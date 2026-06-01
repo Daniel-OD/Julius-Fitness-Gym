@@ -1,5 +1,6 @@
 *.log
 .DS_Store
+/Julius-Fitness-Gym
 .env
 .env.backup
 .env.production

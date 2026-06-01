@@ -5,15 +5,15 @@
 ])
 
 <div
-    {{ $attributes->merge(['class' => 'rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900']) }}>
+    {{ $attributes->merge(['class' => 'rounded-xl border border-gray-200 bg-white shadow-sm']) }}>
     @if ($title || isset($actions))
-        <div class="flex items-center justify-between gap-4 border-b border-gray-100 px-5 py-4 dark:border-gray-800">
+        <div class="flex items-center justify-between gap-4 border-b border-gray-100 px-5 py-4">
             <div class="min-w-0">
                 @if ($title)
-                    <h3 class="truncate text-sm font-semibold text-gray-900 dark:text-white">{{ $title }}</h3>
+                    <h3 class="truncate text-sm font-semibold text-gray-900">{{ $title }}</h3>
                 @endif
                 @if ($subtitle)
-                    <p class="mt-0.5 truncate text-xs text-gray-500 dark:text-gray-400">{{ $subtitle }}</p>
+                    <p class="mt-0.5 truncate text-xs text-gray-500">{{ $subtitle }}</p>
                 @endif
             </div>
             @isset($actions)

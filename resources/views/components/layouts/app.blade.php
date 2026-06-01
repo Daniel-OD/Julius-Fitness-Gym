@@ -19,7 +19,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="min-h-screen bg-gray-50 font-sans text-gray-900 antialiased dark:bg-gray-950 dark:text-gray-100">
+<body class="min-h-screen bg-gray-50 font-sans text-gray-900 antialiased">
     <div class="min-h-screen lg:flex">
         {{-- Mobile backdrop --}}
         <div data-sidebar-backdrop
@@ -27,7 +27,7 @@
 
         {{-- Sidebar --}}
         <aside data-sidebar
-            class="fixed inset-y-0 left-0 z-40 flex w-64 -translate-x-full flex-col border-r border-gray-200 bg-white transition-transform duration-200 lg:static lg:translate-x-0 dark:border-gray-800 dark:bg-gray-900">
+            class="fixed inset-y-0 left-0 z-40 flex w-64 -translate-x-full flex-col border-r border-gray-200 bg-white transition-transform duration-200 lg:static lg:translate-x-0">
             <x-app.sidebar />
         </aside>
 

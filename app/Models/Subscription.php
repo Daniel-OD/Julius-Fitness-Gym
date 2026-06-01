@@ -1,0 +1,85 @@
+<?php
+
+namespace App\Models;
+
+use App\Enums\Status;
+use Database\Factories\SubscriptionFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
+
+/**
+ * @property int $id
+ * @property int|null $renewed_from_subscription_id
+ * @property int $member_id
+ * @property int $plan_id
+ * @property Carbon $start_date
+ * @property Carbon $end_date
+ * @property Status|null $status
+ */
+class Subscription extends Model
+{
+    /** @use HasFactory<SubscriptionFactory> */
+    use HasFactory, SoftDeletes;
+
+    /**
+     * @var list<string>
+     */
+    protected $fillable = [
+        'renewed_from_subscription_id',
+        'member_id',
+        'plan_id',
+        'start_date',
+        'end_date',
+        'status',
+    ];
+
+    protected $casts = [
+        'start_date' => 'date',
+        'end_date' => 'date',
+        'status' => Status::class,
+    ];
+
+    /**
+     * @return HasMany<Invoice, $this>
+     */
+    public function invoices(): HasMany
+    {
+        return $this->hasMany(Invoice::class);
+    }
+
+    /**
+     * @return BelongsTo<Subscription, $this>
+     */
+    public function renewedFrom(): BelongsTo
+    {
+        return $this->belongsTo(self::class, 'renewed_from_subscription_id');
+    }
+
+    /**
+     * @return HasMany<Subscription, $this>
+     */
+    public function renewals(): HasMany
+    {
+        return $this->hasMany(self::class, 'renewed_from_subscription_id');
+    }
+
+    /**
+     * @return BelongsTo<Member, $this>
+     */
+    public function member(): BelongsTo
+    {
+        return $this->belongsTo(Member::class);
+    }
+
+    /**
+     * @return BelongsTo<Plan, $this>
+     */
+    public function plan(): BelongsTo
+    {
+        return $this->belongsTo(Plan::class);
+    }
+}

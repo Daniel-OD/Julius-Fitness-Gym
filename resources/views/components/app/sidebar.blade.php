@@ -1,5 +1,5 @@
 {{-- Brand --}}
-<div class="flex h-16 shrink-0 items-center gap-3 border-b border-gray-200 px-6 dark:border-gray-800">
+<div class="flex h-16 shrink-0 items-center gap-3 border-b border-gray-200 px-6">
     <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-600 text-white">
         <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
             stroke-linecap="round" stroke-linejoin="round">
@@ -13,11 +13,11 @@
         </svg>
     </span>
     <div class="min-w-0">
-        <p class="truncate text-sm font-semibold leading-tight text-gray-900 dark:text-white">Julius Fitness</p>
-        <p class="truncate text-xs text-gray-500 dark:text-gray-400">Gym Management</p>
+        <p class="truncate text-sm font-semibold leading-tight text-gray-900">Julius Fitness</p>
+        <p class="truncate text-xs text-gray-500">Gym Management</p>
     </div>
     <button type="button" data-sidebar-close
-        class="ml-auto rounded-md p-1.5 text-gray-500 hover:bg-gray-100 lg:hidden dark:hover:bg-gray-800">
+        class="ml-auto rounded-md p-1.5 text-gray-500 hover:bg-gray-100 lg:hidden">
         <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
             stroke-linecap="round" stroke-linejoin="round">
             <path d="M18 6 6 18" />
@@ -38,7 +38,7 @@
     </div>
 
     <div>
-        <p class="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">
+        <p class="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
             Membership
         </p>
         <div class="space-y-1">
@@ -71,7 +71,7 @@
     </div>
 
     <div>
-        <p class="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">
+        <p class="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
             Finance
         </p>
         <div class="space-y-1">
@@ -93,7 +93,7 @@
     </div>
 
     <div>
-        <p class="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">
+        <p class="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
             CRM
         </p>
         <div class="space-y-1">
@@ -107,7 +107,7 @@
     </div>
 
     <div>
-        <p class="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">
+        <p class="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
             Admin
         </p>
         <div class="space-y-1">
@@ -130,9 +130,9 @@
 </nav>
 
 {{-- Footer card --}}
-<div class="border-t border-gray-200 p-3 dark:border-gray-800">
-    <div class="rounded-lg bg-gray-50 p-3 text-xs text-gray-500 dark:bg-gray-800/50 dark:text-gray-400">
-        <p class="font-medium text-gray-700 dark:text-gray-300">UI foundation</p>
+<div class="border-t border-gray-200 p-3">
+    <div class="rounded-lg bg-gray-50 p-3 text-xs text-gray-500">
+        <p class="font-medium text-gray-700">UI foundation</p>
         <p class="mt-0.5">Placeholder data — connect to backend models once ready.</p>
     </div>
 </div>
