@@ -40,6 +40,7 @@ return [
         'enquiries' => ['singular' => 'Solicitare',   'plural' => 'Solicitări'],
         'follow_ups' => ['singular' => 'Follow-up',    'plural' => 'Follow-up-uri'],
         'services' => ['singular' => 'Serviciu',     'plural' => 'Servicii'],
+        'users' => ['singular' => 'Utilizator',  'plural' => 'Utilizatori'],
     ],
 
     'settings' => [

@@ -4,6 +4,8 @@ namespace App\Filament\Livewire;
 
 use App\Contracts\SettingsRepository;
 use App\Support\AppConfig;
+use App\Support\AppLocale;
+use App\Support\Data;
 use Filament\Notifications\Notification;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
@@ -22,7 +24,31 @@ class LocaleSwitcher extends Component
 
     public function mount(): void
     {
-        $this->locale = AppConfig::string('app.locale', 'en');
+        $this->locale = $this->resolveLocaleFromSettings();
+    }
+
+    private function resolveLocaleFromSettings(): string
+    {
+        $fallback = AppConfig::string('app.fallback_locale', 'en');
+        $supported = AppConfig::supportedLocales();
+
+        try {
+            $settings = app(SettingsRepository::class)->get();
+            $candidate = data_get($settings, 'general.locale');
+            $locale = is_string($candidate) ? trim($candidate) : '';
+        } catch (\Throwable) {
+            $locale = '';
+        }
+
+        if ($locale === '' || ! in_array($locale, $supported, true)) {
+            $locale = AppConfig::string('app.locale', $fallback);
+        }
+
+        if (! in_array($locale, $supported, true)) {
+            return in_array($fallback, $supported, true) ? $fallback : Data::string($supported[0] ?? 'en', 'en');
+        }
+
+        return $locale;
     }
 
     /**
@@ -65,7 +91,7 @@ class LocaleSwitcher extends Component
 
         $this->locale = $locale;
 
-        app()->setLocale($locale);
+        AppLocale::apply();
 
         Notification::make()
             ->title(__('app.notifications.language_updated'))

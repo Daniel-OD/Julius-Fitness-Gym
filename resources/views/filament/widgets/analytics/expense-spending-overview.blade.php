@@ -6,8 +6,8 @@
     $filters = $this->getFilters();
     @endphp
 
-    <x-filament-widgets::widget>
-        <x-filament::section :heading="$heading" class="fi-wi-chart h-full">
+    <x-filament-widgets::widget class="fi-ios-widget-surface">
+        <x-filament::section :heading="$heading" class="fi-wi-chart h-full rounded-2xl shadow-sm ring-1 ring-black/5">
             <x-slot name="afterHeader">
                 @if ($filters)
                 <x-filament::input.wrapper inline-prefix wire:target="filter" class="fi-wi-chart-filter">
@@ -22,13 +22,13 @@
                 @endif
             </x-slot>
 
-            <div class="grid gap-4">
+            <div class="grid gap-4 rounded-2xl">
                 <div class="text-3xl font-semibold tracking-tight text-gray-950 dark:text-white">
                     {{ $totalExpense }}
                 </div>
 
                 <div class="grid gap-8">
-                    <div class="h-8 w-full overflow-hidden rounded-md bg-gray-100 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-800 dark:ring-white/10">
+                    <div class="fi-ios-chart-bar h-8 w-full overflow-hidden rounded-2xl bg-gray-100 shadow-sm ring-1 ring-black/5 dark:bg-gray-800 dark:ring-white/10">
                         @if ($segments->isEmpty())
                         <div class="flex h-full items-center justify-center text-sm text-gray-500 dark:text-gray-400">
                             {{ __('app.widgets.no_expenses_in_period') }}

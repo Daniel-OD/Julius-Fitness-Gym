@@ -1,0 +1,247 @@
+@import 'tailwindcss';
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+
+@theme {
+    --font-sans:
+        -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', Inter,
+        ui-sans-serif, system-ui, sans-serif;
+}
+
+/* ——— Apple iOS system shell ——— */
+
+html.fi,
+html.fi .fi-body {
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+}
+
+.fi-body {
+    background-color: #f2f2f7 !important;
+}
+
+.fi-main-ctn {
+    background-color: #f2f2f7;
+}
+
+.fi-header-heading,
+.fi-section-header-heading,
+.fi-wi-stats-overview-stat-value {
+    font-weight: 600;
+}
+
+/* Sidebar — frosted glass */
+.fi-sidebar {
+    background: rgba(255, 255, 255, 0.85) !important;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-inline-end: none !important;
+    box-shadow: none !important;
+}
+
+.fi-sidebar.fi-sidebar-open {
+    box-shadow:
+        0 1px 3px rgba(0, 0, 0, 0.06),
+        0 0 0 1px rgb(0 0 0 / 0.05) !important;
+}
+
+.fi-sidebar-header {
+    background: transparent;
+}
+
+/* Topbar — sticky frosted */
+.fi-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    background: rgba(242, 242, 247, 0.9) !important;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: none !important;
+    box-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.04),
+        0 0 0 1px rgb(0 0 0 / 0.05) !important;
+}
+
+/* Nav items — pill hover */
+.fi-sidebar-item-btn,
+.fi-sidebar-group-dropdown-trigger-btn {
+    border-radius: 0.75rem;
+    transition:
+        background-color 200ms ease-in-out,
+        color 200ms ease-in-out;
+}
+
+.fi-sidebar-item-btn:hover,
+.fi-sidebar-group-dropdown-trigger-btn:hover,
+.fi-sidebar-item.fi-active .fi-sidebar-item-btn {
+    background-color: rgb(var(--primary-50)) !important;
+}
+
+.fi-sidebar-item.fi-active .fi-sidebar-item-btn {
+    color: rgb(var(--primary-700));
+}
+
+/* Sections / cards — rounded, soft shadow */
+.fi-section:not(.fi-section-not-contained) {
+    border-radius: 1rem;
+    border: none !important;
+    box-shadow:
+        0 1px 3px rgba(0, 0, 0, 0.06),
+        0 0 0 1px rgb(0 0 0 / 0.05);
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    overflow: hidden;
+}
+
+.fi-section-header {
+    border-bottom: none !important;
+    box-shadow: inset 0 -1px 0 rgb(0 0 0 / 0.04);
+}
+
+/* Buttons — pill primary, rounded secondary */
+.fi-btn {
+    transition:
+        background-color 200ms ease-in-out,
+        box-shadow 200ms ease-in-out,
+        transform 150ms ease-in-out;
+}
+
+.fi-btn.fi-color-primary:not(.fi-outlined) {
+    border-radius: 9999px;
+}
+
+.fi-btn.fi-outlined,
+.fi-btn:not(.fi-color-primary):not(.fi-outlined) {
+    border-radius: 0.625rem;
+}
+
+/* Inputs */
+.fi-input-wrp {
+    border-radius: 0.75rem !important;
+    transition:
+        box-shadow 200ms ease-in-out,
+        ring-color 200ms ease-in-out;
+}
+
+.fi-input-wrp:focus-within {
+    box-shadow: 0 0 0 3px rgb(var(--primary-500) / 0.2);
+}
+
+/* Badges — pill */
+.fi-badge {
+    border-radius: 9999px;
+}
+
+/* Table rows — clean hover */
+.fi-ta-row {
+    transition: background-color 200ms ease-in-out;
+}
+
+.fi-ta-row:hover {
+    background-color: #f9f9fb !important;
+}
+
+.fi-ta-header-cell {
+    font-weight: 600;
+}
+
+.fi-ta-table > .fi-ta-header-ctn {
+    border-bottom: none;
+    box-shadow: inset 0 -1px 0 rgb(0 0 0 / 0.05);
+}
+
+/* Stats widgets */
+.fi-wi-stats-overview-stat {
+    border-radius: 1rem;
+    border: none !important;
+    box-shadow:
+        0 1px 3px rgba(0, 0, 0, 0.06),
+        0 0 0 1px rgb(0 0 0 / 0.05);
+    background: rgba(255, 255, 255, 0.92);
+    transition: box-shadow 200ms ease-in-out;
+}
+
+.fi-wi-stats-overview-stat:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Modals */
+.fi-modal-window {
+    border-radius: 1.25rem !important;
+    border: none !important;
+    box-shadow:
+        0 16px 48px rgba(0, 0, 0, 0.12),
+        0 0 0 1px rgb(0 0 0 / 0.06);
+}
+
+.fi-modal-content {
+    border-radius: 1.25rem;
+}
+
+/* Dropdown panels (locale switcher etc.) */
+.fi-dropdown-panel {
+    border-radius: 0.75rem !important;
+    border: none !important;
+    box-shadow:
+        0 8px 24px rgba(0, 0, 0, 0.1),
+        0 0 0 1px rgb(0 0 0 / 0.05);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+}
+
+.fi-dropdown-list-item {
+    border-radius: 0.75rem;
+    margin-inline: 0.25rem;
+    transition: background-color 200ms ease-in-out;
+}
+
+/* Tabs (settings) */
+.fi-tabs-item {
+    border-radius: 0.75rem;
+    transition: background-color 200ms ease-in-out;
+}
+
+.fi-tabs-item.fi-active {
+    background-color: rgb(var(--primary-50));
+}
+
+/* Dashboard header filter bar (custom view) */
+.fi-ios-filter-bar {
+    border-radius: 1rem;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow:
+        0 1px 3px rgba(0, 0, 0, 0.06),
+        0 0 0 1px rgb(0 0 0 / 0.05);
+}
+
+/* Locale switcher trigger */
+.fi-locale-switcher-trigger {
+    border-radius: 9999px !important;
+    background: rgba(255, 255, 255, 0.8) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow:
+        0 1px 3px rgba(0, 0, 0, 0.06),
+        0 0 0 1px rgb(0 0 0 / 0.05) !important;
+    transition: transform 150ms ease-in-out;
+}
+
+.fi-locale-switcher-trigger:hover {
+    transform: scale(1.05);
+}
+
+/* Expense widget surfaces */
+.fi-ios-widget-surface .fi-section {
+    border-radius: 1rem;
+}
+
+.fi-ios-chart-bar {
+    border-radius: 1rem !important;
+}

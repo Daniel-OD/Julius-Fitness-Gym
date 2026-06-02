@@ -40,6 +40,7 @@ return [
         'enquiries' => ['singular' => 'Enquiry',       'plural' => 'Enquiries'],
         'follow_ups' => ['singular' => 'Follow-up',     'plural' => 'Follow-ups'],
         'services' => ['singular' => 'Service',       'plural' => 'Services'],
+        'users' => ['singular' => 'User',          'plural' => 'Users'],
     ],
 
     'settings' => [

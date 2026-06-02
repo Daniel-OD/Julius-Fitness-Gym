@@ -13,8 +13,12 @@ use App\Support\Billing\TaxRate;
 use App\Support\Data;
 use App\Support\Dates\FiscalYear;
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Nnjeim\World\WorldHelper;
+use TypeError;
 
 class Helpers
 {
@@ -306,9 +310,46 @@ class Helpers
      */
     private static function worldResponse(string $method, array $parameters = []): object
     {
-        /** @var object{success: bool, data: array<int, array<string, mixed>>} $response */
-        $response = app(WorldHelper::class)->__call($method, [$parameters]);
+        try {
+            $action = app(WorldHelper::class)->__call($method, [$parameters]);
+        } catch (TypeError) {
+            // nnjeim/world caches Collections forever; a stale DB cache entry can
+            // deserialize as __PHP_Incomplete_Class and crash Settings country/currency selects.
+            self::clearWorldCache();
+            $action = app(WorldHelper::class)->__call($method, [$parameters]);
+        }
 
-        return $response;
+        $data = $action->data ?? collect();
+
+        if ($data instanceof Collection) {
+            $data = $data->all();
+        } elseif (! is_array($data)) {
+            $data = [];
+        }
+
+        return (object) [
+            'success' => (bool) ($action->success ?? false),
+            'data' => $data,
+        ];
+    }
+
+    /**
+     * Drop cached nnjeim/world index results (used after cache corruption recovery).
+     */
+    private static function clearWorldCache(): void
+    {
+        if (config('cache.default') === 'database') {
+            DB::table('cache')
+                ->where(function ($query): void {
+                    foreach (['currencies', 'countries', 'states', 'cities', 'languages', 'timezones'] as $tag) {
+                        $query->orWhere('key', 'like', '%'.$tag.'%');
+                    }
+                })
+                ->delete();
+
+            return;
+        }
+
+        Cache::flush();
     }
 }

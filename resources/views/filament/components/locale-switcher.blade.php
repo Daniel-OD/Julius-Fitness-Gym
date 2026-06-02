@@ -6,6 +6,7 @@
                 color="gray"
                 outlined
                 size="sm"
+                class="fi-locale-switcher-trigger"
                 title="{{ $this->options[$this->locale]['label'] ?? $this->locale }}"
                 aria-label="{{ $this->options[$this->locale]['label'] ?? $this->locale }}"
             >
