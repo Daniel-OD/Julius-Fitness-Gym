@@ -4,9 +4,9 @@ namespace App\Filament\Resources\CheckIns;
 
 use App\Filament\Resources\CheckIns\Pages\ListCheckIns;
 use App\Models\CheckIn;
+use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -92,7 +92,7 @@ class CheckInResource extends Resource
                     ->options(['qr' => 'QR', 'manual' => 'Manual']),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
+                ViewAction::make(),
             ]);
     }
 
