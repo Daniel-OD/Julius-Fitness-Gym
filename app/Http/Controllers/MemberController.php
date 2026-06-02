@@ -7,6 +7,7 @@ use App\Models\Member;
 use App\Models\Plan;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class MemberController extends Controller
@@ -14,6 +15,7 @@ class MemberController extends Controller
     public function index(Request $request): View
     {
         $members = Member::query()
+            ->with(['subscriptions.plan'])
             ->when($request->search, fn ($q, $s) => $q->where('name', 'like', "%{$s}%")
                 ->orWhere('email', 'like', "%{$s}%")
                 ->orWhere('code', 'like', "%{$s}%"))
@@ -50,7 +52,12 @@ class MemberController extends Controller
             'source' => ['nullable', 'in:word_of_mouth,promotions,others'],
             'goal' => ['nullable', 'in:fitness,fatloss,weightgain,body_building,others'],
             'status' => ['required', 'in:active,inactive'],
+            'photo' => ['nullable', 'image', 'max:2048'],
         ]);
+
+        if ($request->hasFile('photo')) {
+            $validated['photo'] = $request->file('photo')->store('members', 'public');
+        }
 
         $member = Member::create($validated);
 
@@ -88,7 +95,15 @@ class MemberController extends Controller
             'source' => ['nullable', 'in:word_of_mouth,promotions,others'],
             'goal' => ['nullable', 'in:fitness,fatloss,weightgain,body_building,others'],
             'status' => ['required', 'in:active,inactive'],
+            'photo' => ['nullable', 'image', 'max:2048'],
         ]);
+
+        if ($request->hasFile('photo')) {
+            if ($member->photo) {
+                Storage::disk('public')->delete($member->photo);
+            }
+            $validated['photo'] = $request->file('photo')->store('members', 'public');
+        }
 
         $member->update($validated);
 
@@ -98,6 +113,10 @@ class MemberController extends Controller
 
     public function destroy(Member $member): RedirectResponse
     {
+        if ($member->photo) {
+            Storage::disk('public')->delete($member->photo);
+        }
+
         $member->delete();
 
         return redirect()->route('web.members.index')
