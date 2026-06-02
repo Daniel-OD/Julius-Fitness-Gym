@@ -332,15 +332,16 @@ return [
     ],
 
     'titles' => [
-        'record'                    => 'Record',
-        'summary'                   => 'Summary',
-        'invoice_details'           => 'Invoice details',
-        'invoice_number'            => 'Invoice :number',
-        'edit_invoice_number'       => 'Edit invoice :number',
-        'payment_history'           => 'Payment history',
-        'expense_details'           => 'Expense details',
-        'follow_up_timeline'        => 'Follow-up timeline',
-        'subscription_and_invoice'  => 'Subscription & invoice',
+        'record'                   => 'Record',
+        'summary'                  => 'Summary',
+        'invoice_details'          => 'Invoice details',
+        'invoice_number'           => 'Invoice :number',
+        'edit_invoice_number'      => 'Edit invoice :number',
+        'payment_history'          => 'Payment history',
+        'expense_details'          => 'Expense details',
+        'follow_up_timeline'       => 'Follow-up timeline',
+        'subscription_and_invoice' => 'Subscription & invoice',
+        'renew_subscription'       => 'Renew Subscription',
     ],
 
     'empty' => [
@@ -382,7 +383,25 @@ return [
     ],
 
     'units' => [
+        'day'  => 'day',
         'days' => 'days',
+    ],
+
+    'analytics' => [
+        'ranges' => [
+            '7days'   => 'Last 7 days',
+            '30days'  => 'Last 30 days',
+            'quarter' => 'Last quarter',
+            '6months' => 'Last 6 months',
+            'ytd'     => 'Year to date',
+        ],
+        'collected' => 'Collected',
+        'expenses'  => 'Expenses',
+        'other'     => 'Other',
+    ],
+
+    'api' => [
+        'invalid_query' => 'Invalid query parameters.',
     ],
 
     'ui' => [
@@ -393,45 +412,29 @@ return [
     ],
 
     'widgets' => [
-        'membership' => [
-            'total_members'     => 'Total members',
-            'active_members'    => 'Active members',
-            'new_members'       => 'New members',
-            'new_subscriptions' => 'New subscriptions',
-            'expiring_soon'     => 'Expiring soon',
-            'in_period'         => 'In selected period',
-            'next_7_days'       => 'Next 7 days',
-        ],
-        'financial' => [
-            'revenue'     => 'Revenue collected',
-            'outstanding' => 'Outstanding',
-            'expenses'    => 'Expenses',
-        ],
-        'expense_categories' => [
-            'heading'       => 'Expenses by category',
-            'uncategorized' => 'Uncategorized',
-        ],
-        'subscriptions' => [
-            'heading'    => 'New subscriptions',
-            'member'     => 'Member',
-            'plan'       => 'Plan',
-            'start_date' => 'Start date',
-            'end_date'   => 'End date',
-            'status'     => 'Status',
-        ],
-        'transactions' => [
-            'heading' => 'Recent transactions',
-            'date'    => 'Date',
-            'invoice' => 'Invoice',
-            'type'    => 'Type',
-            'amount'  => 'Amount',
-            'method'  => 'Method',
-        ],
-        'cashflow' => [
-            'heading'  => 'Cashflow trend',
-            'revenue'  => 'Revenue',
-            'expenses' => 'Expenses',
-        ],
+        'net_revenue'                          => 'Net Revenue',
+        'total_collected'                      => 'Total Collected',
+        'outstanding_payments'                 => 'Outstanding Payments',
+        'profit'                               => 'Profit',
+        'cashflow'                             => 'Cashflow',
+        'total_expense'                        => 'Total Expense',
+        'top_plans_collected'                  => 'Top Plans (Collected)',
+        'recent_transactions'                  => 'Recent Transactions',
+        'expiring_soon'                        => 'Expiring Soon',
+        'days_left'                            => 'Days Left',
+        'days_since'                           => 'Days Since',
+        'no_expenses_in_period'                => 'No expenses in this period',
+        'no_expiring_subscriptions'            => 'No subscriptions expiring soon',
+        'no_expiring_subscriptions_description' => 'You are all set - nothing is ending in the next few days.',
+        'no_expiring_memberships'              => 'No memberships expiring soon',
+        'no_expiring_memberships_description'  => 'You are all set - nothing is ending in the next few days.',
+        'no_expired_memberships'               => 'No expired memberships',
+        'no_expired_memberships_description'   => 'There are no memberships that have ended yet.',
+        'active_members'                       => 'Active Members',
+        'new_members'                          => 'New Members',
+        'renewals'                             => 'Renewals',
+        'expired_not_renewed'                  => 'Expired / Not Renewed',
+        'vs_previous_period'                   => 'vs :count previous period',
     ],
 
 ];

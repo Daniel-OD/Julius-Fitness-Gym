@@ -341,6 +341,7 @@ return [
         'expense_details'          => 'Detalii cheltuială',
         'follow_up_timeline'       => 'Cronologie follow-up',
         'subscription_and_invoice' => 'Abonament și factură',
+        'renew_subscription'       => 'Reînnoire abonament',
     ],
 
     'empty' => [
@@ -382,7 +383,25 @@ return [
     ],
 
     'units' => [
+        'day'  => 'zi',
         'days' => 'zile',
+    ],
+
+    'analytics' => [
+        'ranges' => [
+            '7days'   => 'Ultimele 7 zile',
+            '30days'  => 'Ultimele 30 de zile',
+            'quarter' => 'Ultimul trimestru',
+            '6months' => 'Ultimele 6 luni',
+            'ytd'     => 'De la începutul anului',
+        ],
+        'collected' => 'Încasat',
+        'expenses'  => 'Cheltuieli',
+        'other'     => 'Altele',
+    ],
+
+    'api' => [
+        'invalid_query' => 'Parametri de interogare invalizi.',
     ],
 
     'ui' => [
@@ -393,45 +412,29 @@ return [
     ],
 
     'widgets' => [
-        'membership' => [
-            'total_members'     => 'Total membri',
-            'active_members'    => 'Membri activi',
-            'new_members'       => 'Membri noi',
-            'new_subscriptions' => 'Abonamente noi',
-            'expiring_soon'     => 'Expiră curând',
-            'in_period'         => 'În perioada selectată',
-            'next_7_days'       => 'Următoarele 7 zile',
-        ],
-        'financial' => [
-            'revenue'     => 'Venituri încasate',
-            'outstanding' => 'Neîncasat',
-            'expenses'    => 'Cheltuieli',
-        ],
-        'expense_categories' => [
-            'heading'       => 'Cheltuieli pe categorii',
-            'uncategorized' => 'Necategorizat',
-        ],
-        'subscriptions' => [
-            'heading'    => 'Abonamente noi',
-            'member'     => 'Membru',
-            'plan'       => 'Plan',
-            'start_date' => 'Data de început',
-            'end_date'   => 'Data de sfârșit',
-            'status'     => 'Status',
-        ],
-        'transactions' => [
-            'heading' => 'Tranzacții recente',
-            'date'    => 'Dată',
-            'invoice' => 'Factură',
-            'type'    => 'Tip',
-            'amount'  => 'Sumă',
-            'method'  => 'Metodă',
-        ],
-        'cashflow' => [
-            'heading'  => 'Evoluție cashflow',
-            'revenue'  => 'Venituri',
-            'expenses' => 'Cheltuieli',
-        ],
+        'net_revenue'                           => 'Venit net',
+        'total_collected'                       => 'Total încasat',
+        'outstanding_payments'                  => 'Plăți restante',
+        'profit'                                => 'Profit',
+        'cashflow'                              => 'Evoluție cashflow',
+        'total_expense'                         => 'Total cheltuieli',
+        'top_plans_collected'                   => 'Top planuri (încasări)',
+        'recent_transactions'                   => 'Tranzacții recente',
+        'expiring_soon'                         => 'Expiră curând',
+        'days_left'                             => 'Zile rămase',
+        'days_since'                            => 'Zile de la expirare',
+        'no_expenses_in_period'                 => 'Nicio cheltuială în această perioadă',
+        'no_expiring_subscriptions'             => 'Niciun abonament care expiră curând',
+        'no_expiring_subscriptions_description' => 'Totul e în regulă — nimic nu expiră în următoarele zile.',
+        'no_expiring_memberships'               => 'Nicio abonare care expiră curând',
+        'no_expiring_memberships_description'   => 'Totul e în regulă — nimic nu expiră în următoarele zile.',
+        'no_expired_memberships'                => 'Nicio abonare expirată',
+        'no_expired_memberships_description'    => 'Nu există abonamente care să fi expirat încă.',
+        'active_members'                        => 'Membri activi',
+        'new_members'                           => 'Membri noi',
+        'renewals'                              => 'Reînnoiri',
+        'expired_not_renewed'                   => 'Expirate / neînnoite',
+        'vs_previous_period'                    => 'vs :count perioada anterioară',
     ],
 
 ];
