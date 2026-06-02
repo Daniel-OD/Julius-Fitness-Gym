@@ -48,6 +48,10 @@ class ListSubscriptions extends ListRecords
                 ->badge(Subscription::query()->where('status', 'renewed')->count())
                 ->badgeColor(Status::Renewed->getColor())
                 ->modifyQueryUsing(fn (Builder $query): Builder => $query->where('status', 'renewed')),
+            'without_invoice' => Tab::make(__('app.billing.without_invoice_tab'))
+                ->badge(Subscription::query()->withoutInvoices()->count())
+                ->badgeColor('warning')
+                ->modifyQueryUsing(fn (Builder $query): Builder => $query->withoutInvoices()),
         ];
     }
 

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\Status;
 use Database\Factories\SubscriptionFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -98,5 +99,14 @@ class Subscription extends Model
     public function isOfficial(): bool
     {
         return $this->type === 'official';
+    }
+
+    /**
+     * @param  Builder<Subscription>  $query
+     * @return Builder<Subscription>
+     */
+    public function scopeWithoutInvoices(Builder $query): Builder
+    {
+        return $query->whereDoesntHave('invoices');
     }
 }

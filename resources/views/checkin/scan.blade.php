@@ -1,48 +1,81 @@
-<!DOCTYPE html>
-<html lang="{{ app()->getLocale() }}">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ config('app.name') }} — Check-in</title>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f2f2f7; min-height: 100dvh; display: flex; align-items: center; justify-content: center; padding: 1rem; }
-        .card { background: #fff; border-radius: 1.25rem; box-shadow: 0 2px 16px rgba(0,0,0,.08); max-width: 380px; width: 100%; padding: 2rem; text-align: center; }
-        .icon { font-size: 3rem; margin-bottom: 1rem; }
-        .status-success .icon::before { content: '✅'; }
-        .status-warning .icon::before  { content: '⚠️'; }
-        .status-error .icon::before    { content: '❌'; }
-        .status-rate_limited .icon::before { content: '⏳'; }
-        h1 { font-size: 1.25rem; font-weight: 700; color: #1c1c1e; margin-bottom: .5rem; }
-        p  { color: #6b6b6b; font-size: .95rem; line-height: 1.5; }
-        .meta { margin-top: 1.5rem; background: #f2f2f7; border-radius: .75rem; padding: 1rem; text-align: left; font-size: .875rem; }
-        .meta dt { color: #8e8e93; font-size: .75rem; text-transform: uppercase; letter-spacing: .5px; }
-        .meta dd { color: #1c1c1e; font-weight: 600; margin-bottom: .75rem; }
-    </style>
-</head>
-<body>
-<div class="card status-{{ $status }}">
-    <div class="icon"></div>
-    <h1>{{ $message }}</h1>
+@php
+    $tone = match ($status) {
+        'success' => [
+            'icon' => '✅',
+            'ring' => 'ring-emerald-500/30',
+            'bg' => 'bg-emerald-500/10',
+            'text' => 'text-emerald-600 dark:text-emerald-400',
+        ],
+        'warning', 'rate_limited' => [
+            'icon' => '⚠️',
+            'ring' => 'ring-orange-500/30',
+            'bg' => 'bg-orange-500/10',
+            'text' => 'text-orange-600 dark:text-orange-400',
+        ],
+        default => [
+            'icon' => '❌',
+            'ring' => 'ring-red-500/30',
+            'bg' => 'bg-red-500/10',
+            'text' => 'text-red-600 dark:text-red-400',
+        ],
+    };
+@endphp
 
-    @if ($member)
-        <div class="meta">
-            <dl>
-                <dt>{{ __('app.fields.member') }}</dt>
-                <dd>{{ $member->name }}</dd>
-                @if ($subscription)
-                    <dt>{{ __('app.fields.plan') }}</dt>
-                    <dd>{{ $subscription->plan?->name }}</dd>
-                    <dt>{{ __('app.fields.end_date') }}</dt>
-                    <dd>{{ $subscription->end_date?->translatedFormat('d M Y') }}</dd>
+@push('head')
+    <meta http-equiv="refresh" content="5;url={{ route('home') }}">
+@endpush
+
+<x-layouts.minimal :title="__('app.checkin.title') . ' · ' . config('app.name')">
+    <div class="flex flex-1 flex-col items-center justify-center py-6 text-center sm:py-10">
+        <div
+            class="flex h-20 w-20 items-center justify-center rounded-full text-3xl ring-8 sm:h-24 sm:w-24 sm:text-4xl {{ $tone['ring'] }} {{ $tone['bg'] }}">
+            {{ $tone['icon'] }}
+        </div>
+
+        <p class="mt-6 text-lg font-semibold tracking-tight sm:text-xl {{ $tone['text'] }}">
+            {{ $message }}
+        </p>
+
+        @if ($member)
+            <p class="mt-3 text-2xl font-semibold tracking-tight text-zinc-900 dark:text-white sm:text-3xl">
+                {{ $member->name }}
+            </p>
+        @endif
+
+        @if ($checkIn?->checked_in_at)
+            <p class="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
+                {{ __('app.checkin.checked_in_at', [
+                    'time' => $checkIn->checked_in_at->timezone(config('app.timezone'))->format('H:i'),
+                ]) }}
+            </p>
+        @endif
+
+        @if ($member && ($subscription || $checkIn))
+            <dl
+                class="mt-8 w-full max-w-sm rounded-2xl border border-zinc-200 bg-white p-4 text-left text-sm dark:border-white/10 dark:bg-zinc-950">
+                @if ($subscription?->plan)
+                    <div class="mb-3">
+                        <dt class="text-xs font-medium uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+                            {{ __('app.resources.plans.singular') }}
+                        </dt>
+                        <dd class="mt-0.5 font-semibold text-zinc-900 dark:text-white">{{ $subscription->plan->name }}</dd>
+                    </div>
                 @endif
-                @if ($checkIn)
-                    <dt>{{ __('app.fields.date') }}</dt>
-                    <dd>{{ $checkIn->checked_in_at?->translatedFormat('d M Y, H:i') }}</dd>
+                @if ($subscription?->end_date)
+                    <div>
+                        <dt class="text-xs font-medium uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+                            {{ __('app.fields.end_date') }}
+                        </dt>
+                        <dd class="mt-0.5 font-semibold text-zinc-900 dark:text-white">
+                            {{ $subscription->end_date->translatedFormat('d M Y') }}
+                        </dd>
+                    </div>
                 @endif
             </dl>
-        </div>
-    @endif
-</div>
-</body>
-</html>
+        @endif
+
+        <p class="mt-10 text-xs text-zinc-400 dark:text-zinc-500">
+            {{ __('app.checkin.redirect_hint') }}
+        </p>
+    </div>
+</x-layouts.minimal>

@@ -15,7 +15,7 @@
         </div>
     </x-slot>
 
-    <form action="{{ route('web.members.store') }}" method="POST" enctype="multipart/form-data"
+    <form action="{{ route('web.members.store') }}" method="POST" enctype="multipart/form-data" data-jf-form
         class="mx-auto max-w-3xl space-y-6">
         @csrf
 
@@ -31,9 +31,7 @@
                 <span class="text-sm font-medium text-white/70">Alege imagine</span>
                 <input type="file" name="photo" accept="image/jpeg,image/png,image/webp" class="sr-only" />
             </label>
-            @error('photo')
-                <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
-            @enderror
+            <x-ui.field-error :message="$errors->first('photo')" class="mt-2" />
         </x-ui.card>
 
         <x-ui.card title="{{ __('app.fields.details') ?? 'Date personale' }}">
@@ -98,7 +96,7 @@
 
         <div class="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
             <x-ui.button :href="route('web.members.index')" variant="secondary" size="lg">{{ __('app.actions.cancel') }}</x-ui.button>
-            <x-ui.button type="submit" variant="primary" size="lg">{{ __('app.actions.save') }}</x-ui.button>
+            <x-ui.button type="submit" variant="primary" size="lg" data-jf-submit>{{ __('app.actions.save') }}</x-ui.button>
         </div>
     </form>
 </x-layouts.app>

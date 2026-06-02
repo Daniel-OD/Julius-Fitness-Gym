@@ -4,8 +4,8 @@ namespace App\Services\Members;
 
 use App\Data\CheckinScanResult;
 use App\Enums\CheckinScanStatus;
+use App\Models\CheckIn;
 use App\Models\Member;
-use App\Models\MemberCheckin;
 use App\Support\AppConfig;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Carbon;
@@ -54,7 +54,7 @@ class MemberCheckinService
     {
         $today = CarbonImmutable::today(AppConfig::timezone());
 
-        return MemberCheckin::query()
+        return CheckIn::query()
             ->whereBetween('checked_in_at', [
                 $today->startOfDay(),
                 $today->endOfDay(),

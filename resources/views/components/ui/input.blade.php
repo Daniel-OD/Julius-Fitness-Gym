@@ -8,7 +8,7 @@
 <div {{ $attributes->only('class') }}>
     @if ($label)
         <label @if ($name) for="{{ $name }}" @endif
-            class="mb-1.5 block text-sm font-medium text-white/70">
+            class="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-white/70">
             {{ $label }}
         </label>
     @endif
@@ -18,11 +18,9 @@
             'class' =>
                 'jf-input ' .
                 ($error
-                    ? 'border-red-500/50 focus:border-red-500 focus:ring-red-500/30'
+                    ? 'border-red-500/60 focus:border-red-500 focus:ring-red-500/30 dark:border-red-500/50'
                     : ''),
         ]) }}>
 
-    @if ($error)
-        <p class="mt-1 text-xs text-red-400">{{ $error }}</p>
-    @endif
+    <x-ui.field-error :message="$error" />
 </div>

@@ -137,12 +137,13 @@
                 <x-slot name="subtitle">{{ $member->subscriptions->count() }} total</x-slot>
 
                 @if ($member->subscriptions->isEmpty())
-                    <div class="px-5 py-12 text-center">
-                        <p class="text-sm text-white/45">{{ __('app.empty.create_to_get_started', ['resource' => __('app.resources.subscriptions.singular')]) }}</p>
-                        <x-ui.button :href="route('web.subscriptions.create', ['member_id' => $member->id])" variant="primary" size="md" class="mt-4">
-                            Abonament nou
-                        </x-ui.button>
-                    </div>
+                    <x-ui.empty-state :title="__('app.empty.no_subscriptions')">
+                        <x-slot:action>
+                            <x-ui.button :href="route('web.subscriptions.create', ['member_id' => $member->id])" variant="primary" size="md">
+                                Abonament nou
+                            </x-ui.button>
+                        </x-slot:action>
+                    </x-ui.empty-state>
                 @else
                     <x-ui.table :headings="[__('app.resources.plans.singular'), __('app.fields.period') ?? 'Perioadă', __('app.fields.amount'), __('app.fields.status'), '']">
                         @foreach ($member->subscriptions->sortByDesc('end_date') as $subscription)

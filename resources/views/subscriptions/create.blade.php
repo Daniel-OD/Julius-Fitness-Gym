@@ -38,7 +38,7 @@
     </x-slot>
 
     <div class="mx-auto max-w-2xl space-y-6">
-        <form action="{{ route('web.subscriptions.store') }}" method="POST" class="space-y-6">
+        <form action="{{ route('web.subscriptions.store') }}" method="POST" data-jf-form class="space-y-6">
             @csrf
 
             <x-ui.card :title="__('app.resources.members.singular')">
@@ -121,7 +121,7 @@
                 <x-ui.button
                     :href="$selectedMember ? route('web.members.show', $selectedMember) : route('web.subscriptions.index')"
                     variant="secondary" size="lg">{{ __('app.actions.cancel') }}</x-ui.button>
-                <x-ui.button type="submit" variant="primary" size="lg">{{ __('app.actions.save') }}</x-ui.button>
+                <x-ui.button type="submit" variant="primary" size="lg" data-jf-submit>{{ __('app.actions.save') }}</x-ui.button>
             </div>
         </form>
     </div>

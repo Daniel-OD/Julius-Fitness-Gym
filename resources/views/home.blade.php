@@ -71,10 +71,10 @@
             class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,#000000_72%)]">
         </div>
 
-        <div class="relative z-10 mx-auto max-w-5xl px-4 py-32 text-center sm:px-6">
+        <div class="relative z-10 mx-auto max-w-5xl px-4 py-24 text-center sm:px-6 sm:py-32">
             <p class="text-xs font-semibold uppercase tracking-[0.35em] text-white/40">Julius Fitness Gym</p>
             <h1
-                class="text-balance mt-6 text-5xl font-extrabold leading-[1.05] tracking-tight text-white sm:text-7xl lg:text-8xl">
+                class="text-balance mt-6 text-4xl font-extrabold leading-[1.05] tracking-tight text-white sm:text-6xl lg:text-8xl">
                 Antrenează.<br>
                 <span class="text-brand-400">Transformă.</span>
             </h1>

@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Office\Pages\Dashboard as OfficeDashboard;
 use App\Filament\Pages\Dashboard;
 use App\Filament\Pages\Settings;
 use App\Filament\Resources\CheckIns\CheckInResource;
@@ -50,7 +51,7 @@ class AdminPanelProvider extends PanelProvider
     public function panel(Panel $panel): Panel
     {
         return $this->basePanel($panel)
-            ->navigation(fn (NavigationBuilder $builder) => $this->buildNavigation($builder));
+            ->navigation(fn (NavigationBuilder $builder) => $this->buildNavigation($builder, 'admin'));
     }
 
     /**
@@ -112,15 +113,25 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([])
-            ->plugins([FilamentShieldPlugin::make()
+            ->plugins($this->shieldPlugins());
+    }
+
+    /**
+     * @return array<int, mixed>
+     */
+    protected function shieldPlugins(): array
+    {
+        return [
+            FilamentShieldPlugin::make()
                 ->navigationIcon(fn (): null => null)
-                ->activeNavigationIcon(fn (): null => null)]);
+                ->activeNavigationIcon(fn (): null => null),
+        ];
     }
 
     /**
      * Build grouped navigation for the admin panel.
      */
-    protected function buildNavigation(NavigationBuilder $builder): NavigationBuilder
+    protected function buildNavigation(NavigationBuilder $builder, string $panel = 'admin'): NavigationBuilder
     {
         $administration = [
             ...Settings::getNavigationItems(),
@@ -171,8 +182,12 @@ class AdminPanelProvider extends PanelProvider
             ->item(
                 NavigationItem::make(__('app.navigation.dashboard'))
                     ->icon('heroicon-o-chart-bar')
-                    ->url(fn () => Dashboard::getUrl())
-                    ->isActiveWhen(fn () => request()->routeIs('filament.admin.pages.dashboard'))
+                    ->url(fn (): string => $panel === 'office'
+                        ? OfficeDashboard::getUrl()
+                        : Dashboard::getUrl())
+                    ->isActiveWhen(fn (): bool => $panel === 'office'
+                        ? request()->routeIs('filament.office.pages.dashboard')
+                        : request()->routeIs('filament.admin.pages.dashboard'))
             );
     }
 

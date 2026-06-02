@@ -18,8 +18,8 @@
     <x-slot name="header">
         <div class="flex w-full flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-                <h1 class="text-2xl font-semibold tracking-tight text-white">{{ __('app.resources.subscriptions.plural') }}</h1>
-                <p class="mt-1 text-sm text-white/45">{{ $subscriptions->total() }} {{ __('app.resources.subscriptions.plural') }}</p>
+                <h1 class="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-white">{{ __('app.resources.subscriptions.plural') }}</h1>
+                <p class="mt-1 text-sm text-zinc-500 dark:text-white/45">{{ $subscriptions->total() }} {{ __('app.resources.subscriptions.plural') }}</p>
             </div>
             <x-ui.button :href="route('web.subscriptions.create')" variant="primary" size="md">
                 <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -40,7 +40,7 @@
 
     <x-ui.card :padding="false">
         <form method="GET" action="{{ route('web.subscriptions.index') }}"
-            class="flex flex-col gap-4 border-b border-white/8 p-5 sm:flex-row sm:items-end">
+            class="flex flex-col gap-4 border-b border-zinc-200 p-5 dark:border-white/8 sm:flex-row sm:items-end">
             <div class="w-full sm:w-56">
                 <label for="status" class="mb-1.5 block text-sm font-medium text-white/70">{{ __('app.fields.status') }}</label>
                 <select id="status" name="status"
@@ -101,15 +101,15 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="7" class="px-5 py-12 text-center text-sm text-white/45">
-                        {{ __('app.empty.no_records', ['records' => __('app.resources.subscriptions.plural')]) }}
+                    <td colspan="7" class="p-0">
+                        <x-ui.empty-state :title="__('app.empty.no_subscriptions')" />
                     </td>
                 </tr>
             @endforelse
         </x-ui.table>
 
         @if ($subscriptions->hasPages())
-            <div class="border-t border-white/8 px-5 py-4">
+            <div class="border-t border-zinc-200 px-5 py-4 dark:border-white/8">
                 {{ $subscriptions->withQueryString()->links() }}
             </div>
         @endif

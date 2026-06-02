@@ -6,9 +6,11 @@
 @php
     $base = 'group flex items-center gap-3 rounded-full px-3 py-2 text-sm font-medium transition-all duration-200';
     $state = $active
-        ? 'bg-brand-500/15 text-brand-300 jf-glow-accent'
-        : 'text-white/55 hover:bg-white/5 hover:text-white';
-    $iconState = $active ? 'text-brand-400' : 'text-white/35 group-hover:text-white/60';
+        ? 'bg-brand-500/15 text-brand-600 dark:text-brand-300 jf-glow-accent'
+        : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-white/55 dark:hover:bg-white/5 dark:hover:text-white';
+    $iconState = $active
+        ? 'text-brand-500 dark:text-brand-400'
+        : 'text-zinc-400 group-hover:text-zinc-600 dark:text-white/35 dark:group-hover:text-white/60';
 @endphp
 
 <a href="{{ $href }}" {{ $attributes->merge(['class' => "$base $state"]) }}>

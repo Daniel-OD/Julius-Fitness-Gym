@@ -17,7 +17,8 @@
         </div>
     </x-slot>
 
-    <form action="{{ route('web.members.update', $member) }}" method="POST" class="mx-auto max-w-3xl space-y-6">
+    <form action="{{ route('web.members.update', $member) }}" method="POST" data-jf-form
+        class="mx-auto max-w-3xl space-y-6">
         @csrf
         @method('PUT')
 
@@ -83,7 +84,7 @@
 
         <div class="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
             <x-ui.button :href="route('web.members.show', $member)" variant="secondary" size="lg">{{ __('app.actions.cancel') }}</x-ui.button>
-            <x-ui.button type="submit" variant="primary" size="lg">{{ __('app.actions.save') }}</x-ui.button>
+            <x-ui.button type="submit" variant="primary" size="lg" data-jf-submit>{{ __('app.actions.save') }}</x-ui.button>
         </div>
     </form>
 

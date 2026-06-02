@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CheckInController;
 use App\Http\Controllers\MemberController;
+use App\Http\Controllers\MemberImportDownloadController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SubscriptionController;
 use Illuminate\Support\Facades\Route;
@@ -24,6 +25,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::get('members/import/template', [MemberImportDownloadController::class, 'template'])
+        ->name('members.import.template');
+    Route::get('members/import/errors/{token}', [MemberImportDownloadController::class, 'errorReport'])
+        ->name('members.import.errors');
 
     Route::get('members/{member}/qr', [MemberController::class, 'qr'])->name('web.members.qr');
     Route::get('members/{member}/qr/download', [MemberController::class, 'qrDownload'])->name('web.members.qr.download');

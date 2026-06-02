@@ -1,4 +1,4 @@
-<div class="flex h-16 shrink-0 items-center gap-3 border-b border-white/8 px-6">
+<div class="flex h-16 shrink-0 items-center gap-3 border-b border-zinc-200 px-6 dark:border-white/8">
     <span
         class="flex h-9 w-9 items-center justify-center rounded-full border border-brand-500/30 bg-brand-500/15 text-brand-400">
         <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -13,11 +13,11 @@
         </svg>
     </span>
     <div class="min-w-0">
-        <p class="truncate text-sm font-semibold leading-tight text-white">Julius Fitness</p>
-        <p class="truncate text-xs text-white/40">Gym Management</p>
+        <p class="truncate text-sm font-semibold leading-tight text-zinc-900 dark:text-white">Julius Fitness</p>
+        <p class="truncate text-xs text-zinc-500 dark:text-white/40">Gym Management</p>
     </div>
     <button type="button" data-sidebar-close
-        class="ml-auto rounded-full p-1.5 text-white/50 transition-colors hover:bg-white/5 lg:hidden">
+        class="ml-auto rounded-full p-1.5 text-zinc-500 transition-colors hover:bg-zinc-100 dark:text-white/50 dark:hover:bg-white/5 lg:hidden">
         <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
             stroke-linecap="round" stroke-linejoin="round">
             <path d="M18 6 6 18" />
@@ -37,7 +37,7 @@
     </div>
 
     <div>
-        <p class="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-white/30">
+        <p class="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-white/30">
             Membership
         </p>
         <div class="space-y-1">
@@ -70,7 +70,7 @@
     </div>
 
     <div>
-        <p class="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-white/30">
+        <p class="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-white/30">
             Finance
         </p>
         <div class="space-y-1">
@@ -92,7 +92,7 @@
     </div>
 
     <div>
-        <p class="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-white/30">
+        <p class="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-white/30">
             CRM
         </p>
         <div class="space-y-1">
@@ -106,7 +106,7 @@
     </div>
 
     <div>
-        <p class="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-white/30">
+        <p class="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-white/30">
             Admin
         </p>
         <div class="space-y-1">
@@ -128,9 +128,9 @@
     </div>
 </nav>
 
-<div class="border-t border-white/8 p-3">
-    <div class="rounded-xl border border-white/8 bg-surface p-3 text-xs text-white/45">
-        <p class="font-medium text-white/70">Julius Fitness</p>
+<div class="border-t border-zinc-200 p-3 dark:border-white/8">
+    <div class="rounded-xl border border-zinc-200 bg-zinc-50 p-3 text-xs text-zinc-500 dark:border-white/8 dark:bg-surface dark:text-white/45">
+        <p class="font-medium text-zinc-700 dark:text-white/70">Julius Fitness</p>
         <p class="mt-1 leading-relaxed">SpaceX-inspired dark UI</p>
     </div>
 </div>

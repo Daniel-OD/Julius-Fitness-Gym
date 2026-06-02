@@ -31,7 +31,9 @@ class TodayCheckinsStatsWidget extends StatsOverviewWidget
 
         return [
             Stat::make(__('app.widgets.today_checkins'), (string) $count)
-                ->description(__('app.widgets.today_checkins_hint'))
+                ->description($count === 0
+                    ? __('app.empty.no_checkins_today')
+                    : __('app.widgets.today_checkins_hint'))
                 ->descriptionIcon('heroicon-o-arrow-right-end-on-rectangle')
                 ->icon('heroicon-o-arrow-right-end-on-rectangle')
                 ->color('primary')

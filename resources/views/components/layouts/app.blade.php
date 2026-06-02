@@ -1,32 +1,18 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth dark">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth">
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-
-    <title>{{ $title ?? config('app.name', 'Julius Fitness Gym') }}</title>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
-    <script>
-        document.documentElement.classList.add('dark');
-        localStorage.setItem('theme', 'dark');
-    </script>
-
+    <x-layouts.partials.head-meta :title="$title ?? null" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="min-h-screen bg-canvas font-sans text-white antialiased">
+<body class="min-h-screen bg-zinc-50 font-sans text-zinc-900 antialiased dark:bg-canvas dark:text-white">
     <div class="min-h-screen lg:flex">
         <div data-sidebar-backdrop
-            class="fixed inset-0 z-30 hidden bg-black/70 backdrop-blur-sm lg:hidden"></div>
+            class="fixed inset-0 z-30 hidden bg-black/50 backdrop-blur-sm lg:hidden dark:bg-black/70"></div>
 
         <aside data-sidebar
-            class="fixed inset-y-0 left-0 z-40 flex w-64 -translate-x-full flex-col border-r border-white/8 bg-canvas transition-transform duration-300 lg:static lg:translate-x-0">
+            class="fixed inset-y-0 left-0 z-40 flex w-64 -translate-x-full flex-col border-r border-zinc-200 bg-white transition-transform duration-300 dark:border-white/8 dark:bg-canvas lg:static lg:translate-x-0">
             <x-app.sidebar />
         </aside>
 
