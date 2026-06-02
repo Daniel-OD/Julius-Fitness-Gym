@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Julius Fitness Gym is a gym and fitness club management application built on Laravel 13. The project is in early development. A reference implementation lives in `Julius-Fitness-Gym/laravel-gymie/` — a full-featured open-source gym management system that demonstrates the intended domain model and feature set.
+Julius Fitness Gym is a gym and fitness club management application built on Laravel 13. The project is in early development. A reference implementation lives in `Julius-Fitness-Gym/laravel-gymie/`[...]
 
 ## Commands
 
@@ -29,7 +29,7 @@ vendor/bin/pint --dirty --format agent
 
 ## Architecture
 
-**Stack:** Laravel 13 · PHP 8.4 · Tailwind CSS v4 · Vite · Pest v4 · SQLite (dev: `database/database.sqlite`, tests: in-memory)
+**Stack:** Laravel 13 · PHP 8.4 · Tailwind CSS v4.1 · Vite · Pest v4 · SQLite (dev: `database/database.sqlite`, tests: in-memory)
 
 **Frontend:** Tailwind v4 is configured via the `@tailwindcss/vite` plugin (not a PostCSS config). Font is Instrument Sans via Bunny Fonts, configured in `vite.config.js`.
 
@@ -37,7 +37,7 @@ vendor/bin/pint --dirty --format agent
 
 ## Reference Implementation
 
-`Julius-Fitness-Gym/laravel-gymie/` is a complete gym management app (Laravel 12, Filament 5, Sanctum API) that serves as a domain reference. Its `CLAUDE.md` documents the domain model (Member, Subscription, Plan, Invoice, Enquiry, Expense), service layer classes, API query conventions, and scheduling patterns — consult it when building equivalent features in this project.
+`Julius-Fitness-Gym/laravel-gymie/` is a complete gym management app (Laravel 12, Filament 5, Sanctum API) that serves as a domain reference. Its `CLAUDE.md` documents the domain model (Member, Su[...]
 
 ===
 
@@ -46,26 +46,32 @@ vendor/bin/pint --dirty --format agent
 
 # Laravel Boost Guidelines
 
-The Laravel Boost guidelines are specifically curated by Laravel maintainers for this application. These guidelines should be followed closely to ensure the best experience when building Laravel applications.
+The Laravel Boost guidelines are specifically curated by Laravel maintainers for this application. These guidelines should be followed closely to ensure the best experience when building Laravel a[...]
 
 ## Foundational Context
 
 This application is a Laravel application and its main Laravel ecosystems package & versions are below. You are an expert with them all. Ensure you abide by these specific packages & versions.
 
 - php - 8.4
+- barryvdh/laravel-dompdf - v3.1
+- bezhansalleh/filament-shield - v4.0
 - filament/filament (FILAMENT) - v5
-- laravel/framework (LARAVEL) - v13
-- laravel/prompts (PROMPTS) - v0
+- laravel/framework (LARAVEL) - v13.8
 - laravel/sanctum (SANCTUM) - v4
-- livewire/livewire (LIVEWIRE) - v4
+- laravel/tinker (TINKER) - v3
+- nnjeim/world (WORLD) - v1.1
+- spatie/laravel-query-builder (QUERYBUILDER) - v6.4
 - laravel/boost (BOOST) - v2
-- laravel/breeze (BREEZE) - v2
-- laravel/mcp (MCP) - v0
-- laravel/pail (PAIL) - v1
-- laravel/pint (PINT) - v1
-- pestphp/pest (PEST) - v4
-- phpunit/phpunit (PHPUNIT) - v12
-- tailwindcss (TAILWINDCSS) - v4
+- laravel/breeze (BREEZE) - v2.4
+- laravel/pail (PAIL) - v1.2.5
+- laravel/pao (PAO) - v1.0.6
+- laravel/pint (PINT) - v1.27
+- pestphp/pest (PEST) - v4.7
+- pestphp/pest-plugin-laravel - v4.1
+- fakerphp/faker - v1.23
+- mockery/mockery - v1.6
+- nunomaduro/collision - v8.6
+- tailwindcss (TAILWINDCSS) - v4.1.18
 
 ## Skills Activation
 
@@ -126,13 +132,13 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 
 ## Artisan
 
-- Run Artisan commands directly via the command line (e.g., `php artisan route:list`). Use `php artisan list` to discover available commands and `php artisan [command] --help` to check parameters.
+- Run Artisan commands directly via the command line (e.g., `php artisan route:list`). Use `php artisan list` to discover available commands and `php artisan [command] --help` to check parameters[...]
 - Inspect routes with `php artisan route:list`. Filter with: `--method=GET`, `--name=users`, `--path=api`, `--except-vendor`, `--only-vendor`.
 - Read configuration values using dot notation: `php artisan config:show app.name`, `php artisan config:show database.default`. Or read config files directly from the `config/` directory.
 
 ## Tinker
 
-- Execute PHP in app context for debugging and testing code. Do not create models without user approval, prefer tests with factories instead. Prefer existing Artisan commands over custom tinker code.
+- Execute PHP in app context for debugging and testing code. Do not create models without user approval, prefer tests with factories instead. Prefer existing Artisan commands over custom tinker c[...]
 - Always use single quotes to prevent shell expansion: `php artisan tinker --execute 'Your::code();'`
   - Double quotes for PHP strings inside: `php artisan tinker --execute 'User::where("active", true)->count();'`
 
@@ -157,7 +163,7 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 
 # Do Things the Laravel Way
 
-- Use `php artisan make:` commands to create new files (i.e. migrations, controllers, models, etc.). You can list available Artisan commands using `php artisan list` and check their parameters with `php artisan [command] --help`.
+- Use `php artisan make:` commands to create new files (i.e. migrations, controllers, models, etc.). You can list available Artisan commands using `php artisan list` and check their parameters wi[...]
 - If you're creating a generic PHP class, use `php artisan make:class`.
 - Pass `--no-interaction` to all Artisan commands to ensure they work without user input. You should also pass the correct `--options` to ensure correct behavior.
 
