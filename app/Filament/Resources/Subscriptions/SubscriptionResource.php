@@ -89,6 +89,23 @@ class SubscriptionResource extends Resource
     }
 
     /**
+     * In the /admin panel show only official subscriptions.
+     * In /office show all (no filter on type).
+     *
+     * @return Builder<Subscription>
+     */
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+
+        if (filament()->getCurrentPanel()?->getId() === 'admin') {
+            $query->where('type', 'official');
+        }
+
+        return $query;
+    }
+
+    /**
      * Define the form schema for the resource.
      */
     public static function form(Schema $schema): Schema

@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\Pages\Dashboard;
 use App\Filament\Pages\Settings;
+use App\Filament\Resources\CheckIns\CheckInResource;
 use App\Filament\Resources\Enquiries\EnquiryResource;
 use App\Filament\Resources\Expenses\ExpenseResource;
 use App\Filament\Resources\FollowUps\FollowUpResource;
@@ -53,14 +54,11 @@ class AdminPanelProvider extends PanelProvider
     }
 
     /**
-     * Configure the base panel options.
+     * Shared Filament panel options for admin and office panels.
      */
-    public function basePanel(Panel $panel): Panel
+    protected function sharedPanel(Panel $panel): Panel
     {
         return $panel
-            ->default()
-            ->id('admin')
-            ->path('admin')
             ->login()
             ->passwordReset()
             ->brandName('Julius Fitness Gym')
@@ -69,17 +67,6 @@ class AdminPanelProvider extends PanelProvider
             ->darkMode(true)
             ->defaultThemeMode(ThemeMode::Dark)
             ->sidebarWidth('12rem')
-            ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
-            ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
-            ->pages([
-                Dashboard::class,
-                Settings::class,
-            ])
-            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
-            ->widgets([])
-            ->plugins([FilamentShieldPlugin::make()
-                ->navigationIcon(fn (): null => null)
-                ->activeNavigationIcon(fn (): null => null)])
             ->bootUsing(fn (): string => AppLocale::apply())
             ->middleware([SetAppLocale::class], isPersistent: true)
             ->middleware([
@@ -97,15 +84,37 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->viteTheme('resources/css/filament/admin/theme.css')
-            ->databaseNotifications()
             ->globalSearchKeyBindings(['command+k', 'ctrl+k'])
             ->renderHook(
                 PanelsRenderHook::GLOBAL_SEARCH_AFTER,
                 fn (): HtmlString => new HtmlString(
+                    Blade::render('@livewire(\App\Filament\Livewire\SubscriptionExpirationNotifications::class, [], key(\'subscription-expiration-notifications\'))').
                     Blade::render('@livewire(\App\Filament\Livewire\LocaleSwitcher::class, [], key(\'locale-switcher\'))').
                     Blade::render('@livewire(\App\Filament\Livewire\ThemeSwitcher::class, [], key(\'theme-switcher\'))')
                 ),
             );
+    }
+
+    /**
+     * Configure the admin panel.
+     */
+    protected function basePanel(Panel $panel): Panel
+    {
+        return $this->sharedPanel($panel)
+            ->default()
+            ->id('admin')
+            ->path('admin')
+            ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
+            ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
+            ->pages([
+                Dashboard::class,
+                Settings::class,
+            ])
+            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
+            ->widgets([])
+            ->plugins([FilamentShieldPlugin::make()
+                ->navigationIcon(fn (): null => null)
+                ->activeNavigationIcon(fn (): null => null)]);
     }
 
     /**
@@ -134,6 +143,7 @@ class AdminPanelProvider extends PanelProvider
             ...PlanResource::getNavigationItems(),
             ...ServiceResource::getNavigationItems(),
             ...SubscriptionResource::getNavigationItems(),
+            ...CheckInResource::getNavigationItems(),
         ];
 
         return $builder

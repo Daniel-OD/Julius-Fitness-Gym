@@ -31,20 +31,20 @@
     <x-slot name="header">
         <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
             <div>
-                <nav class="mb-2 flex flex-wrap items-center gap-2 text-sm text-gray-500">
-                    <a href="{{ route('web.subscriptions.index') }}" class="hover:text-brand-600">{{ __('app.resources.subscriptions.plural') }}</a>
+                <nav class="mb-2 flex flex-wrap items-center gap-2 text-sm text-white/45">
+                    <a href="{{ route('web.subscriptions.index') }}" class="hover:text-brand-400">{{ __('app.resources.subscriptions.plural') }}</a>
                     <span>/</span>
-                    <span class="text-gray-900">{{ $subscription->plan?->name ?? __('app.resources.subscriptions.singular') }}</span>
+                    <span class="text-white">{{ $subscription->plan?->name ?? __('app.resources.subscriptions.singular') }}</span>
                 </nav>
                 <div class="flex flex-wrap items-center gap-2">
-                    <h1 class="text-2xl font-semibold tracking-tight text-gray-900">
+                    <h1 class="text-2xl font-semibold tracking-tight text-white">
                         {{ $subscription->plan?->name ?? __('app.resources.subscriptions.singular') }}
                     </h1>
                     <x-ui.badge :color="$subscriptionStatusColor">{{ $subscriptionStatusLabel }}</x-ui.badge>
                 </div>
                 @if ($subscription->member)
-                    <p class="mt-1 text-sm text-gray-500">
-                        <a href="{{ route('web.members.show', $subscription->member) }}" class="font-medium text-brand-600 hover:text-brand-700">
+                    <p class="mt-1 text-sm text-white/45">
+                        <a href="{{ route('web.members.show', $subscription->member) }}" class="font-medium text-brand-400 hover:text-brand-300">
                             {{ $subscription->member->name }}
                         </a>
                         · {{ $subscription->member->code }}
@@ -60,7 +60,7 @@
     </x-slot>
 
     @if (session('success'))
-        <div class="mb-6 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
+        <div class="mb-6 rounded-lg border border-emerald-500/25 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-300">
             {{ session('success') }}
         </div>
     @endif
@@ -70,30 +70,30 @@
             <x-ui.card :title="__('app.resources.subscriptions.singular')">
                 <dl class="space-y-4 text-sm">
                     <div>
-                        <dt class="text-xs font-medium uppercase tracking-wider text-gray-400">{{ __('app.resources.plans.singular') }}</dt>
-                        <dd class="mt-1 font-medium text-gray-900">{{ $subscription->plan?->name ?? '—' }}</dd>
+                        <dt class="text-xs font-medium uppercase tracking-wider text-white/35">{{ __('app.resources.plans.singular') }}</dt>
+                        <dd class="mt-1 font-medium text-white">{{ $subscription->plan?->name ?? '—' }}</dd>
                     </div>
                     <div>
-                        <dt class="text-xs font-medium uppercase tracking-wider text-gray-400">{{ __('app.fields.start_date') }}</dt>
-                        <dd class="mt-1 text-gray-900">{{ $subscription->start_date?->translatedFormat('d M Y') ?? '—' }}</dd>
+                        <dt class="text-xs font-medium uppercase tracking-wider text-white/35">{{ __('app.fields.start_date') }}</dt>
+                        <dd class="mt-1 text-white">{{ $subscription->start_date?->translatedFormat('d M Y') ?? '—' }}</dd>
                     </div>
                     <div>
-                        <dt class="text-xs font-medium uppercase tracking-wider text-gray-400">{{ __('app.fields.end_date') }}</dt>
-                        <dd class="mt-1 text-gray-900">{{ $subscription->end_date?->translatedFormat('d M Y') ?? '—' }}</dd>
+                        <dt class="text-xs font-medium uppercase tracking-wider text-white/35">{{ __('app.fields.end_date') }}</dt>
+                        <dd class="mt-1 text-white">{{ $subscription->end_date?->translatedFormat('d M Y') ?? '—' }}</dd>
                     </div>
                     <div>
-                        <dt class="text-xs font-medium uppercase tracking-wider text-gray-400">{{ __('app.fields.status') }}</dt>
+                        <dt class="text-xs font-medium uppercase tracking-wider text-white/35">{{ __('app.fields.status') }}</dt>
                         <dd class="mt-1">
                             <x-ui.badge :color="$subscriptionStatusColor">{{ $subscriptionStatusLabel }}</x-ui.badge>
                         </dd>
                     </div>
-                    <div class="border-t border-gray-100 pt-4">
-                        <dt class="text-xs font-medium uppercase tracking-wider text-gray-400">{{ __('app.fields.amount') }}</dt>
-                        <dd class="mt-1 text-lg font-semibold text-gray-900">
+                    <div class="border-t border-white/8 pt-4">
+                        <dt class="text-xs font-medium uppercase tracking-wider text-white/35">{{ __('app.fields.amount') }}</dt>
+                        <dd class="mt-1 text-lg font-semibold text-white">
                             {{ $subscription->plan ? Helpers::formatCurrency((float) $subscription->plan->amount) : '—' }}
                         </dd>
                         @if ($subscription->plan?->days)
-                            <p class="mt-1 text-xs text-gray-500">{{ $subscription->plan->days }} {{ strtolower(__('app.fields.days')) }}</p>
+                            <p class="mt-1 text-xs text-white/45">{{ $subscription->plan->days }} {{ strtolower(__('app.fields.days')) }}</p>
                         @endif
                     </div>
                 </dl>
@@ -105,7 +105,7 @@
                 <x-slot name="subtitle">{{ $subscription->invoices->count() }} {{ strtolower(__('app.resources.invoices.plural')) }}</x-slot>
 
                 @if ($subscription->invoices->isEmpty())
-                    <div class="px-5 py-12 text-center text-sm text-gray-500">
+                    <div class="px-5 py-12 text-center text-sm text-white/45">
                         {{ __('app.empty.no_records', ['records' => strtolower(__('app.resources.invoices.plural'))]) }}
                     </div>
                 @else
@@ -118,20 +118,20 @@
                         __('app.fields.status'),
                     ]">
                         @foreach ($subscription->invoices->sortByDesc('date') as $invoice)
-                            <tr class="hover:bg-gray-50/80">
-                                <td class="whitespace-nowrap px-5 py-4 font-medium text-gray-900">
+                            <tr class="hover:bg-white/5">
+                                <td class="whitespace-nowrap px-5 py-4 font-medium text-white">
                                     {{ $invoice->number ?? '#' . $invoice->id }}
                                 </td>
-                                <td class="whitespace-nowrap px-5 py-4 text-sm text-gray-600">
+                                <td class="whitespace-nowrap px-5 py-4 text-sm text-white/55">
                                     {{ $invoice->date?->translatedFormat('d M Y') ?? '—' }}
                                 </td>
-                                <td class="whitespace-nowrap px-5 py-4 text-sm text-gray-600">
+                                <td class="whitespace-nowrap px-5 py-4 text-sm text-white/55">
                                     {{ $invoice->due_date?->translatedFormat('d M Y') ?? '—' }}
                                 </td>
-                                <td class="whitespace-nowrap px-5 py-4 text-sm font-medium text-gray-900">
+                                <td class="whitespace-nowrap px-5 py-4 text-sm font-medium text-white">
                                     {{ Helpers::formatCurrency((float) ($invoice->total_amount ?? 0)) }}
                                 </td>
-                                <td class="whitespace-nowrap px-5 py-4 text-sm text-gray-700">
+                                <td class="whitespace-nowrap px-5 py-4 text-sm text-white/70">
                                     {{ Helpers::formatCurrency((float) ($invoice->paid_amount ?? 0)) }}
                                 </td>
                                 <td class="px-5 py-4">

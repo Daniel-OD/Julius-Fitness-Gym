@@ -1,11 +1,20 @@
 <?php
 
+use App\Http\Controllers\CheckInController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SubscriptionController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'home')->name('home');
+
+// Public check-in routes (no auth — used by QR scanners and member phones)
+Route::get('/checkin/{qrToken}', [CheckInController::class, 'scan'])
+    ->name('checkin.scan')
+    ->middleware('throttle:60,1');
+Route::post('/checkin/{qrToken}/checkout', [CheckInController::class, 'checkout'])
+    ->name('checkin.checkout')
+    ->middleware('throttle:60,1');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -16,6 +25,8 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    Route::get('members/{member}/qr', [MemberController::class, 'qr'])->name('web.members.qr');
+    Route::get('members/{member}/qr/download', [MemberController::class, 'qrDownload'])->name('web.members.qr.download');
     Route::resource('members', MemberController::class)->names([
         'index' => 'web.members.index',
         'create' => 'web.members.create',

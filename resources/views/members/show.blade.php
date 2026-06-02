@@ -37,26 +37,33 @@
                         class="h-16 w-16 rounded-2xl object-cover ring-2 ring-white shadow-sm" />
                 @else
                     <span
-                        class="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-brand-600 text-xl font-semibold text-white shadow-sm">
+                        class="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-brand-500 text-xl font-semibold text-white shadow-sm">
                         {{ $memberInitials }}
                     </span>
                 @endif
                 <div>
-                    <nav class="mb-1 flex items-center gap-2 text-sm text-gray-500">
-                        <a href="{{ route('web.members.index') }}" class="hover:text-brand-600">{{ __('app.resources.members.plural') }}</a>
+                    <nav class="mb-1 flex items-center gap-2 text-sm text-white/45">
+                        <a href="{{ route('web.members.index') }}" class="hover:text-brand-400">{{ __('app.resources.members.plural') }}</a>
                         <span>/</span>
-                        <span class="text-gray-900">{{ $member->name }}</span>
+                        <span class="text-white">{{ $member->name }}</span>
                     </nav>
                     <div class="flex flex-wrap items-center gap-2">
-                        <h1 class="text-2xl font-semibold tracking-tight text-gray-900">{{ $member->name }}</h1>
+                        <h1 class="text-2xl font-semibold tracking-tight text-white">{{ $member->name }}</h1>
                         <x-ui.badge :color="$memberStatusColor">{{ $member->status?->getLabel() }}</x-ui.badge>
                     </div>
-                    <p class="mt-1 text-sm text-gray-500">
+                    <p class="mt-1 text-sm text-white/45">
                         {{ $member->code }} · {{ $member->created_at?->translatedFormat('d M Y') }}
                     </p>
                 </div>
             </div>
             <div class="flex flex-wrap gap-2">
+                <x-ui.button :href="route('web.members.qr', $member)" variant="secondary" size="md">
+                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M3 3h6v6H3V3zm12 0h6v6h-6V3zM3 15h6v6H3v-6zm15 0h1.5a1.5 1.5 0 0 1 0 3H18v3h-3v-3h3v-1.5a1.5 1.5 0 0 1 3 0V18h1.5a1.5 1.5 0 0 1 0 3H18v3h-3v-3h-1.5a1.5 1.5 0 0 1 0-3H15v-3h3v-1.5z" />
+                    </svg>
+                    {{ __('app.members.qr.title') }}
+                </x-ui.button>
                 <x-ui.button :href="route('web.members.edit', $member)" variant="secondary" size="md">
                     {{ __('app.actions.edit', ['resource' => __('app.resources.members.singular')]) }}
                 </x-ui.button>
@@ -72,7 +79,7 @@
     </x-slot>
 
     @if (session('success'))
-        <div class="mb-6 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
+        <div class="mb-6 rounded-lg border border-emerald-500/25 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-300">
             {{ session('success') }}
         </div>
     @endif
@@ -82,16 +89,16 @@
             <x-ui.card :title="__('app.fields.contact')">
                 <dl class="space-y-4 text-sm">
                     <div>
-                        <dt class="text-xs font-medium uppercase tracking-wider text-gray-400">{{ __('app.fields.email') }}</dt>
-                        <dd class="mt-1 font-medium text-gray-900">{{ $member->email ?? '—' }}</dd>
+                        <dt class="text-xs font-medium uppercase tracking-wider text-white/35">{{ __('app.fields.email') }}</dt>
+                        <dd class="mt-1 font-medium text-white">{{ $member->email ?? '—' }}</dd>
                     </div>
                     <div>
-                        <dt class="text-xs font-medium uppercase tracking-wider text-gray-400">{{ __('app.fields.contact') }}</dt>
-                        <dd class="mt-1 text-gray-900">{{ $member->contact ?? '—' }}</dd>
+                        <dt class="text-xs font-medium uppercase tracking-wider text-white/35">{{ __('app.fields.contact') }}</dt>
+                        <dd class="mt-1 text-white">{{ $member->contact ?? '—' }}</dd>
                     </div>
                     <div>
-                        <dt class="text-xs font-medium uppercase tracking-wider text-gray-400">{{ __('app.fields.emergency_contact') }}</dt>
-                        <dd class="mt-1 text-gray-900">{{ $member->emergency_contact ?? '—' }}</dd>
+                        <dt class="text-xs font-medium uppercase tracking-wider text-white/35">{{ __('app.fields.emergency_contact') }}</dt>
+                        <dd class="mt-1 text-white">{{ $member->emergency_contact ?? '—' }}</dd>
                     </div>
                 </dl>
             </x-ui.card>
@@ -99,21 +106,21 @@
             <x-ui.card title="{{ __('app.fields.details') ?? 'Detalii' }}">
                 <dl class="space-y-3 text-sm">
                     <div class="flex justify-between gap-4">
-                        <dt class="text-gray-500">{{ __('app.fields.gender') }}</dt>
-                        <dd class="font-medium text-gray-900">{{ $member->gender ? ucfirst($member->gender) : '—' }}</dd>
+                        <dt class="text-white/45">{{ __('app.fields.gender') }}</dt>
+                        <dd class="font-medium text-white">{{ $member->gender ? ucfirst($member->gender) : '—' }}</dd>
                     </div>
                     <div class="flex justify-between gap-4">
-                        <dt class="text-gray-500">{{ __('app.fields.dob') }}</dt>
-                        <dd class="font-medium text-gray-900">{{ $member->dob?->translatedFormat('d M Y') ?? '—' }}</dd>
+                        <dt class="text-white/45">{{ __('app.fields.dob') }}</dt>
+                        <dd class="font-medium text-white">{{ $member->dob?->translatedFormat('d M Y') ?? '—' }}</dd>
                     </div>
                     <div class="flex justify-between gap-4">
-                        <dt class="text-gray-500">{{ __('app.fields.source') }}</dt>
-                        <dd class="font-medium text-gray-900">{{ $member->source ? str_replace('_', ' ', $member->source) : '—' }}</dd>
+                        <dt class="text-white/45">{{ __('app.fields.source') }}</dt>
+                        <dd class="font-medium text-white">{{ $member->source ? str_replace('_', ' ', $member->source) : '—' }}</dd>
                     </div>
                     @if ($member->address)
-                        <div class="border-t border-gray-100 pt-3">
-                            <dt class="text-gray-500">{{ __('app.fields.address') }}</dt>
-                            <dd class="mt-1 text-gray-900">{{ $member->address }}</dd>
+                        <div class="border-t border-white/8 pt-3">
+                            <dt class="text-white/45">{{ __('app.fields.address') }}</dt>
+                            <dd class="mt-1 text-white">{{ $member->address }}</dd>
                         </div>
                     @endif
                 </dl>
@@ -131,7 +138,7 @@
 
                 @if ($member->subscriptions->isEmpty())
                     <div class="px-5 py-12 text-center">
-                        <p class="text-sm text-gray-500">{{ __('app.empty.create_to_get_started', ['resource' => __('app.resources.subscriptions.singular')]) }}</p>
+                        <p class="text-sm text-white/45">{{ __('app.empty.create_to_get_started', ['resource' => __('app.resources.subscriptions.singular')]) }}</p>
                         <x-ui.button :href="route('web.subscriptions.create', ['member_id' => $member->id])" variant="primary" size="md" class="mt-4">
                             Abonament nou
                         </x-ui.button>
@@ -139,16 +146,16 @@
                 @else
                     <x-ui.table :headings="[__('app.resources.plans.singular'), __('app.fields.period') ?? 'Perioadă', __('app.fields.amount'), __('app.fields.status'), '']">
                         @foreach ($member->subscriptions->sortByDesc('end_date') as $subscription)
-                            <tr class="hover:bg-gray-50/80">
-                                <td class="px-5 py-4 font-medium text-gray-900">
+                            <tr class="hover:bg-white/5">
+                                <td class="px-5 py-4 font-medium text-white">
                                     {{ $subscription->plan?->name ?? '—' }}
                                 </td>
-                                <td class="px-5 py-4 text-sm text-gray-600">
+                                <td class="px-5 py-4 text-sm text-white/55">
                                     {{ $subscription->start_date?->translatedFormat('d M Y') }}
                                     —
                                     {{ $subscription->end_date?->translatedFormat('d M Y') }}
                                 </td>
-                                <td class="whitespace-nowrap px-5 py-4 text-sm font-medium text-gray-900">
+                                <td class="whitespace-nowrap px-5 py-4 text-sm font-medium text-white">
                                     {{ $subscription->plan ? Helpers::formatCurrency((float) $subscription->plan->amount) : '—' }}
                                 </td>
                                 <td class="px-5 py-4">
@@ -158,7 +165,7 @@
                                 </td>
                                 <td class="px-5 py-4 text-right">
                                     <a href="{{ route('web.subscriptions.show', $subscription) }}"
-                                        class="text-sm font-medium text-brand-600 hover:text-brand-700">{{ __('app.actions.view') }}</a>
+                                        class="text-sm font-medium text-brand-400 hover:text-brand-300">{{ __('app.actions.view') }}</a>
                                 </td>
                             </tr>
                         @endforeach

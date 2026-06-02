@@ -1,94 +1,74 @@
 <header
-    class="sticky top-0 z-20 flex h-16 items-center gap-3 border-b border-gray-200 bg-white/80 px-4 backdrop-blur sm:px-6 lg:px-8">
-    {{-- Mobile sidebar trigger --}}
+    class="sticky top-0 z-20 flex h-16 items-center gap-3 border-b border-white/8 bg-canvas/80 px-4 backdrop-blur-xl sm:px-6 lg:px-8">
     <button type="button" data-sidebar-toggle
-        class="rounded-md p-2 text-gray-500 hover:bg-gray-100 lg:hidden">
+        class="rounded-full p-2 text-white/50 transition-colors hover:bg-white/5 lg:hidden">
         <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
             stroke-linecap="round" stroke-linejoin="round">
             <path d="M4 12h16" /><path d="M4 6h16" /><path d="M4 18h16" />
         </svg>
     </button>
 
-    {{-- Search --}}
     <div class="relative hidden max-w-xs flex-1 sm:block">
-        <svg class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" viewBox="0 0 24 24"
+        <svg class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/30" viewBox="0 0 24 24"
             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" />
         </svg>
-        <input type="search" placeholder="Search members, invoices…"
-            class="w-full rounded-lg border border-gray-200 bg-gray-50 py-2 pl-9 pr-3 text-sm text-gray-900 placeholder-gray-400 focus:border-brand-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500">
+        <input type="search" placeholder="Caută membri, facturi…" class="jf-input py-2 pl-9">
     </div>
 
     <div class="ml-auto flex items-center gap-1 sm:gap-2">
-        {{-- Theme toggle --}}
-        <button type="button" data-theme-toggle title="Toggle theme"
-            class="rounded-lg p-2 text-gray-500 hover:bg-gray-100">
-            <svg class="hidden h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="4" /><path d="M12 2v2" /><path d="M12 20v2" /><path d="m4.93 4.93 1.41 1.41" />
-                <path d="m17.66 17.66 1.41 1.41" /><path d="M2 12h2" /><path d="M20 12h2" />
-                <path d="m6.34 17.66-1.41 1.41" /><path d="m19.07 4.93-1.41 1.41" />
-            </svg>
-            <svg class="block h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
-            </svg>
-        </button>
-
-        {{-- Notifications --}}
-        <button type="button" title="Notifications"
-            class="relative rounded-lg p-2 text-gray-500 hover:bg-gray-100">
+        <button type="button" title="Notificări"
+            class="relative rounded-full p-2 text-white/50 transition-colors hover:bg-white/5">
             <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                 stroke-linecap="round" stroke-linejoin="round">
                 <path d="M10.268 21a2 2 0 0 0 3.464 0" />
                 <path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326" />
             </svg>
-            <span class="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-brand-500 ring-2 ring-white"></span>
+            <span class="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-brand-500 ring-2 ring-canvas"></span>
         </button>
 
-        {{-- User dropdown --}}
         <div class="relative" data-dropdown>
             <button type="button" data-dropdown-trigger
-                class="flex items-center gap-2 rounded-lg p-1 pr-2 hover:bg-gray-100">
-                <span class="flex h-8 w-8 items-center justify-center rounded-full bg-brand-600 text-sm font-semibold text-white">
+                class="flex items-center gap-2 rounded-full p-1 pr-2 transition-colors hover:bg-white/5">
+                <span
+                    class="flex h-8 w-8 items-center justify-center rounded-full bg-brand-500 text-sm font-semibold text-white">
                     {{ strtoupper(substr(auth()->user()->name ?? 'A', 0, 1)) }}
                 </span>
                 <span class="hidden text-left sm:block">
-                    <span class="block text-sm font-medium leading-tight text-gray-900">
+                    <span class="block text-sm font-medium leading-tight text-white">
                         {{ auth()->user()->name ?? 'Admin' }}
                     </span>
-                    <span class="block text-xs leading-tight text-gray-500">Administrator</span>
+                    <span class="block text-xs leading-tight text-white/40">Administrator</span>
                 </span>
-                <svg class="h-4 w-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                <svg class="h-4 w-4 text-white/35" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="m6 9 6 6 6-6" />
                 </svg>
             </button>
 
             <div data-dropdown-menu
-                class="absolute right-0 mt-2 hidden w-48 overflow-hidden rounded-lg border border-gray-200 bg-white py-1 shadow-lg">
+                class="absolute right-0 mt-2 hidden w-48 overflow-hidden rounded-xl border border-white/10 bg-surface-elevated py-1 shadow-2xl">
                 <a href="#"
-                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                    Profile
+                    class="block px-4 py-2 text-sm text-white/70 transition-colors hover:bg-white/5 hover:text-white">
+                    Profil
                 </a>
                 <a href="#"
-                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                    Settings
+                    class="block px-4 py-2 text-sm text-white/70 transition-colors hover:bg-white/5 hover:text-white">
+                    Setări
                 </a>
-                <div class="my-1 border-t border-gray-100"></div>
-                {{-- Wired to auth by backend; falls back to a plain link until the route exists. --}}
+                <div class="my-1 border-t border-white/8"></div>
                 @if (Route::has('logout'))
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit"
-                            class="block w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-100">
-                            Log out
+                            class="block w-full px-4 py-2 text-left text-sm text-red-400 transition-colors hover:bg-white/5">
+                            Deconectare
                         </button>
                     </form>
                 @else
                     <a href="#"
-                        class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
-                        Log out
+                        class="block px-4 py-2 text-sm text-red-400 transition-colors hover:bg-white/5">
+                        Deconectare
                     </a>
                 @endif
             </div>

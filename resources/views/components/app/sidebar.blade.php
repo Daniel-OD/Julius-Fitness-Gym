@@ -1,6 +1,6 @@
-{{-- Brand --}}
-<div class="flex h-16 shrink-0 items-center gap-3 border-b border-gray-200 px-6">
-    <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-600 text-white">
+<div class="flex h-16 shrink-0 items-center gap-3 border-b border-white/8 px-6">
+    <span
+        class="flex h-9 w-9 items-center justify-center rounded-full border border-brand-500/30 bg-brand-500/15 text-brand-400">
         <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
             stroke-linecap="round" stroke-linejoin="round">
             <path d="M6.5 6.5 17.5 17.5" />
@@ -13,11 +13,11 @@
         </svg>
     </span>
     <div class="min-w-0">
-        <p class="truncate text-sm font-semibold leading-tight text-gray-900">Julius Fitness</p>
-        <p class="truncate text-xs text-gray-500">Gym Management</p>
+        <p class="truncate text-sm font-semibold leading-tight text-white">Julius Fitness</p>
+        <p class="truncate text-xs text-white/40">Gym Management</p>
     </div>
     <button type="button" data-sidebar-close
-        class="ml-auto rounded-md p-1.5 text-gray-500 hover:bg-gray-100 lg:hidden">
+        class="ml-auto rounded-full p-1.5 text-white/50 transition-colors hover:bg-white/5 lg:hidden">
         <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
             stroke-linecap="round" stroke-linejoin="round">
             <path d="M18 6 6 18" />
@@ -26,8 +26,7 @@
     </button>
 </div>
 
-{{-- Navigation --}}
-<nav class="flex-1 space-y-6 overflow-y-auto px-3 py-4">
+<nav class="flex-1 space-y-6 overflow-y-auto px-3 py-5">
     <div class="space-y-1">
         <x-app.nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
             <x-slot:icon>
@@ -38,7 +37,7 @@
     </div>
 
     <div>
-        <p class="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+        <p class="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-white/30">
             Membership
         </p>
         <div class="space-y-1">
@@ -71,7 +70,7 @@
     </div>
 
     <div>
-        <p class="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+        <p class="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-white/30">
             Finance
         </p>
         <div class="space-y-1">
@@ -93,7 +92,7 @@
     </div>
 
     <div>
-        <p class="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+        <p class="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-white/30">
             CRM
         </p>
         <div class="space-y-1">
@@ -107,7 +106,7 @@
     </div>
 
     <div>
-        <p class="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+        <p class="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-white/30">
             Admin
         </p>
         <div class="space-y-1">
@@ -129,10 +128,9 @@
     </div>
 </nav>
 
-{{-- Footer card --}}
-<div class="border-t border-gray-200 p-3">
-    <div class="rounded-lg bg-gray-50 p-3 text-xs text-gray-500">
-        <p class="font-medium text-gray-700">UI foundation</p>
-        <p class="mt-0.5">Placeholder data — connect to backend models once ready.</p>
+<div class="border-t border-white/8 p-3">
+    <div class="rounded-xl border border-white/8 bg-surface p-3 text-xs text-white/45">
+        <p class="font-medium text-white/70">Julius Fitness</p>
+        <p class="mt-1 leading-relaxed">SpaceX-inspired dark UI</p>
     </div>
 </div>

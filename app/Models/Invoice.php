@@ -48,6 +48,7 @@ class Invoice extends Model
         'due_date',
         'payment_method',
         'status',
+        'visibility',
         'tax',
         'discount',
         'discount_amount',

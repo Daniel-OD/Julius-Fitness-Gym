@@ -8,9 +8,18 @@
     --font-sans:
         -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', Inter,
         ui-sans-serif, system-ui, sans-serif;
+
+    /* Apple light palette (Filament admin) */
+    --jf-light-bg: #f2f2f7;
+    --jf-light-surface: #ffffff;
+    --jf-light-border: #e5e5e7;
+    --jf-light-text: #1c1c1e;
+    --jf-light-text-secondary: #6e6e73;
+    --jf-light-row: #f2f2f7;
+    --jf-light-row-hover: #e8e8ed;
 }
 
-/* ——— Apple iOS system shell ——— */
+/* ——— Shared ——— */
 
 html.fi,
 html.fi .fi-body {
@@ -18,230 +27,672 @@ html.fi .fi-body {
     -webkit-font-smoothing: antialiased;
 }
 
-.fi-body {
-    background-color: #f2f2f7 !important;
-}
-
-.fi-main-ctn {
-    background-color: #f2f2f7;
-}
-
 .fi-header-heading,
 .fi-section-header-heading,
 .fi-wi-stats-overview-stat-value {
     font-weight: 600;
+    letter-spacing: -0.02em;
 }
 
-/* Sidebar — frosted glass */
-.fi-sidebar {
-    background: rgba(255, 255, 255, 0.85) !important;
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-inline-end: none !important;
-    box-shadow: none !important;
-}
-
-.fi-sidebar.fi-sidebar-open {
-    box-shadow:
-        0 1px 3px rgba(0, 0, 0, 0.06),
-        0 0 0 1px rgb(0 0 0 / 0.05) !important;
-}
-
-.fi-sidebar-header {
-    background: transparent;
-}
-
-/* Topbar — sticky frosted */
-.fi-topbar {
-    position: sticky;
-    top: 0;
-    z-index: 30;
-    background: rgba(242, 242, 247, 0.9) !important;
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-bottom: none !important;
-    box-shadow:
-        0 1px 2px rgba(0, 0, 0, 0.04),
-        0 0 0 1px rgb(0 0 0 / 0.05) !important;
-}
-
-/* Nav items — pill hover */
-.fi-sidebar-item-btn,
-.fi-sidebar-group-dropdown-trigger-btn {
-    border-radius: 0.75rem;
-    transition:
-        background-color 200ms ease-in-out,
-        color 200ms ease-in-out;
-}
-
-.fi-sidebar-item-btn:hover,
-.fi-sidebar-group-dropdown-trigger-btn:hover,
-.fi-sidebar-item.fi-active .fi-sidebar-item-btn {
-    background-color: rgb(var(--primary-50)) !important;
-}
-
-.fi-sidebar-item.fi-active .fi-sidebar-item-btn {
-    color: rgb(var(--primary-700));
-}
-
-/* Sections / cards — rounded, soft shadow */
-.fi-section:not(.fi-section-not-contained) {
-    border-radius: 1rem;
-    border: none !important;
-    box-shadow:
-        0 1px 3px rgba(0, 0, 0, 0.06),
-        0 0 0 1px rgb(0 0 0 / 0.05);
-    background: rgba(255, 255, 255, 0.92);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    overflow: hidden;
-}
-
-.fi-section-header {
-    border-bottom: none !important;
-    box-shadow: inset 0 -1px 0 rgb(0 0 0 / 0.04);
-}
-
-/* Buttons — pill primary, rounded secondary */
 .fi-btn {
     transition:
-        background-color 200ms ease-in-out,
-        box-shadow 200ms ease-in-out,
-        transform 150ms ease-in-out;
+        background-color 220ms ease,
+        box-shadow 220ms ease,
+        transform 180ms ease;
 }
 
 .fi-btn.fi-color-primary:not(.fi-outlined) {
     border-radius: 9999px;
+    background-color: #ff5a1f !important;
+}
+
+.fi-btn.fi-color-primary:not(.fi-outlined):hover {
+    box-shadow: 0 0 24px rgb(255 90 31 / 0.35);
 }
 
 .fi-btn.fi-outlined,
 .fi-btn:not(.fi-color-primary):not(.fi-outlined) {
-    border-radius: 0.625rem;
+    border-radius: 9999px;
 }
 
-/* Inputs */
-.fi-input-wrp {
-    border-radius: 0.75rem !important;
-    transition:
-        box-shadow 200ms ease-in-out,
-        ring-color 200ms ease-in-out;
-}
-
-.fi-input-wrp:focus-within {
-    box-shadow: 0 0 0 3px rgb(var(--primary-500) / 0.2);
-}
-
-/* Badges — pill */
 .fi-badge {
     border-radius: 9999px;
 }
 
-/* Table rows — clean hover */
-.fi-ta-row {
-    transition: background-color 200ms ease-in-out;
-}
-
-.fi-ta-row:hover {
-    background-color: #f9f9fb !important;
-}
-
-.fi-ta-header-cell {
-    font-weight: 600;
-}
-
-.fi-ta-table > .fi-ta-header-ctn {
-    border-bottom: none;
-    box-shadow: inset 0 -1px 0 rgb(0 0 0 / 0.05);
-}
-
-/* Stats widgets */
-.fi-wi-stats-overview-stat {
-    border-radius: 1rem;
-    border: none !important;
-    box-shadow:
-        0 1px 3px rgba(0, 0, 0, 0.06),
-        0 0 0 1px rgb(0 0 0 / 0.05);
-    background: rgba(255, 255, 255, 0.92);
-    transition: box-shadow 200ms ease-in-out;
-}
-
-.fi-wi-stats-overview-stat:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-}
-
-/* Modals */
-.fi-modal-window {
-    border-radius: 1.25rem !important;
-    border: none !important;
-    box-shadow:
-        0 16px 48px rgba(0, 0, 0, 0.12),
-        0 0 0 1px rgb(0 0 0 / 0.06);
-}
-
-.fi-modal-content {
-    border-radius: 1.25rem;
-}
-
-/* Dropdown panels (locale switcher etc.) */
-.fi-dropdown-panel {
+.fi-input-wrp {
     border-radius: 0.75rem !important;
-    border: none !important;
-    box-shadow:
-        0 8px 24px rgba(0, 0, 0, 0.1),
-        0 0 0 1px rgb(0 0 0 / 0.05);
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    transition:
+        box-shadow 220ms ease,
+        border-color 220ms ease;
 }
 
-.fi-dropdown-list-item {
-    border-radius: 0.75rem;
-    margin-inline: 0.25rem;
-    transition: background-color 200ms ease-in-out;
+.fi-input-wrp:focus-within {
+    border-color: rgb(255 90 31 / 0.5) !important;
+    box-shadow: 0 0 0 3px rgb(255 90 31 / 0.15);
 }
 
-/* Tabs (settings) */
+.fi-ta-row {
+    transition: background-color 220ms ease;
+}
+
 .fi-tabs-item {
-    border-radius: 0.75rem;
-    transition: background-color 200ms ease-in-out;
+    border-radius: 9999px;
+    transition: background-color 220ms ease;
 }
 
-.fi-tabs-item.fi-active {
-    background-color: rgb(var(--primary-50));
-}
-
-/* Dashboard header filter bar (custom view) */
-.fi-ios-filter-bar {
-    border-radius: 1rem;
-    background: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    box-shadow:
-        0 1px 3px rgba(0, 0, 0, 0.06),
-        0 0 0 1px rgb(0 0 0 / 0.05);
-}
-
-/* Locale switcher trigger */
-.fi-locale-switcher-trigger {
-    border-radius: 9999px !important;
-    background: rgba(255, 255, 255, 0.8) !important;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    box-shadow:
-        0 1px 3px rgba(0, 0, 0, 0.06),
-        0 0 0 1px rgb(0 0 0 / 0.05) !important;
-    transition: transform 150ms ease-in-out;
-}
-
-.fi-locale-switcher-trigger:hover {
-    transform: scale(1.05);
-}
-
-/* Expense widget surfaces */
 .fi-ios-widget-surface .fi-section {
     border-radius: 1rem;
 }
 
 .fi-ios-chart-bar {
     border-radius: 1rem !important;
+}
+
+/* ——— Light mode (Apple) ——— */
+
+html.fi:not(.dark) .fi-body {
+    background-color: var(--jf-light-bg) !important;
+    color: var(--jf-light-text);
+}
+
+html.fi:not(.dark) .fi-main-ctn {
+    background-color: var(--jf-light-bg);
+}
+
+html.fi:not(.dark) .fi-sidebar {
+    background: var(--jf-light-surface) !important;
+    border-inline-end: 1px solid var(--jf-light-border) !important;
+    box-shadow: none !important;
+}
+
+html.fi:not(.dark) .fi-sidebar-header {
+    background: transparent;
+    border-bottom: 1px solid var(--jf-light-border);
+}
+
+html.fi:not(.dark) .fi-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    background: rgb(242 242 247 / 0.88) !important;
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 1px solid var(--jf-light-border) !important;
+    box-shadow: none !important;
+}
+
+html.fi:not(.dark) .fi-sidebar-item-btn:hover,
+html.fi:not(.dark) .fi-sidebar-group-dropdown-trigger-btn:hover {
+    background-color: var(--jf-light-row) !important;
+}
+
+html.fi:not(.dark) .fi-sidebar-item.fi-active .fi-sidebar-item-btn {
+    background-color: rgb(255 90 31 / 0.12) !important;
+    color: #c43f10 !important;
+    box-shadow: none;
+}
+
+html.fi:not(.dark) .fi-section:not(.fi-section-not-contained) {
+    border-radius: 1rem;
+    border: 1px solid var(--jf-light-border) !important;
+    box-shadow: none;
+    background: var(--jf-light-surface);
+    overflow: hidden;
+}
+
+html.fi:not(.dark) .fi-section-header {
+    border-bottom: 1px solid var(--jf-light-border) !important;
+    box-shadow: none;
+}
+
+html.fi:not(.dark) .fi-section-header-heading,
+html.fi:not(.dark) .fi-header-heading,
+html.fi:not(.dark) .fi-ta-header-heading {
+    color: var(--jf-light-text);
+}
+
+html.fi:not(.dark) .fi-section-header-description,
+html.fi:not(.dark) .fi-ta-header-description {
+    color: var(--jf-light-text-secondary);
+}
+
+html.fi:not(.dark) .fi-input-wrp {
+    background-color: var(--jf-light-surface) !important;
+    border-color: var(--jf-light-border) !important;
+}
+
+html.fi:not(.dark) .fi-btn.fi-outlined,
+html.fi:not(.dark) .fi-btn:not(.fi-color-primary):not(.fi-outlined) {
+    border-color: var(--jf-light-border) !important;
+    color: var(--jf-light-text);
+}
+
+html.fi:not(.dark) .fi-ta-ctn {
+    background: var(--jf-light-surface);
+    border: 1px solid var(--jf-light-border);
+    border-radius: 1rem;
+}
+
+html.fi:not(.dark) .fi-ta-header-cell {
+    font-weight: 600;
+    color: var(--jf-light-text-secondary) !important;
+}
+
+html.fi:not(.dark) .fi-ta-table > .fi-ta-header-ctn {
+    border-bottom: 1px solid var(--jf-light-border);
+    box-shadow: none;
+    background: var(--jf-light-surface);
+}
+
+html.fi:not(.dark) .fi-ta-content:not(.fi-ta-content-grid) {
+    background-color: var(--jf-light-border);
+}
+
+html.fi:not(.dark) .fi-ta-row,
+html.fi:not(.dark) .fi-ta-content .fi-ta-record {
+    background-color: var(--jf-light-row) !important;
+    color: var(--jf-light-text);
+}
+
+html.fi:not(.dark) .fi-ta-row.fi-striped,
+html.fi:not(.dark) .fi-ta-row.fi-selected:not(.fi-striped) {
+    background-color: #ebebf0 !important;
+}
+
+html.fi:not(.dark) .fi-ta-row:hover,
+html.fi:not(.dark) .fi-ta-row.fi-clickable:hover,
+html.fi:not(.dark) .fi-ta-content .fi-ta-record.fi-clickable:hover {
+    background-color: var(--jf-light-row-hover) !important;
+}
+
+html.fi:not(.dark) .fi-ta-text,
+html.fi:not(.dark) .fi-ta-text-item,
+html.fi:not(.dark) .fi-ta-col,
+html.fi:not(.dark) .fi-ta-cell,
+html.fi:not(.dark) .fi-ta-group-heading {
+    color: var(--jf-light-text);
+}
+
+html.fi:not(.dark) .fi-ta-text-description,
+html.fi:not(.dark) .fi-ta-group-description {
+    color: var(--jf-light-text-secondary) !important;
+}
+
+html.fi:not(.dark) .fi-wi-stats-overview-stat {
+    border-radius: 1rem;
+    border: 1px solid var(--jf-light-border) !important;
+    box-shadow: none;
+    background: var(--jf-light-surface);
+    color: var(--jf-light-text);
+}
+
+html.fi:not(.dark) .fi-wi-stats-overview-stat-label,
+html.fi:not(.dark) .fi-wi-stats-overview-stat-description {
+    color: var(--jf-light-text-secondary) !important;
+}
+
+html.fi:not(.dark) .fi-wi-stats-overview-stat-value {
+    color: var(--jf-light-text) !important;
+}
+
+html.fi:not(.dark) .fi-wi-stats-overview-stat .fi-icon {
+    color: var(--jf-light-text-secondary) !important;
+}
+
+html.fi:not(.dark) .fi-wi-stats-overview-stat:hover {
+    border-color: rgb(255 90 31 / 0.35) !important;
+    box-shadow: 0 4px 16px rgb(0 0 0 / 0.06);
+}
+
+html.fi:not(.dark) .fi-modal-window {
+    border-radius: 1.25rem !important;
+    border: 1px solid var(--jf-light-border) !important;
+    box-shadow: 0 16px 48px rgb(0 0 0 / 0.12);
+    background: var(--jf-light-surface);
+    color: var(--jf-light-text);
+}
+
+html.fi:not(.dark) .fi-dropdown-panel {
+    border-radius: 0.875rem !important;
+    border: 1px solid var(--jf-light-border) !important;
+    box-shadow: 0 8px 24px rgb(0 0 0 / 0.1);
+    background: var(--jf-light-surface);
+    color: var(--jf-light-text);
+}
+
+html.fi:not(.dark) .fi-dropdown-list-item:hover {
+    background-color: var(--jf-light-row);
+}
+
+html.fi:not(.dark) .fi-tabs-item.fi-active {
+    background-color: rgb(255 90 31 / 0.12);
+    color: var(--jf-light-text);
+}
+
+html.fi:not(.dark) .fi-ios-filter-bar,
+html.fi:not(.dark) .fi-locale-switcher-trigger {
+    border-radius: 1rem;
+    background: var(--jf-light-surface) !important;
+    border: 1px solid var(--jf-light-border) !important;
+    box-shadow: none !important;
+    color: var(--jf-light-text);
+}
+
+html.fi:not(.dark) .fi-locale-switcher-trigger:hover {
+    transform: scale(1.03);
+    box-shadow: 0 4px 12px rgb(0 0 0 / 0.06);
+}
+
+html.fi:not(.dark) .fi-ios-chart-bar {
+    background-color: var(--jf-light-row) !important;
+    border: 1px solid var(--jf-light-border);
+}
+
+/* ——— Dark mode (SpaceX) ——— */
+
+html.fi.dark .fi-body {
+    background-color: #0a0a0a !important;
+    color: #ffffff;
+}
+
+html.fi.dark .fi-main-ctn {
+    background-color: #0a0a0a;
+}
+
+html.fi.dark .fi-sidebar {
+    background: #0a0a0a !important;
+    border-inline-end: 1px solid rgb(255 255 255 / 0.08) !important;
+    box-shadow: none !important;
+}
+
+html.fi.dark .fi-sidebar-header {
+    background: transparent;
+    border-bottom: 1px solid rgb(255 255 255 / 0.06);
+}
+
+html.fi.dark .fi-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    background: rgb(10 10 10 / 0.72) !important;
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 1px solid rgb(255 255 255 / 0.08) !important;
+    box-shadow: none !important;
+}
+
+html.fi.dark .fi-sidebar-item-btn:hover,
+html.fi.dark .fi-sidebar-group-dropdown-trigger-btn:hover {
+    background-color: rgb(255 255 255 / 0.06) !important;
+}
+
+html.fi.dark .fi-sidebar-item.fi-active .fi-sidebar-item-btn {
+    background-color: rgb(255 90 31 / 0.15) !important;
+    color: #ff8a66 !important;
+    box-shadow: 0 0 20px rgb(255 90 31 / 0.12);
+}
+
+html.fi.dark .fi-section:not(.fi-section-not-contained) {
+    border-radius: 1rem;
+    border: 1px solid rgb(255 255 255 / 0.08) !important;
+    box-shadow: none;
+    background: #1c1c1e;
+    overflow: hidden;
+}
+
+html.fi.dark .fi-section-header {
+    border-bottom: 1px solid rgb(255 255 255 / 0.06) !important;
+    box-shadow: none;
+}
+
+html.fi.dark .fi-section-header-heading,
+html.fi.dark .fi-header-heading,
+html.fi.dark .fi-ta-header-heading {
+    color: #ffffff;
+}
+
+html.fi.dark .fi-section-header-description,
+html.fi.dark .fi-ta-header-description {
+    color: rgb(255 255 255 / 0.55);
+}
+
+html.fi.dark .fi-input-wrp {
+    background-color: #111111 !important;
+    border-color: rgb(255 255 255 / 0.1) !important;
+}
+
+html.fi.dark .fi-btn.fi-outlined,
+html.fi.dark .fi-btn:not(.fi-color-primary):not(.fi-outlined) {
+    border-color: rgb(255 255 255 / 0.12) !important;
+}
+
+html.fi.dark .fi-ta-header-cell {
+    font-weight: 600;
+    color: rgb(255 255 255 / 0.55) !important;
+}
+
+html.fi.dark .fi-ta-table > .fi-ta-header-ctn {
+    border-bottom: 1px solid rgb(255 255 255 / 0.06);
+    box-shadow: none;
+}
+
+html.fi.dark .fi-ta-row,
+html.fi.dark .fi-ta-content .fi-ta-record {
+    background-color: #141414 !important;
+    color: #ffffff;
+}
+
+html.fi.dark .fi-ta-row:hover,
+html.fi.dark .fi-ta-row.fi-clickable:hover,
+html.fi.dark .fi-ta-content .fi-ta-record.fi-clickable:hover {
+    background-color: rgb(255 255 255 / 0.06) !important;
+}
+
+html.fi.dark .fi-ta-text,
+html.fi.dark .fi-ta-text-item,
+html.fi.dark .fi-ta-col,
+html.fi.dark .fi-ta-group-heading {
+    color: #ffffff;
+}
+
+html.fi.dark .fi-ta-text-description,
+html.fi.dark .fi-ta-group-description {
+    color: rgb(255 255 255 / 0.55) !important;
+}
+
+html.fi.dark .fi-wi-stats-overview-stat {
+    border-radius: 1rem;
+    border: 1px solid rgb(255 255 255 / 0.08) !important;
+    box-shadow: none;
+    background: #1c1c1e;
+    color: #ffffff;
+}
+
+html.fi.dark .fi-wi-stats-overview-stat-label,
+html.fi.dark .fi-wi-stats-overview-stat-description {
+    color: rgb(255 255 255 / 0.55) !important;
+}
+
+html.fi.dark .fi-wi-stats-overview-stat-value {
+    color: #ffffff !important;
+}
+
+html.fi.dark .fi-wi-stats-overview-stat:hover {
+    border-color: rgb(255 90 31 / 0.25) !important;
+    box-shadow: 0 0 28px rgb(255 90 31 / 0.08);
+}
+
+html.fi.dark .fi-modal-window {
+    border-radius: 1.25rem !important;
+    border: 1px solid rgb(255 255 255 / 0.1) !important;
+    box-shadow: 0 24px 64px rgb(0 0 0 / 0.6);
+    background: #1c1c1e;
+}
+
+html.fi.dark .fi-modal-content {
+    border-radius: 1.25rem;
+}
+
+html.fi.dark .fi-dropdown-panel {
+    border-radius: 0.875rem !important;
+    border: 1px solid rgb(255 255 255 / 0.1) !important;
+    box-shadow: 0 16px 48px rgb(0 0 0 / 0.5);
+    background: #1c1c1e;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+}
+
+html.fi.dark .fi-dropdown-list-item {
+    border-radius: 0.625rem;
+    margin-inline: 0.25rem;
+}
+
+html.fi.dark .fi-dropdown-list-item:hover {
+    background-color: rgb(255 255 255 / 0.06);
+}
+
+html.fi.dark .fi-tabs-item.fi-active {
+    background-color: rgb(255 90 31 / 0.15);
+}
+
+html.fi.dark .fi-ios-filter-bar,
+html.fi.dark .fi-locale-switcher-trigger {
+    border-radius: 1rem;
+    background: #1c1c1e !important;
+    border: 1px solid rgb(255 255 255 / 0.08) !important;
+    box-shadow: none !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+html.fi.dark .fi-locale-switcher-trigger:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 20px rgb(255 90 31 / 0.15);
+}
+
+/* ——— Subscription expiration notifications (topbar) ——— */
+
+.fi-subscription-expiration-notifications-btn .fi-badge {
+    background-color: #ff5a1f !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 12px rgb(255 90 31 / 0.45);
+}
+
+.fi-subscription-expiration-notifications-panel {
+    width: 100%;
+    max-width: 22rem;
+    padding: 0.25rem;
+}
+
+.fi-subscription-expiration-notifications-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.75rem 0.75rem 0.5rem;
+    border-bottom: 1px solid var(--jf-light-border, #e5e5e7);
+}
+
+html.fi.dark .fi-subscription-expiration-notifications-header {
+    border-bottom-color: rgb(255 255 255 / 0.08);
+}
+
+.fi-subscription-expiration-notifications-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--jf-light-text, #1c1c1e);
+}
+
+html.fi.dark .fi-subscription-expiration-notifications-title {
+    color: #ffffff;
+}
+
+.fi-subscription-expiration-notifications-subtitle {
+    margin-top: 0.125rem;
+    font-size: 0.75rem;
+    color: var(--jf-light-text-secondary, #6e6e73);
+}
+
+html.fi.dark .fi-subscription-expiration-notifications-subtitle {
+    color: rgb(255 255 255 / 0.5);
+}
+
+.fi-subscription-expiration-notifications-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 2rem 1rem;
+    text-align: center;
+    font-size: 0.8125rem;
+    color: var(--jf-light-text-secondary, #6e6e73);
+}
+
+html.fi.dark .fi-subscription-expiration-notifications-empty {
+    color: rgb(255 255 255 / 0.45);
+}
+
+.fi-subscription-expiration-notifications-empty-icon {
+    width: 1.75rem;
+    height: 1.75rem;
+    color: #34c759;
+}
+
+.fi-subscription-expiration-notifications-list {
+    max-height: 20rem;
+    overflow-y: auto;
+    padding: 0.25rem;
+}
+
+.fi-subscription-expiration-notifications-item {
+    border-radius: 0.75rem;
+    transition: background-color 200ms ease;
+}
+
+.fi-subscription-expiration-notifications-item:not(.is-read):hover,
+.fi-subscription-expiration-notifications-item:not(.is-read) .fi-subscription-expiration-notifications-link:hover {
+    background-color: var(--jf-light-row, #f2f2f7);
+}
+
+html.fi.dark .fi-subscription-expiration-notifications-item:not(.is-read):hover {
+    background-color: rgb(255 255 255 / 0.06);
+}
+
+.fi-subscription-expiration-notifications-item.is-read {
+    opacity: 0.65;
+}
+
+.fi-subscription-expiration-notifications-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.625rem 0.75rem;
+    text-decoration: none;
+    color: inherit;
+}
+
+.fi-subscription-expiration-notifications-avatar {
+    display: flex;
+    height: 2.5rem;
+    width: 2.5rem;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: 9999px;
+}
+
+.fi-subscription-expiration-notifications-avatar--photo {
+    object-fit: cover;
+    border: 1px solid var(--jf-light-border, #e5e5e7);
+}
+
+html.fi.dark .fi-subscription-expiration-notifications-avatar--photo {
+    border-color: rgb(255 255 255 / 0.1);
+}
+
+.fi-subscription-expiration-notifications-avatar--initials {
+    background: rgb(255 90 31 / 0.15);
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #e84e15;
+}
+
+html.fi.dark .fi-subscription-expiration-notifications-avatar--initials {
+    background: rgb(255 90 31 / 0.2);
+    color: #ff8a66;
+}
+
+.fi-subscription-expiration-notifications-body {
+    display: flex;
+    min-width: 0;
+    flex: 1;
+    flex-direction: column;
+    gap: 0.125rem;
+}
+
+.fi-subscription-expiration-notifications-member {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--jf-light-text, #1c1c1e);
+}
+
+html.fi.dark .fi-subscription-expiration-notifications-member {
+    color: #ffffff;
+}
+
+.fi-subscription-expiration-notifications-plan {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.75rem;
+    color: var(--jf-light-text-secondary, #6e6e73);
+}
+
+html.fi.dark .fi-subscription-expiration-notifications-plan {
+    color: rgb(255 255 255 / 0.5);
+}
+
+.fi-subscription-expiration-notifications-meta {
+    display: flex;
+    flex-shrink: 0;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.25rem;
+}
+
+.fi-subscription-expiration-notifications-badge {
+    border-radius: 9999px;
+    padding: 0.125rem 0.5rem;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+}
+
+.fi-subscription-expiration-notifications-badge--warning {
+    background: rgb(255 90 31 / 0.15);
+    color: #c43f10;
+    border: 1px solid rgb(255 90 31 / 0.35);
+}
+
+html.fi.dark .fi-subscription-expiration-notifications-badge--warning {
+    background: rgb(255 90 31 / 0.2);
+    color: #ffb199;
+    border-color: rgb(255 90 31 / 0.4);
+}
+
+.fi-subscription-expiration-notifications-badge--danger {
+    background: rgb(239 68 68 / 0.12);
+    color: #b91c1c;
+    border: 1px solid rgb(239 68 68 / 0.35);
+}
+
+html.fi.dark .fi-subscription-expiration-notifications-badge--danger {
+    background: rgb(239 68 68 / 0.2);
+    color: #fca5a5;
+    border-color: rgb(239 68 68 / 0.45);
+}
+
+.fi-subscription-expiration-notifications-badge--critical {
+    background: #dc2626;
+    color: #ffffff;
+    border: 1px solid #ef4444;
+    box-shadow: 0 0 14px rgb(220 38 38 / 0.45);
+}
+
+.fi-subscription-expiration-notifications-urgency {
+    font-size: 0.625rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--jf-light-text-secondary, #6e6e73);
+}
+
+html.fi.dark .fi-subscription-expiration-notifications-urgency {
+    color: rgb(255 255 255 / 0.4);
 }

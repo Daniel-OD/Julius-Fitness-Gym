@@ -23,6 +23,7 @@ return [
 
     'navigation' => [
         'dashboard' => 'Dashboard',
+        'office' => 'Front desk',
         'groups' => [
             'sales' => 'Sales',
             'memberships' => 'Memberships',
@@ -430,6 +431,34 @@ return [
         'location' => 'Location',
         'preferences' => 'Preferences',
         'toggle_theme' => 'Toggle light / dark',
+        'light_mode' => 'Light',
+        'dark_mode' => 'Dark',
+    ],
+
+    'office' => [
+        'title' => 'Front desk',
+    ],
+
+    'members' => [
+        'qr' => [
+            'title' => 'QR code',
+            'print' => 'Print',
+            'download' => 'Download QR',
+            'back' => 'Back to member',
+            'no_subscription' => 'No active subscription',
+            'expired_days_ago' => 'Expired :days day(s) ago',
+            'expires_today' => 'Active — expires today',
+            'active_days_left' => 'Active — :days day(s) remaining',
+        ],
+    ],
+
+    'checkin' => [
+        'title' => 'Check-in',
+        'success' => 'Check-in successful',
+        'expired' => 'Subscription expired',
+        'invalid' => 'Invalid QR code',
+        'checked_in_at' => 'Checked in at :time',
+        'redirect_hint' => 'Returning to home in 5 seconds…',
     ],
 
     'widgets' => [
@@ -456,22 +485,56 @@ return [
         'monthly_revenue' => 'Monthly Revenue',
         'monthly_revenue_hint' => 'Collected in :month',
         'expiring_soon_hint' => 'Ending within :days days',
+        'today_checkins' => 'Check-ins today',
+        'today_checkins_hint' => 'Member entries recorded today',
         'new_members' => 'New Members',
         'renewals' => 'Renewals',
         'expired_not_renewed' => 'Expired / Not Renewed',
         'vs_previous_period' => 'vs :count previous period',
     ],
 
+    'checkin' => [
+        'disabled'                     => 'Check-in is currently disabled.',
+        'invalid_token'                => 'Invalid or unknown QR code.',
+        'success'                      => 'Welcome, :name! Check-in recorded.',
+        'no_active_subscription'       => 'No active subscription found. Entry denied.',
+        'no_active_subscription_warning' => 'Welcome, :name! No active subscription found.',
+        'rate_limited'                 => 'Already checked in recently. Please wait :minutes min.',
+        'no_open_checkin'              => 'No open check-in found.',
+        'checkout_success'             => 'Goodbye, :name! Visit recorded.',
+    ],
+
+    'subscriptions' => [
+        'office_section'  => 'Internal / Office',
+        'type'            => 'Subscription type',
+        'type_official'   => 'Official',
+        'type_internal'   => 'Internal',
+        'internal_note'   => 'Internal note',
+    ],
+
+    'checkins' => [
+        'singular'     => 'Check-in',
+        'plural'       => 'Check-ins',
+        'checked_in'   => 'Checked in',
+        'checked_out'  => 'Checked out',
+        'duration'     => 'Duration',
+        'minutes'      => ':min min',
+        'today'        => 'Today',
+        'this_week'    => 'This week',
+        'this_month'   => 'This month',
+        'today_count'  => 'Check-ins today',
+    ],
+
     'emails' => [
-        'greeting'                    => 'Hi :name,',
-        'there'                       => 'there',
-        'reply_to_email'              => 'If you have questions, reply to this email.',
-        'invoice_status_line'         => 'Your invoice <strong>:invoice_number</strong> is <strong>:status</strong>. The PDF is attached.',
-        'payment_received_line'       => 'Your payment for invoice <strong>:invoice_number</strong> has been received. The updated PDF is attached.',
-        'subscription_expiring_line'  => 'Your <strong>:plan</strong> subscription expires in <strong>:days day(s)</strong> on :date.',
-        'subscription_expired_line'   => 'Your <strong>:plan</strong> subscription expired on :date.',
+        'greeting' => 'Hi :name,',
+        'there' => 'there',
+        'reply_to_email' => 'If you have questions, reply to this email.',
+        'invoice_status_line' => 'Your invoice <strong>:invoice_number</strong> is <strong>:status</strong>. The PDF is attached.',
+        'payment_received_line' => 'Your payment for invoice <strong>:invoice_number</strong> has been received. The updated PDF is attached.',
+        'subscription_expiring_line' => 'Your <strong>:plan</strong> subscription expires in <strong>:days day(s)</strong> on :date.',
+        'subscription_expired_line' => 'Your <strong>:plan</strong> subscription expired on :date.',
         'subscription_expiring_subject' => 'Your subscription expires in :days day(s) — :gym',
-        'subscription_expired_subject'  => 'Your subscription has expired — :gym',
+        'subscription_expired_subject' => 'Your subscription has expired — :gym',
     ],
 
 ];

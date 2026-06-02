@@ -23,6 +23,7 @@ return [
 
     'navigation' => [
         'dashboard' => 'Tablou de bord',
+        'office' => 'Recepție',
         'groups' => [
             'sales' => 'Vânzări',
             'memberships' => 'Abonamente',
@@ -430,6 +431,34 @@ return [
         'location' => 'Locație',
         'preferences' => 'Preferințe',
         'toggle_theme' => 'Comută luminos / întunecat',
+        'light_mode' => 'Luminos',
+        'dark_mode' => 'Întunecat',
+    ],
+
+    'office' => [
+        'title' => 'Recepție',
+    ],
+
+    'members' => [
+        'qr' => [
+            'title' => 'Cod QR',
+            'print' => 'Printează',
+            'download' => 'Descarcă QR',
+            'back' => 'Înapoi la membru',
+            'no_subscription' => 'Fără abonament activ',
+            'expired_days_ago' => 'Expirat acum :days zi(le)',
+            'expires_today' => 'Activ — expiră azi',
+            'active_days_left' => 'Activ — :days zi(le) rămase',
+        ],
+    ],
+
+    'checkin' => [
+        'title' => 'Check-in',
+        'success' => 'Check-in reușit',
+        'expired' => 'Abonament expirat',
+        'invalid' => 'Cod QR invalid',
+        'checked_in_at' => 'Intrare la :time',
+        'redirect_hint' => 'Revenire acasă în 5 secunde…',
     ],
 
     'widgets' => [
@@ -456,22 +485,56 @@ return [
         'monthly_revenue' => 'Venit lunar',
         'monthly_revenue_hint' => 'Încasat în :month',
         'expiring_soon_hint' => 'Expiră în următoarele :days zile',
+        'today_checkins' => 'Check-in-uri azi',
+        'today_checkins_hint' => 'Intrări înregistrate astăzi',
         'new_members' => 'Membri noi',
         'renewals' => 'Reînnoiri',
         'expired_not_renewed' => 'Expirate / neînnoite',
         'vs_previous_period' => 'vs :count perioada anterioară',
     ],
 
+    'checkin' => [
+        'disabled'                       => 'Check-in-ul este dezactivat momentan.',
+        'invalid_token'                  => 'Cod QR invalid sau necunoscut.',
+        'success'                        => 'Bun venit, :name! Check-in înregistrat.',
+        'no_active_subscription'         => 'Niciun abonament activ. Acces refuzat.',
+        'no_active_subscription_warning' => 'Bun venit, :name! Niciun abonament activ găsit.',
+        'rate_limited'                   => 'Ai efectuat deja un check-in recent. Așteptați :minutes min.',
+        'no_open_checkin'                => 'Niciun check-in deschis găsit.',
+        'checkout_success'               => 'La revedere, :name! Vizita a fost înregistrată.',
+    ],
+
+    'subscriptions' => [
+        'office_section' => 'Intern / Oficiu',
+        'type'           => 'Tip abonament',
+        'type_official'  => 'Oficial',
+        'type_internal'  => 'Intern',
+        'internal_note'  => 'Notă internă',
+    ],
+
+    'checkins' => [
+        'singular'    => 'Check-in',
+        'plural'      => 'Check-in-uri',
+        'checked_in'  => 'Intrat',
+        'checked_out' => 'Ieșit',
+        'duration'    => 'Durată',
+        'minutes'     => ':min min',
+        'today'       => 'Azi',
+        'this_week'   => 'Săptămâna aceasta',
+        'this_month'  => 'Luna aceasta',
+        'today_count' => 'Check-in-uri azi',
+    ],
+
     'emails' => [
-        'greeting'                    => 'Salut :name,',
-        'there'                       => 'acolo',
-        'reply_to_email'              => 'Dacă ai întrebări, răspunde la acest email.',
-        'invoice_status_line'         => 'Factura ta <strong>:invoice_number</strong> are statusul <strong>:status</strong>. PDF-ul este atașat.',
-        'payment_received_line'       => 'Plata pentru factura <strong>:invoice_number</strong> a fost înregistrată. PDF-ul actualizat este atașat.',
-        'subscription_expiring_line'  => 'Abonamentul tău <strong>:plan</strong> expiră în <strong>:days zi(le)</strong>, pe :date.',
-        'subscription_expired_line'   => 'Abonamentul tău <strong>:plan</strong> a expirat pe :date.',
+        'greeting' => 'Salut :name,',
+        'there' => 'acolo',
+        'reply_to_email' => 'Dacă ai întrebări, răspunde la acest email.',
+        'invoice_status_line' => 'Factura ta <strong>:invoice_number</strong> are statusul <strong>:status</strong>. PDF-ul este atașat.',
+        'payment_received_line' => 'Plata pentru factura <strong>:invoice_number</strong> a fost înregistrată. PDF-ul actualizat este atașat.',
+        'subscription_expiring_line' => 'Abonamentul tău <strong>:plan</strong> expiră în <strong>:days zi(le)</strong>, pe :date.',
+        'subscription_expired_line' => 'Abonamentul tău <strong>:plan</strong> a expirat pe :date.',
         'subscription_expiring_subject' => 'Abonamentul tău expiră în :days zi(le) — :gym',
-        'subscription_expired_subject'  => 'Abonamentul tău a expirat — :gym',
+        'subscription_expired_subject' => 'Abonamentul tău a expirat — :gym',
     ],
 
 ];

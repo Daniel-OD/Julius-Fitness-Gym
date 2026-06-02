@@ -11,11 +11,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 
 /**
  * @property int $id
  * @property string|null $photo
  * @property string $code
+ * @property string|null $checkin_token
  * @property string|null $name
  * @property string|null $email
  * @property string|null $contact
@@ -43,6 +45,7 @@ class Member extends Model
     protected $fillable = [
         'photo',
         'code',
+        'checkin_token',
         'name',
         'email',
         'contact',
@@ -73,6 +76,14 @@ class Member extends Model
         return $this->hasMany(Subscription::class);
     }
 
+    /**
+     * @return HasMany<CheckIn, $this>
+     */
+    public function checkIns(): HasMany
+    {
+        return $this->hasMany(CheckIn::class);
+    }
+
     protected static function boot(): void
     {
         parent::boot();
@@ -82,6 +93,10 @@ class Member extends Model
                 $member->code = Helpers::generateLastNumber('member', Member::class, null, 'code');
             }
             Helpers::updateLastNumber('member', $member->code);
+
+            if (! $member->checkin_token) {
+                $member->checkin_token = Str::random(32);
+            }
         });
     }
 

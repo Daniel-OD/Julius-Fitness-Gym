@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth dark">
 
 <head>
     <meta charset="utf-8">
@@ -7,59 +7,52 @@
 
     <title>{{ $title ?? config('app.name', 'Julius Fitness Gym') }}</title>
     <meta name="description"
-        content="{{ $description ?? 'Julius Fitness Gym — strength, conditioning and group classes. Join today.' }}">
+        content="{{ $description ?? 'Julius Fitness Gym — forță, condiționare și clase de grup. Alătură-te azi.' }}">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <script>
-        if (localStorage.getItem('theme') === 'dark' ||
-            (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        }
+        document.documentElement.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
     </script>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="min-h-screen bg-white font-sans text-gray-900 antialiased dark:bg-gray-950 dark:text-gray-100">
-    {{-- Header --}}
-    <header class="sticky top-0 z-40 border-b border-gray-200/80 bg-white/80 backdrop-blur dark:border-gray-800/80 dark:bg-gray-950/80">
+<body class="min-h-screen bg-black font-sans text-white antialiased">
+    <header
+        class="fixed inset-x-0 top-0 z-50 border-b border-white/0 bg-transparent transition-[background-color,border-color,backdrop-filter] duration-300"
+        data-public-header>
         <div class="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 sm:px-6 lg:px-8">
             <a href="{{ url('/') }}" class="flex items-center gap-2.5">
-                <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-600 text-white">
+                <span
+                    class="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white">
                     <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round">
                         <path d="M6.5 6.5 17.5 17.5" /><path d="m21 21-1-1" /><path d="m3 3 1 1" />
                         <path d="m18 22 4-4" /><path d="m2 6 4-4" /><path d="m3 10 7-7" /><path d="m14 21 7-7" />
                     </svg>
                 </span>
-                <span class="text-lg font-bold tracking-tight">Julius Fitness</span>
+                <span class="text-sm font-semibold tracking-tight text-white">Julius Fitness</span>
             </a>
 
             <nav class="ml-6 hidden items-center gap-1 md:flex">
-                <a href="#servicii" class="rounded-lg px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white">Servicii</a>
-                <a href="#program" class="rounded-lg px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white">Program</a>
-                <a href="#abonamente" class="rounded-lg px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white">Abonamente</a>
-                <a href="#contact" class="rounded-lg px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white">Contact</a>
+                <a href="#servicii"
+                    class="rounded-full px-3 py-2 text-sm font-medium text-white/60 transition-colors duration-200 hover:bg-white/5 hover:text-white">Servicii</a>
+                <a href="#program"
+                    class="rounded-full px-3 py-2 text-sm font-medium text-white/60 transition-colors duration-200 hover:bg-white/5 hover:text-white">Program</a>
+                <a href="#abonamente"
+                    class="rounded-full px-3 py-2 text-sm font-medium text-white/60 transition-colors duration-200 hover:bg-white/5 hover:text-white">Abonamente</a>
+                <a href="#contact"
+                    class="rounded-full px-3 py-2 text-sm font-medium text-white/60 transition-colors duration-200 hover:bg-white/5 hover:text-white">Contact</a>
             </nav>
 
             <div class="ml-auto flex items-center gap-2">
-                <button type="button" data-theme-toggle title="Toggle theme"
-                    class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800">
-                    <svg class="hidden h-5 w-5 dark:block" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="4" /><path d="M12 2v2" /><path d="M12 20v2" />
-                        <path d="m4.93 4.93 1.41 1.41" /><path d="m17.66 17.66 1.41 1.41" /><path d="M2 12h2" />
-                        <path d="M20 12h2" /><path d="m6.34 17.66-1.41 1.41" /><path d="m19.07 4.93-1.41 1.41" />
-                    </svg>
-                    <svg class="block h-5 w-5 dark:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
-                    </svg>
-                </button>
-
-                {{-- Login/portal links resolve once the backend adds auth routes. --}}
                 <x-ui.button :href="Route::has('login') ? route('login') : '#'" variant="ghost" size="md"
                     class="hidden sm:inline-flex">
-                    Log in
+                    Autentificare
                 </x-ui.button>
                 <x-ui.button href="#abonamente" variant="primary" size="md">Abonament</x-ui.button>
             </div>
@@ -70,52 +63,67 @@
         {{ $slot }}
     </main>
 
-    {{-- Footer --}}
-    <footer class="border-t border-gray-200 bg-gray-50 dark:border-gray-800 dark:bg-gray-900">
-        <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-2 gap-8 md:grid-cols-4">
+    <footer class="border-t border-white/8 bg-canvas">
+        <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 gap-10 md:grid-cols-4">
                 <div class="col-span-2 md:col-span-1">
                     <div class="flex items-center gap-2.5">
-                        <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600 text-white">
-                            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round">
+                        <span
+                            class="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/5">
+                            <svg class="h-4 w-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M6.5 6.5 17.5 17.5" /><path d="m21 21-1-1" /><path d="m3 3 1 1" />
                                 <path d="m18 22 4-4" /><path d="m2 6 4-4" /><path d="m3 10 7-7" /><path d="m14 21 7-7" />
                             </svg>
                         </span>
-                        <span class="font-bold">Julius Fitness</span>
+                        <span class="font-semibold tracking-tight">Julius Fitness</span>
                     </div>
-                    <p class="mt-3 text-sm text-gray-500 dark:text-gray-400">Train hard. Stay consistent. Get results.</p>
+                    <p class="mt-4 max-w-xs text-sm leading-relaxed text-white/45">
+                        Antrenează inteligent. Rămâi constant. Obține rezultate.
+                    </p>
                 </div>
                 <div>
-                    <h4 class="text-sm font-semibold">Gym</h4>
-                    <ul class="mt-3 space-y-2 text-sm text-gray-500 dark:text-gray-400">
-                        <li><a href="#servicii" class="hover:text-gray-900 dark:hover:text-white">Servicii</a></li>
-                        <li><a href="#program" class="hover:text-gray-900 dark:hover:text-white">Program</a></li>
-                        <li><a href="#abonamente" class="hover:text-gray-900 dark:hover:text-white">Abonamente</a></li>
+                    <h4 class="text-xs font-semibold uppercase tracking-wider text-white/35">Sală</h4>
+                    <ul class="mt-4 space-y-2 text-sm text-white/55">
+                        <li><a href="#servicii" class="transition-colors hover:text-white">Servicii</a></li>
+                        <li><a href="#program" class="transition-colors hover:text-white">Program</a></li>
+                        <li><a href="#abonamente" class="transition-colors hover:text-white">Abonamente</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h4 class="text-sm font-semibold">Support</h4>
-                    <ul class="mt-3 space-y-2 text-sm text-gray-500 dark:text-gray-400">
-                        <li><a href="#contact" class="hover:text-gray-900 dark:hover:text-white">Contact</a></li>
-                        <li><a href="#" class="hover:text-gray-900 dark:hover:text-white">FAQ</a></li>
+                    <h4 class="text-xs font-semibold uppercase tracking-wider text-white/35">Suport</h4>
+                    <ul class="mt-4 space-y-2 text-sm text-white/55">
+                        <li><a href="#contact" class="transition-colors hover:text-white">Contact</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h4 class="text-sm font-semibold">Program</h4>
-                    <ul class="mt-3 space-y-2 text-sm text-gray-500 dark:text-gray-400">
+                    <h4 class="text-xs font-semibold uppercase tracking-wider text-white/35">Program</h4>
+                    <ul class="mt-4 space-y-2 text-sm text-white/55">
                         <li>Lun–Vin: 06:00 – 23:00</li>
                         <li>Sâm: 08:00 – 20:00</li>
                         <li>Dum: 08:00 – 18:00</li>
                     </ul>
                 </div>
             </div>
-            <div class="mt-10 border-t border-gray-200 pt-6 text-sm text-gray-400 dark:border-gray-800">
-                &copy; {{ date('Y') }} Julius Fitness Gym. All rights reserved.
+            <div class="mt-12 border-t border-white/8 pt-8 text-sm text-white/30">
+                &copy; {{ date('Y') }} Julius Fitness Gym
             </div>
         </div>
     </footer>
+
+    <script>
+        const header = document.querySelector('[data-public-header]');
+        const onScroll = () => {
+            if (!header) return;
+            if (window.scrollY > 24) {
+                header.classList.add('border-white/8', 'bg-black/75', 'backdrop-blur-xl');
+            } else {
+                header.classList.remove('border-white/8', 'bg-black/75', 'backdrop-blur-xl');
+            }
+        };
+        onScroll();
+        window.addEventListener('scroll', onScroll, { passive: true });
+    </script>
 </body>
 
 </html>

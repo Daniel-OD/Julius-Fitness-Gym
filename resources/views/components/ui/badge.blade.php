@@ -4,12 +4,12 @@
 
 @php
     $colors = [
-        'gray' => 'bg-gray-100 text-gray-700',
-        'brand' => 'bg-brand-50 text-brand-700',
-        'green' => 'bg-green-100 text-green-700',
-        'amber' => 'bg-amber-100 text-amber-700',
-        'red' => 'bg-red-100 text-red-700',
-        'blue' => 'bg-blue-100 text-blue-700',
+        'gray' => 'border border-white/10 bg-white/8 text-white/70',
+        'brand' => 'border border-brand-500/30 bg-brand-500/15 text-brand-300',
+        'green' => 'border border-emerald-500/25 bg-emerald-500/12 text-emerald-300',
+        'amber' => 'border border-amber-500/25 bg-amber-500/12 text-amber-300',
+        'red' => 'border border-red-500/25 bg-red-500/12 text-red-300',
+        'blue' => 'border border-blue-500/25 bg-blue-500/12 text-blue-300',
     ];
 
     $classes = 'inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium '

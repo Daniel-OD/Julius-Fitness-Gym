@@ -10,6 +10,7 @@ use App\Filament\Widgets\Analytics\MembershipMetricsWidget;
 use App\Filament\Widgets\Analytics\MembershipOverviewSubscriptionsTableWidget;
 use App\Filament\Widgets\Analytics\RecentTransactionsTableWidget;
 use App\Filament\Widgets\GymOverviewStatsWidget;
+use App\Filament\Widgets\TodayCheckinsStatsWidget;
 use App\Support\AppConfig;
 use Carbon\CarbonImmutable;
 use Filament\Forms\Components\DatePicker;
@@ -143,6 +144,11 @@ class Dashboard extends \Filament\Pages\Dashboard
         $columns = $this->getColumns();
 
         return Grid::make(1)->schema([
+            Grid::make($columns)->schema([
+                ...$this->getWidgetsSchemaComponents([
+                    TodayCheckinsStatsWidget::class,
+                ]),
+            ]),
             Grid::make($columns)->schema([
                 ...$this->getWidgetsSchemaComponents([
                     GymOverviewStatsWidget::class,

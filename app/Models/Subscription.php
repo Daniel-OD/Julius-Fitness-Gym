@@ -19,6 +19,8 @@ use Illuminate\Support\Carbon;
  * @property Carbon $start_date
  * @property Carbon $end_date
  * @property Status|null $status
+ * @property string $type official|internal
+ * @property string|null $internal_note
  */
 class Subscription extends Model
 {
@@ -35,6 +37,8 @@ class Subscription extends Model
         'start_date',
         'end_date',
         'status',
+        'type',
+        'internal_note',
     ];
 
     protected $casts = [
@@ -81,5 +85,18 @@ class Subscription extends Model
     public function plan(): BelongsTo
     {
         return $this->belongsTo(Plan::class);
+    }
+
+    /**
+     * @return HasMany<CheckIn, $this>
+     */
+    public function checkIns(): HasMany
+    {
+        return $this->hasMany(CheckIn::class);
+    }
+
+    public function isOfficial(): bool
+    {
+        return $this->type === 'official';
     }
 }
