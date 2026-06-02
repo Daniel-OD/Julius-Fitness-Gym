@@ -4,16 +4,19 @@ namespace App\Models;
 
 use App\Enums\Status;
 use App\Helpers\Helpers;
+use App\Observers\InvoiceObserver;
 use App\Support\AppConfig;
 use App\Support\Billing\InvoiceCalculator;
 use Carbon\Carbon;
 use Database\Factories\InvoiceFactory;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+#[ObservedBy(InvoiceObserver::class)]
 /**
  * @property int $id
  * @property string|null $number
@@ -75,6 +78,11 @@ class Invoice extends Model
     public function transactions(): HasMany
     {
         return $this->hasMany(InvoiceTransaction::class);
+    }
+
+    public function getDisplayStatusLabel(): string
+    {
+        return $this->status?->getLabel() ?? '';
     }
 
     public function syncFromTransactions(): void

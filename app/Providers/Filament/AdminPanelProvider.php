@@ -12,6 +12,7 @@ use App\Filament\Resources\Members\MemberResource;
 use App\Filament\Resources\Plans\PlanResource;
 use App\Filament\Resources\Services\ServiceResource;
 use App\Filament\Resources\Subscriptions\SubscriptionResource;
+use App\Filament\Resources\Users\UserResource;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use BezhanSalleh\FilamentShield\Resources\Roles\RoleResource;
 use Filament\Http\Middleware\Authenticate;
@@ -97,6 +98,7 @@ class AdminPanelProvider extends PanelProvider
     {
         $administration = [
             ...Settings::getNavigationItems(),
+            ...UserResource::getNavigationItems(),
             ...RoleResource::getNavigationItems(),
         ];
 
