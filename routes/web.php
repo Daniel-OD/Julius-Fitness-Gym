@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\MemberController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SubscriptionController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'home')->name('home');
@@ -13,6 +15,25 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::resource('members', MemberController::class)->names([
+        'index' => 'web.members.index',
+        'create' => 'web.members.create',
+        'store' => 'web.members.store',
+        'show' => 'web.members.show',
+        'edit' => 'web.members.edit',
+        'update' => 'web.members.update',
+        'destroy' => 'web.members.destroy',
+    ]);
+    Route::resource('subscriptions', SubscriptionController::class)->names([
+        'index' => 'web.subscriptions.index',
+        'create' => 'web.subscriptions.create',
+        'store' => 'web.subscriptions.store',
+        'show' => 'web.subscriptions.show',
+        'edit' => 'web.subscriptions.edit',
+        'update' => 'web.subscriptions.update',
+        'destroy' => 'web.subscriptions.destroy',
+    ]);
 });
 
 require __DIR__.'/auth.php';
