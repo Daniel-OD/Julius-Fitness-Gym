@@ -1,132 +1,127 @@
 @php
-    // Placeholder — controller: $member, $plans, $paymentMethods
-    $member = [
-        'id' => 1,
-        'name' => 'Ana Popescu',
-        'code' => 'MEM-001',
-        'initials' => 'AP',
-    ];
+    use App\Enums\Status;
+    use App\Helpers\Helpers;
 
-    $plans = [
-        ['id' => 1, 'name' => 'Abonament 1 lună', 'price' => '150 RON', 'duration' => '30 zile'],
-        ['id' => 2, 'name' => 'Abonament 3 luni', 'price' => '400 RON', 'duration' => '90 zile'],
-        ['id' => 3, 'name' => 'Abonament 12 luni', 'price' => '1.200 RON', 'duration' => '365 zile'],
-        ['id' => 4, 'name' => 'Day Pass', 'price' => '50 RON', 'duration' => '1 zi'],
-        ['id' => 5, 'name' => 'Premium + PT', 'price' => '350 RON', 'duration' => '30 zile'],
-    ];
+    $memberInitials = collect(preg_split('/\s+/', trim($selectedMember?->name ?? '')) ?: [])
+        ->take(2)
+        ->map(fn (string $part) => mb_strtoupper(mb_substr($part, 0, 1)))
+        ->implode('') ?: '?';
 
-    $paymentMethods = [
-        'cash' => 'Numerar',
-        'card' => 'Card',
-        'transfer' => 'Transfer bancar',
-        'online' => 'Plată online',
+    $subscriptionStatuses = [
+        Status::Upcoming,
+        Status::Ongoing,
+        Status::Expiring,
+        Status::Expired,
+        Status::Renewed,
+        Status::Cancelled,
     ];
 @endphp
 
-<x-layouts.app :title="'Abonament nou · ' . config('app.name')">
+<x-layouts.app :title="__('app.actions.new', ['resource' => __('app.resources.subscriptions.singular')]) . ' · ' . config('app.name')">
     <x-slot name="header">
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
                 <nav class="mb-2 flex items-center gap-2 text-sm text-gray-500">
-                    <a href="#" class="hover:text-brand-600">Membri</a>
+                    <a href="{{ route('web.members.index') }}" class="hover:text-brand-600">{{ __('app.resources.members.plural') }}</a>
+                    @if ($selectedMember)
+                        <span>/</span>
+                        <a href="{{ route('web.members.show', $selectedMember) }}" class="hover:text-brand-600">{{ $selectedMember->name }}</a>
+                    @endif
                     <span>/</span>
-                    <a href="#" class="hover:text-brand-600">{{ $member['name'] }}</a>
-                    <span>/</span>
-                    <span class="text-gray-900">Abonament nou</span>
+                    <span class="text-gray-900">{{ __('app.actions.new', ['resource' => __('app.resources.subscriptions.singular')]) }}</span>
                 </nav>
-                <h1 class="text-2xl font-semibold tracking-tight text-gray-900">Abonament nou</h1>
-                <p class="mt-1 text-sm text-gray-500">Asociază un plan de membership acestui membru.</p>
+                <h1 class="text-2xl font-semibold tracking-tight text-gray-900">
+                    {{ __('app.actions.new', ['resource' => __('app.resources.subscriptions.singular')]) }}
+                </h1>
             </div>
         </div>
     </x-slot>
 
     <div class="mx-auto max-w-2xl space-y-6">
-        {{-- Membru selectat --}}
-        <div class="flex items-center gap-4 rounded-xl border border-brand-100 bg-brand-50/60 px-5 py-4">
-            <span
-                class="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-600 text-sm font-semibold text-white">
-                {{ $member['initials'] }}
-            </span>
-            <div class="min-w-0 flex-1">
-                <p class="text-xs font-medium uppercase tracking-wider text-brand-700">Membru</p>
-                <p class="truncate font-semibold text-gray-900">{{ $member['name'] }}</p>
-                <p class="text-sm text-gray-600">{{ $member['code'] }}</p>
-            </div>
-            <a href="#" class="shrink-0 text-sm font-medium text-brand-600 hover:text-brand-700">Schimbă</a>
-        </div>
-
-        <form action="#" method="POST" class="space-y-6">
+        <form action="{{ route('web.subscriptions.store') }}" method="POST" class="space-y-6">
             @csrf
-            <input type="hidden" name="member_id" value="{{ $member['id'] }}" />
 
-            <x-ui.card title="Plan & perioadă">
+            <x-ui.card :title="__('app.resources.members.singular')">
+                @if ($selectedMember)
+                    <div class="flex items-center gap-4 rounded-xl border border-brand-100 bg-brand-50/60 px-4 py-3">
+                        <span
+                            class="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-600 text-sm font-semibold text-white">
+                            {{ $memberInitials }}
+                        </span>
+                        <div class="min-w-0 flex-1">
+                            <p class="font-semibold text-gray-900">{{ $selectedMember->name }}</p>
+                            <p class="text-sm text-gray-600">{{ $selectedMember->code }}</p>
+                        </div>
+                        <a href="{{ route('web.subscriptions.create') }}"
+                            class="shrink-0 text-sm font-medium text-brand-600 hover:text-brand-700">Schimbă</a>
+                    </div>
+                    <input type="hidden" name="member_id" value="{{ $selectedMember->id }}" />
+                @else
+                    <div>
+                        <label for="member_id" class="mb-1.5 block text-sm font-medium text-gray-700">{{ __('app.fields.member') }} <span class="text-red-500">*</span></label>
+                        <select id="member_id" name="member_id" required
+                            class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500">
+                            <option value="">— {{ __('app.fields.member') }} —</option>
+                            @foreach ($members as $m)
+                                <option value="{{ $m->id }}" @selected(old('member_id') == $m->id)>{{ $m->name }} ({{ $m->code }})</option>
+                            @endforeach
+                        </select>
+                        @error('member_id')
+                            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+                @endif
+            </x-ui.card>
+
+            <x-ui.card :title="__('app.resources.plans.singular') . ' & ' . (__('app.fields.period') ?? 'perioadă')">
                 <div class="space-y-5">
                     <div>
-                        <label for="plan_id" class="mb-1.5 block text-sm font-medium text-gray-700">Plan <span
-                                class="text-red-500">*</span></label>
+                        <label for="plan_id" class="mb-1.5 block text-sm font-medium text-gray-700">{{ __('app.resources.plans.singular') }} <span class="text-red-500">*</span></label>
                         <select id="plan_id" name="plan_id" required
                             class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500">
-                            <option value="">— Selectează planul —</option>
+                            <option value="">—</option>
                             @foreach ($plans as $plan)
-                                <option value="{{ $plan['id'] }}">
-                                    {{ $plan['name'] }} — {{ $plan['price'] }} ({{ $plan['duration'] }})
+                                <option value="{{ $plan->id }}" @selected(old('plan_id') == $plan->id)>
+                                    {{ $plan->name }} — {{ Helpers::formatCurrency((float) $plan->amount) }}
+                                    ({{ $plan->days }} {{ __('app.units.days') ?? 'zile' }})
                                 </option>
                             @endforeach
                         </select>
+                        @error('plan_id')
+                            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <div class="grid gap-5 sm:grid-cols-2">
-                        <x-ui.input label="Data start" name="start_date" type="date" required
-                            value="{{ now()->format('Y-m-d') }}" />
-                        <div>
-                            <label for="end_date" class="mb-1.5 block text-sm font-medium text-gray-700">Data
-                                sfârșit</label>
-                            <input type="date" id="end_date" name="end_date" disabled
-                                placeholder="Calculat automat"
-                                class="w-full cursor-not-allowed rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-500" />
-                            <p class="mt-1 text-xs text-gray-500">Se calculează după plan (backend).</p>
-                        </div>
+                        <x-ui.input :label="__('app.fields.start_date')" name="start_date" type="date" required
+                            :value="old('start_date', now()->format('Y-m-d'))" :error="$errors->first('start_date')" />
+                        <x-ui.input :label="__('app.fields.end_date')" name="end_date" type="date"
+                            :value="old('end_date')" :error="$errors->first('end_date')" />
                     </div>
-                </div>
-            </x-ui.card>
+                    <p class="text-xs text-gray-500">{{ __('app.help.subscription_end_date') ?? 'Data de sfârșit se calculează automat din plan dacă e goală.' }}</p>
 
-            <x-ui.card title="Plată">
-                <div class="space-y-5">
                     <div>
-                        <label for="payment_method" class="mb-1.5 block text-sm font-medium text-gray-700">Metodă
-                            plată <span class="text-red-500">*</span></label>
-                        <select id="payment_method" name="payment_method" required
+                        <label for="status" class="mb-1.5 block text-sm font-medium text-gray-700">{{ __('app.fields.status') }}</label>
+                        <select id="status" name="status"
                             class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500">
-                            <option value="">— Selectează —</option>
-                            @foreach ($paymentMethods as $value => $label)
-                                <option value="{{ $value }}">{{ $label }}</option>
+                            @foreach ($subscriptionStatuses as $status)
+                                <option value="{{ $status->value }}" @selected(old('status', Status::Ongoing->value) === $status->value)>
+                                    {{ $status->getLabel() }}
+                                </option>
                             @endforeach
                         </select>
-                    </div>
-
-                    <x-ui.input label="Sumă încasată (RON)" name="amount" type="number" step="0.01" min="0"
-                        placeholder="0.00" />
-
-                    <div class="flex items-center gap-3 rounded-lg border border-gray-100 bg-gray-50 px-4 py-3">
-                        <input type="checkbox" id="create_invoice" name="create_invoice" value="1" checked
-                            class="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500" />
-                        <label for="create_invoice" class="text-sm text-gray-700">
-                            Generează factură automat la salvare
-                        </label>
+                        @error('status')
+                            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
-            </x-ui.card>
-
-            <x-ui.card title="Note interne">
-                <textarea id="notes" name="notes" rows="3" placeholder="Observații opționale…"
-                    class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"></textarea>
             </x-ui.card>
 
             <div class="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-                <x-ui.button href="#" variant="secondary" size="lg">Anulează</x-ui.button>
-                <x-ui.button type="submit" variant="primary" size="lg">
-                    Creează abonament
-                </x-ui.button>
+                <x-ui.button
+                    :href="$selectedMember ? route('web.members.show', $selectedMember) : route('web.subscriptions.index')"
+                    variant="secondary" size="lg">{{ __('app.actions.cancel') }}</x-ui.button>
+                <x-ui.button type="submit" variant="primary" size="lg">{{ __('app.actions.save') }}</x-ui.button>
             </div>
         </form>
     </div>

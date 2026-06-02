@@ -29,7 +29,7 @@
                     <path d="M5 12h14" />
                     <path d="M12 5v14" />
                 </svg>
-                {{ __('app.actions.new', ['resource' => __('app.resources.members.singular')]) }}
+                Adaugă {{ strtolower(__('app.resources.members.singular')) }}
             </x-ui.button>
         </div>
     </x-slot>
@@ -44,7 +44,7 @@
         <form method="GET" action="{{ route('web.members.index') }}"
             class="flex flex-col gap-4 border-b border-gray-100 p-5 sm:flex-row sm:items-end">
             <div class="flex-1">
-                <label for="search" class="mb-1.5 block text-sm font-medium text-gray-700">{{ __('app.fields.search') ?? 'Caută' }}</label>
+                <label for="search" class="mb-1.5 block text-sm font-medium text-gray-700">Caută</label>
                 <div class="relative">
                     <svg class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
                         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -60,7 +60,7 @@
                 <label for="status" class="mb-1.5 block text-sm font-medium text-gray-700">{{ __('app.fields.status') }}</label>
                 <select id="status" name="status"
                     class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500">
-                    <option value="">{{ __('app.status.all') ?? 'Toți' }}</option>
+                    <option value="">Toți</option>
                     <option value="active" @selected(request('status') === 'active')>{{ __('app.status.active') }}</option>
                     <option value="inactive" @selected(request('status') === 'inactive')>{{ __('app.status.inactive') }}</option>
                 </select>
@@ -112,7 +112,7 @@
                     </td>
                     <td class="whitespace-nowrap px-5 py-4 text-right">
                         <a href="{{ route('web.members.show', $member) }}"
-                            class="text-sm font-medium text-brand-600 hover:text-brand-700">{{ __('app.actions.view', ['resource' => '']) ?: 'Vezi' }}</a>
+                            class="text-sm font-medium text-brand-600 hover:text-brand-700">{{ __('app.actions.view') }}</a>
                     </td>
                 </tr>
             @empty

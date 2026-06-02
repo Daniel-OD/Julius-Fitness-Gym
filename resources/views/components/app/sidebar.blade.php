@@ -42,18 +42,18 @@
             Membership
         </p>
         <div class="space-y-1">
-            <x-app.nav-link href="#" :active="false">
+            <x-app.nav-link :href="route('web.members.index')" :active="request()->routeIs('web.members.*')">
                 <x-slot:icon>
                     <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" />
                     <path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
                 </x-slot:icon>
-                Members
+                {{ __('app.resources.members.plural') }}
             </x-app.nav-link>
-            <x-app.nav-link href="#" :active="false">
+            <x-app.nav-link :href="route('web.subscriptions.index')" :active="request()->routeIs('web.subscriptions.*')">
                 <x-slot:icon>
                     <path d="M3 12a9 9 0 1 0 18 0 9 9 0 0 0-18 0Z" /><path d="M12 7v5l3 3" />
                 </x-slot:icon>
-                Subscriptions
+                {{ __('app.resources.subscriptions.plural') }}
             </x-app.nav-link>
             <x-app.nav-link href="#" :active="false">
                 <x-slot:icon>

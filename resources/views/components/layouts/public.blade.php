@@ -35,9 +35,9 @@
             </a>
 
             <nav class="ml-6 hidden items-center gap-1 md:flex">
-                <a href="#features" class="rounded-lg px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white">Features</a>
-                <a href="#plans" class="rounded-lg px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white">Plans</a>
-                <a href="#about" class="rounded-lg px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white">About</a>
+                <a href="#servicii" class="rounded-lg px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white">Servicii</a>
+                <a href="#program" class="rounded-lg px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white">Program</a>
+                <a href="#abonamente" class="rounded-lg px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white">Abonamente</a>
                 <a href="#contact" class="rounded-lg px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white">Contact</a>
             </nav>
 
@@ -61,7 +61,7 @@
                     class="hidden sm:inline-flex">
                     Log in
                 </x-ui.button>
-                <x-ui.button href="#plans" variant="primary" size="md">Join now</x-ui.button>
+                <x-ui.button href="#abonamente" variant="primary" size="md">Abonament</x-ui.button>
             </div>
         </div>
     </header>
@@ -90,9 +90,9 @@
                 <div>
                     <h4 class="text-sm font-semibold">Gym</h4>
                     <ul class="mt-3 space-y-2 text-sm text-gray-500 dark:text-gray-400">
-                        <li><a href="#features" class="hover:text-gray-900 dark:hover:text-white">Features</a></li>
-                        <li><a href="#plans" class="hover:text-gray-900 dark:hover:text-white">Plans</a></li>
-                        <li><a href="#about" class="hover:text-gray-900 dark:hover:text-white">About</a></li>
+                        <li><a href="#servicii" class="hover:text-gray-900 dark:hover:text-white">Servicii</a></li>
+                        <li><a href="#program" class="hover:text-gray-900 dark:hover:text-white">Program</a></li>
+                        <li><a href="#abonamente" class="hover:text-gray-900 dark:hover:text-white">Abonamente</a></li>
                     </ul>
                 </div>
                 <div>
@@ -103,10 +103,11 @@
                     </ul>
                 </div>
                 <div>
-                    <h4 class="text-sm font-semibold">Hours</h4>
+                    <h4 class="text-sm font-semibold">Program</h4>
                     <ul class="mt-3 space-y-2 text-sm text-gray-500 dark:text-gray-400">
-                        <li>Mon–Fri: 06:00 – 23:00</li>
-                        <li>Sat–Sun: 08:00 – 20:00</li>
+                        <li>Lun–Vin: 06:00 – 23:00</li>
+                        <li>Sâm: 08:00 – 20:00</li>
+                        <li>Dum: 08:00 – 18:00</li>
                     </ul>
                 </div>
             </div>

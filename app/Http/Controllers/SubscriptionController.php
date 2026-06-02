@@ -17,7 +17,21 @@ class SubscriptionController extends Controller
     {
         $subscriptions = Subscription::query()
             ->with(['member', 'plan'])
-            ->when($request->status, fn ($q, $s) => $q->where('status', $s))
+            ->when($request->status === 'active', fn ($q) => $q->whereIn('status', [
+                Status::Ongoing,
+                Status::Expiring,
+                Status::Upcoming,
+                Status::Renewed,
+            ]))
+            ->when($request->status === 'expired', fn ($q) => $q->whereIn('status', [
+                Status::Expired,
+                Status::Cancelled,
+            ]))
+            ->when(
+                $request->filled('status')
+                    && ! in_array($request->status, ['active', 'expired'], true),
+                fn ($q) => $q->where('status', $request->status),
+            )
             ->when($request->member_id, fn ($q, $id) => $q->where('member_id', $id))
             ->latest()
             ->paginate(15)

@@ -65,7 +65,7 @@
                         <path d="M5 12h14" />
                         <path d="M12 5v14" />
                     </svg>
-                    {{ __('app.actions.new', ['resource' => __('app.resources.subscriptions.singular')]) }}
+                    Abonament nou
                 </x-ui.button>
             </div>
         </div>
@@ -124,7 +124,7 @@
             <x-ui.card :padding="false" :title="__('app.resources.subscriptions.plural')">
                 <x-slot name="actions">
                     <x-ui.button :href="route('web.subscriptions.create', ['member_id' => $member->id])" variant="primary" size="sm">
-                        {{ __('app.actions.new', ['resource' => __('app.resources.subscriptions.singular')]) }}
+                        Abonament nou
                     </x-ui.button>
                 </x-slot>
                 <x-slot name="subtitle">{{ $member->subscriptions->count() }} total</x-slot>
@@ -133,7 +133,7 @@
                     <div class="px-5 py-12 text-center">
                         <p class="text-sm text-gray-500">{{ __('app.empty.create_to_get_started', ['resource' => __('app.resources.subscriptions.singular')]) }}</p>
                         <x-ui.button :href="route('web.subscriptions.create', ['member_id' => $member->id])" variant="primary" size="md" class="mt-4">
-                            {{ __('app.actions.new', ['resource' => __('app.resources.subscriptions.singular')]) }}
+                            Abonament nou
                         </x-ui.button>
                     </div>
                 @else
