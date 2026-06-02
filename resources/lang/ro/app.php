@@ -415,10 +415,11 @@ return [
     ],
 
     'ui' => [
-        'details' => 'Detalii',
+        'details'        => 'Detalii',
         'follow_details' => 'Detalii follow-up',
-        'location' => 'Locație',
-        'preferences' => 'Preferințe',
+        'location'       => 'Locație',
+        'preferences'    => 'Preferințe',
+        'toggle_theme'   => 'Comută luminos / întunecat',
     ],
 
     'widgets' => [

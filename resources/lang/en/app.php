@@ -415,10 +415,11 @@ return [
     ],
 
     'ui' => [
-        'details' => 'Details',
+        'details'       => 'Details',
         'follow_details' => 'Follow-up details',
-        'location' => 'Location',
-        'preferences' => 'Preferences',
+        'location'      => 'Location',
+        'preferences'   => 'Preferences',
+        'toggle_theme'  => 'Toggle light / dark',
     ],
 
     'widgets' => [

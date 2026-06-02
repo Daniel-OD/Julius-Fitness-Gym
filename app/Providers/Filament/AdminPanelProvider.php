@@ -17,6 +17,7 @@ use App\Http\Middleware\SetAppLocale;
 use App\Support\AppLocale;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use BezhanSalleh\FilamentShield\Resources\Roles\RoleResource;
+use Filament\Enums\ThemeMode;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -65,7 +66,8 @@ class AdminPanelProvider extends PanelProvider
             ->brandName('Julius Fitness Gym')
             ->unsavedChangesAlerts()
             ->colors($this->colors())
-            ->darkMode(false)
+            ->darkMode(true)
+            ->defaultThemeMode(ThemeMode::Dark)
             ->sidebarWidth('12rem')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
@@ -100,7 +102,8 @@ class AdminPanelProvider extends PanelProvider
             ->renderHook(
                 PanelsRenderHook::GLOBAL_SEARCH_AFTER,
                 fn (): HtmlString => new HtmlString(
-                    Blade::render('@livewire(\App\Filament\Livewire\LocaleSwitcher::class, [], key(\'locale-switcher\'))')
+                    Blade::render('@livewire(\App\Filament\Livewire\LocaleSwitcher::class, [], key(\'locale-switcher\'))').
+                    Blade::render('@livewire(\App\Filament\Livewire\ThemeSwitcher::class, [], key(\'theme-switcher\'))')
                 ),
             );
     }
@@ -172,17 +175,17 @@ class AdminPanelProvider extends PanelProvider
     {
         return [
             'primary' => [
-                50 => '#b3fefc',
-                100 => '#37f2ee',
-                200 => '#2dcdc9',
-                300 => '#24adaa',
-                400 => '#1c908d',
-                500 => '#157573',
-                600 => '#0e5c5a',
-                700 => '#084543',
-                800 => '#042f2e',
-                900 => '#021f1e',
-                950 => '#011413',
+                50 => '#fff5f0',
+                100 => '#ffe8dc',
+                200 => '#ffd0bc',
+                300 => '#ffb199',
+                400 => '#ff8a66',
+                500 => '#ff5a1f',
+                600 => '#e84e15',
+                700 => '#c43f10',
+                800 => '#9a3210',
+                900 => '#7a2a0e',
+                950 => '#421408',
             ],
             'danger' => Color::Rose,
             'gray' => Color::Gray,
