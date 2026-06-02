@@ -6,16 +6,11 @@
 
 @theme {
     --font-sans:
-        'Instrument Sans', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
-        'Segoe UI', sans-serif;
-
-    --color-julius-black: #0a0a0a;
-    --color-julius-charcoal: #141414;
-    --color-julius-gold: #d4af37;
-    --color-julius-red: #c41e3a;
+        -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', Inter,
+        ui-sans-serif, system-ui, sans-serif;
 }
 
-/* ——— Julius Fitness Gym brand shell ——— */
+/* ——— Apple iOS system shell ——— */
 
 html.fi,
 html.fi .fi-body {
@@ -24,211 +19,229 @@ html.fi .fi-body {
 }
 
 .fi-body {
-    background-color: #f4f4f5 !important;
+    background-color: #f2f2f7 !important;
 }
 
 .fi-main-ctn {
-    background-color: #f4f4f5;
+    background-color: #f2f2f7;
 }
 
-/* Sidebar — black + gold accent */
+.fi-header-heading,
+.fi-section-header-heading,
+.fi-wi-stats-overview-stat-value {
+    font-weight: 600;
+}
+
+/* Sidebar — frosted glass */
 .fi-sidebar {
-    background: linear-gradient(180deg, #0a0a0a 0%, #141414 100%) !important;
-    border-inline-end: 1px solid rgb(212 175 55 / 0.15) !important;
-    box-shadow: 4px 0 24px rgb(0 0 0 / 0.12) !important;
+    background: rgba(255, 255, 255, 0.85) !important;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-inline-end: none !important;
+    box-shadow: none !important;
 }
 
 .fi-sidebar.fi-sidebar-open {
-    box-shadow: 4px 0 32px rgb(0 0 0 / 0.2) !important;
+    box-shadow:
+        0 1px 3px rgba(0, 0, 0, 0.06),
+        0 0 0 1px rgb(0 0 0 / 0.05) !important;
 }
 
 .fi-sidebar-header {
     background: transparent;
-    border-bottom: 1px solid rgb(212 175 55 / 0.2);
-    padding-block: 1rem;
 }
 
-.fi-sidebar-header-logo-ctn .fi-logo {
-    justify-content: flex-start;
+/* Topbar — sticky frosted */
+.fi-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    background: rgba(242, 242, 247, 0.9) !important;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: none !important;
+    box-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.04),
+        0 0 0 1px rgb(0 0 0 / 0.05) !important;
 }
 
-.fi-sidebar-header-logo-ctn img {
-    filter: drop-shadow(0 2px 8px rgb(0 0 0 / 0.4));
-}
-
-.fi-sidebar-group-label {
-    color: rgb(212 175 55 / 0.75) !important;
-    font-size: 0.65rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-}
-
+/* Nav items — pill hover */
 .fi-sidebar-item-btn,
 .fi-sidebar-group-dropdown-trigger-btn {
-    border-radius: 0.625rem;
-    color: #e4e4e7 !important;
+    border-radius: 0.75rem;
     transition:
-        background-color 200ms ease,
-        color 200ms ease;
-}
-
-.fi-sidebar-item-btn .fi-icon,
-.fi-sidebar-group-dropdown-trigger-btn .fi-icon {
-    color: rgb(212 175 55 / 0.7) !important;
+        background-color 200ms ease-in-out,
+        color 200ms ease-in-out;
 }
 
 .fi-sidebar-item-btn:hover,
-.fi-sidebar-group-dropdown-trigger-btn:hover {
-    background-color: rgb(196 30 58 / 0.15) !important;
-    color: #fafafa !important;
+.fi-sidebar-group-dropdown-trigger-btn:hover,
+.fi-sidebar-item.fi-active .fi-sidebar-item-btn {
+    background-color: rgb(var(--primary-50)) !important;
 }
 
 .fi-sidebar-item.fi-active .fi-sidebar-item-btn {
-    background: linear-gradient(90deg, rgb(196 30 58 / 0.35), rgb(212 175 55 / 0.2)) !important;
-    color: #fafafa !important;
-    box-shadow: inset 3px 0 0 0 var(--color-julius-gold);
+    color: rgb(var(--primary-700));
 }
 
-.fi-sidebar-item.fi-active .fi-sidebar-item-btn .fi-icon {
-    color: var(--color-julius-gold) !important;
-}
-
-/* Topbar */
-.fi-topbar {
-    background: linear-gradient(90deg, #0a0a0a, #1a1a1a) !important;
-    border-bottom: 2px solid var(--color-julius-gold);
-    box-shadow: 0 2px 12px rgb(0 0 0 / 0.15) !important;
-}
-
-.fi-topbar .fi-topbar-item-btn,
-.fi-topbar .fi-global-search-field input {
-    color: #f4f4f5;
-}
-
-.fi-topbar .fi-global-search-field {
-    --tw-ring-color: rgb(212 175 55 / 0.4);
-}
-
-/* KPI cards — gold top accent */
-.fi-wi-stats-overview-stat {
-    border-radius: 1rem;
-    border: none !important;
-    border-top: 3px solid var(--color-julius-gold) !important;
-    box-shadow:
-        0 4px 16px rgb(0 0 0 / 0.06),
-        0 0 0 1px rgb(0 0 0 / 0.04);
-    background: #fff;
-    transition:
-        box-shadow 200ms ease,
-        transform 200ms ease;
-}
-
-.fi-wi-stats-overview-stat:hover {
-    box-shadow: 0 8px 24px rgb(0 0 0 / 0.1);
-    transform: translateY(-1px);
-}
-
-.fi-wi-stats-overview-stat-label {
-    color: #52525b;
-    font-weight: 600;
-}
-
-.fi-wi-stats-overview-stat-value {
-    font-weight: 700;
-    color: #0a0a0a;
-}
-
-.fi-wi-stats-overview-stat-description {
-    color: #71717a;
-}
-
-/* Sections / cards */
+/* Sections / cards — rounded, soft shadow */
 .fi-section:not(.fi-section-not-contained) {
     border-radius: 1rem;
     border: none !important;
-    border-top: 2px solid rgb(212 175 55 / 0.35);
-    box-shadow: 0 2px 12px rgb(0 0 0 / 0.05);
-    background: #fff;
+    box-shadow:
+        0 1px 3px rgba(0, 0, 0, 0.06),
+        0 0 0 1px rgb(0 0 0 / 0.05);
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    overflow: hidden;
 }
 
-.fi-section-header-heading {
-    font-weight: 600;
-    color: #0a0a0a;
+.fi-section-header {
+    border-bottom: none !important;
+    box-shadow: inset 0 -1px 0 rgb(0 0 0 / 0.04);
 }
 
-/* Primary buttons — gold pill */
+/* Buttons — pill primary, rounded secondary */
+.fi-btn {
+    transition:
+        background-color 200ms ease-in-out,
+        box-shadow 200ms ease-in-out,
+        transform 150ms ease-in-out;
+}
+
 .fi-btn.fi-color-primary:not(.fi-outlined) {
     border-radius: 9999px;
-    font-weight: 600;
-    box-shadow: 0 2px 8px rgb(184 148 31 / 0.35);
 }
 
-.fi-btn.fi-color-danger:not(.fi-outlined) {
-    border-radius: 0.625rem;
-}
-
-.fi-btn.fi-outlined {
+.fi-btn.fi-outlined,
+.fi-btn:not(.fi-color-primary):not(.fi-outlined) {
     border-radius: 0.625rem;
 }
 
 /* Inputs */
 .fi-input-wrp {
-    border-radius: 0.625rem !important;
+    border-radius: 0.75rem !important;
+    transition:
+        box-shadow 200ms ease-in-out,
+        ring-color 200ms ease-in-out;
 }
 
 .fi-input-wrp:focus-within {
-    box-shadow: 0 0 0 2px rgb(212 175 55 / 0.35);
+    box-shadow: 0 0 0 3px rgb(var(--primary-500) / 0.2);
 }
 
-/* Tables */
+/* Badges — pill */
+.fi-badge {
+    border-radius: 9999px;
+}
+
+/* Table rows — clean hover */
+.fi-ta-row {
+    transition: background-color 200ms ease-in-out;
+}
+
 .fi-ta-row:hover {
-    background-color: rgb(250 250 250) !important;
+    background-color: #f9f9fb !important;
 }
 
 .fi-ta-header-cell {
     font-weight: 600;
-    color: #3f3f46;
-    background-color: #fafafa;
 }
 
-/* Badges */
-.fi-badge {
-    border-radius: 9999px;
-    font-weight: 600;
+.fi-ta-table > .fi-ta-header-ctn {
+    border-bottom: none;
+    box-shadow: inset 0 -1px 0 rgb(0 0 0 / 0.05);
+}
+
+/* Stats widgets */
+.fi-wi-stats-overview-stat {
+    border-radius: 1rem;
+    border: none !important;
+    box-shadow:
+        0 1px 3px rgba(0, 0, 0, 0.06),
+        0 0 0 1px rgb(0 0 0 / 0.05);
+    background: rgba(255, 255, 255, 0.92);
+    transition: box-shadow 200ms ease-in-out;
+}
+
+.fi-wi-stats-overview-stat:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 /* Modals */
 .fi-modal-window {
-    border-radius: 1rem !important;
-    border-top: 3px solid var(--color-julius-gold) !important;
-    box-shadow: 0 24px 48px rgb(0 0 0 / 0.2);
+    border-radius: 1.25rem !important;
+    border: none !important;
+    box-shadow:
+        0 16px 48px rgba(0, 0, 0, 0.12),
+        0 0 0 1px rgb(0 0 0 / 0.06);
 }
 
-/* Dashboard filter bar */
-.fi-ios-filter-bar {
+.fi-modal-content {
+    border-radius: 1.25rem;
+}
+
+/* Dropdown panels (locale switcher etc.) */
+.fi-dropdown-panel {
+    border-radius: 0.75rem !important;
+    border: none !important;
+    box-shadow:
+        0 8px 24px rgba(0, 0, 0, 0.1),
+        0 0 0 1px rgb(0 0 0 / 0.05);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+}
+
+.fi-dropdown-list-item {
     border-radius: 0.75rem;
-    background: #fff;
-    border: 1px solid rgb(212 175 55 / 0.25);
-    box-shadow: 0 2px 8px rgb(0 0 0 / 0.04);
+    margin-inline: 0.25rem;
+    transition: background-color 200ms ease-in-out;
 }
 
+/* Tabs (settings) */
+.fi-tabs-item {
+    border-radius: 0.75rem;
+    transition: background-color 200ms ease-in-out;
+}
+
+.fi-tabs-item.fi-active {
+    background-color: rgb(var(--primary-50));
+}
+
+/* Dashboard header filter bar (custom view) */
+.fi-ios-filter-bar {
+    border-radius: 1rem;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow:
+        0 1px 3px rgba(0, 0, 0, 0.06),
+        0 0 0 1px rgb(0 0 0 / 0.05);
+}
+
+/* Locale switcher trigger */
 .fi-locale-switcher-trigger {
     border-radius: 9999px !important;
-    background: rgb(255 255 255 / 0.1) !important;
-    border: 1px solid rgb(212 175 55 / 0.4) !important;
-    color: #fafafa !important;
+    background: rgba(255, 255, 255, 0.8) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow:
+        0 1px 3px rgba(0, 0, 0, 0.06),
+        0 0 0 1px rgb(0 0 0 / 0.05) !important;
+    transition: transform 150ms ease-in-out;
 }
 
 .fi-locale-switcher-trigger:hover {
-    background: rgb(196 30 58 / 0.25) !important;
-    transform: scale(1.03);
+    transform: scale(1.05);
 }
 
-/* Login */
-.fi-simple-layout {
-    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
+/* Expense widget surfaces */
+.fi-ios-widget-surface .fi-section {
+    border-radius: 1rem;
 }
 
-.fi-simple-main {
-    border-top: 3px solid var(--color-julius-gold);
+.fi-ios-chart-bar {
+    border-radius: 1rem !important;
 }

@@ -63,8 +63,6 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->passwordReset()
             ->brandName('Julius Fitness Gym')
-            ->brandLogo(asset('images/brand/julius-fitness-logo.svg'))
-            ->brandLogoHeight('2.75rem')
             ->unsavedChangesAlerts()
             ->colors($this->colors())
             ->darkMode(false)
@@ -174,35 +172,23 @@ class AdminPanelProvider extends PanelProvider
     {
         return [
             'primary' => [
-                50 => '#faf6e8',
-                100 => '#f0e6c4',
-                200 => '#e5d49a',
-                300 => '#d4af37',
-                400 => '#c9a227',
-                500 => '#b8941f',
-                600 => '#9a7a19',
-                700 => '#7c6114',
-                800 => '#5e4a10',
-                900 => '#3d310b',
-                950 => '#241c06',
+                50 => '#b3fefc',
+                100 => '#37f2ee',
+                200 => '#2dcdc9',
+                300 => '#24adaa',
+                400 => '#1c908d',
+                500 => '#157573',
+                600 => '#0e5c5a',
+                700 => '#084543',
+                800 => '#042f2e',
+                900 => '#021f1e',
+                950 => '#011413',
             ],
-            'danger' => [
-                50 => '#fef2f3',
-                100 => '#fde3e6',
-                200 => '#fbb8c0',
-                300 => '#f78997',
-                400 => '#ef4d63',
-                500 => '#c41e3a',
-                600 => '#9f1830',
-                700 => '#7a1226',
-                800 => '#560d1b',
-                900 => '#350810',
-                950 => '#1f0409',
-            ],
-            'gray' => Color::Zinc,
+            'danger' => Color::Rose,
+            'gray' => Color::Gray,
             'info' => Color::Blue,
             'success' => Color::Emerald,
-            'warning' => Color::Amber,
+            'warning' => Color::Orange,
         ];
     }
 }
