@@ -13,6 +13,8 @@ use App\Filament\Resources\Plans\PlanResource;
 use App\Filament\Resources\Services\ServiceResource;
 use App\Filament\Resources\Subscriptions\SubscriptionResource;
 use App\Filament\Resources\Users\UserResource;
+use App\Http\Middleware\SetAppLocale;
+use App\Support\AppLocale;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use BezhanSalleh\FilamentShield\Resources\Roles\RoleResource;
 use Filament\Http\Middleware\Authenticate;
@@ -76,6 +78,8 @@ class AdminPanelProvider extends PanelProvider
             ->plugins([FilamentShieldPlugin::make()
                 ->navigationIcon(fn (): null => null)
                 ->activeNavigationIcon(fn (): null => null)])
+            ->bootUsing(fn (): string => AppLocale::apply())
+            ->middleware([SetAppLocale::class], isPersistent: true)
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
@@ -90,6 +94,7 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
+            ->viteTheme('resources/css/filament/admin/theme.css')
             ->databaseNotifications()
             ->globalSearchKeyBindings(['command+k', 'ctrl+k'])
             ->renderHook(
