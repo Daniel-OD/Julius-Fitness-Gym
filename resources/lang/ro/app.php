@@ -334,11 +334,21 @@ return [
         'subscription_renewed_body' => 'Abonamentul a fost reînnoit cu succes.',
         'subscription_marked_as_expired' => 'Abonament marcat ca expirat',
         'subscription_marked_as_expiring' => 'Abonament marcat ca expirând',
+        'subscription_expiring_title' => 'Abonament expiră în :days zi(le)',
+        'subscription_expired_title' => 'Abonament expirat — :member',
+        'subscription_expiring_body' => ':member — :plan expiră pe :date.',
         'enquiry_converted_to_member' => 'Solicitare convertită în membru',
         'enquiry_marked_as_lost' => 'Solicitare marcată ca pierdută',
         'follow_up_marked_as_done' => 'Follow-up marcat ca finalizat',
         'success_settings_save' => 'Setări salvate',
         'failed_settings_save' => 'Eroare la salvarea setărilor',
+        'expiration_bell_label' => 'Alerte expirare abonamente',
+        'expiration_panel_title' => 'Expiră curând',
+        'expiration_panel_subtitle' => 'Abonamente care expiră în :days zile',
+        'mark_all_read' => 'Marchează toate ca citite',
+        'expiry_urgency_warning' => 'În 7 zile',
+        'expiry_urgency_danger' => 'În 3 zile',
+        'expiry_urgency_critical' => 'Expiră azi',
     ],
 
     'titles' => [
@@ -415,11 +425,11 @@ return [
     ],
 
     'ui' => [
-        'details'        => 'Detalii',
+        'details' => 'Detalii',
         'follow_details' => 'Detalii follow-up',
-        'location'       => 'Locație',
-        'preferences'    => 'Preferințe',
-        'toggle_theme'   => 'Comută luminos / întunecat',
+        'location' => 'Locație',
+        'preferences' => 'Preferințe',
+        'toggle_theme' => 'Comută luminos / întunecat',
     ],
 
     'widgets' => [
@@ -450,6 +460,18 @@ return [
         'renewals' => 'Reînnoiri',
         'expired_not_renewed' => 'Expirate / neînnoite',
         'vs_previous_period' => 'vs :count perioada anterioară',
+    ],
+
+    'emails' => [
+        'greeting'                    => 'Salut :name,',
+        'there'                       => 'acolo',
+        'reply_to_email'              => 'Dacă ai întrebări, răspunde la acest email.',
+        'invoice_status_line'         => 'Factura ta <strong>:invoice_number</strong> are statusul <strong>:status</strong>. PDF-ul este atașat.',
+        'payment_received_line'       => 'Plata pentru factura <strong>:invoice_number</strong> a fost înregistrată. PDF-ul actualizat este atașat.',
+        'subscription_expiring_line'  => 'Abonamentul tău <strong>:plan</strong> expiră în <strong>:days zi(le)</strong>, pe :date.',
+        'subscription_expired_line'   => 'Abonamentul tău <strong>:plan</strong> a expirat pe :date.',
+        'subscription_expiring_subject' => 'Abonamentul tău expiră în :days zi(le) — :gym',
+        'subscription_expired_subject'  => 'Abonamentul tău a expirat — :gym',
     ],
 
 ];

@@ -334,11 +334,21 @@ return [
         'subscription_renewed_body' => 'The subscription has been renewed successfully.',
         'subscription_marked_as_expired' => 'Subscription marked as expired',
         'subscription_marked_as_expiring' => 'Subscription marked as expiring',
+        'subscription_expiring_title' => 'Subscription expiring in :days day(s)',
+        'subscription_expired_title' => 'Subscription expired — :member',
+        'subscription_expiring_body' => ':member — :plan expires on :date.',
         'enquiry_converted_to_member' => 'Enquiry converted to member',
         'enquiry_marked_as_lost' => 'Enquiry marked as lost',
         'follow_up_marked_as_done' => 'Follow-up marked as done',
         'success_settings_save' => 'Settings saved',
         'failed_settings_save' => 'Failed to save settings',
+        'expiration_bell_label' => 'Subscription expiration alerts',
+        'expiration_panel_title' => 'Expiring soon',
+        'expiration_panel_subtitle' => 'Subscriptions ending within :days days',
+        'mark_all_read' => 'Mark all as read',
+        'expiry_urgency_warning' => 'Within a week',
+        'expiry_urgency_danger' => 'Within 3 days',
+        'expiry_urgency_critical' => 'Expires today',
     ],
 
     'titles' => [
@@ -415,11 +425,11 @@ return [
     ],
 
     'ui' => [
-        'details'       => 'Details',
+        'details' => 'Details',
         'follow_details' => 'Follow-up details',
-        'location'      => 'Location',
-        'preferences'   => 'Preferences',
-        'toggle_theme'  => 'Toggle light / dark',
+        'location' => 'Location',
+        'preferences' => 'Preferences',
+        'toggle_theme' => 'Toggle light / dark',
     ],
 
     'widgets' => [
@@ -450,6 +460,18 @@ return [
         'renewals' => 'Renewals',
         'expired_not_renewed' => 'Expired / Not Renewed',
         'vs_previous_period' => 'vs :count previous period',
+    ],
+
+    'emails' => [
+        'greeting'                    => 'Hi :name,',
+        'there'                       => 'there',
+        'reply_to_email'              => 'If you have questions, reply to this email.',
+        'invoice_status_line'         => 'Your invoice <strong>:invoice_number</strong> is <strong>:status</strong>. The PDF is attached.',
+        'payment_received_line'       => 'Your payment for invoice <strong>:invoice_number</strong> has been received. The updated PDF is attached.',
+        'subscription_expiring_line'  => 'Your <strong>:plan</strong> subscription expires in <strong>:days day(s)</strong> on :date.',
+        'subscription_expired_line'   => 'Your <strong>:plan</strong> subscription expired on :date.',
+        'subscription_expiring_subject' => 'Your subscription expires in :days day(s) — :gym',
+        'subscription_expired_subject'  => 'Your subscription has expired — :gym',
     ],
 
 ];
