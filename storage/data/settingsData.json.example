@@ -1,0 +1,46 @@
+{
+    "general": {
+        "locale": "",
+        "gym_logo": [],
+        "currency": "",
+        "gym_name": "",
+        "financial_year_start": "",
+        "financial_year_end": "",
+        "gym_email": "",
+        "gym_contact": "",
+        "address": "",
+        "country": "",
+        "state": "",
+        "city": "",
+        "zip": ""
+    },
+    "invoice": {
+        "prefix": "",
+        "last_number": "",
+        "name_type": ""
+    },
+    "member": {
+        "prefix": "",
+        "last_number": ""
+    },
+    "charges": {
+        "admission_fee": "",
+        "taxes": "",
+        "discounts": []
+    },
+    "expenses": {
+        "categories": []
+    },
+    "subscriptions": {
+        "expiring_days": 7
+    },
+    "notifications": {
+        "email": {
+            "enabled": false,
+            "auto_send_invoice_issued": false,
+            "auto_send_payment_receipt": false,
+            "invoice_subject_template": "Invoice {invoice_number} - {status}",
+            "receipt_subject_template": "Payment received - {invoice_number}"
+        }
+    }
+}
