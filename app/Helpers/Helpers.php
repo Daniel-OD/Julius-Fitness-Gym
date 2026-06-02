@@ -22,7 +22,7 @@ use TypeError;
 
 class Helpers
 {
-    private const DEFAULT_CURRENCY = 'USD';
+    private const DEFAULT_CURRENCY = 'RON';
 
     private const DEFAULT_EXPENSE_CATEGORIES = [
         'Rent',
