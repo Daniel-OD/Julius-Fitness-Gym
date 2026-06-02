@@ -45,7 +45,19 @@ git checkout 2026-06-01-byv4   # active development branch
 composer run setup              # install, .env, key, migrate, npm build
 ```
 
-Copy settings if needed:
+Populate countries/currencies (required for Settings page):
+
+```bash
+php -d memory_limit=512M artisan db:seed --class=WorldSeeder
+```
+
+Create the first admin user:
+
+```bash
+php artisan filament:make-user
+```
+
+Copy settings template:
 
 ```bash
 cp storage/data/settingsData.json.example storage/data/settingsData.json
