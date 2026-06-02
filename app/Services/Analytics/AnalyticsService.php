@@ -131,6 +131,26 @@ class AnalyticsService
     }
 
     /**
+     * Net collected by date for the given range (payments - refunds).
+     *
+     * @return array<string, float> Map of `Y-m-d` => amount
+     */
+    public function collectedTrendByDate(AnalyticsDateRange $range): array
+    {
+        /** @var Collection<string, float> $rows */
+        $rows = InvoiceTransaction::query()
+            ->whereBetween('occurred_at', [$range->start, $range->end])
+            ->selectRaw('DATE(occurred_at) as day')
+            ->selectRaw("SUM(CASE WHEN type = 'payment' THEN amount WHEN type = 'refund' THEN -amount ELSE 0 END) as net")
+            ->groupBy('day')
+            ->orderBy('day')
+            ->pluck('net', 'day')
+            ->map(fn ($value): float => Data::float($value));
+
+        return $rows->all();
+    }
+
+    /**
      * @return array<string, float>
      */
     public function collectedTrendByMonth(AnalyticsDateRange $range): array
@@ -146,6 +166,26 @@ class AnalyticsService
             ->groupBy('month')
             ->orderBy('month')
             ->pluck('net', 'month')
+            ->map(fn ($value): float => Data::float($value));
+
+        return $rows->all();
+    }
+
+    /**
+     * Expense totals by date for the given range.
+     *
+     * @return array<string, float> Map of `Y-m-d` => amount
+     */
+    public function expenseTrendByDate(AnalyticsDateRange $range): array
+    {
+        /** @var Collection<string, float> $rows */
+        $rows = Expense::query()
+            ->whereBetween('date', [$range->start->toDateString(), $range->end->toDateString()])
+            ->selectRaw('date as day')
+            ->selectRaw('SUM(amount) as total')
+            ->groupBy('day')
+            ->orderBy('day')
+            ->pluck('total', 'day')
             ->map(fn ($value): float => Data::float($value));
 
         return $rows->all();

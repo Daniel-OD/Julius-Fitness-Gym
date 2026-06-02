@@ -13,6 +13,8 @@ use App\Filament\Resources\Plans\PlanResource;
 use App\Filament\Resources\Services\ServiceResource;
 use App\Filament\Resources\Subscriptions\SubscriptionResource;
 use App\Filament\Resources\Users\UserResource;
+use App\Http\Middleware\SetAppLocale;
+use App\Support\AppLocale;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use BezhanSalleh\FilamentShield\Resources\Roles\RoleResource;
 use Filament\Http\Middleware\Authenticate;
@@ -25,11 +27,14 @@ use Filament\Navigation\NavigationItem;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\View\PanelsRenderHook;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\HtmlString;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 /**
@@ -73,6 +78,8 @@ class AdminPanelProvider extends PanelProvider
             ->plugins([FilamentShieldPlugin::make()
                 ->navigationIcon(fn (): null => null)
                 ->activeNavigationIcon(fn (): null => null)])
+            ->bootUsing(fn (): string => AppLocale::apply())
+            ->middleware([SetAppLocale::class], isPersistent: true)
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
@@ -87,8 +94,15 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
+            ->viteTheme('resources/css/filament/admin/theme.css')
             ->databaseNotifications()
-            ->globalSearchKeyBindings(['command+k', 'ctrl+k']);
+            ->globalSearchKeyBindings(['command+k', 'ctrl+k'])
+            ->renderHook(
+                PanelsRenderHook::GLOBAL_SEARCH_AFTER,
+                fn (): HtmlString => new HtmlString(
+                    Blade::render('@livewire(\App\Filament\Livewire\LocaleSwitcher::class, [], key(\'locale-switcher\'))')
+                ),
+            );
     }
 
     /**
