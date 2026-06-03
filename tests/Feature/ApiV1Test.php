@@ -5,20 +5,40 @@ use App\Models\Plan;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 uses(RefreshDatabase::class);
 
+/**
+ * Build an API user with the Shield permissions the API endpoints require.
+ *
+ * Shield is configured with super_admin.define_via_gate = false, so there is no
+ * global gate bypass — permissions must exist and be granted explicitly. In the
+ * real app `shield:generate` does this; tests grant them directly.
+ */
 function apiUser(): User
 {
+    $permissions = [
+        'ViewAny:Member', 'View:Member', 'Create:Member', 'Update:Member', 'Delete:Member',
+        'ViewAny:Plan', 'View:Plan', 'Create:Plan', 'Update:Plan', 'Delete:Plan',
+    ];
+
     $role = Role::firstOrCreate(['name' => 'super_admin', 'guard_name' => 'web']);
+
+    foreach ($permissions as $permission) {
+        Permission::firstOrCreate(['name' => $permission, 'guard_name' => 'web']);
+    }
+
+    $role->syncPermissions($permissions);
+
     $user = User::factory()->create(['password' => bcrypt('password')]);
     $user->assignRole($role);
 
     return $user;
 }
 
-// ─── Auth ─────────────────────────────────────────────────────────────────────
+// ─── Auth ───────────────────────────────────────────────────────────────────
 
 it('login returns sanctum token', function (): void {
     $user = User::factory()->create(['password' => bcrypt('password')]);
@@ -33,6 +53,7 @@ it('login returns sanctum token', function (): void {
 it('login fails with wrong password', function (): void {
     $user = User::factory()->create(['password' => bcrypt('password')]);
 
+    // AuthController throws a ValidationException for bad credentials → 422.
     $this->postJson('/api/v1/auth/login', [
         'email' => $user->email,
         'password' => 'wrong',
@@ -112,7 +133,7 @@ it('DELETE /api/v1/members/{id} soft-deletes member', function (): void {
     expect(Member::find($member->id))->toBeNull();
 });
 
-// ─── Plans API ────────────────────────────────────────────────────────────────
+// ─── Plans API ─────────────────────────────────────────────────────────────
 
 it('GET /api/v1/plans returns plans', function (): void {
     Sanctum::actingAs(apiUser());
@@ -123,7 +144,7 @@ it('GET /api/v1/plans returns plans', function (): void {
         ->assertJsonStructure(['data']);
 });
 
-// ─── Analytics API ────────────────────────────────────────────────────────────
+// ─── Analytics API ────────────────────────────────────────────────────────
 
 it('GET /api/v1/analytics/financial returns financial metrics', function (): void {
     Sanctum::actingAs(apiUser());
