@@ -60,6 +60,7 @@ return [
         'title' => 'Settings',
         'actions' => [
             'save_settings' => 'Save settings',
+            'backup_now' => 'Backup now',
         ],
         'tabs' => [
             'gym_info' => 'Gym Info',
@@ -69,6 +70,7 @@ return [
             'member' => 'Member',
             'subscriptions' => 'Subscriptions',
             'import' => 'Import',
+            'backup' => 'Backup',
         ],
         'import' => [
             'steps_label' => 'Import steps',
@@ -136,6 +138,9 @@ return [
             'contact_information' => 'Contact Information',
             'address' => 'Address',
             'email' => 'Email',
+            'backup_config' => 'Backup Configuration',
+            'backup_config_desc' => 'Enter the path to your synced Google Drive or iCloud folder on this computer.',
+            'backup_manual' => 'Manual Backup & History',
         ],
         'fields' => [
             'gym_name' => 'Gym name',
@@ -163,11 +168,21 @@ return [
             'email_receipt_subject' => 'Receipt email subject',
             'auto_send_invoice_issued' => 'Auto-send invoice on issue',
             'auto_send_payment_receipt' => 'Auto-send receipt on payment',
+            'backup_enabled' => 'Enable backup',
+            'backup_path' => 'Backup folder path',
+            'backup_trigger' => 'When to backup',
+            'backup_end_of_day_time' => 'Daily backup time',
+            'backup_keep' => 'Keep last N backups',
         ],
         'options' => [
             'name_type' => [
                 'gym_name' => 'Show gym name',
                 'gym_logo' => 'Show gym logo',
+            ],
+            'backup_trigger' => [
+                'after_member' => 'After each member registration',
+                'end_of_day' => 'At end of day (scheduled)',
+                'both' => 'Both',
             ],
         ],
         'hints' => [
@@ -176,11 +191,23 @@ return [
             'type_discount' => 'Type a discount and press Enter.',
             'tokens_invoice' => 'Available tokens: {member_name}, {invoice_number}, {gym_name}',
             'tokens_receipt' => 'Available tokens: {member_name}, {invoice_number}, {amount}, {gym_name}',
+            'backup_path' => 'Enter the full path to your Google Drive or iCloud synced folder.',
+            'backup_time_format' => 'Format: HH:MM (e.g. 22:00)',
+        ],
+        'backup' => [
+            'no_path_set' => 'No backup path configured.',
+            'no_backups' => 'No backups created yet.',
+            'recent_backups' => 'Recent backups',
+            'file' => 'File',
+            'date' => 'Date',
+            'size' => 'Size',
+            'folder' => 'Folder',
         ],
         'placeholders' => [
             'prefix' => 'e.g. INV-',
             'invoice_email_subject' => 'e.g. Invoice #{invoice_number} from {gym_name}',
             'receipt_email_subject' => 'e.g. Payment receipt from {gym_name}',
+            'backup_path' => 'e.g. C:\Users\Admin\Google Drive\Gym Backup',
         ],
     ],
 
@@ -417,6 +444,10 @@ return [
         'follow_up_marked_as_done' => 'Follow-up marked as done',
         'success_settings_save' => 'Settings saved',
         'failed_settings_save' => 'Failed to save settings',
+        'backup_success' => 'Backup created successfully',
+        'backup_failed' => 'Backup failed',
+        'backup_disabled' => 'Backup is not enabled',
+        'backup_path_missing' => 'Backup path is not configured',
         'expiration_bell_label' => 'Subscription expiration alerts',
         'expiration_panel_title' => 'Expiring soon',
         'expiration_panel_subtitle' => 'Subscriptions ending within :days days',

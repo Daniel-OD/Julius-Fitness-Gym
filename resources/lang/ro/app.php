@@ -60,6 +60,7 @@ return [
         'title' => 'Setări',
         'actions' => [
             'save_settings' => 'Salvează setările',
+            'backup_now' => 'Backup acum',
         ],
         'tabs' => [
             'gym_info' => 'Info sală',
@@ -69,6 +70,7 @@ return [
             'member' => 'Membru',
             'subscriptions' => 'Abonamente',
             'import' => 'Import',
+            'backup' => 'Backup',
         ],
         'import' => [
             'steps_label' => 'Pași import',
@@ -136,6 +138,9 @@ return [
             'contact_information' => 'Date de contact',
             'address' => 'Adresă',
             'email' => 'Email',
+            'backup_config' => 'Configurare backup',
+            'backup_config_desc' => 'Introdu calea spre folderul Google Drive sau iCloud sincronizat pe acest calculator.',
+            'backup_manual' => 'Backup manual & istoric',
         ],
         'fields' => [
             'gym_name' => 'Numele sălii',
@@ -163,11 +168,21 @@ return [
             'email_receipt_subject' => 'Subiect email chitanță',
             'auto_send_invoice_issued' => 'Trimite automat factura la emitere',
             'auto_send_payment_receipt' => 'Trimite automat chitanța la plată',
+            'backup_enabled' => 'Backup activat',
+            'backup_path' => 'Calea spre folderul de backup',
+            'backup_trigger' => 'Când se face backup',
+            'backup_end_of_day_time' => 'Ora backup zilnic',
+            'backup_keep' => 'Păstrează ultimele N backup-uri',
         ],
         'options' => [
             'name_type' => [
                 'gym_name' => 'Afișează numele sălii',
                 'gym_logo' => 'Afișează logo-ul sălii',
+            ],
+            'backup_trigger' => [
+                'after_member' => 'După fiecare client înregistrat',
+                'end_of_day' => 'La sfârșitul zilei (programat)',
+                'both' => 'Ambele',
             ],
         ],
         'hints' => [
@@ -176,11 +191,23 @@ return [
             'type_discount' => 'Tastează o reducere și apasă Enter.',
             'tokens_invoice' => 'Tokeni disponibili: {member_name}, {invoice_number}, {gym_name}',
             'tokens_receipt' => 'Tokeni disponibili: {member_name}, {invoice_number}, {amount}, {gym_name}',
+            'backup_path' => 'Introdu calea completă spre folderul sincronizat cu Google Drive sau iCloud.',
+            'backup_time_format' => 'Format: HH:MM (ex. 22:00)',
+        ],
+        'backup' => [
+            'no_path_set' => 'Nicio cale de backup configurată.',
+            'no_backups' => 'Nu există backup-uri create încă.',
+            'recent_backups' => 'Backup-uri recente',
+            'file' => 'Fișier',
+            'date' => 'Data',
+            'size' => 'Dimensiune',
+            'folder' => 'Folder',
         ],
         'placeholders' => [
             'prefix' => 'ex. FACT-',
             'invoice_email_subject' => 'ex. Factură #{invoice_number} de la {gym_name}',
             'receipt_email_subject' => 'ex. Chitanță de plată de la {gym_name}',
+            'backup_path' => 'ex. C:\Users\Admin\Google Drive\Backup Sala',
         ],
     ],
 
@@ -417,6 +444,10 @@ return [
         'follow_up_marked_as_done' => 'Follow-up marcat ca finalizat',
         'success_settings_save' => 'Setări salvate',
         'failed_settings_save' => 'Eroare la salvarea setărilor',
+        'backup_success' => 'Backup creat cu succes',
+        'backup_failed' => 'Eroare la crearea backup-ului',
+        'backup_disabled' => 'Backup-ul nu este activat',
+        'backup_path_missing' => 'Calea de backup nu este configurată',
         'expiration_bell_label' => 'Alerte expirare abonamente',
         'expiration_panel_title' => 'Expiră curând',
         'expiration_panel_subtitle' => 'Abonamente care expiră în :days zile',

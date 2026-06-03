@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Str;
 
 /**
@@ -96,6 +97,14 @@ class Member extends Model
 
             if (! $member->checkin_token) {
                 $member->checkin_token = Str::random(32);
+            }
+        });
+
+        static::created(function (): void {
+            $backup = is_array($b = Helpers::getSettings()['backup'] ?? null) ? $b : [];
+
+            if (! empty($backup['enabled']) && in_array($backup['trigger'] ?? '', ['after_member', 'both'], true)) {
+                Artisan::call('app:backup', ['--trigger' => 'after_member']);
             }
         });
     }

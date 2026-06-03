@@ -5,6 +5,7 @@ namespace App\Filament\Pages;
 use App\Contracts\SettingsRepository;
 use App\Helpers\Helpers;
 use Carbon\Carbon;
+use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
@@ -16,6 +17,7 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Grid;
@@ -25,6 +27,7 @@ use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\Artisan;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 /**
@@ -94,6 +97,7 @@ class Settings extends Page implements HasForms
                     $this->expensesTab(),
                     $this->subscriptionsTab(),
                     $this->importTab(),
+                    $this->backupTab(),
                 ]),
         ];
     }
@@ -347,6 +351,105 @@ class Settings extends Page implements HasForms
                         ->default(7)
                         ->required(),
                 ]);
+    }
+
+    /**
+     * Backup Tab Schema.
+     */
+    private function backupTab(): Tab
+    {
+        return Tab::make(__('app.settings.tabs.backup'))
+            ->icon('heroicon-m-archive-box')
+            ->schema([
+                Section::make(__('app.settings.sections.backup_config'))
+                    ->aside()
+                    ->description(__('app.settings.sections.backup_config_desc'))
+                    ->schema([
+                        Toggle::make('backup.enabled')
+                            ->label(__('app.settings.fields.backup_enabled'))
+                            ->inlineLabel()
+                            ->columnSpanFull(),
+                        TextInput::make('backup.path')
+                            ->label(__('app.settings.fields.backup_path'))
+                            ->placeholder(__('app.settings.placeholders.backup_path'))
+                            ->helperText(__('app.settings.hints.backup_path'))
+                            ->columnSpanFull(),
+                        Select::make('backup.trigger')
+                            ->label(__('app.settings.fields.backup_trigger'))
+                            ->native(false)
+                            ->options([
+                                'after_member' => __('app.settings.options.backup_trigger.after_member'),
+                                'end_of_day' => __('app.settings.options.backup_trigger.end_of_day'),
+                                'both' => __('app.settings.options.backup_trigger.both'),
+                            ])
+                            ->default('end_of_day'),
+                        TextInput::make('backup.end_of_day_time')
+                            ->label(__('app.settings.fields.backup_end_of_day_time'))
+                            ->placeholder('22:00')
+                            ->helperText(__('app.settings.hints.backup_time_format'))
+                            ->visible(fn ($get) => in_array($get('backup.trigger'), ['end_of_day', 'both'])),
+                        TextInput::make('backup.keep_backups')
+                            ->label(__('app.settings.fields.backup_keep'))
+                            ->numeric()
+                            ->minValue(1)
+                            ->maxValue(365)
+                            ->default(7),
+                    ])
+                    ->columnSpan(3),
+
+                Section::make(__('app.settings.sections.backup_manual'))
+                    ->schema([
+                        Actions::make([
+                            Action::make('runBackupNow')
+                                ->label(__('app.settings.actions.backup_now'))
+                                ->icon('heroicon-o-archive-box-arrow-down')
+                                ->color('success')
+                                ->action(fn () => $this->runBackupNow()),
+                        ]),
+                        View::make('filament.settings.backup-status'),
+                    ])
+                    ->columnSpan(3),
+            ]);
+    }
+
+    /**
+     * Run an immediate backup and notify the user.
+     */
+    public function runBackupNow(): void
+    {
+        $settings = $this->data['backup'] ?? [];
+
+        if (empty($settings['enabled'])) {
+            Notification::make()
+                ->title(__('app.notifications.backup_disabled'))
+                ->warning()
+                ->send();
+
+            return;
+        }
+
+        if (empty(trim((string) ($settings['path'] ?? '')))) {
+            Notification::make()
+                ->title(__('app.notifications.backup_path_missing'))
+                ->danger()
+                ->send();
+
+            return;
+        }
+
+        $exitCode = Artisan::call('app:backup', ['--trigger' => 'manual']);
+
+        if ($exitCode === 0) {
+            Notification::make()
+                ->title(__('app.notifications.backup_success'))
+                ->success()
+                ->send();
+        } else {
+            Notification::make()
+                ->title(__('app.notifications.backup_failed'))
+                ->danger()
+                ->send();
+        }
     }
 
     /**

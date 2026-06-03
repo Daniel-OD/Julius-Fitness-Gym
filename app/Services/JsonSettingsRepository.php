@@ -85,6 +85,7 @@ class JsonSettingsRepository implements SettingsRepository
             'expenses' => [],
             'subscriptions' => [],
             'notifications' => [],
+            'backup' => [],
         ], JSON_PRETTY_PRINT));
     }
 
@@ -94,7 +95,7 @@ class JsonSettingsRepository implements SettingsRepository
      */
     private function normalize(array $settings): array
     {
-        foreach (['general', 'invoice', 'member', 'charges', 'expenses', 'subscriptions', 'payments', 'notifications'] as $key) {
+        foreach (['general', 'invoice', 'member', 'charges', 'expenses', 'subscriptions', 'payments', 'notifications', 'backup'] as $key) {
             if (! array_key_exists($key, $settings) || ! is_array($settings[$key])) {
                 $settings[$key] = [];
             }
