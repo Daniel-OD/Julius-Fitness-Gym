@@ -28,7 +28,9 @@ use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use ZipArchive;
 
 /**
  * @property-read Schema $form
@@ -409,6 +411,37 @@ class Settings extends Page implements HasForms
                         View::make('filament.settings.backup-status'),
                     ])
                     ->columnSpan(3),
+
+                Section::make(__('app.settings.sections.backup_restore'))
+                    ->description(__('app.settings.sections.backup_restore_desc'))
+                    ->aside()
+                    ->schema([
+                        Actions::make([
+                            Action::make('restoreFromBackup')
+                                ->label(__('app.settings.actions.restore_now'))
+                                ->icon('heroicon-o-arrow-path')
+                                ->color('danger')
+                                ->modalHeading(__('app.settings.backup.restore_heading'))
+                                ->modalDescription(__('app.settings.backup.restore_warning'))
+                                ->modalSubmitActionLabel(__('app.settings.actions.restore_confirm'))
+                                ->modalIcon('heroicon-o-exclamation-triangle')
+                                ->form([
+                                    FileUpload::make('backup_zip')
+                                        ->label(__('app.settings.fields.restore_zip'))
+                                        ->disk('local')
+                                        ->directory('restore-tmp')
+                                        ->acceptedFileTypes(['application/zip', 'application/x-zip-compressed', 'application/octet-stream'])
+                                        ->required(),
+                                    Toggle::make('include_settings')
+                                        ->label(__('app.settings.fields.restore_include_settings'))
+                                        ->helperText(__('app.settings.hints.restore_include_settings'))
+                                        ->default(false)
+                                        ->inlineLabel(),
+                                ])
+                                ->action(fn (array $data) => $this->restoreFromBackup($data)),
+                        ]),
+                    ])
+                    ->columnSpan(3),
             ]);
     }
 
@@ -450,6 +483,118 @@ class Settings extends Page implements HasForms
                 ->danger()
                 ->send();
         }
+    }
+
+    /**
+     * Restore database (and optionally settings) from an uploaded backup ZIP.
+     *
+     * @param  array<string, mixed>  $data
+     */
+    public function restoreFromBackup(array $data): void
+    {
+        $relPath = is_array($data['backup_zip']) ? ($data['backup_zip'][0] ?? '') : (string) ($data['backup_zip'] ?? '');
+        $zipPath = storage_path('app/'.$relPath);
+
+        if (! file_exists($zipPath)) {
+            Notification::make()->title(__('app.notifications.restore_zip_not_found'))->danger()->send();
+
+            return;
+        }
+
+        $zip = new ZipArchive;
+
+        if ($zip->open($zipPath) !== true) {
+            Notification::make()->title(__('app.notifications.restore_zip_invalid'))->danger()->send();
+            @unlink($zipPath);
+
+            return;
+        }
+
+        if ($zip->locateName('database.sqlite') === false) {
+            Notification::make()->title(__('app.notifications.restore_no_database'))->danger()->send();
+            $zip->close();
+            @unlink($zipPath);
+
+            return;
+        }
+
+        $tempDir = storage_path('app/restore-tmp-extract-'.time());
+        mkdir($tempDir, 0755, true);
+        $zip->extractTo($tempDir);
+        $zip->close();
+
+        $newDbPath = $tempDir.DIRECTORY_SEPARATOR.'database.sqlite';
+
+        if (! $this->isValidSQLite($newDbPath)) {
+            $this->cleanupTempDir($tempDir);
+            @unlink($zipPath);
+            Notification::make()->title(__('app.notifications.restore_invalid_database'))->danger()->send();
+
+            return;
+        }
+
+        // Safety backup of current state before overwriting
+        Artisan::call('app:backup', ['--trigger' => 'pre-restore', '--force' => true]);
+
+        $dbPath = database_path('database.sqlite');
+
+        DB::disconnect();
+
+        if (! copy($newDbPath, $dbPath)) {
+            DB::reconnect();
+            $this->cleanupTempDir($tempDir);
+            @unlink($zipPath);
+            Notification::make()->title(__('app.notifications.restore_failed'))->danger()->send();
+
+            return;
+        }
+
+        if (! empty($data['include_settings'])) {
+            $settingsSource = $tempDir.DIRECTORY_SEPARATOR.'settingsData.json';
+            if (file_exists($settingsSource)) {
+                copy($settingsSource, storage_path('data/settingsData.json'));
+                $decoded = json_decode((string) file_get_contents($settingsSource), true);
+                if (is_array($decoded)) {
+                    app(SettingsRepository::class)->put($decoded);
+                }
+            }
+        }
+
+        $this->cleanupTempDir($tempDir);
+        @unlink($zipPath);
+
+        DB::reconnect();
+
+        Notification::make()
+            ->title(__('app.notifications.restore_success'))
+            ->success()
+            ->send();
+    }
+
+    private function isValidSQLite(string $path): bool
+    {
+        if (! file_exists($path) || filesize($path) < 16) {
+            return false;
+        }
+
+        $handle = fopen($path, 'rb');
+        $magic = fread($handle, 16);
+        fclose($handle);
+
+        return str_starts_with((string) $magic, 'SQLite format 3');
+    }
+
+    private function cleanupTempDir(string $dir): void
+    {
+        if (! is_dir($dir)) {
+            return;
+        }
+
+        foreach (glob($dir.DIRECTORY_SEPARATOR.'*') ?: [] as $file) {
+            @unlink($file);
+        }
+
+        @rmdir($dir);
     }
 
     /**

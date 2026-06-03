@@ -7,9 +7,9 @@ use App\Http\Requests\Api\V1\UserUpdateRequest;
 use App\Http\Resources\V1\UserResource;
 use App\Models\User;
 use App\Services\Api\QueryFilters;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Response;
 use Spatie\Permission\Models\Role;
 
 /**
@@ -108,7 +108,7 @@ class UsersController extends ApiController
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Request $request, User $user): JsonResponse
+    public function destroy(Request $request, User $user): Response
     {
         return $this->deleteModel($request, 'Delete:User', $user);
     }
@@ -127,7 +127,7 @@ class UsersController extends ApiController
     /**
      * Permanently delete a user.
      */
-    public function forceDelete(Request $request, int $user): JsonResponse
+    public function forceDelete(Request $request, int $user): Response
     {
         $this->forceDeleteSoftDeleted($request, 'ForceDeleteAny:User', User::class, $user);
 

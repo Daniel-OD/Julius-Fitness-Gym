@@ -8,7 +8,7 @@ use ZipArchive;
 
 class BackupApplication extends Command
 {
-    protected $signature = 'app:backup {--trigger= : Trigger type: manual, after_member, end_of_day}';
+    protected $signature = 'app:backup {--trigger= : Trigger type: manual, after_member, end_of_day, pre-restore} {--force : Run even when backup is disabled}';
 
     protected $description = 'Create a zip backup of the database and settings to the configured folder';
 
@@ -17,7 +17,9 @@ class BackupApplication extends Command
         $settings = Helpers::getSettings();
         $backup = is_array($settings['backup'] ?? null) ? $settings['backup'] : [];
 
-        if (empty($backup['enabled'])) {
+        $isForced = (bool) $this->option('force');
+
+        if (! $isForced && empty($backup['enabled'])) {
             $this->info('Backup is disabled.');
 
             return self::SUCCESS;

@@ -20,6 +20,7 @@ use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Response;
 
 /**
  * Subscriptions CRUD endpoints.
@@ -144,7 +145,7 @@ class SubscriptionsController extends ApiController
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Request $request, Subscription $subscription): JsonResponse
+    public function destroy(Request $request, Subscription $subscription): Response
     {
         return $this->deleteModel($request, 'Delete:Subscription', $subscription);
     }
@@ -163,7 +164,7 @@ class SubscriptionsController extends ApiController
     /**
      * Permanently delete a subscription.
      */
-    public function forceDelete(Request $request, int $subscription): JsonResponse
+    public function forceDelete(Request $request, int $subscription): Response
     {
         $this->forceDeleteSoftDeleted($request, 'ForceDeleteAny:Subscription', Subscription::class, $subscription);
 

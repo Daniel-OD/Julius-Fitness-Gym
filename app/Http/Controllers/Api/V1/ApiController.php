@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 /**
  * Base API controller helpers for v1 endpoints.
@@ -27,17 +27,17 @@ abstract class ApiController extends Controller
     }
 
     /**
-     * Return a 204 No Content JSON response.
+     * Return a 204 No Content response.
      */
-    protected function noContent(): JsonResponse
+    protected function noContent(): Response
     {
-        return response()->json([], 204);
+        return response()->noContent();
     }
 
     /**
      * Delete a model and return a 204 No Content response.
      */
-    protected function deleteModel(Request $request, string $permission, Model $record): JsonResponse
+    protected function deleteModel(Request $request, string $permission, Model $record): Response
     {
         $this->requirePermission($request, $permission);
 

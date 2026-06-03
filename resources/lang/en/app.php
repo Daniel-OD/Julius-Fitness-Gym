@@ -61,6 +61,8 @@ return [
         'actions' => [
             'save_settings' => 'Save settings',
             'backup_now' => 'Backup now',
+            'restore_now' => 'Restore from backup',
+            'restore_confirm' => 'Yes, restore now',
         ],
         'tabs' => [
             'gym_info' => 'Gym Info',
@@ -141,6 +143,8 @@ return [
             'backup_config' => 'Backup Configuration',
             'backup_config_desc' => 'Enter the path to your synced Google Drive or iCloud folder on this computer.',
             'backup_manual' => 'Manual Backup & History',
+            'backup_restore' => 'Restore from Backup',
+            'backup_restore_desc' => 'Upload a backup ZIP file to restore the database to a previous state. This action is irreversible — an automatic safety backup will be created first.',
         ],
         'fields' => [
             'gym_name' => 'Gym name',
@@ -173,6 +177,8 @@ return [
             'backup_trigger' => 'When to backup',
             'backup_end_of_day_time' => 'Daily backup time',
             'backup_keep' => 'Keep last N backups',
+            'restore_zip' => 'Backup ZIP file',
+            'restore_include_settings' => 'Also restore application settings',
         ],
         'options' => [
             'name_type' => [
@@ -193,10 +199,13 @@ return [
             'tokens_receipt' => 'Available tokens: {member_name}, {invoice_number}, {amount}, {gym_name}',
             'backup_path' => 'Enter the full path to your Google Drive or iCloud synced folder.',
             'backup_time_format' => 'Format: HH:MM (e.g. 22:00)',
+            'restore_include_settings' => 'If enabled, application settings (currency, invoice prefix, etc.) will also be restored.',
         ],
         'backup' => [
             'no_path_set' => 'No backup path configured.',
             'no_backups' => 'No backups created yet.',
+            'restore_heading' => 'Restore Database',
+            'restore_warning' => '⚠️ This will replace the ENTIRE current database (members, subscriptions, invoices, expenses). An automatic safety backup will be created first. Are you sure?',
             'recent_backups' => 'Recent backups',
             'file' => 'File',
             'date' => 'Date',
@@ -448,6 +457,12 @@ return [
         'backup_failed' => 'Backup failed',
         'backup_disabled' => 'Backup is not enabled',
         'backup_path_missing' => 'Backup path is not configured',
+        'restore_success' => 'Database restored successfully',
+        'restore_failed' => 'Failed to restore database',
+        'restore_zip_not_found' => 'ZIP file not found',
+        'restore_zip_invalid' => 'ZIP file is corrupted or invalid',
+        'restore_no_database' => 'ZIP does not contain a database.sqlite file',
+        'restore_invalid_database' => 'database.sqlite in ZIP is not a valid database',
         'expiration_bell_label' => 'Subscription expiration alerts',
         'expiration_panel_title' => 'Expiring soon',
         'expiration_panel_subtitle' => 'Subscriptions ending within :days days',

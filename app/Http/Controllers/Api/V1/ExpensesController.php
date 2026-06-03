@@ -7,7 +7,6 @@ use App\Http\Requests\Api\V1\ExpenseUpdateRequest;
 use App\Http\Resources\V1\ExpenseResource;
 use App\Models\Expense;
 use App\Services\Api\QueryFilters;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
@@ -71,7 +70,7 @@ class ExpensesController extends ApiController
     /**
      * Delete an expense.
      */
-    public function destroy(Request $request, Expense $expense): JsonResponse
+    public function destroy(Request $request, Expense $expense): Response
     {
         return $this->deleteModel($request, 'Delete:Expense', $expense);
     }

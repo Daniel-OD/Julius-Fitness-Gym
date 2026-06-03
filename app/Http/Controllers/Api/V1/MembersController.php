@@ -7,9 +7,9 @@ use App\Http\Requests\Api\V1\MemberUpdateRequest;
 use App\Http\Resources\V1\MemberResource;
 use App\Models\Member;
 use App\Services\Api\QueryFilters;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Response;
 
 /**
  * Members CRUD endpoints.
@@ -83,7 +83,7 @@ class MembersController extends ApiController
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Request $request, Member $member): JsonResponse
+    public function destroy(Request $request, Member $member): Response
     {
         return $this->deleteModel($request, 'Delete:Member', $member);
     }
@@ -101,7 +101,7 @@ class MembersController extends ApiController
     /**
      * Permanently delete a member.
      */
-    public function forceDelete(Request $request, int $member): JsonResponse
+    public function forceDelete(Request $request, int $member): Response
     {
         $this->forceDeleteSoftDeleted($request, 'ForceDeleteAny:Member', Member::class, $member);
 

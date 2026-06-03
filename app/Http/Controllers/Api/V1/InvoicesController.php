@@ -98,7 +98,7 @@ class InvoicesController extends ApiController
     /**
      * Soft delete an invoice.
      */
-    public function destroy(Request $request, Invoice $invoice): JsonResponse
+    public function destroy(Request $request, Invoice $invoice): Response
     {
         return $this->deleteModel($request, 'Delete:Invoice', $invoice);
     }
@@ -117,7 +117,7 @@ class InvoicesController extends ApiController
     /**
      * Permanently delete an invoice.
      */
-    public function forceDelete(Request $request, int $invoice): JsonResponse
+    public function forceDelete(Request $request, int $invoice): Response
     {
         $this->forceDeleteSoftDeleted($request, 'ForceDeleteAny:Invoice', Invoice::class, $invoice);
 

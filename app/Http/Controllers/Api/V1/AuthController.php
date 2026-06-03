@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Support\Data;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
@@ -63,7 +64,7 @@ class AuthController extends ApiController
     /**
      * Revoke the current token.
      */
-    public function logout(Request $request): JsonResponse
+    public function logout(Request $request): Response
     {
         /** @var User $user */
         $user = $request->user();

@@ -9,9 +9,9 @@ use App\Models\Enquiry;
 use App\Services\Api\QueryFilters;
 use App\Support\AppConfig;
 use App\Support\Data;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Response;
 
 /**
  * Enquiries CRUD endpoints.
@@ -90,7 +90,7 @@ class EnquiriesController extends ApiController
     /**
      * Soft delete an enquiry.
      */
-    public function destroy(Request $request, Enquiry $enquiry): JsonResponse
+    public function destroy(Request $request, Enquiry $enquiry): Response
     {
         return $this->deleteModel($request, 'Delete:Enquiry', $enquiry);
     }
@@ -108,7 +108,7 @@ class EnquiriesController extends ApiController
     /**
      * Permanently delete an enquiry.
      */
-    public function forceDelete(Request $request, int $enquiry): JsonResponse
+    public function forceDelete(Request $request, int $enquiry): Response
     {
         $this->forceDeleteSoftDeleted($request, 'ForceDeleteAny:Enquiry', Enquiry::class, $enquiry);
 

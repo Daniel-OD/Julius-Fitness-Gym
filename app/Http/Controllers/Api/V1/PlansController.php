@@ -7,9 +7,9 @@ use App\Http\Requests\Api\V1\PlanUpdateRequest;
 use App\Http\Resources\V1\PlanResource;
 use App\Models\Plan;
 use App\Services\Api\QueryFilters;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Response;
 
 /**
  * Plans CRUD endpoints.
@@ -75,7 +75,7 @@ class PlansController extends ApiController
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Request $request, Plan $plan): JsonResponse
+    public function destroy(Request $request, Plan $plan): Response
     {
         return $this->deleteModel($request, 'Delete:Plan', $plan);
     }
@@ -94,7 +94,7 @@ class PlansController extends ApiController
     /**
      * Permanently delete a plan.
      */
-    public function forceDelete(Request $request, int $plan): JsonResponse
+    public function forceDelete(Request $request, int $plan): Response
     {
         $this->forceDeleteSoftDeleted($request, 'ForceDeleteAny:Plan', Plan::class, $plan);
 

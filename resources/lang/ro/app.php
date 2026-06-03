@@ -61,6 +61,8 @@ return [
         'actions' => [
             'save_settings' => 'Salvează setările',
             'backup_now' => 'Backup acum',
+            'restore_now' => 'Restaurează din backup',
+            'restore_confirm' => 'Da, restaurează acum',
         ],
         'tabs' => [
             'gym_info' => 'Info sală',
@@ -141,6 +143,8 @@ return [
             'backup_config' => 'Configurare backup',
             'backup_config_desc' => 'Introdu calea spre folderul Google Drive sau iCloud sincronizat pe acest calculator.',
             'backup_manual' => 'Backup manual & istoric',
+            'backup_restore' => 'Restaurare din backup',
+            'backup_restore_desc' => 'Încarcă un fișier ZIP de backup pentru a restaura baza de date la o stare anterioară. Acțiunea este ireversibilă — un backup automat de siguranță va fi creat înainte.',
         ],
         'fields' => [
             'gym_name' => 'Numele sălii',
@@ -173,6 +177,8 @@ return [
             'backup_trigger' => 'Când se face backup',
             'backup_end_of_day_time' => 'Ora backup zilnic',
             'backup_keep' => 'Păstrează ultimele N backup-uri',
+            'restore_zip' => 'Fișier ZIP de backup',
+            'restore_include_settings' => 'Restaurează și setările aplicației',
         ],
         'options' => [
             'name_type' => [
@@ -193,10 +199,13 @@ return [
             'tokens_receipt' => 'Tokeni disponibili: {member_name}, {invoice_number}, {amount}, {gym_name}',
             'backup_path' => 'Introdu calea completă spre folderul sincronizat cu Google Drive sau iCloud.',
             'backup_time_format' => 'Format: HH:MM (ex. 22:00)',
+            'restore_include_settings' => 'Dacă este activat, setările aplicației (monedă, prefix factură, etc.) vor fi și ele restaurate.',
         ],
         'backup' => [
             'no_path_set' => 'Nicio cale de backup configurată.',
             'no_backups' => 'Nu există backup-uri create încă.',
+            'restore_heading' => 'Restaurare bază de date',
+            'restore_warning' => '⚠️ Această acțiune va înlocui TOATĂ baza de date curentă (clienți, abonamente, facturi, cheltuieli). Un backup automat de siguranță va fi creat înainte. Ești sigur?',
             'recent_backups' => 'Backup-uri recente',
             'file' => 'Fișier',
             'date' => 'Data',
@@ -448,6 +457,12 @@ return [
         'backup_failed' => 'Eroare la crearea backup-ului',
         'backup_disabled' => 'Backup-ul nu este activat',
         'backup_path_missing' => 'Calea de backup nu este configurată',
+        'restore_success' => 'Baza de date a fost restaurată cu succes',
+        'restore_failed' => 'Eroare la restaurarea bazei de date',
+        'restore_zip_not_found' => 'Fișierul ZIP nu a fost găsit',
+        'restore_zip_invalid' => 'Fișierul ZIP este corupt sau invalid',
+        'restore_no_database' => 'ZIP-ul nu conține un fișier database.sqlite',
+        'restore_invalid_database' => 'Fișierul database.sqlite din ZIP nu este o bază de date validă',
         'expiration_bell_label' => 'Alerte expirare abonamente',
         'expiration_panel_title' => 'Expiră curând',
         'expiration_panel_subtitle' => 'Abonamente care expiră în :days zile',

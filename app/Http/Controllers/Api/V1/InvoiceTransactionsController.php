@@ -9,9 +9,9 @@ use App\Models\InvoiceTransaction;
 use App\Services\Api\QueryFilters;
 use App\Support\AppConfig;
 use App\Support\Data;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Response;
 
 /**
  * Nested invoice transaction endpoints.
@@ -59,7 +59,7 @@ class InvoiceTransactionsController extends ApiController
     /**
      * Delete a transaction belonging to an invoice.
      */
-    public function destroy(Request $request, Invoice $invoice, InvoiceTransaction $transaction): JsonResponse
+    public function destroy(Request $request, Invoice $invoice, InvoiceTransaction $transaction): Response
     {
         $this->requirePermission($request, 'Update:Invoice');
 

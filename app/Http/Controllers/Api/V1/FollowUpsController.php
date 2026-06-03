@@ -8,9 +8,9 @@ use App\Http\Resources\V1\FollowUpResource;
 use App\Models\FollowUp;
 use App\Services\Api\QueryFilters;
 use App\Support\Data;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Response;
 
 /**
  * Follow-ups CRUD endpoints.
@@ -75,7 +75,7 @@ class FollowUpsController extends ApiController
     /**
      * Soft delete a follow-up.
      */
-    public function destroy(Request $request, FollowUp $followUp): JsonResponse
+    public function destroy(Request $request, FollowUp $followUp): Response
     {
         return $this->deleteModel($request, 'Delete:FollowUp', $followUp);
     }
@@ -93,7 +93,7 @@ class FollowUpsController extends ApiController
     /**
      * Permanently delete a follow-up.
      */
-    public function forceDelete(Request $request, int $followUp): JsonResponse
+    public function forceDelete(Request $request, int $followUp): Response
     {
         $this->forceDeleteSoftDeleted($request, 'ForceDeleteAny:FollowUp', FollowUp::class, $followUp);
 

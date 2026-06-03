@@ -7,9 +7,9 @@ use App\Http\Requests\Api\V1\ServiceUpdateRequest;
 use App\Http\Resources\V1\ServiceResource;
 use App\Models\Service;
 use App\Services\Api\QueryFilters;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Response;
 
 /**
  * Services CRUD endpoints.
@@ -71,7 +71,7 @@ class ServicesController extends ApiController
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Request $request, Service $service): JsonResponse
+    public function destroy(Request $request, Service $service): Response
     {
         return $this->deleteModel($request, 'Delete:Service', $service);
     }
@@ -89,7 +89,7 @@ class ServicesController extends ApiController
     /**
      * Permanently delete a service.
      */
-    public function forceDelete(Request $request, int $service): JsonResponse
+    public function forceDelete(Request $request, int $service): Response
     {
         $this->forceDeleteSoftDeleted($request, 'ForceDeleteAny:Service', Service::class, $service);
 
