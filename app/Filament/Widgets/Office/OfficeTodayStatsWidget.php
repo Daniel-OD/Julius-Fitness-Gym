@@ -13,9 +13,6 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 /**
  * Front-desk "today" snapshot: check-ins, check-outs and the day's collections.
- *
- * Deliberately limited to current-day figures — employees never see broader
- * financial reports.
  */
 class OfficeTodayStatsWidget extends StatsOverviewWidget
 {
@@ -28,7 +25,10 @@ class OfficeTodayStatsWidget extends StatsOverviewWidget
     /**
      * @var int | array<string, ?int> | null
      */
-    protected int|array|null $columns = 3;
+    protected int|array|null $columns = [
+        'default' => 1,
+        'sm' => 3,
+    ];
 
     /**
      * @return array<int, Stat>
@@ -51,19 +51,25 @@ class OfficeTodayStatsWidget extends StatsOverviewWidget
 
         return [
             Stat::make(__('app.office.checkins_today'), (string) $checkInsToday)
-                ->descriptionIcon('heroicon-o-arrow-right-end-on-rectangle')
+                ->description(__('app.office.checkins_today_hint'))
+                ->descriptionIcon('heroicon-m-arrow-trending-up')
                 ->icon('heroicon-o-arrow-right-end-on-rectangle')
-                ->color('primary'),
+                ->color('success')
+                ->extraAttributes(['class' => 'office-stat office-stat--checkin']),
 
             Stat::make(__('app.office.checkouts_today'), (string) $checkOutsToday)
-                ->descriptionIcon('heroicon-o-arrow-left-start-on-rectangle')
+                ->description(__('app.office.checkouts_today_hint'))
+                ->descriptionIcon('heroicon-m-arrow-right-start-on-rectangle')
                 ->icon('heroicon-o-arrow-left-start-on-rectangle')
-                ->color('gray'),
+                ->color('info')
+                ->extraAttributes(['class' => 'office-stat office-stat--checkout']),
 
             Stat::make(__('app.office.collections_today'), Helpers::formatCurrency((float) $collectedToday))
-                ->descriptionIcon('heroicon-o-banknotes')
+                ->description(__('app.office.collections_today_hint'))
+                ->descriptionIcon('heroicon-m-banknotes')
                 ->icon('heroicon-o-banknotes')
-                ->color('success'),
+                ->color('warning')
+                ->extraAttributes(['class' => 'office-stat office-stat--collections']),
         ];
     }
 }

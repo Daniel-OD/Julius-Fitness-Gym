@@ -3,6 +3,8 @@
 namespace App\Filament\Office\Pages;
 
 use App\Filament\Widgets\Office\OfficeExpiredSubscriptionsWidget;
+use App\Filament\Widgets\Office\OfficeExpiringSoonWidget;
+use App\Filament\Widgets\Office\OfficePresentNowWidget;
 use App\Filament\Widgets\Office\OfficeTodayStatsWidget;
 use Filament\Pages\Dashboard as BaseDashboard;
 use Filament\Schemas\Components\Component;
@@ -42,11 +44,15 @@ class Dashboard extends BaseDashboard
 
     public function getWidgetsContentComponent(): Component
     {
-        return Grid::make(1)->schema(
-            $this->getWidgetsSchemaComponents([
-                OfficeTodayStatsWidget::class,
-                OfficeExpiredSubscriptionsWidget::class,
-            ]),
-        );
+        return Grid::make(1)
+            ->extraAttributes(['class' => 'office-dashboard'])
+            ->schema(
+                $this->getWidgetsSchemaComponents([
+                    OfficeTodayStatsWidget::class,
+                    OfficePresentNowWidget::class,
+                    OfficeExpiringSoonWidget::class,
+                    OfficeExpiredSubscriptionsWidget::class,
+                ]),
+            );
     }
 }

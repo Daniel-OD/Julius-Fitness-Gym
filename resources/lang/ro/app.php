@@ -560,9 +560,15 @@ return [
 
     'office' => [
         'title' => 'Recepție',
+        'present_now' => 'Prezenți acum',
+        'present_now_placeholder' => 'Prezență live — în curând',
+        'present_now_hint' => 'Aici vor apărea membrii aflați în sală în acest moment.',
         'checkins_today' => 'Check-in-uri azi',
+        'checkins_today_hint' => 'Intrări înregistrate astăzi',
         'checkouts_today' => 'Check-out-uri azi',
+        'checkouts_today_hint' => 'Ieșiri înregistrate astăzi',
         'collections_today' => 'Încasări azi',
+        'collections_today_hint' => 'Plăți încasate astăzi',
         'expired_subscriptions' => 'Abonamente expirate',
         'expired_since' => 'Expirat de',
         'no_expired_subscriptions' => 'Niciun abonament expirat',
@@ -654,8 +660,15 @@ return [
         'today_count' => 'Check-in-uri azi',
         'manual_checkin' => 'Check-in manual',
         'manual_checkin_done' => 'Check-in înregistrat',
+        'manual_checkin_done_for' => ':name — check-in înregistrat',
+        'confirm_checkin_heading' => 'Confirmă check-in',
+        'confirm_checkin_submit' => 'Check-in',
+        'confirm_checkout_heading' => 'Confirmă check-out',
+        'confirm_checkout_submit' => 'Check-out',
+        'checkout_time' => 'Ora check-out',
         'check_out' => 'Check-out',
         'check_out_done' => 'Check-out înregistrat',
+        'check_out_done_for' => ':name — check-out înregistrat',
     ],
 
     'studio' => [
