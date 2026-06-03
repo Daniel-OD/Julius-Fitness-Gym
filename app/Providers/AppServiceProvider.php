@@ -24,6 +24,8 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        $this->ensureStorageDirectoriesExist();
+
         RateLimiter::for('api-login', fn (Request $request) => Limit::perMinute(10)->by($request->ip()));
 
         View::share('studio', Studio::meta());
@@ -34,5 +36,21 @@ class AppServiceProvider extends ServiceProvider
             'Repository' => Studio::repository(),
             'Reference' => (string) config('studio.ref'),
         ]);
+    }
+
+    private function ensureStorageDirectoriesExist(): void
+    {
+        $directories = [
+            storage_path('framework/views'),
+            storage_path('framework/cache/data'),
+            storage_path('framework/sessions'),
+            storage_path('logs'),
+        ];
+
+        foreach ($directories as $directory) {
+            if (! is_dir($directory)) {
+                mkdir($directory, 0755, true);
+            }
+        }
     }
 }
