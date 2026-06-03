@@ -1,19 +1,6 @@
 # syntax=docker/dockerfile:1
 
-# ── Stage 1: Frontend assets (Vite) ──────────────────────────────────────────
-FROM node:22-bookworm-slim AS frontend
-
-WORKDIR /app
-
-COPY package.json package-lock.json ./
-RUN npm ci --ignore-scripts
-
-COPY vite.config.js ./
-COPY resources ./resources
-
-RUN npm run build
-
-# ── Stage 2: PHP dependencies ────────────────────────────────────────────────
+# ── Stage 1: PHP dependencies (required before Vite / Filament theme build) ─
 FROM composer:2 AS vendor
 
 WORKDIR /app
@@ -28,6 +15,23 @@ RUN composer install \
 
 COPY . .
 RUN composer dump-autoload --optimize
+
+# ── Stage 2: Frontend assets (Vite + Filament theme.css) ─────────────────────
+FROM node:22-bookworm-slim AS frontend
+
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+RUN npm ci --ignore-scripts
+
+COPY vite.config.js ./
+COPY resources ./resources
+COPY app/Filament ./app/Filament
+
+# theme.css imports vendor/filament/filament/resources/css/theme.css
+COPY --from=vendor /app/vendor ./vendor
+
+RUN npm run build
 
 # ── Stage 3: Application (PHP-FPM 8.4) ───────────────────────────────────────
 FROM php:8.4-fpm-bookworm AS app
