@@ -145,6 +145,7 @@ return [
             'backup_manual' => 'Backup manual & istoric',
             'backup_restore' => 'Restaurare din backup',
             'backup_restore_desc' => 'Încarcă un fișier ZIP de backup pentru a restaura baza de date la o stare anterioară. Acțiunea este ireversibilă — un backup automat de siguranță va fi creat înainte.',
+            'checkin' => 'Check-in & prezență',
         ],
         'fields' => [
             'gym_name' => 'Numele sălii',
@@ -163,6 +164,7 @@ return [
             'discount_percent_available' => 'Reduceri disponibile (%)',
             'categories' => 'Categorii cheltuieli',
             'expiring_days' => 'Avertizare abonamente expirante (zile)',
+            'present_now_grace_minutes' => 'Perioadă grație „Prezenți acum” (minute)',
             'financial_year_start' => 'Început an fiscal',
             'financial_year_end' => 'Sfârșit an fiscal',
             'prefix' => 'Prefix număr factură',
@@ -200,6 +202,7 @@ return [
             'backup_path' => 'Introdu calea completă spre folderul sincronizat cu Google Drive sau iCloud.',
             'backup_time_format' => 'Format: HH:MM (ex. 22:00)',
             'restore_include_settings' => 'Dacă este activat, setările aplicației (monedă, prefix factură, etc.) vor fi și ele restaurate.',
+            'present_now_grace_minutes' => 'Cât timp după check-out rămâne membrul vizibil la „Prezenți acum” pe recepție.',
         ],
         'backup' => [
             'no_path_set' => 'Nicio cale de backup configurată.',
@@ -572,6 +575,13 @@ return [
         'expired_subscriptions' => 'Abonamente expirate',
         'expired_since' => 'Expirat de',
         'no_expired_subscriptions' => 'Niciun abonament expirat',
+        'entry_time' => 'Ora intrării',
+        'no_present_now' => 'Niciun membru prezent momentan',
+        'presence_status' => 'Status',
+        'present_status_in' => 'În sală de la :time',
+        'present_status_left' => 'Ieșit acum :minutes min',
+        'expiring_soon' => 'Expiră curând',
+        'no_expiring_soon' => 'Niciun abonament care expiră curând',
     ],
 
     'members' => [
@@ -635,6 +645,7 @@ return [
         'no_active_subscription' => 'Niciun abonament activ. Acces refuzat.',
         'no_active_subscription_warning' => 'Bun venit, :name! Niciun abonament activ găsit.',
         'rate_limited' => 'Ai efectuat deja un check-in recent. Așteptați :minutes min.',
+        'already_present' => ':name este deja în sală. Efectuați check-out mai întâi.',
         'no_open_checkin' => 'Niciun check-in deschis găsit.',
         'checkout_success' => 'La revedere, :name! Vizita a fost înregistrată.',
     ],
@@ -669,6 +680,8 @@ return [
         'check_out' => 'Check-out',
         'check_out_done' => 'Check-out înregistrat',
         'check_out_done_for' => ':name — check-out înregistrat',
+        'already_present_title' => 'Deja în sală',
+        'already_present_body' => ':name are deja un check-in deschis. Efectuați check-out mai întâi.',
     ],
 
     'studio' => [

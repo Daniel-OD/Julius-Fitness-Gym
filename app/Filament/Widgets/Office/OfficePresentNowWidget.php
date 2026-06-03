@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets\Office;
 
 use App\Models\CheckIn;
+use App\Services\CheckIns\CheckInService;
 use App\Support\AppConfig;
 use Carbon\CarbonImmutable;
 use Filament\Tables\Columns\TextColumn;
@@ -11,8 +12,7 @@ use Filament\Widgets\TableWidget;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
- * Read-only list of members currently in the gym: checked in today and not yet
- * checked out. Polls every 30 seconds so the front desk sees live occupancy.
+ * Read-only list of members currently in the gym (or who left within the grace window).
  */
 class OfficePresentNowWidget extends TableWidget
 {
@@ -25,25 +25,11 @@ class OfficePresentNowWidget extends TableWidget
      */
     protected int|string|array $columnSpan = 'full';
 
-    /**
-     * @return Builder<CheckIn>
-     */
-    public function getPresentNowQuery(): Builder
-    {
-        $today = CarbonImmutable::today(AppConfig::timezone())->toDateString();
-
-        return CheckIn::query()
-            ->with('member')
-            ->whereDate('checked_in_at', $today)
-            ->whereNull('checked_out_at')
-            ->latest('checked_in_at');
-    }
-
     public function table(Table $table): Table
     {
         return $table
             ->heading(__('app.office.present_now'))
-            ->query(fn (): Builder => $this->getPresentNowQuery())
+            ->query(fn (): Builder => app(CheckInService::class)->presentNowQuery())
             ->columns([
                 TextColumn::make('member.name')
                     ->label(__('app.fields.member'))
@@ -55,6 +41,26 @@ class OfficePresentNowWidget extends TableWidget
                     ->time('H:i')
                     ->alignRight()
                     ->sortable(),
+                TextColumn::make('presence_status')
+                    ->label(__('app.office.presence_status'))
+                    ->state(function (CheckIn $record): string {
+                        $service = app(CheckInService::class);
+
+                        if ($record->checked_out_at === null) {
+                            return __('app.office.present_status_in', [
+                                'time' => $record->checked_in_at
+                                    ->timezone(AppConfig::timezone())
+                                    ->format('H:i'),
+                            ]);
+                        }
+
+                        $minutes = (int) CarbonImmutable::parse($record->checked_out_at)
+                            ->diffInMinutes(CarbonImmutable::now(AppConfig::timezone()));
+
+                        return __('app.office.present_status_left', ['minutes' => max($minutes, 1)]);
+                    })
+                    ->color(fn (CheckIn $record): string => $record->checked_out_at === null ? 'success' : 'gray')
+                    ->badge(),
             ])
             ->emptyStateHeading(__('app.office.no_present_now'))
             ->defaultPaginationPageOption(10)
