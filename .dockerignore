@@ -1,0 +1,51 @@
+# Git & IDE
+.git
+.github
+.idea
+.vscode
+.cursor
+.claude
+.agents
+.cursorignore
+*.md
+!DOCKER_SETUP.md
+!GYM_DEPLOYMENT_GUIDE.md
+!GYM_TEST_README.md
+!DOCKER_AUDIT_REPORT.md
+
+# Dependencies (installed in image or via entrypoint)
+/node_modules
+/vendor
+
+# Build output (generated in image)
+/public/build
+/public/hot
+
+# Environment & secrets
+.env
+.env.*
+!.env.docker.example
+
+# Storage runtime (mounted as volume)
+/storage/*.key
+/storage/pail
+/storage/logs/*
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/storage/app/public/*
+/storage/app/restore-tmp-*
+
+# Tests & dev tools
+/tests
+/phpunit.xml
+/.phpunit.cache
+/phpunit.result.cache
+/composer.phar
+/dist
+/installer
+
+# OS
+.DS_Store
+Thumbs.db
+*.log

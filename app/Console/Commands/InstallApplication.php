@@ -116,7 +116,12 @@ class InstallApplication extends Command
         $this->setEnvValue('APP_NAME', $name);
         $this->setEnvValue('APP_URL', $url);
         $this->setEnvValue('APP_ENV', 'local');
-        $this->setEnvValue('DB_CONNECTION', 'sqlite');
+
+        $envContent = File::get($envPath);
+
+        if (! preg_match('/^DB_CONNECTION=mysql/m', $envContent)) {
+            $this->setEnvValue('DB_CONNECTION', 'sqlite');
+        }
     }
 
     private function setEnvValue(string $key, string $value): void

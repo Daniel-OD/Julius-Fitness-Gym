@@ -1,0 +1,109 @@
+name: julius-fitness-gym
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: app
+    container_name: julius_gym_app
+    restart: unless-stopped
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      CONTAINER_ROLE: app
+      DB_HOST: mysql
+    volumes:
+      - .:/var/www/html
+      - julius_storage:/var/www/html/storage
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - julius
+
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: julius_gym_nginx
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-80}:80"
+    volumes:
+      - .:/var/www/html:ro
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - julius_storage:/var/www/html/storage:ro
+    depends_on:
+      app:
+        condition: service_started
+    networks:
+      - julius
+
+  mysql:
+    image: mysql:8.0
+    container_name: julius_gym_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:-julius_gym}
+      MYSQL_USER: ${DB_USERNAME:-julius}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-julius_secret}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root_secret}
+    volumes:
+      - julius_mysql:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-p${MYSQL_ROOT_PASSWORD:-root_secret}"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 40s
+    networks:
+      - julius
+
+  queue:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: app
+    container_name: julius_gym_queue
+    restart: unless-stopped
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      CONTAINER_ROLE: queue
+      DB_HOST: mysql
+    command: ["php", "artisan", "queue:work", "--sleep=3", "--tries=3", "--max-time=3600", "--no-interaction"]
+    volumes:
+      - .:/var/www/html
+      - julius_storage:/var/www/html/storage
+    depends_on:
+      app:
+        condition: service_started
+      mysql:
+        condition: service_healthy
+    networks:
+      - julius
+
+  redis:
+    profiles: ["redis"]
+    image: redis:7-alpine
+    container_name: julius_gym_redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - julius_redis:/data
+    networks:
+      - julius
+
+volumes:
+  julius_mysql:
+    name: julius_gym_mysql_data
+  julius_storage:
+    name: julius_gym_storage
+  julius_redis:
+    name: julius_gym_redis_data
+
+networks:
+  julius:
+    name: julius_gym_network
+    driver: bridge
