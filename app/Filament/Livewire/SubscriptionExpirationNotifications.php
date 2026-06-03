@@ -5,8 +5,10 @@ namespace App\Filament\Livewire;
 use App\Services\Subscriptions\SubscriptionExpirationNotificationService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Lazy;
 use Livewire\Component;
 
+#[Lazy]
 class SubscriptionExpirationNotifications extends Component
 {
     public int $unreadCount = 0;
@@ -74,7 +76,14 @@ class SubscriptionExpirationNotifications extends Component
             ->values()
             ->all();
 
-        $this->unreadCount = $service->getUnreadCount($user);
+        $this->unreadCount = collect($this->notifications)
+            ->where('isRead', false)
+            ->count();
+    }
+
+    public function placeholder(): View
+    {
+        return view('filament.components.subscription-expiration-notifications-placeholder');
     }
 
     public function render(): View

@@ -24,7 +24,12 @@ class AppendStudioSignature
             $response->headers->set($name, $value);
         }
 
-        if ($response instanceof JsonResponse && $response->getStatusCode() >= 200 && $response->getStatusCode() < 300) {
+        if (
+            $response instanceof JsonResponse
+            && $request->is('api/*')
+            && $response->getStatusCode() >= 200
+            && $response->getStatusCode() < 300
+        ) {
             $data = $response->getData(true);
 
             if (is_array($data) && ! array_key_exists('_studio', $data)) {

@@ -24,6 +24,8 @@ class RecentTransactionsTableWidget extends TableWidget
 
     protected static ?int $sort = -35;
 
+    protected ?string $placeholderHeight = '14rem';
+
     protected static ?string $heading = null;
 
     /**

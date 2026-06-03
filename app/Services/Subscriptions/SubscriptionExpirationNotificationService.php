@@ -17,6 +17,14 @@ use Illuminate\Support\Facades\Storage;
 class SubscriptionExpirationNotificationService
 {
     /**
+     * @return Collection<int, Subscription>
+     */
+    private function expiringSoonSubscriptions(): Collection
+    {
+        return once(fn (): Collection => $this->expiringSoonQuery()->get());
+    }
+
+    /**
      * @return Builder<Subscription>
      */
     public function expiringSoonQuery(): Builder
@@ -34,18 +42,9 @@ class SubscriptionExpirationNotificationService
 
     public function getUnreadCount(User $user): int
     {
-        $subscriptionIds = $this->expiringSoonQuery()->pluck('id');
-
-        if ($subscriptionIds->isEmpty()) {
-            return 0;
-        }
-
-        $readCount = SubscriptionExpirationNotificationRead::query()
-            ->where('user_id', $user->id)
-            ->whereIn('subscription_id', $subscriptionIds)
+        return $this->getItemsForUser($user)
+            ->where(fn (SubscriptionExpirationNotificationItem $item): bool => ! $item->isRead)
             ->count();
-
-        return $subscriptionIds->count() - $readCount;
     }
 
     /**
@@ -53,7 +52,7 @@ class SubscriptionExpirationNotificationService
      */
     public function getItemsForUser(User $user): Collection
     {
-        $subscriptions = $this->expiringSoonQuery()->get();
+        $subscriptions = $this->expiringSoonSubscriptions();
 
         if ($subscriptions->isEmpty()) {
             return collect();
@@ -97,7 +96,7 @@ class SubscriptionExpirationNotificationService
     {
         $now = now();
 
-        foreach ($this->expiringSoonQuery()->pluck('id') as $subscriptionId) {
+        foreach ($this->expiringSoonSubscriptions()->pluck('id') as $subscriptionId) {
             SubscriptionExpirationNotificationRead::query()->updateOrCreate(
                 [
                     'user_id' => $user->id,

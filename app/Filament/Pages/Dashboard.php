@@ -4,7 +4,6 @@ namespace App\Filament\Pages;
 
 use App\Filament\Widgets\Analytics\CashflowTrendChartWidget;
 use App\Filament\Widgets\Analytics\ExpenseCategoriesDoughnutChartWidget;
-use App\Filament\Widgets\Analytics\ExpiringSoonSubscriptionsTableWidget;
 use App\Filament\Widgets\Analytics\FinancialMetricsWidget;
 use App\Filament\Widgets\Analytics\MembershipMetricsWidget;
 use App\Filament\Widgets\Analytics\MembershipOverviewSubscriptionsTableWidget;
@@ -153,11 +152,6 @@ class Dashboard extends \Filament\Pages\Dashboard
             Grid::make($columns)->schema([
                 ...$this->getWidgetsSchemaComponents([
                     GymOverviewStatsWidget::class,
-                ]),
-            ]),
-            Grid::make($columns)->schema([
-                ...$this->getWidgetsSchemaComponents([
-                    ExpiringSoonSubscriptionsTableWidget::class,
                 ]),
             ]),
             Grid::make($columns)->schema([

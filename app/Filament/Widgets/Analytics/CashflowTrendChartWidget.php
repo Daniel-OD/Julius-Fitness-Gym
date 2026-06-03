@@ -26,6 +26,8 @@ class CashflowTrendChartWidget extends ChartWidget
 
     protected static ?int $sort = -38;
 
+    protected ?string $placeholderHeight = '400px';
+
     protected ?string $maxHeight = '400px';
 
     public ?string $filter = '7days';

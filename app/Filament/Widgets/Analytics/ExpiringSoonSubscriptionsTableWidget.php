@@ -41,12 +41,21 @@ class ExpiringSoonSubscriptionsTableWidget extends TableWidget
     protected function getExpiringSoonQuery(): Builder
     {
         $today = CarbonImmutable::today(AppConfig::timezone());
+        $todayString = $today->toDateString();
         $end = $today->addDays(Helpers::getSubscriptionExpiringDays());
 
         return Subscription::query()
-            ->with(['member', 'plan'])
-            ->whereDate('start_date', '<=', $today->toDateString())
-            ->whereDate('end_date', '>=', $today->toDateString())
+            ->with([
+                'plan',
+                'renewals',
+                'member' => fn ($q) => $q->with([
+                    'subscriptions' => fn ($sq) => $sq
+                        ->whereDate('start_date', '>', $todayString)
+                        ->select(['id', 'member_id']),
+                ]),
+            ])
+            ->whereDate('start_date', '<=', $todayString)
+            ->whereDate('end_date', '>=', $todayString)
             ->whereDate('end_date', '<=', $end->toDateString())
             ->orderBy('end_date');
     }
@@ -99,16 +108,11 @@ class ExpiringSoonSubscriptionsTableWidget extends TableWidget
                         ->modalWidth('6xl')
                         ->closeModalByClickingAway(false)
                         ->visible(function (Subscription $record): bool {
-                            if ($record->renewals()->exists()) {
+                            if ($record->renewals->isNotEmpty()) {
                                 return false;
                             }
 
-                            $today = CarbonImmutable::today(AppConfig::timezone())->toDateString();
-
-                            return ! Subscription::query()
-                                ->where('member_id', $record->member_id)
-                                ->whereDate('start_date', '>', $today)
-                                ->exists();
+                            return $record->member->subscriptions->isEmpty();
                         })
                         ->schema(fn (Subscription $record): array => SubscriptionForm::renewSchema($record))
                         ->action(function (Subscription $record, array $data): void {

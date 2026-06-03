@@ -55,4 +55,9 @@ final readonly class AnalyticsDateRange
     {
         return $this->end->toDateString();
     }
+
+    public function cacheKey(): string
+    {
+        return $this->start->toIso8601String().'|'.$this->end->toIso8601String();
+    }
 }

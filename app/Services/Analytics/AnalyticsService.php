@@ -15,9 +15,12 @@ use App\Support\Data;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 
 class AnalyticsService
 {
+    private const CACHE_SECONDS = 90;
+
     private function monthGroupExpression(string $column, string $driver): string
     {
         return match ($driver) {
@@ -43,9 +46,36 @@ class AnalyticsService
      */
     public function financialMetrics(AnalyticsDateRange $range): array
     {
-        $salesTotal = (float) Invoice::query()
-            ->whereBetween('date', [$range->start->toDateString(), $range->end->toDateString()])
-            ->sum('total_amount');
+        return $this->remember('financial:'.$range->cacheKey(), fn (): array => $this->computeFinancialMetrics($range));
+    }
+
+    /**
+     * @return array{
+     *   net_revenue: float,
+     *   collected: float,
+     *   collected_from_invoices: float,
+     *   collected_from_uninvoiced: float,
+     *   refunds: float,
+     *   discounts: float,
+     *   outstanding: float,
+     *   expenses: float,
+     *   profit: float,
+     *   uninvoiced_subscriptions_count: int,
+     * }
+     */
+    private function computeFinancialMetrics(AnalyticsDateRange $range): array
+    {
+        $startDate = $range->start->toDateString();
+        $endDate = $range->end->toDateString();
+
+        $invoiceTotals = Invoice::query()
+            ->whereBetween('date', [$startDate, $endDate])
+            ->selectRaw('COALESCE(SUM(total_amount), 0) as sales_total')
+            ->selectRaw('COALESCE(SUM(discount_amount), 0) as discounts_total')
+            ->first();
+
+        $salesTotal = (float) ($invoiceTotals->sales_total ?? 0);
+        $discounts = (float) ($invoiceTotals->discounts_total ?? 0);
 
         $transactions = InvoiceTransaction::query()
             ->whereBetween('occurred_at', [$range->start, $range->end])
@@ -61,10 +91,6 @@ class AnalyticsService
         $collected = $collectedFromInvoices + $collectedFromUninvoiced;
         $netRevenue = max($salesTotal + $collectedFromUninvoiced - $refundsTotal, 0);
 
-        $discounts = (float) Invoice::query()
-            ->whereBetween('date', [$range->start->toDateString(), $range->end->toDateString()])
-            ->sum('discount_amount');
-
         $outstanding = (float) Invoice::query()
             ->whereDate('date', '<=', $range->referenceDateString())
             ->where('due_amount', '>', 0)
@@ -72,7 +98,7 @@ class AnalyticsService
             ->sum('due_amount');
 
         $expenses = (float) Expense::query()
-            ->whereBetween('date', [$range->start->toDateString(), $range->end->toDateString()])
+            ->whereBetween('date', [$startDate, $endDate])
             ->sum('amount');
 
         return [
@@ -139,6 +165,14 @@ class AnalyticsService
      */
     public function membershipMetrics(AnalyticsDateRange $range): array
     {
+        return $this->remember('membership:'.$range->cacheKey(), fn (): array => $this->computeMembershipMetrics($range));
+    }
+
+    /**
+     * @return array{active_members: int, new_signups: int, renewals: int, expired_not_renewed: int}
+     */
+    private function computeMembershipMetrics(AnalyticsDateRange $range): array
+    {
         $referenceDate = $range->referenceDateString();
 
         $activeMembers = Member::query()
@@ -174,6 +208,12 @@ class AnalyticsService
     public function expiringSubscriptionsCount(?CarbonImmutable $today = null): int
     {
         $today ??= CarbonImmutable::today(AppConfig::timezone());
+
+        return $this->remember('expiring-count:'.$today->toDateString(), fn (): int => $this->computeExpiringSubscriptionsCount($today));
+    }
+
+    private function computeExpiringSubscriptionsCount(CarbonImmutable $today): int
+    {
         $expiringDays = Helpers::getSubscriptionExpiringDays();
         $end = $today->addDays($expiringDays);
 
@@ -199,6 +239,14 @@ class AnalyticsService
      */
     public function collectedTrendByDate(AnalyticsDateRange $range): array
     {
+        return $this->remember('collected-trend-day:'.$range->cacheKey(), fn (): array => $this->computeCollectedTrendByDate($range));
+    }
+
+    /**
+     * @return array<string, float>
+     */
+    private function computeCollectedTrendByDate(AnalyticsDateRange $range): array
+    {
         /** @var Collection<string, float> $rows */
         $rows = InvoiceTransaction::query()
             ->whereBetween('occurred_at', [$range->start, $range->end])
@@ -222,6 +270,14 @@ class AnalyticsService
      * @return array<string, float>
      */
     public function collectedTrendByMonth(AnalyticsDateRange $range): array
+    {
+        return $this->remember('collected-trend-month:'.$range->cacheKey(), fn (): array => $this->computeCollectedTrendByMonth($range));
+    }
+
+    /**
+     * @return array<string, float>
+     */
+    private function computeCollectedTrendByMonth(AnalyticsDateRange $range): array
     {
         $driver = InvoiceTransaction::query()->getModel()->getConnection()->getDriverName();
         $monthExpression = $this->monthGroupExpression('occurred_at', $driver);
@@ -265,6 +321,14 @@ class AnalyticsService
      */
     public function expenseTrendByDate(AnalyticsDateRange $range): array
     {
+        return $this->remember('expense-trend-day:'.$range->cacheKey(), fn (): array => $this->computeExpenseTrendByDate($range));
+    }
+
+    /**
+     * @return array<string, float>
+     */
+    private function computeExpenseTrendByDate(AnalyticsDateRange $range): array
+    {
         /** @var Collection<string, float> $rows */
         $rows = Expense::query()
             ->whereBetween('date', [$range->start->toDateString(), $range->end->toDateString()])
@@ -282,6 +346,14 @@ class AnalyticsService
      * @return array<string, float>
      */
     public function expenseTrendByMonth(AnalyticsDateRange $range): array
+    {
+        return $this->remember('expense-trend-month:'.$range->cacheKey(), fn (): array => $this->computeExpenseTrendByMonth($range));
+    }
+
+    /**
+     * @return array<string, float>
+     */
+    private function computeExpenseTrendByMonth(AnalyticsDateRange $range): array
     {
         $driver = Expense::query()->getModel()->getConnection()->getDriverName();
         $monthExpression = $this->monthGroupExpression('date', $driver);
@@ -303,6 +375,17 @@ class AnalyticsService
      * @return Collection<int, array{key: string, plan_id: int, plan_name: string, collected: float, subscriptions: int}>
      */
     public function topPlansByCollected(AnalyticsDateRange $range, int $limit = 5): Collection
+    {
+        return $this->remember(
+            'top-plans:'.$range->cacheKey().':'.$limit,
+            fn (): Collection => $this->computeTopPlansByCollected($range, $limit),
+        );
+    }
+
+    /**
+     * @return Collection<int, array{key: string, plan_id: int, plan_name: string, collected: float, subscriptions: int}>
+     */
+    private function computeTopPlansByCollected(AnalyticsDateRange $range, int $limit): Collection
     {
         /** @var Collection<int, object{plan_id:int, plan_name:string, collected:float, subscriptions:int}> $rows */
         $rows = Plan::query()
@@ -367,6 +450,17 @@ class AnalyticsService
      */
     public function expenseCategoryBreakdownForChart(AnalyticsDateRange $range, int $limit = 5): Collection
     {
+        return $this->remember(
+            'expense-categories:'.$range->cacheKey().':'.$limit,
+            fn (): Collection => $this->computeExpenseCategoryBreakdownForChart($range, $limit),
+        );
+    }
+
+    /**
+     * @return Collection<int, array{key: string, category: string, total: float}>
+     */
+    private function computeExpenseCategoryBreakdownForChart(AnalyticsDateRange $range, int $limit): Collection
+    {
         /** @var Collection<int, object{category: string, total: float}> $rows */
         $rows = Expense::query()
             ->whereBetween('date', [$range->start->toDateString(), $range->end->toDateString()])
@@ -394,5 +488,24 @@ class AnalyticsService
         }
 
         return $top;
+    }
+
+    /**
+     * @template T
+     *
+     * @param  callable(): T  $callback
+     * @return T
+     */
+    private function remember(string $key, callable $callback): mixed
+    {
+        if (app()->runningUnitTests()) {
+            return $callback();
+        }
+
+        return Cache::remember(
+            'analytics:'.$key,
+            now()->addSeconds(self::CACHE_SECONDS),
+            $callback,
+        );
     }
 }
