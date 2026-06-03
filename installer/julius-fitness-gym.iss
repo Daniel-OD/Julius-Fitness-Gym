@@ -54,4 +54,4 @@ Name: "{userprograms}\Julius Fitness Gym\Dezinstalare"; \
 [Messages]
 WelcomeLabel1=Bun venit la instalarea Julius Fitness Gym
 WelcomeLabel2=Acest program va instala Julius Fitness Gym versiunea 1.0 pe calculatorul dumneavoastră.%n%nAsigurați-vă că Laravel Herd este instalat înainte de a continua.%n%nApăsați Înainte pentru a continua.
-FinishedLabel=Julius Fitness Gym a fost instalat cu succes!%n%nAplicația se va deschide automat în browser la adresa:%n%nhttp://julius-fitness-gym.test%n%nDate autentificare:%nAdmin: admin@julius.test%nParolă: julius2024
+FinishedLabel=Julius Fitness Gym a fost instalat cu succes!%n%nAplicația se va deschide automat în browser la adresa:%n%nhttp://julius-fitness-gym.test%n%nAdmin Filament: /admin%n%nCreează utilizatorul admin cu: php artisan make:filament-user

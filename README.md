@@ -300,9 +300,23 @@ php artisan serve
 3. Verify `.env` `APP_URL`: `http://julius-fitness-gym.test`
 4. Restart Herd service
 
-## Windows Installer
+## Desktop installers (Windows & macOS)
 
-See [installer/README.md](installer/README.md) for building and deploying the `.exe` installer.
+Packaging for machines with [Laravel Herd](https://herd.laravel.com), Composer, and Node.js.
+
+| Platform | Build command | Output |
+|----------|---------------|--------|
+| Windows | `installer\build-installer.bat` | `dist/Julius-Fitness-Gym-Setup-v1.0.exe` |
+| macOS | `./installer/build-dmg.sh` | `dist/Julius-Fitness-Gym-Setup-v1.0.dmg` |
+
+Quick install from a git clone on Mac:
+
+```bash
+./install.sh
+./open.command
+```
+
+See [installer/README.md](installer/README.md) for full client setup steps.
 
 ## Contributing
 
