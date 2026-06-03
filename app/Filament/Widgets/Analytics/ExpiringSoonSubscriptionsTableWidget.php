@@ -31,10 +31,7 @@ class ExpiringSoonSubscriptionsTableWidget extends TableWidget
     /**
      * @var int | string | array<string, int | null>
      */
-    protected int|string|array $columnSpan = [
-        'default' => 1,
-        'md' => 3,
-    ];
+    protected int|string|array $columnSpan = 'full';
 
     /**
      * Build the query that powers the expiring soon table.

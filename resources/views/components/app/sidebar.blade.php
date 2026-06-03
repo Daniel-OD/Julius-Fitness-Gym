@@ -1,6 +1,6 @@
-{{-- Brand --}}
-<div class="flex h-16 shrink-0 items-center gap-3 border-b border-gray-200 px-6">
-    <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-600 text-white">
+<div class="flex h-16 shrink-0 items-center gap-3 border-b border-zinc-200 px-6 dark:border-white/8">
+    <span
+        class="flex h-9 w-9 items-center justify-center rounded-full border border-brand-500/30 bg-brand-500/15 text-brand-400">
         <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
             stroke-linecap="round" stroke-linejoin="round">
             <path d="M6.5 6.5 17.5 17.5" />
@@ -13,11 +13,11 @@
         </svg>
     </span>
     <div class="min-w-0">
-        <p class="truncate text-sm font-semibold leading-tight text-gray-900">Julius Fitness</p>
-        <p class="truncate text-xs text-gray-500">Gym Management</p>
+        <p class="truncate text-sm font-semibold leading-tight text-zinc-900 dark:text-white">Julius Fitness</p>
+        <p class="truncate text-xs text-zinc-500 dark:text-white/40">Gym Management</p>
     </div>
     <button type="button" data-sidebar-close
-        class="ml-auto rounded-md p-1.5 text-gray-500 hover:bg-gray-100 lg:hidden">
+        class="ml-auto rounded-full p-1.5 text-zinc-500 transition-colors hover:bg-zinc-100 dark:text-white/50 dark:hover:bg-white/5 lg:hidden">
         <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
             stroke-linecap="round" stroke-linejoin="round">
             <path d="M18 6 6 18" />
@@ -26,8 +26,7 @@
     </button>
 </div>
 
-{{-- Navigation --}}
-<nav class="flex-1 space-y-6 overflow-y-auto px-3 py-4">
+<nav class="flex-1 space-y-6 overflow-y-auto px-3 py-5">
     <div class="space-y-1">
         <x-app.nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
             <x-slot:icon>
@@ -38,22 +37,22 @@
     </div>
 
     <div>
-        <p class="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+        <p class="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-white/30">
             Membership
         </p>
         <div class="space-y-1">
-            <x-app.nav-link href="#" :active="false">
+            <x-app.nav-link :href="route('web.members.index')" :active="request()->routeIs('web.members.*')">
                 <x-slot:icon>
                     <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" />
                     <path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
                 </x-slot:icon>
-                Members
+                {{ __('app.resources.members.plural') }}
             </x-app.nav-link>
-            <x-app.nav-link href="#" :active="false">
+            <x-app.nav-link :href="route('web.subscriptions.index')" :active="request()->routeIs('web.subscriptions.*')">
                 <x-slot:icon>
                     <path d="M3 12a9 9 0 1 0 18 0 9 9 0 0 0-18 0Z" /><path d="M12 7v5l3 3" />
                 </x-slot:icon>
-                Subscriptions
+                {{ __('app.resources.subscriptions.plural') }}
             </x-app.nav-link>
             <x-app.nav-link href="#" :active="false">
                 <x-slot:icon>
@@ -71,7 +70,7 @@
     </div>
 
     <div>
-        <p class="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+        <p class="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-white/30">
             Finance
         </p>
         <div class="space-y-1">
@@ -93,7 +92,7 @@
     </div>
 
     <div>
-        <p class="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+        <p class="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-white/30">
             CRM
         </p>
         <div class="space-y-1">
@@ -107,7 +106,7 @@
     </div>
 
     <div>
-        <p class="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+        <p class="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-white/30">
             Admin
         </p>
         <div class="space-y-1">
@@ -129,10 +128,9 @@
     </div>
 </nav>
 
-{{-- Footer card --}}
-<div class="border-t border-gray-200 p-3">
-    <div class="rounded-lg bg-gray-50 p-3 text-xs text-gray-500">
-        <p class="font-medium text-gray-700">UI foundation</p>
-        <p class="mt-0.5">Placeholder data — connect to backend models once ready.</p>
+<div class="border-t border-zinc-200 p-3 dark:border-white/8">
+    <div class="rounded-xl border border-zinc-200 bg-zinc-50 p-3 text-xs text-zinc-500 dark:border-white/8 dark:bg-surface dark:text-white/45">
+        <p class="font-medium text-zinc-700 dark:text-white/70">Julius Fitness</p>
+        <p class="mt-1 leading-relaxed">SpaceX-inspired dark UI</p>
     </div>
 </div>

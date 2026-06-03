@@ -4,6 +4,8 @@ namespace App\Filament\Resources\Invoices\Pages;
 
 use App\Enums\Status;
 use App\Filament\Resources\Invoices\InvoiceResource;
+use App\Filament\Widgets\Billing\InvoicesListSummaryWidget;
+use App\Filament\Widgets\Billing\UninvoicedSubscriptionsTableWidget;
 use App\Models\Invoice;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Schemas\Components\Tabs\Tab;
@@ -16,6 +18,26 @@ class ListInvoices extends ListRecords
     protected function getHeaderActions(): array
     {
         return [];
+    }
+
+    /**
+     * @return array<class-string>
+     */
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            InvoicesListSummaryWidget::class,
+        ];
+    }
+
+    /**
+     * @return array<class-string>
+     */
+    protected function getFooterWidgets(): array
+    {
+        return [
+            UninvoicedSubscriptionsTableWidget::class,
+        ];
     }
 
     public function getTabs(): array

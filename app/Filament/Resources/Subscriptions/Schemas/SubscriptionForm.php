@@ -9,6 +9,7 @@ use App\Models\Invoice;
 use App\Models\Member;
 use App\Models\Plan;
 use App\Models\Subscription;
+use App\Support\AppConfig;
 use App\Support\Billing\InvoiceCalculator;
 use App\Support\Billing\PaymentMethod;
 use App\Support\Data;
@@ -20,6 +21,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
+use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
@@ -45,9 +47,29 @@ class SubscriptionForm
      */
     public static function configure(Schema $schema): Schema
     {
+        $panelId = filament()->getCurrentPanel()?->getId();
+
         return $schema
             ->columns(1)
             ->components([
+                // Office-only: subscription type + internal note
+                Section::make(__('app.subscriptions.office_section'))
+                    ->schema([
+                        Select::make('type')
+                            ->label(__('app.subscriptions.type'))
+                            ->options([
+                                'official' => __('app.subscriptions.type_official'),
+                                'internal' => __('app.subscriptions.type_internal'),
+                            ])
+                            ->default('official')
+                            ->required(),
+                        Textarea::make('internal_note')
+                            ->label(__('app.subscriptions.internal_note'))
+                            ->rows(2)
+                            ->nullable(),
+                    ])
+                    ->columns(2)
+                    ->visible(fn (): bool => $panelId === 'office'),
                 Group::make()
                     ->columns(6)
                     ->columnSpanFull()
@@ -77,8 +99,8 @@ class SubscriptionForm
                                 $invoices = self::invoiceItems($get);
 
                                 foreach ($invoices as $index => $invoice) {
-                                    $discount = \App\Support\Data::float($invoice['discount_amount'] ?? 0);
-                                    $paid = \App\Support\Data::float($invoice['paid_amount'] ?? 0);
+                                    $discount = Data::float($invoice['discount_amount'] ?? 0);
+                                    $paid = Data::float($invoice['paid_amount'] ?? 0);
                                     $itemKey = (string) $index;
 
                                     $summary = InvoiceCalculator::summary(
@@ -285,11 +307,11 @@ class SubscriptionForm
     }
 
     /**
-     * @return array<int, \Filament\Schemas\Components\Component>
+     * @return array<int, Component>
      */
     public static function renewSchema(Subscription $record): array
     {
-        $today = Carbon::today(\App\Support\AppConfig::timezone())->toDateString();
+        $today = Carbon::today(AppConfig::timezone())->toDateString();
         $defaultStartDate = max(
             $today,
             $record->end_date?->copy()->addDay()->toDateString() ?? $today,
@@ -510,7 +532,7 @@ class SubscriptionForm
     public static function handleRenew(Subscription $record, array $data): void
     {
         Subscription::query()->getConnection()->transaction(function () use ($record, $data): void {
-            $timezone = \App\Support\AppConfig::timezone();
+            $timezone = AppConfig::timezone();
             $today = Carbon::today($timezone);
 
             $plan = Plan::findOrFail(Data::int($data['plan_id'] ?? null));
@@ -652,7 +674,7 @@ class SubscriptionForm
                 continue;
             }
 
-            $normalized[] = \App\Support\Data::map($item);
+            $normalized[] = Data::map($item);
         }
 
         return $normalized;
@@ -660,7 +682,7 @@ class SubscriptionForm
 
     private static function stringState(Get $get, string $path): ?string
     {
-        return \App\Support\Data::nullableString($get($path));
+        return Data::nullableString($get($path));
     }
 
     private static function intState(Get $get, string $path): ?int
@@ -672,7 +694,7 @@ class SubscriptionForm
 
     private static function floatState(Get $get, string $path): float
     {
-        return \App\Support\Data::float($get($path));
+        return Data::float($get($path));
     }
 
     private static function planFromState(Get $get): ?Plan

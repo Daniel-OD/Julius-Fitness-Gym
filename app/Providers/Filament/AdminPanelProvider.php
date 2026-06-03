@@ -2,8 +2,10 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Office\Pages\Dashboard as OfficeDashboard;
 use App\Filament\Pages\Dashboard;
 use App\Filament\Pages\Settings;
+use App\Filament\Resources\CheckIns\CheckInResource;
 use App\Filament\Resources\Enquiries\EnquiryResource;
 use App\Filament\Resources\Expenses\ExpenseResource;
 use App\Filament\Resources\FollowUps\FollowUpResource;
@@ -17,6 +19,7 @@ use App\Http\Middleware\SetAppLocale;
 use App\Support\AppLocale;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use BezhanSalleh\FilamentShield\Resources\Roles\RoleResource;
+use Filament\Enums\ThemeMode;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -48,36 +51,23 @@ class AdminPanelProvider extends PanelProvider
     public function panel(Panel $panel): Panel
     {
         return $this->basePanel($panel)
-            ->navigation(fn (NavigationBuilder $builder) => $this->buildNavigation($builder));
+            ->navigation(fn (NavigationBuilder $builder) => $this->buildNavigation($builder, 'admin'));
     }
 
     /**
-     * Configure the base panel options.
+     * Shared Filament panel options for admin and office panels.
      */
-    public function basePanel(Panel $panel): Panel
+    protected function sharedPanel(Panel $panel): Panel
     {
         return $panel
-            ->default()
-            ->id('admin')
-            ->path('admin')
             ->login()
             ->passwordReset()
             ->brandName('Julius Fitness Gym')
             ->unsavedChangesAlerts()
             ->colors($this->colors())
-            ->darkMode(false)
+            ->darkMode(true)
+            ->defaultThemeMode(ThemeMode::Dark)
             ->sidebarWidth('12rem')
-            ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
-            ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
-            ->pages([
-                Dashboard::class,
-                Settings::class,
-            ])
-            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
-            ->widgets([])
-            ->plugins([FilamentShieldPlugin::make()
-                ->navigationIcon(fn (): null => null)
-                ->activeNavigationIcon(fn (): null => null)])
             ->bootUsing(fn (): string => AppLocale::apply())
             ->middleware([SetAppLocale::class], isPersistent: true)
             ->middleware([
@@ -95,20 +85,53 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->viteTheme('resources/css/filament/admin/theme.css')
-            ->databaseNotifications()
             ->globalSearchKeyBindings(['command+k', 'ctrl+k'])
             ->renderHook(
                 PanelsRenderHook::GLOBAL_SEARCH_AFTER,
                 fn (): HtmlString => new HtmlString(
-                    Blade::render('@livewire(\App\Filament\Livewire\LocaleSwitcher::class, [], key(\'locale-switcher\'))')
+                    Blade::render('@livewire(\App\Filament\Livewire\SubscriptionExpirationNotifications::class, [], key(\'subscription-expiration-notifications\'))').
+                    Blade::render('@livewire(\App\Filament\Livewire\LocaleSwitcher::class, [], key(\'locale-switcher\'))').
+                    Blade::render('@livewire(\App\Filament\Livewire\ThemeSwitcher::class, [], key(\'theme-switcher\'))')
                 ),
             );
     }
 
     /**
+     * Configure the admin panel.
+     */
+    protected function basePanel(Panel $panel): Panel
+    {
+        return $this->sharedPanel($panel)
+            ->default()
+            ->id('admin')
+            ->path('admin')
+            ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
+            ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
+            ->pages([
+                Dashboard::class,
+                Settings::class,
+            ])
+            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
+            ->widgets([])
+            ->plugins($this->shieldPlugins());
+    }
+
+    /**
+     * @return array<int, mixed>
+     */
+    protected function shieldPlugins(): array
+    {
+        return [
+            FilamentShieldPlugin::make()
+                ->navigationIcon(fn (): null => null)
+                ->activeNavigationIcon(fn (): null => null),
+        ];
+    }
+
+    /**
      * Build grouped navigation for the admin panel.
      */
-    protected function buildNavigation(NavigationBuilder $builder): NavigationBuilder
+    protected function buildNavigation(NavigationBuilder $builder, string $panel = 'admin'): NavigationBuilder
     {
         $administration = [
             ...Settings::getNavigationItems(),
@@ -131,6 +154,7 @@ class AdminPanelProvider extends PanelProvider
             ...PlanResource::getNavigationItems(),
             ...ServiceResource::getNavigationItems(),
             ...SubscriptionResource::getNavigationItems(),
+            ...CheckInResource::getNavigationItems(),
         ];
 
         return $builder
@@ -158,8 +182,12 @@ class AdminPanelProvider extends PanelProvider
             ->item(
                 NavigationItem::make(__('app.navigation.dashboard'))
                     ->icon('heroicon-o-chart-bar')
-                    ->url(fn () => Dashboard::getUrl())
-                    ->isActiveWhen(fn () => request()->routeIs('filament.admin.pages.dashboard'))
+                    ->url(fn (): string => $panel === 'office'
+                        ? OfficeDashboard::getUrl()
+                        : Dashboard::getUrl())
+                    ->isActiveWhen(fn (): bool => $panel === 'office'
+                        ? request()->routeIs('filament.office.pages.dashboard')
+                        : request()->routeIs('filament.admin.pages.dashboard'))
             );
     }
 
@@ -172,17 +200,17 @@ class AdminPanelProvider extends PanelProvider
     {
         return [
             'primary' => [
-                50 => '#b3fefc',
-                100 => '#37f2ee',
-                200 => '#2dcdc9',
-                300 => '#24adaa',
-                400 => '#1c908d',
-                500 => '#157573',
-                600 => '#0e5c5a',
-                700 => '#084543',
-                800 => '#042f2e',
-                900 => '#021f1e',
-                950 => '#011413',
+                50 => '#fff5f0',
+                100 => '#ffe8dc',
+                200 => '#ffd0bc',
+                300 => '#ffb199',
+                400 => '#ff8a66',
+                500 => '#ff5a1f',
+                600 => '#e84e15',
+                700 => '#c43f10',
+                800 => '#9a3210',
+                900 => '#7a2a0e',
+                950 => '#421408',
             ],
             'danger' => Color::Rose,
             'gray' => Color::Gray,

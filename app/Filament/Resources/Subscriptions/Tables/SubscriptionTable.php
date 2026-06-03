@@ -4,9 +4,11 @@ namespace App\Filament\Resources\Subscriptions\Tables;
 
 use App\Filament\Resources\Subscriptions\Schemas\SubscriptionForm;
 use App\Filament\Resources\Subscriptions\SubscriptionResource;
+use App\Helpers\Helpers;
 use App\Models\Member;
 use App\Models\Plan;
 use App\Models\Subscription;
+use App\Support\AppConfig;
 use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
@@ -44,6 +46,11 @@ class SubscriptionTable
                 TextColumn::make('plan.name')
                     ->label(__('app.fields.plan'))
                     ->description(fn ($record): string => $record->plan->code),
+                TextColumn::make('plan.amount')
+                    ->label(__('app.fields.amount'))
+                    ->alignRight()
+                    ->formatStateUsing(fn ($state): string => Helpers::formatCurrency((float) $state))
+                    ->toggleable(),
                 TextColumn::make('start_date')
                     ->label(__('app.fields.start_date'))
                     ->date(),
@@ -226,7 +233,7 @@ class SubscriptionTable
                                     return false;
                                 }
 
-                                $today = Carbon::today(\App\Support\AppConfig::timezone());
+                                $today = Carbon::today(AppConfig::timezone());
 
                                 return ! Subscription::query()
                                     ->where('member_id', $record->member_id)

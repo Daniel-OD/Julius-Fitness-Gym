@@ -1,0 +1,78 @@
+<?php
+
+use App\Models\Invoice;
+use App\Models\Member;
+use App\Models\Plan;
+use App\Models\Subscription;
+use App\Services\Analytics\AnalyticsService;
+use App\Support\Analytics\AnalyticsDateRange;
+use Carbon\CarbonImmutable;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+
+uses(RefreshDatabase::class);
+
+beforeEach(function (): void {
+    CarbonImmutable::setTestNow(CarbonImmutable::parse('2026-06-15', config('app.timezone')));
+});
+
+afterEach(function (): void {
+    CarbonImmutable::setTestNow();
+});
+
+it('includes subscriptions without invoices in collected totals', function (): void {
+    $member = Member::factory()->create();
+    $plan = Plan::factory()->create(['amount' => 250, 'days' => 30, 'status' => 'active']);
+
+    Subscription::factory()->create([
+        'member_id' => $member->id,
+        'plan_id' => $plan->id,
+        'start_date' => '2026-06-10',
+        'end_date' => '2026-07-10',
+        'status' => 'ongoing',
+    ]);
+
+    $range = new AnalyticsDateRange(
+        CarbonImmutable::parse('2026-06-01', config('app.timezone'))->startOfDay(),
+        CarbonImmutable::parse('2026-06-30', config('app.timezone'))->endOfDay(),
+    );
+
+    $metrics = app(AnalyticsService::class)->financialMetrics($range);
+
+    expect($metrics['collected_from_uninvoiced'])->toBe(250.0)
+        ->and($metrics['collected'])->toBe(250.0)
+        ->and($metrics['uninvoiced_subscriptions_count'])->toBe(1);
+});
+
+it('does not double count subscriptions that have invoice payments', function (): void {
+    $member = Member::factory()->create();
+    $plan = Plan::factory()->create(['amount' => 300, 'days' => 30, 'status' => 'active']);
+
+    $subscription = Subscription::factory()->create([
+        'member_id' => $member->id,
+        'plan_id' => $plan->id,
+        'start_date' => '2026-06-05',
+        'end_date' => '2026-07-05',
+        'status' => 'ongoing',
+    ]);
+
+    Invoice::factory()->create([
+        'subscription_id' => $subscription->id,
+        'date' => '2026-06-05',
+        'subscription_fee' => 300,
+        'discount' => 0,
+        'discount_amount' => 0,
+        'paid_amount' => 300,
+        'status' => 'paid',
+    ]);
+
+    $range = new AnalyticsDateRange(
+        CarbonImmutable::parse('2026-06-01', config('app.timezone'))->startOfDay(),
+        CarbonImmutable::parse('2026-06-30', config('app.timezone'))->endOfDay(),
+    );
+
+    $metrics = app(AnalyticsService::class)->financialMetrics($range);
+
+    expect($metrics['collected_from_invoices'])->toBe(300.0)
+        ->and($metrics['collected_from_uninvoiced'])->toBe(0.0)
+        ->and($metrics['collected'])->toBe(300.0);
+});

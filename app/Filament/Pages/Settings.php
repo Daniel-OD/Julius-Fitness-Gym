@@ -16,12 +16,14 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
@@ -78,7 +80,7 @@ class Settings extends Page implements HasForms
     /**
      * Defines the form schema with multiple tabs.
      *
-     * @return array<int, \Filament\Schemas\Components\Component>
+     * @return array<int, Component>
      */
     protected function getFormSchema(): array
     {
@@ -91,6 +93,7 @@ class Settings extends Page implements HasForms
                     $this->chargesTab(),
                     $this->expensesTab(),
                     $this->subscriptionsTab(),
+                    $this->importTab(),
                 ]),
         ];
     }
@@ -315,6 +318,18 @@ class Settings extends Page implements HasForms
                         ->placeholder(__('app.settings.hints.type_category'))
                         ->separator(','),
                 ]);
+    }
+
+    /**
+     * Member import wizard tab.
+     */
+    private function importTab(): Tab
+    {
+        return Tab::make(__('app.settings.tabs.import'))
+            ->icon('heroicon-m-arrow-up-tray')
+            ->schema([
+                View::make('filament.settings.member-import-tab'),
+            ]);
     }
 
     /**

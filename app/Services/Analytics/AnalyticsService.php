@@ -28,7 +28,18 @@ class AnalyticsService
     }
 
     /**
-     * @return array{net_revenue: float, collected: float, refunds: float, discounts: float, outstanding: float, expenses: float, profit: float}
+     * @return array{
+     *   net_revenue: float,
+     *   collected: float,
+     *   collected_from_invoices: float,
+     *   collected_from_uninvoiced: float,
+     *   refunds: float,
+     *   discounts: float,
+     *   outstanding: float,
+     *   expenses: float,
+     *   profit: float,
+     *   uninvoiced_subscriptions_count: int,
+     * }
      */
     public function financialMetrics(AnalyticsDateRange $range): array
     {
@@ -44,8 +55,11 @@ class AnalyticsService
 
         $paymentsTotal = (float) ($transactions->payments_total ?? 0);
         $refundsTotal = (float) ($transactions->refunds_total ?? 0);
-        $collected = max($paymentsTotal - $refundsTotal, 0);
-        $netRevenue = max($salesTotal - $refundsTotal, 0);
+        $collectedFromInvoices = max($paymentsTotal - $refundsTotal, 0);
+        $collectedFromUninvoiced = $this->uninvoicedSubscriptionsCollected($range);
+        $uninvoicedCount = $this->uninvoicedSubscriptionsCount($range);
+        $collected = $collectedFromInvoices + $collectedFromUninvoiced;
+        $netRevenue = max($salesTotal + $collectedFromUninvoiced - $refundsTotal, 0);
 
         $discounts = (float) Invoice::query()
             ->whereBetween('date', [$range->start->toDateString(), $range->end->toDateString()])
@@ -64,12 +78,60 @@ class AnalyticsService
         return [
             'net_revenue' => $netRevenue,
             'collected' => $collected,
+            'collected_from_invoices' => $collectedFromInvoices,
+            'collected_from_uninvoiced' => $collectedFromUninvoiced,
             'refunds' => $refundsTotal,
             'discounts' => $discounts,
             'outstanding' => $outstanding,
             'expenses' => $expenses,
             'profit' => max($collected - $expenses, 0),
+            'uninvoiced_subscriptions_count' => $uninvoicedCount,
         ];
+    }
+
+    public function uninvoicedSubscriptionsCollected(AnalyticsDateRange $range): float
+    {
+        return Data::float(
+            $this->uninvoicedSubscriptionsQuery($range)
+                ->join('plans', 'plans.id', '=', 'subscriptions.plan_id')
+                ->sum('plans.amount'),
+        );
+    }
+
+    public function uninvoicedSubscriptionsCount(AnalyticsDateRange $range): int
+    {
+        return $this->uninvoicedSubscriptionsQuery($range)->count();
+    }
+
+    /**
+     * @return Builder<Subscription>
+     */
+    public function uninvoicedSubscriptionsQuery(AnalyticsDateRange $range): Builder
+    {
+        return Subscription::query()
+            ->withoutInvoices()
+            ->whereBetween('start_date', [
+                $range->start->toDateString(),
+                $range->end->toDateString(),
+            ]);
+    }
+
+    /**
+     * @return array<string, float>
+     */
+    public function uninvoicedCollectedTrendByDate(AnalyticsDateRange $range): array
+    {
+        /** @var Collection<string, float> $rows */
+        $rows = $this->uninvoicedSubscriptionsQuery($range)
+            ->join('plans', 'plans.id', '=', 'subscriptions.plan_id')
+            ->selectRaw('subscriptions.start_date as day')
+            ->selectRaw('SUM(plans.amount) as total')
+            ->groupBy('subscriptions.start_date')
+            ->orderBy('subscriptions.start_date')
+            ->pluck('total', 'day')
+            ->map(fn ($value): float => Data::float($value));
+
+        return $rows->all();
     }
 
     /**
@@ -147,7 +209,13 @@ class AnalyticsService
             ->pluck('net', 'day')
             ->map(fn ($value): float => Data::float($value));
 
-        return $rows->all();
+        $trend = $rows->all();
+
+        foreach ($this->uninvoicedCollectedTrendByDate($range) as $day => $amount) {
+            $trend[$day] = ($trend[$day] ?? 0) + $amount;
+        }
+
+        return $trend;
     }
 
     /**
@@ -168,7 +236,26 @@ class AnalyticsService
             ->pluck('net', 'month')
             ->map(fn ($value): float => Data::float($value));
 
-        return $rows->all();
+        $trend = $rows->all();
+
+        $driver = Subscription::query()->getModel()->getConnection()->getDriverName();
+        $monthExpression = $this->monthGroupExpression('subscriptions.start_date', $driver);
+
+        /** @var Collection<string, float> $uninvoiced */
+        $uninvoiced = $this->uninvoicedSubscriptionsQuery($range)
+            ->join('plans', 'plans.id', '=', 'subscriptions.plan_id')
+            ->selectRaw("{$monthExpression} as month")
+            ->selectRaw('SUM(plans.amount) as total')
+            ->groupBy('month')
+            ->orderBy('month')
+            ->pluck('total', 'month')
+            ->map(fn ($value): float => Data::float($value));
+
+        foreach ($uninvoiced as $month => $amount) {
+            $trend[$month] = ($trend[$month] ?? 0) + $amount;
+        }
+
+        return $trend;
     }
 
     /**
@@ -234,13 +321,45 @@ class AnalyticsService
             ->limit($limit)
             ->get();
 
-        return $rows->map(fn (object $row): array => [
-            'key' => 'plan:'.(int) $row->plan_id,
-            'plan_id' => (int) $row->plan_id,
-            'plan_name' => (string) $row->plan_name,
-            'collected' => (float) $row->collected,
-            'subscriptions' => (int) $row->subscriptions,
-        ]);
+        $uninvoicedByPlan = $this->uninvoicedSubscriptionsQuery($range)
+            ->join('plans', 'plans.id', '=', 'subscriptions.plan_id')
+            ->selectRaw('plans.id as plan_id')
+            ->selectRaw('SUM(plans.amount) as uninvoiced_collected')
+            ->selectRaw('COUNT(subscriptions.id) as uninvoiced_count')
+            ->groupBy('plans.id')
+            ->get()
+            ->keyBy('plan_id');
+
+        $mapped = $rows->map(function (object $row) use ($uninvoicedByPlan): array {
+            $planId = (int) $row->plan_id;
+            $uninvoiced = $uninvoicedByPlan->get($planId);
+
+            return [
+                'key' => 'plan:'.$planId,
+                'plan_id' => $planId,
+                'plan_name' => (string) $row->plan_name,
+                'collected' => (float) $row->collected + (float) ($uninvoiced->uninvoiced_collected ?? 0),
+                'subscriptions' => (int) $row->subscriptions + (int) ($uninvoiced->uninvoiced_count ?? 0),
+            ];
+        })->keyBy('plan_id');
+
+        foreach ($uninvoicedByPlan as $planId => $uninvoiced) {
+            $planId = (int) $planId;
+
+            if ($mapped->has($planId)) {
+                continue;
+            }
+
+            $mapped->put($planId, [
+                'key' => 'plan:'.$planId,
+                'plan_id' => $planId,
+                'plan_name' => (string) Plan::query()->whereKey($planId)->value('name'),
+                'collected' => (float) $uninvoiced->uninvoiced_collected,
+                'subscriptions' => (int) $uninvoiced->uninvoiced_count,
+            ]);
+        }
+
+        return $mapped->sortByDesc('collected')->values()->take($limit);
     }
 
     /**

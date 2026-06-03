@@ -4,20 +4,22 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Julius Fitness Gym is a gym and fitness club management application built on Laravel 13. The project is in early development. A reference implementation lives in `Julius-Fitness-Gym/laravel-gymie/`[...]
+Julius Fitness Gym is a gym and fitness club management application built on Laravel 13 + Filament 5. The reference implementation lives in `Julius-Fitness-Gym/laravel-gymie/` — consult its `CLAUDE.md` for domain model details, API conventions, and scheduling patterns.
 
 ## Commands
 
 ```bash
 # First-time setup
 composer run setup           # install deps, copy .env, key:generate, migrate, npm install + build
+php -d memory_limit=512M artisan db:seed --class=WorldSeeder  # populate countries/currencies (requires 512M RAM)
 
-# Development (runs server, queue, logs, and Vite concurrently)
+# Development (server + queue + logs + Vite concurrently)
 composer run dev
 
 # Tests (SQLite in-memory, no external services needed)
 php artisan test --compact
 php artisan test --compact --filter=TestName
+php artisan test tests/Feature/SomeTest.php
 
 # Build frontend assets
 npm run build                # production
@@ -25,19 +27,76 @@ npm run dev                  # watch mode
 
 # Code style (run after any PHP changes)
 vendor/bin/pint --dirty --format agent
+
+# Filament Shield — generate permissions for a new resource
+php artisan shield:generate --resource=SomeResource --panel=admin
+
+# Scheduled commands (run manually for testing)
+php artisan app:mark-invoice-overdue
+php artisan app:mark-subscriptions-status
 ```
 
 ## Architecture
 
-**Stack:** Laravel 13 · PHP 8.4 · Tailwind CSS v4.1 · Vite · Pest v4 · SQLite (dev: `database/database.sqlite`, tests: in-memory)
+**Stack:** Laravel 13 · PHP 8.4 · Filament 5 (Livewire 4) · Tailwind CSS v4 · Pest 4 · Sanctum · DomPDF · Filament Shield
 
-**Frontend:** Tailwind v4 is configured via the `@tailwindcss/vite` plugin (not a PostCSS config). Font is Instrument Sans via Bunny Fonts, configured in `vite.config.js`.
+**Dev database:** `database/database.sqlite` (MySQL in production)
+**Test database:** SQLite in-memory (`phpunit.xml` sets `DB_CONNECTION=sqlite DB_DATABASE=:memory:`)
 
-**Tests:** `phpunit.xml` sets `DB_CONNECTION=sqlite` and `DB_DATABASE=:memory:` — no database setup needed to run tests.
+### Two parallel interfaces share one model layer
 
-## Reference Implementation
+**Filament admin panel** (`/admin`) — primary UI, registered in `app/Providers/Filament/AdminPanelProvider.php`.
+- Custom iOS-style theme: `resources/css/filament/admin/theme.css` (loaded via `->viteTheme()`)
+- Locale switcher (EN/RO) rendered via `PanelsRenderHook::GLOBAL_SEARCH_AFTER` using `app/Filament/Livewire/LocaleSwitcher.php`
 
-`Julius-Fitness-Gym/laravel-gymie/` is a complete gym management app (Laravel 12, Filament 5, Sanctum API) that serves as a domain reference. Its `CLAUDE.md` documents the domain model (Member, Su[...]
+**REST API v1** (`/api/v1`) — Sanctum bearer token auth. Each resource has a controller (`app/Http/Controllers/Api/V1/`), FormRequest, JsonResource, and a Schema class (`app/Services/Api/Schemas/`) that defines allowlists for `spatie/laravel-query-builder`.
+
+### Domain model
+
+```
+Member ──< Subscription >── Plan
+                              └── Service (optional add-on)
+Subscription ──< Invoice ──< InvoiceTransaction
+Member ──< Enquiry ──< FollowUp
+Expense  (standalone)
+User     (admin accounts, Filament Shield roles)
+```
+
+All domain models use soft deletes. `Invoice` and `InvoiceTransaction` have `#[ObservedBy]` attributes — totals sync automatically via observers, and emails are dispatched via queued jobs (`SendInvoiceIssuedEmail`, `SendInvoicePaymentReceiptEmail`).
+
+### Key service-layer classes
+
+| Class | Purpose |
+|---|---|
+| `app/Services/Analytics/AnalyticsService.php` | Financial & membership metric queries used by dashboard widgets |
+| `app/Services/Email/InvoiceEmailService.php` | Builds and sends invoice/receipt emails with PDF attachment |
+| `app/Services/Subscriptions/SubscriptionRenewalService.php` | Renewal business logic (shared by Filament and API) |
+| `app/Services/JsonSettingsRepository.php` | Reads/writes `storage/data/settingsData.json`; implements `SettingsRepository` |
+| `app/Services/JsonSequenceRepository.php` | Generates sequential codes (member codes, invoice numbers) via `SequenceRepository` |
+| `app/Support/AppLocale.php` | Resolves active locale (settings → query param → Accept-Language header) |
+| `app/Helpers/Helpers.php` | Static façade for settings, currencies, formatting; wraps `nnjeim/world` with cache-corruption recovery |
+
+### Settings persistence
+
+App settings are stored in `storage/data/settingsData.json` (not the database). `SettingsRepository` and `SequenceRepository` contracts are bound as singletons in `AppServiceProvider`. Copy `storage/data/settingsData.json.example` to `settingsData.json` on fresh installs — the file is gitignored.
+
+### Locale / i18n
+
+- Supported locales: `en`, `ro` (defined in `config/app.supported_locales`)
+- Translation files: `resources/lang/en/app.php` and `resources/lang/ro/app.php` — all UI strings use `__('app.*')` keys
+- `SetAppLocale` middleware calls `AppLocale::apply()` on every request (reads from settings JSON)
+
+### Filament Resource structure
+
+Each resource follows the pattern: `ResourceName/{ResourceNameResource.php, Pages/, Schemas/, Tables/}`. Schemas hold form and infolist definitions; Tables hold table column/filter/action definitions — keeping them out of the resource class itself.
+
+### nnjeim/world package (countries, currencies)
+
+Requires `WorldSeeder` to be run with 512 MB RAM. The package caches results forever in the `cache` table. If Settings crashes with `__PHP_Incomplete_Class`, `Helpers::worldResponse()` auto-recovers by clearing world cache entries and retrying.
+
+### Filament Shield (roles & permissions)
+
+After creating a new Filament Resource, run `php artisan shield:generate --resource=ResourceName --panel=admin` to generate permissions and assign them to `super_admin`. Without this the resource returns 404 for all users.
 
 ===
 

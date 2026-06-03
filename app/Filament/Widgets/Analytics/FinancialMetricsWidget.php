@@ -155,8 +155,15 @@ HTML);
             )
                 ->icon('heroicon-o-arrow-down-tray')
                 ->extraAttributes(['class' => $this->primaryStatIconClasses()])
-                ->description(__('app.widgets.vs_previous_period', ['count' => Helpers::formatCurrency($previous['collected'])]))
-                ->descriptionColor('gray'),
+                ->description(
+                    $metrics['collected_from_uninvoiced'] > 0
+                        ? __('app.billing.collected_breakdown', [
+                            'invoiced' => Helpers::formatCurrency($metrics['collected_from_invoices']),
+                            'uninvoiced' => Helpers::formatCurrency($metrics['collected_from_uninvoiced']),
+                        ])
+                        : __('app.widgets.vs_previous_period', ['count' => Helpers::formatCurrency($previous['collected'])]),
+                )
+                ->descriptionColor($metrics['collected_from_uninvoiced'] > 0 ? 'warning' : 'gray'),
             Stat::make(
                 __('app.widgets.outstanding_payments'),
                 $this->valueWithDelta(Helpers::formatCurrency($metrics['outstanding']), $outstandingDelta),
