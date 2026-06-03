@@ -13,6 +13,11 @@
     <meta name="description" content="{{ $description }}">
 @endif
 
+<meta name="generator" content="{{ config('studio.signature') }}">
+<meta name="author" content="{{ config('studio.author') }}">
+<meta name="studio" content="{{ config('studio.slug') }}">
+<meta name="application-name" content="{{ config('studio.product') }}">
+
 <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
 <meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)">
 

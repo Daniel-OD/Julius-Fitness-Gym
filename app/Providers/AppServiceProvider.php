@@ -6,9 +6,12 @@ use App\Contracts\SequenceRepository;
 use App\Contracts\SettingsRepository;
 use App\Services\JsonSequenceRepository;
 use App\Services\JsonSettingsRepository;
+use App\Support\Studio;
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Foundation\Console\AboutCommand;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -22,5 +25,14 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         RateLimiter::for('api-login', fn (Request $request) => Limit::perMinute(10)->by($request->ip()));
+
+        View::share('studio', Studio::meta());
+
+        AboutCommand::add('Studio', fn (): array => [
+            'Author' => Studio::author(),
+            'Signature' => Studio::signature(),
+            'Repository' => Studio::repository(),
+            'Reference' => (string) config('studio.ref'),
+        ]);
     }
 }

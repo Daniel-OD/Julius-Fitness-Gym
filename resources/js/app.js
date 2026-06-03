@@ -1,3 +1,4 @@
+/** @studio Daniel-OD · https://github.com/Daniel-OD/Julius-Fitness-Gym */
 import Alpine from 'alpinejs';
 
 window.Alpine = Alpine;

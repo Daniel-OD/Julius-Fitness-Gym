@@ -27,9 +27,12 @@
                 @endisset
 
                 {{ $slot }}
+
+                <x-studio.signature variant="inline" class="mt-10 opacity-60" />
             </main>
         </div>
     </div>
+    <x-studio.html-comment />
 </body>
 
 </html>

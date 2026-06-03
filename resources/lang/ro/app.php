@@ -602,6 +602,11 @@ return [
         'today_count' => 'Check-in-uri azi',
     ],
 
+    'studio' => [
+        'built_by' => 'Construit de',
+        'signature' => 'Daniel-OD/Julius-Fitness-Gym',
+    ],
+
     'emails' => [
         'greeting' => 'Salut :name,',
         'there' => 'acolo',

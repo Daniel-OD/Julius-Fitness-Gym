@@ -102,12 +102,12 @@
     </section>
 
     {{-- Stats --}}
-    <section class="border-y border-white/8 bg-canvas">
+    <section class="border-y border-zinc-200 bg-zinc-100 dark:border-white/8 dark:bg-canvas">
         <dl class="mx-auto grid max-w-7xl grid-cols-2 gap-8 px-4 py-16 sm:grid-cols-4 sm:px-6 lg:px-8">
             @foreach ($stats as $stat)
                 <div class="jf-reveal text-center" style="transition-delay: {{ $loop->index * 60 }}ms">
-                    <dt class="text-3xl font-bold tracking-tight text-white sm:text-4xl">{{ $stat['value'] }}</dt>
-                    <dd class="mt-2 text-sm text-white/40">{{ $stat['label'] }}</dd>
+                    <dt class="text-3xl font-bold tracking-tight text-zinc-900 sm:text-4xl dark:text-white">{{ $stat['value'] }}</dt>
+                    <dd class="mt-2 text-sm text-zinc-500 dark:text-white/40">{{ $stat['label'] }}</dd>
                 </div>
             @endforeach
         </dl>
@@ -116,22 +116,22 @@
     {{-- Servicii --}}
     <section id="servicii" class="mx-auto max-w-7xl scroll-mt-24 px-4 py-28 sm:px-6 lg:px-8">
         <div class="jf-reveal mx-auto max-w-2xl text-center">
-            <h2 class="text-4xl font-bold tracking-tight text-white sm:text-5xl">Servicii</h2>
-            <p class="mt-5 text-lg text-white/50">Tot ce ai nevoie — un singur loc.</p>
+            <h2 class="text-4xl font-bold tracking-tight text-zinc-900 sm:text-5xl dark:text-white">Servicii</h2>
+            <p class="mt-5 text-lg text-zinc-600 dark:text-white/50">Tot ce ai nevoie — un singur loc.</p>
         </div>
 
         <div class="mt-16 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
             @foreach ($services as $service)
                 <x-ui.card class="jf-reveal" style="transition-delay: {{ $loop->index * 80 }}ms">
                     <span
-                        class="flex h-11 w-11 items-center justify-center rounded-full border border-brand-500/25 bg-brand-500/10 text-brand-400">
+                        class="flex h-11 w-11 items-center justify-center rounded-full border border-brand-500/25 bg-brand-500/10 text-brand-500 dark:text-brand-400">
                         <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                             stroke-linecap="round" stroke-linejoin="round">
                             {!! $service['icon'] !!}
                         </svg>
                     </span>
-                    <h3 class="mt-5 text-base font-semibold text-white">{{ $service['title'] }}</h3>
-                    <p class="mt-2 text-sm leading-relaxed text-white/45">{{ $service['desc'] }}</p>
+                    <h3 class="mt-5 text-base font-semibold text-zinc-900 dark:text-white">{{ $service['title'] }}</h3>
+                    <p class="mt-2 text-sm leading-relaxed text-zinc-600 dark:text-white/45">{{ $service['desc'] }}</p>
                 </x-ui.card>
             @endforeach
         </div>
@@ -163,26 +163,26 @@
     {{-- Abonamente --}}
     <section id="abonamente" class="mx-auto max-w-7xl scroll-mt-24 px-4 py-28 sm:px-6 lg:px-8">
         <div class="jf-reveal mx-auto max-w-2xl text-center">
-            <h2 class="text-4xl font-bold tracking-tight text-white sm:text-5xl">Abonamente</h2>
-            <p class="mt-5 text-lg text-white/50">Prețuri clare. Fără surprize.</p>
+            <h2 class="text-4xl font-bold tracking-tight text-zinc-900 sm:text-5xl dark:text-white">Abonamente</h2>
+            <p class="mt-5 text-lg text-zinc-600 dark:text-white/50">Prețuri clare. Fără surprize.</p>
         </div>
 
         <div class="mt-16 grid grid-cols-1 gap-5 lg:grid-cols-3">
             @foreach ($plans as $plan)
                 <div
-                    class="jf-reveal relative flex flex-col rounded-2xl border p-8 transition-all duration-200 {{ $plan['highlight'] ? 'border-brand-500/40 bg-brand-500/5 jf-glow-accent' : 'border-white/8 bg-surface-elevated hover:border-white/15' }}"
+                    class="jf-reveal relative flex flex-col rounded-2xl border p-8 transition-all duration-200 {{ $plan['highlight'] ? 'border-brand-500/40 bg-brand-500/5 jf-glow-accent' : 'border-zinc-200 bg-white hover:border-zinc-300 dark:border-white/8 dark:bg-surface-elevated dark:hover:border-white/15' }}"
                     style="transition-delay: {{ $loop->index * 80 }}ms">
                     @if ($plan['highlight'])
                         <span class="absolute -top-3 left-1/2 -translate-x-1/2">
                             <x-ui.badge color="brand">Popular</x-ui.badge>
                         </span>
                     @endif
-                    <h3 class="text-lg font-semibold text-white">{{ $plan['name'] }}</h3>
+                    <h3 class="text-lg font-semibold text-zinc-900 dark:text-white">{{ $plan['name'] }}</h3>
                     <div class="mt-5 flex items-baseline gap-1">
-                        <span class="text-5xl font-extrabold tracking-tight text-white">{{ $plan['price'] }}</span>
-                        <span class="text-sm font-medium text-white/40">lei {{ $plan['period'] }}</span>
+                        <span class="text-5xl font-extrabold tracking-tight text-zinc-900 dark:text-white">{{ $plan['price'] }}</span>
+                        <span class="text-sm font-medium text-zinc-500 dark:text-white/40">lei {{ $plan['period'] }}</span>
                     </div>
-                    <ul class="mt-8 flex-1 space-y-3 text-sm text-white/55">
+                    <ul class="mt-8 flex-1 space-y-3 text-sm text-zinc-600 dark:text-white/55">
                         @foreach ($plan['features'] as $item)
                             <li class="flex items-start gap-2">
                                 <svg class="mt-0.5 h-4 w-4 shrink-0 text-brand-400" viewBox="0 0 24 24" fill="none"
@@ -208,9 +208,9 @@
     {{-- CTA --}}
     <section id="contact" class="scroll-mt-24 px-4 pb-28 sm:px-6 lg:px-8">
         <div
-            class="jf-reveal mx-auto max-w-5xl overflow-hidden rounded-3xl border border-white/10 bg-surface-elevated px-6 py-20 text-center sm:px-14">
-            <h2 class="text-4xl font-bold tracking-tight text-white sm:text-5xl">Gata să începi?</h2>
-            <p class="mx-auto mt-5 max-w-lg text-lg text-white/50">
+            class="jf-reveal mx-auto max-w-5xl overflow-hidden rounded-3xl border border-zinc-200 bg-white px-6 py-20 text-center sm:px-14 dark:border-white/10 dark:bg-surface-elevated">
+            <h2 class="text-4xl font-bold tracking-tight text-zinc-900 sm:text-5xl dark:text-white">Gata să începi?</h2>
+            <p class="mx-auto mt-5 max-w-lg text-lg text-zinc-600 dark:text-white/50">
                 Creează-ți contul sau vino la o vizită. Primul pas e cel mai greu.
             </p>
             <div class="mt-10 flex flex-wrap items-center justify-center gap-4">

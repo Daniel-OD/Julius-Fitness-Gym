@@ -13,6 +13,8 @@ use Illuminate\Http\Request;
 
 /**
  * Base API controller helpers for v1 endpoints.
+ *
+ * @studio daniel-od · Julius-Fitness-Gym
  */
 abstract class ApiController extends Controller
 {

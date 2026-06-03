@@ -1,5 +1,7 @@
 <?php
 
+/** API v1 — Julius Fitness Gym · @studio Daniel-OD */
+
 use App\Http\Controllers\Api\V1\AnalyticsController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\EnquiriesController;

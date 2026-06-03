@@ -1,10 +1,17 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/laravel",
+    "name": "daniel-od/julius-fitness-gym",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
-    "keywords": ["laravel", "framework"],
+    "description": "Julius Fitness Gym — gym management by Daniel-OD.",
+    "keywords": ["laravel", "filament", "gym", "daniel-od", "julius-fitness-gym"],
     "license": "MIT",
+    "authors": [
+        {
+            "name": "Daniel-OD",
+            "homepage": "https://github.com/Daniel-OD"
+        }
+    ],
+    "homepage": "https://github.com/Daniel-OD/Julius-Fitness-Gym",
     "require": {
         "php": "^8.4",
         "barryvdh/laravel-dompdf": "^3.1",

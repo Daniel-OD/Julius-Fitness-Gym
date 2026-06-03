@@ -1,4 +1,9 @@
 {
+    "_studio": {
+        "author": "Daniel-OD",
+        "repository": "https://github.com/Daniel-OD/Julius-Fitness-Gym",
+        "ref": "dod-jfg-2026"
+    },
     "general": {
         "locale": "",
         "gym_logo": [],

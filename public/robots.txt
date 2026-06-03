@@ -1,2 +1,3 @@
+# Studio: Daniel-OD — https://github.com/Daniel-OD/Julius-Fitness-Gym
 User-agent: *
 Disallow:

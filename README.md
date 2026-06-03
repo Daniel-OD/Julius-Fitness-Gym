@@ -4,6 +4,8 @@ Gym and fitness club management application built on Laravel 13, with a Filament
 
 **Repository:** [github.com/Daniel-OD/Julius-Fitness-Gym](https://github.com/Daniel-OD/Julius-Fitness-Gym)
 
+**Author / studio:** [Daniel-OD](https://github.com/Daniel-OD) — signature `Daniel-OD/Julius-Fitness-Gym` (see `config/studio.php`, `php artisan about`)
+
 ## Stack
 
 | Layer | Technology |

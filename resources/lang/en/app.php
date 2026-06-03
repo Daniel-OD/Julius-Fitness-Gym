@@ -602,6 +602,11 @@ return [
         'today_count' => 'Check-ins today',
     ],
 
+    'studio' => [
+        'built_by' => 'Built by',
+        'signature' => 'Daniel-OD/Julius-Fitness-Gym',
+    ],
+
     'emails' => [
         'greeting' => 'Hi :name,',
         'there' => 'there',

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth dark">
 
 <head>
     <x-layouts.partials.head-meta
@@ -8,7 +8,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="min-h-screen bg-black font-sans text-white antialiased dark:bg-black">
+<body class="min-h-screen bg-zinc-100 font-sans text-zinc-900 antialiased dark:bg-black dark:text-white">
     <header
         class="fixed inset-x-0 top-0 z-50 border-b border-transparent bg-transparent transition-[background-color,border-color,backdrop-filter] duration-300"
         data-public-header>
@@ -56,7 +56,7 @@
         {{ $slot }}
     </main>
 
-    <footer class="border-t border-white/8 bg-canvas">
+    <footer class="border-t border-zinc-200 bg-zinc-100 dark:border-white/8 dark:bg-canvas">
         <div class="mx-auto max-w-7xl px-4 py-12 sm:py-16 sm:px-6 lg:px-8">
             <div class="grid grid-cols-2 gap-8 sm:gap-10 md:grid-cols-4">
                 <div class="col-span-2 md:col-span-1">
@@ -69,40 +69,45 @@
                                 <path d="m18 22 4-4" /><path d="m2 6 4-4" /><path d="m3 10 7-7" /><path d="m14 21 7-7" />
                             </svg>
                         </span>
-                        <span class="font-semibold tracking-tight">Julius Fitness</span>
+                        <span class="font-semibold tracking-tight text-zinc-900 dark:text-white">Julius Fitness</span>
                     </div>
-                    <p class="mt-4 max-w-xs text-sm leading-relaxed text-white/45">
+                    <p class="mt-4 max-w-xs text-sm leading-relaxed text-zinc-600 dark:text-white/45">
                         Antrenează inteligent. Rămâi constant. Obține rezultate.
                     </p>
                 </div>
                 <div>
-                    <h4 class="text-xs font-semibold uppercase tracking-wider text-white/35">Sală</h4>
-                    <ul class="mt-4 space-y-2 text-sm text-white/55">
-                        <li><a href="#servicii" class="transition-colors hover:text-white">Servicii</a></li>
-                        <li><a href="#program" class="transition-colors hover:text-white">Program</a></li>
-                        <li><a href="#abonamente" class="transition-colors hover:text-white">Abonamente</a></li>
+                    <h4 class="text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-white/35">Sală</h4>
+                    <ul class="mt-4 space-y-2 text-sm text-zinc-600 dark:text-white/55">
+                        <li><a href="#servicii" class="transition-colors hover:text-zinc-900 dark:hover:text-white">Servicii</a></li>
+                        <li><a href="#program" class="transition-colors hover:text-zinc-900 dark:hover:text-white">Program</a></li>
+                        <li><a href="#abonamente" class="transition-colors hover:text-zinc-900 dark:hover:text-white">Abonamente</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h4 class="text-xs font-semibold uppercase tracking-wider text-white/35">Suport</h4>
-                    <ul class="mt-4 space-y-2 text-sm text-white/55">
-                        <li><a href="#contact" class="transition-colors hover:text-white">Contact</a></li>
+                    <h4 class="text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-white/35">Suport</h4>
+                    <ul class="mt-4 space-y-2 text-sm text-zinc-600 dark:text-white/55">
+                        <li><a href="#contact" class="transition-colors hover:text-zinc-900 dark:hover:text-white">Contact</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h4 class="text-xs font-semibold uppercase tracking-wider text-white/35">Program</h4>
-                    <ul class="mt-4 space-y-2 text-sm text-white/55">
+                    <h4 class="text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-white/35">Program</h4>
+                    <ul class="mt-4 space-y-2 text-sm text-zinc-600 dark:text-white/55">
                         <li>Lun–Vin: 06:00 – 23:00</li>
                         <li>Sâm: 08:00 – 20:00</li>
                         <li>Dum: 08:00 – 18:00</li>
                     </ul>
                 </div>
             </div>
-            <div class="mt-10 border-t border-white/8 pt-8 text-sm text-white/30 sm:mt-12">
-                &copy; {{ date('Y') }} Julius Fitness Gym
+            <div class="mt-10 flex flex-col gap-3 border-t border-zinc-200 pt-8 sm:flex-row sm:items-center sm:justify-between dark:border-white/8 sm:mt-12">
+                <p class="text-sm text-zinc-500 dark:text-white/30">
+                    &copy; {{ date('Y') }} Julius Fitness Gym
+                </p>
+                <x-studio.signature variant="inline" />
             </div>
         </div>
     </footer>
+
+    <x-studio.html-comment />
 
     <script>
         const header = document.querySelector('[data-public-header]');

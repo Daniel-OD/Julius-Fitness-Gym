@@ -93,6 +93,20 @@ class AdminPanelProvider extends PanelProvider
                     Blade::render('@livewire(\App\Filament\Livewire\LocaleSwitcher::class, [], key(\'locale-switcher\'))').
                     Blade::render('@livewire(\App\Filament\Livewire\ThemeSwitcher::class, [], key(\'theme-switcher\'))')
                 ),
+            )
+            ->renderHook(
+                PanelsRenderHook::AUTH_LOGIN_FORM_AFTER,
+                fn (): HtmlString => new HtmlString(Blade::render('<x-studio.signature variant="login" />')),
+            )
+            ->renderHook(
+                PanelsRenderHook::FOOTER,
+                fn (): HtmlString => new HtmlString(
+                    Blade::render('<div class="px-4 pb-2"><x-studio.signature /></div>')
+                ),
+            )
+            ->renderHook(
+                PanelsRenderHook::BODY_END,
+                fn (): HtmlString => new HtmlString(Blade::render('<x-studio.html-comment />')),
             );
     }
 

@@ -1,3 +1,4 @@
+/** @studio Daniel-OD · https://github.com/Daniel-OD/Julius-Fitness-Gym */
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import tailwindcss from '@tailwindcss/vite';

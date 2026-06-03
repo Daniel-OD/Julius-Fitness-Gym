@@ -25,6 +25,10 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\SetAppLocale::class,
             \App\Http\Middleware\ForceJsonResponse::class,
         ]);
+
+        $middleware->append([
+            \App\Http\Middleware\AppendStudioSignature::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->render(function (InvalidQuery $exception, Request $request) {
