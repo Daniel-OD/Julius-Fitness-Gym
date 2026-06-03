@@ -30,7 +30,7 @@ $afterActions = \Filament\Support\Facades\FilamentView::renderHook(\Filament\Vie
     <div class="fi-header-actions-ctn" wire:init="ensureDefaultFilters">
         {{ $beforeActions }}
 
-        <div class="fi-ios-filter-bar flex flex-wrap items-center justify-end gap-3 px-4 py-2">
+        <div class="fi-ios-filter-bar flex w-full flex-wrap items-stretch justify-end gap-2 px-2 py-2 sm:items-center sm:gap-3 sm:px-4">
             {{ $this->form }}
 
             @if ($period === 'custom')

@@ -71,7 +71,7 @@
             class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,#000000_72%)]">
         </div>
 
-        <div class="relative z-10 mx-auto max-w-5xl px-4 py-24 text-center sm:px-6 sm:py-32">
+        <div class="relative z-10 mx-auto max-w-5xl px-4 pb-24 pt-[max(5rem,calc(env(safe-area-inset-top,0px)+4rem))] text-center sm:px-6 sm:pb-32 sm:pt-28">
             <p class="text-xs font-semibold uppercase tracking-[0.35em] text-white/40">Julius Fitness Gym</p>
             <h1
                 class="text-balance mt-6 text-4xl font-extrabold leading-[1.05] tracking-tight text-white sm:text-6xl lg:text-8xl">
