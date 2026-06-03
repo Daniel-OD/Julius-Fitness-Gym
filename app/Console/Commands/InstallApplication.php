@@ -99,15 +99,23 @@ class InstallApplication extends Command
     private function configureEnvironment(string $url, string $name): void
     {
         $envPath = base_path('.env');
+        $freshInstall = ! is_file($envPath);
 
-        if (! is_file($envPath)) {
+        if ($freshInstall) {
             File::copy(base_path('.env.example'), $envPath);
         }
 
         $this->setEnvValue('APP_NAME', $name);
         $this->setEnvValue('APP_URL', $url);
-        $this->setEnvValue('APP_ENV', 'local');
-        $this->setEnvValue('DB_CONNECTION', 'sqlite');
+
+        // Only seed install defaults on a brand-new .env — never overwrite an
+        // already-configured environment (e.g. a MySQL dev setup). This keeps
+        // standalone installs on SQLite while protecting existing setups and
+        // test runs from having their database connection clobbered.
+        if ($freshInstall) {
+            $this->setEnvValue('APP_ENV', 'local');
+            $this->setEnvValue('DB_CONNECTION', 'sqlite');
+        }
     }
 
     private function setEnvValue(string $key, string $value): void

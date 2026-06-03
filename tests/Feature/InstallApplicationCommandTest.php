@@ -6,6 +6,28 @@ use Illuminate\Support\Facades\File;
 
 uses(RefreshDatabase::class);
 
+/*
+ * app:install writes to the real base_path('.env'). Snapshot it before each
+ * test and restore it after so running the suite never mutates the working
+ * environment's database connection or app settings.
+ */
+beforeEach(function (): void {
+    $env = base_path('.env');
+
+    if (File::exists($env)) {
+        File::copy($env, $env.'.testbak');
+    }
+});
+
+afterEach(function (): void {
+    $env = base_path('.env');
+    $backup = $env.'.testbak';
+
+    if (File::exists($backup)) {
+        File::move($backup, $env);
+    }
+});
+
 it('creates admin user and credentials file', function (): void {
     $this->artisan('app:install', [
         '--email' => 'installer@test.local',
@@ -37,4 +59,28 @@ it('does not recreate admin without force flag', function (): void {
     ])->assertSuccessful();
 
     expect(User::query()->where('email', 'existing@test.local')->count())->toBe(1);
+});
+
+it('does not overwrite the database connection on an existing env', function (): void {
+    $env = base_path('.env');
+
+    if (! File::exists($env)) {
+        File::copy(base_path('.env.example'), $env);
+    }
+
+    File::put($env, (string) preg_replace(
+        '/^DB_CONNECTION=.*$/m',
+        'DB_CONNECTION=mysql',
+        File::get($env),
+    ));
+
+    $this->artisan('app:install', [
+        '--email' => 'guard@test.local',
+        '--password' => 'secret-pass-99',
+        '--no-interaction' => true,
+    ])->assertSuccessful();
+
+    expect(File::get($env))
+        ->toContain('DB_CONNECTION=mysql')
+        ->not->toContain('DB_CONNECTION=sqlite');
 });
