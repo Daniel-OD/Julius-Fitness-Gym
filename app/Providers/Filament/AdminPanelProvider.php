@@ -2,6 +2,8 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Auth\ForcePasswordChange;
+use App\Filament\Auth\Login;
 use App\Filament\Office\Pages\Dashboard as OfficeDashboard;
 use App\Filament\Pages\Dashboard;
 use App\Filament\Pages\Settings;
@@ -15,6 +17,8 @@ use App\Filament\Resources\Plans\PlanResource;
 use App\Filament\Resources\Services\ServiceResource;
 use App\Filament\Resources\Subscriptions\SubscriptionResource;
 use App\Filament\Resources\Users\UserResource;
+use App\Http\Middleware\EnforceFilamentPanelSession;
+use App\Http\Middleware\RequirePasswordChange;
 use App\Http\Middleware\SetAppLocale;
 use App\Support\AppLocale;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
@@ -60,7 +64,7 @@ class AdminPanelProvider extends PanelProvider
     protected function sharedPanel(Panel $panel): Panel
     {
         return $panel
-            ->login()
+            ->login(Login::class)
             ->passwordReset()
             ->brandName('Julius Fitness Gym')
             ->unsavedChangesAlerts()
@@ -80,9 +84,14 @@ class AdminPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
-            ])
+                EnforceFilamentPanelSession::class,
+            ], isPersistent: true)
             ->authMiddleware([
                 Authenticate::class,
+                RequirePasswordChange::class,
+            ])
+            ->pages([
+                ForcePasswordChange::class,
             ])
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->globalSearchKeyBindings(['command+k', 'ctrl+k'])

@@ -291,6 +291,14 @@ return [
         'handled_by' => 'Gestionat de',
         'refunded_at' => 'Rambursat la',
         'to' => 'Către',
+        'new_password' => 'Parolă nouă',
+        'confirm_password' => 'Confirmare parolă',
+    ],
+
+    'auth' => [
+        'change_password' => 'Schimbă parola',
+        'force_change_notice' => 'Din motive de securitate, trebuie să îți schimbi parola înainte de a continua.',
+        'password_changed' => 'Parola a fost schimbată cu succes.',
     ],
 
     'actions' => [
