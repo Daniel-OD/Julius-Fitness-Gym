@@ -560,6 +560,12 @@ return [
 
     'office' => [
         'title' => 'Front desk',
+        'checkins_today' => 'Check-ins today',
+        'checkouts_today' => 'Check-outs today',
+        'collections_today' => 'Collections today',
+        'expired_subscriptions' => 'Expired subscriptions',
+        'expired_since' => 'Expired since',
+        'no_expired_subscriptions' => 'No expired subscriptions',
     ],
 
     'members' => [
@@ -646,6 +652,10 @@ return [
         'this_week' => 'This week',
         'this_month' => 'This month',
         'today_count' => 'Check-ins today',
+        'manual_checkin' => 'Manual check-in',
+        'manual_checkin_done' => 'Check-in recorded',
+        'check_out' => 'Check out',
+        'check_out_done' => 'Check-out recorded',
     ],
 
     'studio' => [

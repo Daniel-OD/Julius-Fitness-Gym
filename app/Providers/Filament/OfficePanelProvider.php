@@ -3,12 +3,18 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Office\Pages\Dashboard;
-use App\Filament\Pages\Settings;
+use App\Filament\Resources\CheckIns\CheckInResource;
 use Filament\Navigation\NavigationBuilder;
 use Filament\Panel;
 
 /**
- * Front-desk Filament panel — same theme and navigation as admin.
+ * Front-desk Filament panel for employees.
+ *
+ * Deliberately minimal: only the check-in resource and a dashboard limited to
+ * check-in/out activity, expired subscriptions, and the day's collections.
+ * No financial reports, member/billing management, or settings are exposed —
+ * resources are registered explicitly (not auto-discovered) so employees can
+ * neither see nor reach management pages, even by direct URL.
  */
 class OfficePanelProvider extends AdminPanelProvider
 {
@@ -18,15 +24,29 @@ class OfficePanelProvider extends AdminPanelProvider
             ->default(false)
             ->id('office')
             ->path('office')
-            ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
-            ->discoverPages(in: app_path('Filament/Office/Pages'), for: 'App\\Filament\\Office\\Pages')
+            ->resources([
+                CheckInResource::class,
+            ])
             ->pages([
                 Dashboard::class,
-                Settings::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([])
-            ->plugins($this->shieldPlugins())
-            ->navigation(fn (NavigationBuilder $builder): NavigationBuilder => $this->buildNavigation($builder, 'office'));
+            // Shield plugin is intentionally omitted: it would expose the Roles
+            // management resource. Permission enforcement still works through
+            // policies (Gate), which are panel-independent.
+            ->navigation(fn (NavigationBuilder $builder): NavigationBuilder => $this->buildOfficeNavigation($builder));
+    }
+
+    /**
+     * Minimal front-desk navigation: dashboard + check-ins only.
+     */
+    protected function buildOfficeNavigation(NavigationBuilder $builder): NavigationBuilder
+    {
+        return $builder
+            ->items([
+                ...Dashboard::getNavigationItems(),
+                ...CheckInResource::getNavigationItems(),
+            ]);
     }
 }

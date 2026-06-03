@@ -302,21 +302,23 @@ php artisan serve
 
 ## Desktop installers (Windows & macOS)
 
-Packaging for machines with [Laravel Herd](https://herd.laravel.com), Composer, and Node.js.
+Automated setup for [Laravel Herd](https://herd.laravel.com): migrations, admin user, Herd link, desktop shortcut (Windows), `.app` launcher (macOS). Distribution packages bundle `vendor` and compiled assets — clients only need Herd.
 
-| Platform | Build command | Output |
-|----------|---------------|--------|
-| Windows | `installer\build-installer.bat` | `dist/Julius-Fitness-Gym-Setup-v1.0.exe` |
-| macOS | `./installer/build-dmg.sh` | `dist/Julius-Fitness-Gym-Setup-v1.0.dmg` |
+| Platform | Build | Client runs |
+|----------|-------|-------------|
+| Windows | `installer\build-installer.bat` | `.exe` → shortcut on Desktop |
+| macOS | `./installer/build-dmg.sh` | DMG + `Julius Fitness Gym.app` |
 
-Quick install from a git clone on Mac:
+Default admin after install: `admin@julius.test` / `julius2024` (see `storage/app/install-credentials.txt`).
+
+Quick install from git:
 
 ```bash
 ./install.sh
 ./open.command
 ```
 
-See [installer/README.md](installer/README.md) for full client setup steps.
+See [installer/README.md](installer/README.md) for full steps.
 
 ## Contributing
 

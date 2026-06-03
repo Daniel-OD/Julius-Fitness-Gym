@@ -1,0 +1,3 @@
+# Laravel Herd — configurare proiect (rulează: herd init)
+name: julius-fitness-gym
+php: "8.4"

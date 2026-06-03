@@ -2,7 +2,8 @@
 
 namespace App\Filament\Office\Pages;
 
-use App\Filament\Widgets\TodayCheckinsStatsWidget;
+use App\Filament\Widgets\Office\OfficeExpiredSubscriptionsWidget;
+use App\Filament\Widgets\Office\OfficeTodayStatsWidget;
 use Filament\Pages\Dashboard as BaseDashboard;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Grid;
@@ -43,7 +44,8 @@ class Dashboard extends BaseDashboard
     {
         return Grid::make(1)->schema(
             $this->getWidgetsSchemaComponents([
-                TodayCheckinsStatsWidget::class,
+                OfficeTodayStatsWidget::class,
+                OfficeExpiredSubscriptionsWidget::class,
             ]),
         );
     }

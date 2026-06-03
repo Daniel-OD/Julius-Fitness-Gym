@@ -4,7 +4,14 @@ namespace App\Filament\Resources\CheckIns;
 
 use App\Filament\Resources\CheckIns\Pages\ListCheckIns;
 use App\Models\CheckIn;
+use App\Models\Member;
+use App\Models\Subscription;
+use App\Support\AppConfig;
+use Carbon\CarbonImmutable;
+use Filament\Actions\Action;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\Select;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
@@ -32,11 +39,28 @@ class CheckInResource extends Resource
     }
 
     /**
-     * No write operations — check-ins are recorded via QR scan only.
+     * No inline form — check-ins are recorded via QR scan or the manual
+     * check-in toolbar action.
      */
     public static function form(Schema $schema): Schema
     {
         return $schema->components([]);
+    }
+
+    /**
+     * Resolve the member's currently active subscription, if any.
+     */
+    protected static function activeSubscriptionFor(int $memberId): ?Subscription
+    {
+        $today = CarbonImmutable::today(AppConfig::timezone())->toDateString();
+
+        return Subscription::query()
+            ->where('member_id', $memberId)
+            ->whereDate('start_date', '<=', $today)
+            ->whereDate('end_date', '>=', $today)
+            ->whereNotIn('status', ['cancelled', 'renewed'])
+            ->latest('end_date')
+            ->first();
     }
 
     public static function table(Table $table): Table
@@ -91,7 +115,51 @@ class CheckInResource extends Resource
                     ->label(__('app.fields.method'))
                     ->options(['qr' => 'QR', 'manual' => 'Manual']),
             ])
+            ->headerActions([
+                Action::make('manualCheckIn')
+                    ->label(__('app.checkins.manual_checkin'))
+                    ->icon('heroicon-o-arrow-right-end-on-rectangle')
+                    ->schema([
+                        Select::make('member_id')
+                            ->label(__('app.fields.member'))
+                            ->options(fn (): array => Member::query()
+                                ->orderBy('name')
+                                ->pluck('name', 'id')
+                                ->all())
+                            ->searchable()
+                            ->required(),
+                    ])
+                    ->action(function (array $data): void {
+                        $memberId = (int) $data['member_id'];
+
+                        CheckIn::create([
+                            'member_id' => $memberId,
+                            'subscription_id' => static::activeSubscriptionFor($memberId)?->id,
+                            'checked_in_at' => now(),
+                            'method' => 'manual',
+                        ]);
+
+                        Notification::make()
+                            ->title(__('app.checkins.manual_checkin_done'))
+                            ->success()
+                            ->send();
+                    }),
+            ])
             ->actions([
+                Action::make('checkOut')
+                    ->label(__('app.checkins.check_out'))
+                    ->icon('heroicon-o-arrow-left-start-on-rectangle')
+                    ->color('gray')
+                    ->requiresConfirmation()
+                    ->visible(fn (CheckIn $record): bool => $record->checked_out_at === null)
+                    ->action(function (CheckIn $record): void {
+                        $record->update(['checked_out_at' => now()]);
+
+                        Notification::make()
+                            ->title(__('app.checkins.check_out_done'))
+                            ->success()
+                            ->send();
+                    }),
                 ViewAction::make(),
             ]);
     }

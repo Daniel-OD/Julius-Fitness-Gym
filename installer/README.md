@@ -1,89 +1,67 @@
 # Installers — Julius Fitness Gym
 
-Pachete de instalare pentru **Windows** (Inno Setup `.exe`) și **macOS** (DMG), pentru medii cu [Laravel Herd](https://herd.laravel.com).
+Instalare automată pentru **Windows** (`.exe`) și **macOS** (`.dmg` + `.app`), cu [Laravel Herd](https://herd.laravel.com).
 
-Ambele variante copiază codul sursă (fără `vendor` / `node_modules`) și rulează instalarea Laravel la destinație.
+## Ce face instalarea automat
 
-## Cerințe pe mașina țintă (Windows și macOS)
+| Pas | Automat |
+|-----|---------|
+| Verificare PHP / Herd | ✅ |
+| Composer + NPM | ✅ doar dacă lipsește `vendor` / `public/build` din pachet |
+| `.env`, cheie app, migrări | ✅ |
+| `storage:link` | ✅ |
+| `herd link` + `herd init` | ✅ dacă CLI Herd e disponibil |
+| User admin Filament (`super_admin`) | ✅ `php artisan app:install` |
+| Credențiale în fișier | ✅ `storage/app/install-credentials.txt` |
+| Shortcut desktop (Windows) | ✅ Inno Setup |
+| Aplicație `.app` (macOS) | ✅ în DMG — deschide /admin, rulează install la prima utilizare |
 
-| Componentă | Link |
-|------------|------|
-| Laravel Herd | https://herd.laravel.com |
-| Composer | https://getcomposer.org |
-| Node.js | https://nodejs.org |
-| Internet | La prima rulare (`composer install`, `npm install`) |
+**Implicit admin:** `admin@julius.test` / `julius2024` — schimbă parola după login.
 
-**Folder recomandat:** `~/Herd/julius-fitness-gym` (Mac) sau `%USERPROFILE%\Herd\julius-fitness-gym` (Windows).
-
-**URL:** http://julius-fitness-gym.test — numele folderului trebuie să corespundă în Herd.
-
-După instalare, creează un utilizator admin Filament:
-
-```bash
-php artisan make:filament-user
-```
+**Pe mașina client:** doar **Laravel Herd** este obligatoriu (pachetul include `vendor` + assets build-uite).
 
 ---
 
-## Windows — `.exe` (Inno Setup)
+## Build pachet distribuție
 
-### Build (pe Windows)
-
-1. [Inno Setup 6](https://jrsoftware.org/isinfo.php)
-2. Node.js
-3. `public/favicon.ico` (generat automat din SVG dacă ai ImageMagick `magick`)
+### Windows (pe PC cu Inno Setup)
 
 ```bat
 installer\build-installer.bat
 ```
 
-**Output:** `dist/Julius-Fitness-Gym-Setup-v1.0.exe`
+→ `dist/Julius-Fitness-Gym-Setup-v1.0.exe`
 
-### Instalare client
-
-1. Instalează Herd, Composer, Node.
-2. Rulează `.exe` → copiază în `%USERPROFILE%\Herd\julius-fitness-gym`.
-3. `install.bat` rulează automat (post-install).
-4. Shortcut desktop / Start Menu → `open.bat`.
-
-### Fișiere
-
-| Fișier | Rol |
-|--------|-----|
-| `julius-fitness-gym.iss` | Script Inno Setup |
-| `build-installer.bat` | Compilează `.exe` |
-| `check-prerequisites.bat` | Verifică PHP, Composer, Node |
-| `../install.bat` | Setup Laravel |
-| `../open.bat` | Deschide site-ul |
-
----
-
-## macOS — DMG
-
-### Build (pe Mac)
+### macOS (pe Mac)
 
 ```bash
-chmod +x installer/build-dmg.sh install.sh open.command open.sh installer/check-prerequisites.sh
+chmod +x installer/build-dmg.sh install.sh installer/*.sh
 ./installer/build-dmg.sh
 ```
 
-**Output:** `dist/Julius-Fitness-Gym-Setup-v1.0.dmg`
+→ `dist/Julius-Fitness-Gym-Setup-v1.0.dmg` + `dist/Julius Fitness Gym.app`
 
-### Instalare client
+---
 
-1. Instalează Herd, Composer, Node.
-2. Deschide DMG, citește `INSTALARE-macOS.txt`.
-3. Copiază folderul în `~/Herd/julius-fitness-gym`.
-4. În Terminal:
+## Instalare client Windows
 
-```bash
-cd ~/Herd/julius-fitness-gym
-./install.sh
-```
+1. Instalează [Herd pentru Windows](https://herd.laravel.com/windows)
+2. Rulează `Julius-Fitness-Gym-Setup-v1.0.exe`
+3. Așteaptă finalizarea (fără ferestre — rulează ascuns)
+4. Dublu-click shortcut **Julius Fitness Gym** pe Desktop
 
-5. Dublu-click `open.command` sau deschide http://julius-fitness-gym.test
+---
 
-### Instalare fără DMG (dezvoltare / clone git)
+## Instalare client macOS
+
+1. Instalează [Herd pentru Mac](https://herd.laravel.com)
+2. Deschide DMG, copiază tot în `~/Herd/julius-fitness-gym`
+3. Dublu-click **Julius Fitness Gym.app** (instalează la prima rulare)
+4. Opțional: trage `.app` pe Desktop
+
+---
+
+## Instalare din git (dezvoltare)
 
 ```bash
 cd ~/Herd/julius-fitness-gym
@@ -91,34 +69,26 @@ cd ~/Herd/julius-fitness-gym
 ./open.command
 ```
 
-### Fișiere
+Sau: `composer run setup` apoi `php artisan app:install`.
+
+---
+
+## Comenzi utile
+
+```bash
+php artisan app:install --force          # resetează parola admin
+php artisan app:install --email=... --password=...
+```
+
+---
+
+## Fișiere cheie
 
 | Fișier | Rol |
 |--------|-----|
-| `build-dmg.sh` | Creează DMG în `dist/` |
-| `check-prerequisites.sh` | Verifică PHP, Composer, Node |
-| `../install.sh` | Setup Laravel |
-| `../open.command` | Deschide site-ul (Finder) |
-| `../open.sh` | Deschide site-ul (Terminal) |
-
----
-
-## Ce face instalarea
-
-1. Verifică prerequisituri
-2. Creează `database/database.sqlite` dacă lipsește
-3. `composer install`
-4. Copiază `.env.example` → `.env` dacă lipsește
-5. `php artisan key:generate --force`
-6. `php artisan migrate --force`
-7. `npm install` + `npm run build`
-
-**Nu rulează** `db:seed` — datele demo / admin trebuie create manual.
-
----
-
-## Excluderi la packaging
-
-Nu se copiază: `vendor/`, `node_modules/`, `.git/`, `.env`, cache-uri `storage/framework/*`, `dist/`.
-
-Scripturile de build (`build-installer.bat`, `build-dmg.sh`, `julius-fitness-gym.iss`) nu intră în pachetul client macOS; pe Windows, `check-prerequisites.bat` este inclus explicit în `.exe`.
+| `install.bat` / `install.sh` | Intrare instalare |
+| `installer/post-install.*` | Logică completă |
+| `installer/check-prerequisites.*` | Verificări (Herd obligatoriu) |
+| `app/Console/Commands/InstallApplication.php` | Admin + `.env` + credențiale |
+| `herd.yml` | Config Herd (`herd init`) |
+| `open.bat` / `open.command` | Deschide `/admin` |

@@ -560,6 +560,12 @@ return [
 
     'office' => [
         'title' => 'Recepție',
+        'checkins_today' => 'Check-in-uri azi',
+        'checkouts_today' => 'Check-out-uri azi',
+        'collections_today' => 'Încasări azi',
+        'expired_subscriptions' => 'Abonamente expirate',
+        'expired_since' => 'Expirat de',
+        'no_expired_subscriptions' => 'Niciun abonament expirat',
     ],
 
     'members' => [
@@ -646,6 +652,10 @@ return [
         'this_week' => 'Săptămâna aceasta',
         'this_month' => 'Luna aceasta',
         'today_count' => 'Check-in-uri azi',
+        'manual_checkin' => 'Check-in manual',
+        'manual_checkin_done' => 'Check-in înregistrat',
+        'check_out' => 'Check-out',
+        'check_out_done' => 'Check-out înregistrat',
     ],
 
     'studio' => [

@@ -1,5 +1,5 @@
 ; Julius Fitness Gym — Windows installer (Inno Setup 6)
-; Build: run installer\build-installer.bat on Windows (requires Inno Setup + Node)
+; Build: installer\build-installer.bat (include vendor + assets compilate)
 
 [Setup]
 AppName=Julius Fitness Gym
@@ -19,39 +19,42 @@ PrivilegesRequired=lowest
 Name: "romanian"; MessagesFile: "compiler:Languages\Romanian.isl"
 
 [Files]
-; Copiază tot proiectul mai puțin vendor/node_modules/.git
+; Proiect cu vendor si build incluse — fara node_modules / .git
 Source: "..\*"; DestDir: "{app}"; \
   Flags: recursesubdirs createallsubdirs; \
-  Excludes: "vendor\*,node_modules\*,.git\*,storage\logs\*,storage\framework\cache\*,storage\framework\sessions\*,storage\framework\views\*,.env,dist\*,installer\*"
+  Excludes: "node_modules\*,.git\*,storage\logs\*,storage\framework\cache\*,storage\framework\sessions\*,storage\framework\views\*,storage\app\install-credentials.txt,storage\app\.install-complete,.env,dist\*,installer\build-*,installer\julius-fitness-gym.iss,installer\mac-app\*"
 
-; Scripturi necesare la rularea install.bat (folderul installer e exclus mai sus)
 Source: "..\installer\check-prerequisites.bat"; DestDir: "{app}\installer"; Flags: ignoreversion
+Source: "..\installer\check-prerequisites.sh"; DestDir: "{app}\installer"; Flags: ignoreversion
+Source: "..\installer\post-install.bat"; DestDir: "{app}\installer"; Flags: ignoreversion
+Source: "..\installer\post-install.sh"; DestDir: "{app}\installer"; Flags: ignoreversion
 
 [Run]
-; Rulează install.bat după copiere
 Filename: "{app}\install.bat"; \
-  Description: "Configurează aplicația"; \
+  Description: "Configurează aplicația (migrări, admin, Herd)"; \
   Flags: runhidden waituntilterminated postinstall
 
-; Deschide browserul după instalare
 Filename: "{app}\open.bat"; \
-  Description: "Deschide Julius Fitness Gym în browser"; \
-  Flags: postinstall skipifsilent
+  Description: "Deschide panoul de administrare"; \
+  Flags: postinstall skipifsilent nowait
 
 [Icons]
-; Shortcut pe Desktop
 Name: "{userdesktop}\Julius Fitness Gym"; \
   Filename: "{app}\open.bat"; \
   IconFilename: "{app}\public\favicon.ico"; \
-  Comment: "Deschide Julius Fitness Gym"
+  WorkingDir: "{app}"; \
+  Comment: "Julius Fitness Gym — Administrare"
 
-; Shortcut în Start Menu
 Name: "{userprograms}\Julius Fitness Gym\Julius Fitness Gym"; \
-  Filename: "{app}\open.bat"
+  Filename: "{app}\open.bat"; \
+  WorkingDir: "{app}"
+Name: "{userprograms}\Julius Fitness Gym\Instalare"; \
+  Filename: "{app}\install.bat"; \
+  WorkingDir: "{app}"
 Name: "{userprograms}\Julius Fitness Gym\Dezinstalare"; \
   Filename: "{uninstallexe}"
 
 [Messages]
 WelcomeLabel1=Bun venit la instalarea Julius Fitness Gym
-WelcomeLabel2=Acest program va instala Julius Fitness Gym versiunea 1.0 pe calculatorul dumneavoastră.%n%nAsigurați-vă că Laravel Herd este instalat înainte de a continua.%n%nApăsați Înainte pentru a continua.
-FinishedLabel=Julius Fitness Gym a fost instalat cu succes!%n%nAplicația se va deschide automat în browser la adresa:%n%nhttp://julius-fitness-gym.test%n%nAdmin Filament: /admin%n%nCreează utilizatorul admin cu: php artisan make:filament-user
+WelcomeLabel2=Acest program instalează Julius Fitness Gym v1.0.%n%nNecesită Laravel Herd pentru Windows (Composer și Node sunt incluse în pachet).%n%nApăsați Înainte pentru a continua.
+FinishedLabel=Instalare finalizată!%n%nSite: http://julius-fitness-gym.test%nAdmin: http://julius-fitness-gym.test/admin%n%nCredențiale implicite:%nEmail: admin@julius.test%nParolă: julius2024%n%nSalvate și în storage\app\install-credentials.txt%n%nShortcut pe Desktop creat.
