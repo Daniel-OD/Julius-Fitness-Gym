@@ -90,9 +90,6 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
                 RequirePasswordChange::class,
             ])
-            ->pages([
-                ForcePasswordChange::class,
-            ])
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->globalSearchKeyBindings(['command+k', 'ctrl+k'])
             ->renderHook(
@@ -105,8 +102,7 @@ class AdminPanelProvider extends PanelProvider
                     (filament()->getCurrentPanel()?->getId() === 'office'
                         ? ''
                         : Blade::render('@livewire(\App\Filament\Livewire\SubscriptionExpirationNotifications::class, [], key(\'subscription-expiration-notifications\'))')).
-                    Blade::render('@livewire(\App\Filament\Livewire\LocaleSwitcher::class, [], key(\'locale-switcher\'))').
-                    Blade::render('@livewire(\App\Filament\Livewire\ThemeSwitcher::class, [], key(\'theme-switcher\'))')
+                    Blade::render('@livewire(\App\Filament\Livewire\LocaleSwitcher::class, [], key(\'locale-switcher\'))')
                 ),
             )
             ->renderHook(
@@ -137,6 +133,7 @@ class AdminPanelProvider extends PanelProvider
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
+                ForcePasswordChange::class,
                 Dashboard::class,
                 Settings::class,
             ])

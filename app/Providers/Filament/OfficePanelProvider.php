@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Auth\ForcePasswordChange;
 use App\Filament\Office\Pages\Dashboard;
 use App\Filament\Resources\CheckIns\CheckInResource;
 use Filament\Navigation\NavigationBuilder;
@@ -28,6 +29,7 @@ class OfficePanelProvider extends AdminPanelProvider
                 CheckInResource::class,
             ])
             ->pages([
+                ForcePasswordChange::class,
                 Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')

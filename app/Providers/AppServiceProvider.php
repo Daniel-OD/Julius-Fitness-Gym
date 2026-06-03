@@ -31,6 +31,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->ensureStorageDirectoriesExist();
+        $this->configureLocalExecutionTimeLimit();
 
         RateLimiter::for('api-login', fn (Request $request) => Limit::perMinute(10)->by($request->ip()));
         RateLimiter::for('api', fn (Request $request) => Limit::perMinute(60)->by($request->user()?->id ?: $request->ip()));
@@ -61,5 +62,19 @@ class AppServiceProvider extends ServiceProvider
                 mkdir($directory, 0755, true);
             }
         }
+    }
+
+    /**
+     * Local `php artisan serve` on Windows often uses max_execution_time=30,
+     * which is too low for the analytics-heavy admin dashboard first load.
+     */
+    private function configureLocalExecutionTimeLimit(): void
+    {
+        if ($this->app->runningInConsole() || ! $this->app->environment('local')) {
+            return;
+        }
+
+        @ini_set('max_execution_time', '120');
+        @set_time_limit(120);
     }
 }

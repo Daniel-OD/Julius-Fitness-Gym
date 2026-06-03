@@ -7,7 +7,9 @@ echo "[entrypoint] Julius Fitness Gym — container startup"
 
 # ── Environment file ─────────────────────────────────────────────────────────
 if [ ! -f .env ]; then
-    if [ -f .env.docker.example ]; then
+    if [ -n "${RENDER:-}" ]; then
+        echo "[entrypoint] Render deployment — using platform environment variables"
+    elif [ -f .env.docker.example ]; then
         echo "[entrypoint] Creating .env from .env.docker.example"
         cp .env.docker.example .env
     else
@@ -29,8 +31,10 @@ if [ ! -f public/build/manifest.json ] && [ -d /.image/public/build ]; then
     cp -a /.image/public/build/. public/build/
 fi
 
-# ── Wait for MySQL ───────────────────────────────────────────────────────────
-if [ "${DB_CONNECTION:-mysql}" = "mysql" ]; then
+# ── Wait for database ────────────────────────────────────────────────────────
+db_connection="${DB_CONNECTION:-mysql}"
+
+if [ "$db_connection" = "mysql" ]; then
     echo "[entrypoint] Waiting for MySQL at ${DB_HOST:-mysql}:${DB_PORT:-3306}..."
     until php -r "
         try {
@@ -48,6 +52,24 @@ if [ "${DB_CONNECTION:-mysql}" = "mysql" ]; then
         sleep 2
     done
     echo "[entrypoint] MySQL is ready"
+elif [ "$db_connection" = "pgsql" ]; then
+    echo "[entrypoint] Waiting for PostgreSQL at ${DB_HOST}:${DB_PORT:-5432}..."
+    until php -r "
+        try {
+            new PDO(
+                'pgsql:host=' . getenv('DB_HOST') . ';port=' . (getenv('DB_PORT') ?: '5432') . ';dbname=' . getenv('DB_DATABASE'),
+                getenv('DB_USERNAME'),
+                getenv('DB_PASSWORD'),
+                [PDO::ATTR_TIMEOUT => 3]
+            );
+            exit(0);
+        } catch (Throwable \$e) {
+            exit(1);
+        }
+    " 2>/dev/null; do
+        sleep 2
+    done
+    echo "[entrypoint] PostgreSQL is ready"
 fi
 
 # ── Composer (fallback if backup missing) ────────────────────────────────────
@@ -57,7 +79,11 @@ if [ ! -f vendor/autoload.php ]; then
 fi
 
 # ── Application key ──────────────────────────────────────────────────────────
-if ! grep -q '^APP_KEY=base64:' .env 2>/dev/null; then
+if [ -n "${APP_KEY:-}" ] && [ "${APP_KEY#base64:}" != "${APP_KEY}" ]; then
+    echo "[entrypoint] APP_KEY provided via environment"
+elif [ -f .env ] && grep -q '^APP_KEY=base64:' .env 2>/dev/null; then
+    echo "[entrypoint] APP_KEY present in .env"
+else
     echo "[entrypoint] Generating APP_KEY"
     php artisan key:generate --force --no-interaction
 fi
@@ -86,16 +112,20 @@ fi
 
 rm -f public/hot
 
-# ── App container only: migrate & cache ──────────────────────────────────────
-if [ "${CONTAINER_ROLE:-app}" = "app" ]; then
+# ── Render nginx (listens on $PORT) ───────────────────────────────────────────
+if [ "${CONTAINER_ROLE:-app}" = "web" ]; then
+    export PORT="${PORT:-10000}"
+    echo "[entrypoint] Configuring nginx for PORT=${PORT}"
+    envsubst '${PORT}' < /etc/nginx/templates/default.conf.template > /etc/nginx/conf.d/default.conf
+fi
+
+# ── App / web container: migrate & cache ─────────────────────────────────────
+if [ "${CONTAINER_ROLE:-app}" = "app" ] || [ "${CONTAINER_ROLE}" = "web" ]; then
     echo "[entrypoint] Running migrations"
     php artisan migrate --force --no-interaction
 
     if [ "${APP_ENV:-production}" = "production" ]; then
-        php artisan config:cache --no-interaction
-        php artisan route:cache --no-interaction
-        php artisan view:cache --no-interaction
-        php artisan filament:cache-components --no-interaction 2>/dev/null || true
+        php artisan app:cache --no-interaction
     fi
 fi
 

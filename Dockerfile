@@ -45,6 +45,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libicu-dev \
     libonig-dev \
     libxml2-dev \
+    libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
@@ -57,6 +58,7 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
         opcache \
         pcntl \
         pdo_mysql \
+        pdo_pgsql \
         xml \
         zip
 
@@ -92,3 +94,26 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=90s --retries=3 \
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["php-fpm"]
+
+# ── Stage 4: Render Web Service (nginx + PHP-FPM on $PORT) ─────────────────────
+FROM app AS production
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    nginx \
+    supervisor \
+    gettext-base \
+    wget \
+    && rm -rf /var/lib/apt/lists/* \
+    && rm -f /etc/nginx/sites-enabled/default
+
+COPY docker/nginx/render.conf.template /etc/nginx/templates/default.conf.template
+COPY docker/supervisor/render-supervisord.conf /etc/supervisor/conf.d/render.conf
+
+ENV CONTAINER_ROLE=web
+
+EXPOSE 10000
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=120s --retries=3 \
+    CMD sh -c 'port="${PORT:-10000}"; wget -q -O /dev/null "http://127.0.0.1:${port}/up" || exit 1'
+
+CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/supervisord.conf"]

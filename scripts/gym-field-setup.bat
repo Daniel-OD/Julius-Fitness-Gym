@@ -34,6 +34,8 @@ if errorlevel 1 (
     call npm run build
 )
 
+if exist "public\hot" del /F /Q "public\hot"
+
 echo.
 echo  Creare admin de test (parola temporara)...
 call php artisan app:install --no-interaction --force --email=admin@julius.test --password=GymTest2026! --url=http://127.0.0.1:8000
@@ -42,6 +44,10 @@ if errorlevel 1 exit /b 1
 echo.
 echo  Incarcare date demo (planuri, membri, abonamente)...
 call php artisan db:seed --force
+
+echo.
+echo  Cache aplicatie (pagini mai rapide)...
+call php artisan app:cache --no-interaction
 
 echo.
 echo  ========================================
