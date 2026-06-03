@@ -89,7 +89,13 @@ class AdminPanelProvider extends PanelProvider
             ->renderHook(
                 PanelsRenderHook::GLOBAL_SEARCH_AFTER,
                 fn (): HtmlString => new HtmlString(
-                    Blade::render('@livewire(\App\Filament\Livewire\SubscriptionExpirationNotifications::class, [], key(\'subscription-expiration-notifications\'))').
+                    // The subscription-expiry bell links to the subscription
+                    // resource, which only exists on the admin panel. Employees
+                    // (office panel) don't manage subscriptions, so it is omitted
+                    // there to avoid a RouteNotFoundException.
+                    (filament()->getCurrentPanel()?->getId() === 'office'
+                        ? ''
+                        : Blade::render('@livewire(\App\Filament\Livewire\SubscriptionExpirationNotifications::class, [], key(\'subscription-expiration-notifications\'))')).
                     Blade::render('@livewire(\App\Filament\Livewire\LocaleSwitcher::class, [], key(\'locale-switcher\'))').
                     Blade::render('@livewire(\App\Filament\Livewire\ThemeSwitcher::class, [], key(\'theme-switcher\'))')
                 ),
