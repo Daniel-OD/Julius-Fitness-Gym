@@ -45,8 +45,6 @@ class Member extends Model
      */
     protected $fillable = [
         'photo',
-        'code',
-        'checkin_token',
         'name',
         'email',
         'contact',

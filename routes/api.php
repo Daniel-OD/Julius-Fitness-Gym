@@ -30,7 +30,7 @@ Route::prefix('v1')
         Route::post('/auth/login', [AuthController::class, 'login'])
             ->middleware('throttle:api-login');
 
-        Route::middleware('auth:sanctum')
+        Route::middleware(['auth:sanctum', 'throttle:api'])
             ->group(function (): void {
                 Route::get('/me', [AuthController::class, 'me']);
                 Route::post('/auth/logout', [AuthController::class, 'logout']);
