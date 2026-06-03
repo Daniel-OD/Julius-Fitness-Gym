@@ -36,7 +36,8 @@ it('login fails with wrong password', function (): void {
     $this->postJson('/api/v1/auth/login', [
         'email' => $user->email,
         'password' => 'wrong',
-    ])->assertStatus(401);
+    ])->assertUnprocessable()
+        ->assertJsonValidationErrors(['email']);
 });
 
 it('logout revokes token', function (): void {

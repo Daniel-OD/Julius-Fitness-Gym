@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\CheckInController;
+use App\Http\Controllers\CheckinController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\MemberImportDownloadController;
 use App\Http\Controllers\ProfileController;
@@ -10,10 +10,10 @@ use Illuminate\Support\Facades\Route;
 Route::view('/', 'home')->name('home');
 
 // Public check-in routes (no auth — used by QR scanners and member phones)
-Route::get('/checkin/{qrToken}', [CheckInController::class, 'scan'])
+Route::get('/checkin/{qrToken}', [CheckinController::class, 'scan'])
     ->name('checkin.scan')
     ->middleware('throttle:60,1');
-Route::post('/checkin/{qrToken}/checkout', [CheckInController::class, 'checkout'])
+Route::post('/checkin/{qrToken}/checkout', [CheckinController::class, 'checkout'])
     ->name('checkin.checkout')
     ->middleware('throttle:60,1');
 
