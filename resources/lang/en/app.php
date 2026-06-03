@@ -560,9 +560,15 @@ return [
 
     'office' => [
         'title' => 'Front desk',
+        'present_now' => 'Present now',
+        'present_now_placeholder' => 'Live occupancy — coming soon',
+        'present_now_hint' => 'This area will show members currently in the gym.',
         'checkins_today' => 'Check-ins today',
+        'checkins_today_hint' => 'Entries recorded today',
         'checkouts_today' => 'Check-outs today',
+        'checkouts_today_hint' => 'Exits recorded today',
         'collections_today' => 'Collections today',
+        'collections_today_hint' => 'Payments received today',
         'expired_subscriptions' => 'Expired subscriptions',
         'expired_since' => 'Expired since',
         'no_expired_subscriptions' => 'No expired subscriptions',
@@ -654,8 +660,15 @@ return [
         'today_count' => 'Check-ins today',
         'manual_checkin' => 'Manual check-in',
         'manual_checkin_done' => 'Check-in recorded',
+        'manual_checkin_done_for' => ':name checked in',
+        'confirm_checkin_heading' => 'Confirm check-in',
+        'confirm_checkin_submit' => 'Check in',
+        'confirm_checkout_heading' => 'Confirm check-out',
+        'confirm_checkout_submit' => 'Check out',
+        'checkout_time' => 'Check-out time',
         'check_out' => 'Check out',
         'check_out_done' => 'Check-out recorded',
+        'check_out_done_for' => ':name checked out',
     ],
 
     'studio' => [

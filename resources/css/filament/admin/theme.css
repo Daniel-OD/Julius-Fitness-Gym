@@ -1073,4 +1073,118 @@ html.fi.dark .jf-import-result-card--danger {
     color: var(--jf-light-text-secondary, #6e6e73);
 }
 
+/* ——— Office / front-desk panel ——— */
+
+.office-dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    max-width: 100%;
+}
+
+.office-dashboard .fi-wi-stats-overview {
+    gap: 1rem;
+}
+
+@media (min-width: 640px) {
+    .office-dashboard .fi-wi-stats-overview {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+.office-stat .fi-wi-stats-overview-stat-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+}
+
+.office-stat .fi-wi-stats-overview-stat-icon svg {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.office-stat--checkin .fi-wi-stats-overview-stat-icon {
+    color: rgb(22 163 74);
+    background: rgb(22 163 74 / 0.12);
+}
+
+.office-stat--checkout .fi-wi-stats-overview-stat-icon {
+    color: rgb(37 99 235);
+    background: rgb(37 99 235 / 0.12);
+}
+
+.office-stat--collections .fi-wi-stats-overview-stat-icon {
+    color: rgb(255 90 31);
+    background: rgb(255 90 31 / 0.12);
+}
+
+.office-present-now__section {
+    border: 2px dashed rgb(255 90 31 / 0.35);
+    background: rgb(255 90 31 / 0.04);
+}
+
+.office-present-now__body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1.5rem 1rem;
+    text-align: center;
+}
+
+.office-present-now__hint {
+    font-size: 0.875rem;
+    color: var(--jf-light-text-secondary, #6e6e73);
+}
+
+html.fi.dark .office-present-now__hint {
+    color: rgb(255 255 255 / 0.5);
+}
+
+.office-expired-table {
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+.office-expired-table .fi-ta-table {
+    width: 100%;
+    min-width: 0;
+}
+
+.office-table-row {
+    transition: background-color 150ms ease;
+}
+
+.office-table-row:hover > td {
+    background-color: rgb(0 0 0 / 0.03);
+}
+
+html.fi.dark .office-table-row:hover > td {
+    background-color: rgb(255 255 255 / 0.04);
+}
+
+.office-expiry-badge--recent.fi-badge {
+    background-color: rgb(254 243 199) !important;
+    color: rgb(146 64 14) !important;
+    ring-color: rgb(253 230 138) !important;
+}
+
+html.fi.dark .office-expiry-badge--recent.fi-badge {
+    background-color: rgb(113 63 18 / 0.45) !important;
+    color: rgb(253 230 138) !important;
+}
+
+.office-confirm-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    font-size: 0.9375rem;
+}
+
+.office-manual-checkin-btn {
+    font-weight: 600;
+}
+
 /* @studio daniel-od · Julius-Fitness-Gym · https://github.com/Daniel-OD */

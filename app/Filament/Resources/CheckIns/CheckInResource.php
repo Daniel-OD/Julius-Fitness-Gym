@@ -10,14 +10,17 @@ use App\Support\AppConfig;
 use Carbon\CarbonImmutable;
 use Filament\Actions\Action;
 use Filament\Actions\ViewAction;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\Size;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\HtmlString;
 
 class CheckInResource extends Resource
 {
@@ -50,6 +53,11 @@ class CheckInResource extends Resource
     /**
      * Resolve the member's currently active subscription, if any.
      */
+    protected static function isOfficePanel(): bool
+    {
+        return Filament::getCurrentPanel()?->getId() === 'office';
+    }
+
     protected static function activeSubscriptionFor(int $memberId): ?Subscription
     {
         $today = CarbonImmutable::today(AppConfig::timezone())->toDateString();
@@ -118,7 +126,11 @@ class CheckInResource extends Resource
             ->headerActions([
                 Action::make('manualCheckIn')
                     ->label(__('app.checkins.manual_checkin'))
-                    ->icon('heroicon-o-arrow-right-end-on-rectangle')
+                    ->icon('heroicon-o-check-circle')
+                    ->button()
+                    ->size(static::isOfficePanel() ? Size::Large : Size::Medium)
+                    ->color(static::isOfficePanel() ? 'primary' : 'gray')
+                    ->extraAttributes(static::isOfficePanel() ? ['class' => 'office-manual-checkin-btn'] : [])
                     ->schema([
                         Select::make('member_id')
                             ->label(__('app.fields.member'))
@@ -127,10 +139,40 @@ class CheckInResource extends Resource
                                 ->pluck('name', 'id')
                                 ->all())
                             ->searchable()
+                            ->live()
                             ->required(),
                     ])
+                    ->requiresConfirmation()
+                    ->modalIcon('heroicon-o-check-circle')
+                    ->modalIconColor('success')
+                    ->modalHeading(__('app.checkins.confirm_checkin_heading'))
+                    ->modalDescription(function (array $data): HtmlString|string {
+                        $memberId = (int) ($data['member_id'] ?? 0);
+
+                        if ($memberId === 0) {
+                            return '';
+                        }
+
+                        $member = Member::query()->find($memberId);
+
+                        if ($member === null) {
+                            return '';
+                        }
+
+                        $subscription = static::activeSubscriptionFor($memberId);
+                        $planName = $subscription?->plan?->name ?? __('app.members.qr.no_subscription');
+
+                        return new HtmlString(
+                            '<ul class="office-confirm-list">'
+                            .'<li><strong>'.e(__('app.fields.member')).':</strong> '.e($member->name).'</li>'
+                            .'<li><strong>'.e(__('app.fields.plan')).':</strong> '.e($planName).'</li>'
+                            .'</ul>'
+                        );
+                    })
+                    ->modalSubmitActionLabel(__('app.checkins.confirm_checkin_submit'))
                     ->action(function (array $data): void {
                         $memberId = (int) $data['member_id'];
+                        $member = Member::query()->findOrFail($memberId);
 
                         CheckIn::create([
                             'member_id' => $memberId,
@@ -140,7 +182,8 @@ class CheckInResource extends Resource
                         ]);
 
                         Notification::make()
-                            ->title(__('app.checkins.manual_checkin_done'))
+                            ->title(__('app.checkins.manual_checkin_done_for', ['name' => $member->name]))
+                            ->body(static::activeSubscriptionFor($memberId)?->plan?->name ?? __('app.members.qr.no_subscription'))
                             ->success()
                             ->send();
                     }),
@@ -148,15 +191,33 @@ class CheckInResource extends Resource
             ->actions([
                 Action::make('checkOut')
                     ->label(__('app.checkins.check_out'))
-                    ->icon('heroicon-o-arrow-left-start-on-rectangle')
-                    ->color('gray')
+                    ->icon('heroicon-o-arrow-right-start-on-rectangle')
+                    ->color('danger')
+                    ->button()
                     ->requiresConfirmation()
+                    ->modalIcon('heroicon-o-clock')
+                    ->modalIconColor('danger')
+                    ->modalHeading(__('app.checkins.confirm_checkout_heading'))
+                    ->modalDescription(function (CheckIn $record): HtmlString {
+                        $time = now()->timezone(AppConfig::timezone())->translatedFormat('d M Y, H:i');
+
+                        return new HtmlString(
+                            '<ul class="office-confirm-list">'
+                            .'<li><strong>'.e(__('app.fields.member')).':</strong> '.e($record->member?->name ?? '—').'</li>'
+                            .'<li><strong>'.e(__('app.checkins.checkout_time')).':</strong> '.e($time).'</li>'
+                            .'</ul>'
+                        );
+                    })
+                    ->modalSubmitActionLabel(__('app.checkins.confirm_checkout_submit'))
                     ->visible(fn (CheckIn $record): bool => $record->checked_out_at === null)
                     ->action(function (CheckIn $record): void {
                         $record->update(['checked_out_at' => now()]);
 
                         Notification::make()
-                            ->title(__('app.checkins.check_out_done'))
+                            ->title(__('app.checkins.check_out_done_for', [
+                                'name' => $record->member?->name ?? '—',
+                            ]))
+                            ->body(now()->timezone(AppConfig::timezone())->translatedFormat('d M Y, H:i'))
                             ->success()
                             ->send();
                     }),
