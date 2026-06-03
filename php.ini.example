@@ -1,0 +1,13 @@
+; Copiază ca php.ini lângă php.exe SAU setează PHPRC la calea acestui fișier.
+; Necesar pe Windows când extensiile SQLite/MBString nu sunt activate implicit.
+
+extension_dir = "ext"
+
+extension=mbstring
+extension=openssl
+extension=pdo_sqlite
+extension=sqlite3
+extension=fileinfo
+extension=curl
+extension=gd
+extension=zip
