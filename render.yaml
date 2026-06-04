@@ -65,10 +65,14 @@ services:
         fromDatabase:
           name: julius-gym-db
           property: password
+      - key: DB_URL
+        fromDatabase:
+          name: julius-gym-db
+          property: connectionString
       - key: SESSION_DRIVER
-        value: database
+        value: file
       - key: CACHE_STORE
-        value: database
+        value: file
       - key: QUEUE_CONNECTION
         value: database
       - key: FILESYSTEM_DISK

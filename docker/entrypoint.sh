@@ -3,12 +3,28 @@ set -e
 
 cd /var/www/html
 
+# Render sets RENDER, RENDER_SERVICE_ID, and/or RENDER_EXTERNAL_URL (not always all three).
+if [ -n "${RENDER:-}" ] || [ -n "${RENDER_SERVICE_ID:-}" ] || [ -n "${RENDER_EXTERNAL_URL:-}" ]; then
+    export JULIUS_ON_RENDER=1
+fi
+
 echo "[entrypoint] Julius Fitness Gym — container startup (role=${CONTAINER_ROLE:-app})"
+
+# Web services must use Docker target "production" (nginx on $PORT). Force web on Render if misconfigured.
+if [ -n "${JULIUS_ON_RENDER:-}" ] && [ "${CONTAINER_ROLE:-app}" = "app" ]; then
+    export CONTAINER_ROLE=web
+    echo "[entrypoint] Render detected — forcing CONTAINER_ROLE=web (Dockerfile dockerTarget must be: production)"
+fi
+
+if [ -n "${JULIUS_ON_RENDER:-}" ] && [ "${DB_HOST:-}" = "mysql" ] && [ "${DB_CONNECTION:-}" = "mysql" ]; then
+    echo "[entrypoint] WARNING: DB_HOST=mysql looks like docker-compose defaults — link PostgreSQL and set DB_CONNECTION=pgsql in Render"
+fi
 
 # Ensure .env exists with APP_KEY and Render env vars (php-fpm does not always inherit env).
 ensure_app_key() {
-    if [ ! -f .env ]; then
-        touch .env
+    if [ -n "${JULIUS_ON_RENDER:-}" ]; then
+        env | grep -E '^(APP_|DB_|LOG_|SESSION_|CACHE_|QUEUE_|FILESYSTEM_|MAIL_|DATABASE_URL|RENDER_EXTERNAL_URL|RENDER|RENDER_SERVICE_ID)=' \
+            > /tmp/render-container.env 2>/dev/null || true
     fi
 
     php /usr/local/bin/ensure-env.php /var/www/html/.env
@@ -19,12 +35,21 @@ ensure_app_key() {
         echo "[entrypoint] ERROR: APP_KEY missing after ensure-env.php"
         exit 1
     fi
+
+    if [ -n "${JULIUS_ON_RENDER:-}" ]; then
+        var_count=$(grep -cE '^[A-Z_]+=' .env 2>/dev/null || echo 0)
+        echo "[entrypoint] .env: ${var_count} variables, APP_URL=$(grep '^APP_URL=' .env | cut -d= -f2- | head -1), DB_HOST=$(grep '^DB_HOST=' .env | cut -d= -f2- | head -1)"
+        if [ "$var_count" -lt 10 ]; then
+            echo "[entrypoint] ERROR: .env incomplete — redeploy with latest image (.env.render.example must be in the image)"
+            exit 1
+        fi
+    fi
 }
 
 # ── Render web: open HTTP port immediately (before DB wait / migrate) ────────
 if [ "${CONTAINER_ROLE}" = "web" ]; then
-    if [ ! -f .env ] && [ -n "${RENDER:-}" ]; then
-        echo "[entrypoint] Render — using platform environment variables"
+    if [ -n "${JULIUS_ON_RENDER:-}" ]; then
+        echo "[entrypoint] Render — building .env from .env.render.example + platform variables"
     fi
 
     if [ ! -f vendor/autoload.php ] && [ -d /.image/vendor ]; then
@@ -38,6 +63,8 @@ if [ "${CONTAINER_ROLE}" = "web" ]; then
     fi
 
     ensure_app_key
+
+    php artisan config:clear --no-interaction 2>/dev/null || true
 
     if [ ! -f storage/data/settingsData.json ] && [ -f storage/data/settingsData.json.example ]; then
         cp storage/data/settingsData.json.example storage/data/settingsData.json
@@ -60,9 +87,9 @@ fi
 
 # ── Environment file (compose / worker) ───────────────────────────────────────
 if [ ! -f .env ]; then
-    if [ -n "${RENDER:-}" ]; then
-        touch .env
-        echo "[entrypoint] Render deployment — using platform environment variables"
+    if [ -n "${JULIUS_ON_RENDER:-}" ]; then
+        echo "[entrypoint] Render deployment — building .env from .env.render.example"
+        php /usr/local/bin/ensure-env.php /var/www/html/.env
     elif [ -f .env.docker.example ]; then
         echo "[entrypoint] Creating .env from .env.docker.example"
         cp .env.docker.example .env

@@ -3,10 +3,12 @@
 declare(strict_types=1);
 
 /**
- * Build .env from container environment (Render) and guarantee a valid APP_KEY.
- * PHP-FPM may not pass env vars to workers; Laravel needs them in .env on disk.
+ * Build .env from .env.render.example + container environment (Render).
+ * PHP-FPM workers may not inherit env vars; Laravel must read them from disk.
  */
+
 $envPath = $argv[1] ?? (getcwd().DIRECTORY_SEPARATOR.'.env');
+$templatePath = dirname($envPath).DIRECTORY_SEPARATOR.'.env.render.example';
 
 $keys = [
     'APP_NAME',
@@ -24,6 +26,7 @@ $keys = [
     'DB_DATABASE',
     'DB_USERNAME',
     'DB_PASSWORD',
+    'DB_URL',
     'SESSION_DRIVER',
     'CACHE_STORE',
     'QUEUE_CONNECTION',
@@ -33,30 +36,92 @@ $keys = [
     'MAIL_FROM_NAME',
 ];
 
-/** @var array<string, string> $lines */
-$lines = [];
+if (is_file($templatePath)) {
+    copy($templatePath, $envPath);
+} elseif (! is_file($envPath)) {
+    touch($envPath);
+}
 
-if (is_file($envPath)) {
-    foreach (file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) ?: [] as $line) {
-        $trim = trim($line);
+/** @var array<string, string> $containerExport */
+$containerExport = [];
 
-        if ($trim === '' || str_starts_with($trim, '#') || ! str_contains($line, '=')) {
+$exportPath = '/tmp/render-container.env';
+
+if (is_file($exportPath)) {
+    foreach (file($exportPath, FILE_IGNORE_NEW_LINES) ?: [] as $line) {
+        if (! str_contains($line, '=')) {
             continue;
         }
 
-        [$key] = explode('=', $line, 2);
-        $lines[trim($key)] = $line;
+        [$key, $value] = explode('=', $line, 2);
+        $containerExport[trim($key)] = $value;
     }
 }
 
-foreach ($keys as $key) {
-    $value = getenv($key);
+/** @var array<string, string> $lines */
+$lines = [];
 
-    if ($value === false || $value === '') {
+foreach (file($envPath, FILE_IGNORE_NEW_LINES) ?: [] as $line) {
+    $trim = trim($line);
+
+    if ($trim === '' || str_starts_with($trim, '#') || ! str_contains($line, '=')) {
+        continue;
+    }
+
+    [$key] = explode('=', $line, 2);
+    $lines[trim($key)] = $line;
+}
+
+/**
+ * @param  array<string, string>  $containerExport
+ * @return string|false|null
+ */
+function read_env(string $key, array $containerExport): string|false|null
+{
+    if (isset($containerExport[$key]) && $containerExport[$key] !== '') {
+        return $containerExport[$key];
+    }
+
+    $value = getenv($key, local_only: false);
+
+    if ($value !== false && $value !== '') {
+        return $value;
+    }
+
+    if (isset($_ENV[$key]) && $_ENV[$key] !== '') {
+        return (string) $_ENV[$key];
+    }
+
+    if (isset($_SERVER[$key]) && $_SERVER[$key] !== '') {
+        return (string) $_SERVER[$key];
+    }
+
+    return null;
+}
+
+foreach ($keys as $key) {
+    $value = read_env($key, $containerExport);
+
+    if ($value === null) {
         continue;
     }
 
     $lines[$key] = $key.'='.$value;
+}
+
+$databaseUrl = read_env('DATABASE_URL', $containerExport);
+
+if ($databaseUrl !== null && ! isset($lines['DB_URL'])) {
+    $lines['DB_URL'] = 'DB_URL='.$databaseUrl;
+}
+
+$renderExternalUrl = read_env('RENDER_EXTERNAL_URL', $containerExport);
+
+if ($renderExternalUrl !== null && ! isset($lines['APP_URL'])) {
+    $host = str_starts_with($renderExternalUrl, 'http')
+        ? $renderExternalUrl
+        : 'https://'.$renderExternalUrl;
+    $lines['APP_URL'] = 'APP_URL='.$host;
 }
 
 $appKeyLine = $lines['APP_KEY'] ?? '';
@@ -70,4 +135,19 @@ if ($appKeyValue === '' || ! str_starts_with($appKeyValue, 'base64:')) {
 
 file_put_contents($envPath, implode("\n", $lines)."\n");
 
-echo '[ensure-env] Wrote '.count($lines)." variables to {$envPath}\n";
+$dbConfigured = isset($lines['DB_HOST']) || isset($lines['DB_URL']);
+
+echo '[ensure-env] Wrote '.count($lines).' variables to '.$envPath.PHP_EOL;
+
+$onRender = read_env('RENDER', $containerExport) !== null
+    || read_env('RENDER_SERVICE_ID', $containerExport) !== null
+    || read_env('RENDER_EXTERNAL_URL', $containerExport) !== null;
+
+if ($onRender && count($lines) < 10) {
+    fwrite(STDERR, '[ensure-env] ERROR: .env.render.example missing from image — only '.count($lines)." variables written\n");
+    exit(1);
+}
+
+if ($onRender && ! $dbConfigured) {
+    fwrite(STDERR, '[ensure-env] WARNING: DB_HOST/DB_URL missing — link PostgreSQL to this web service in Render'.PHP_EOL);
+}
