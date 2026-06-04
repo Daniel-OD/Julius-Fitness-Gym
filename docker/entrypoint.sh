@@ -58,8 +58,14 @@ if [ "${CONTAINER_ROLE}" = "web" ]; then
     fi
 
     if [ ! -f public/build/manifest.json ] && [ -d /.image/public/build ]; then
+        echo "[entrypoint] Restoring Vite build from image backup"
         mkdir -p public/build
         cp -a /.image/public/build/. public/build/
+    fi
+
+    if [ ! -f public/build/manifest.json ]; then
+        echo "[entrypoint] ERROR: public/build/manifest.json missing — image must include npm run build output"
+        exit 1
     fi
 
     ensure_app_key
