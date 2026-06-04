@@ -23,6 +23,8 @@ services:
     autoDeploy: true
     # Do not set PORT — Render assigns it automatically; nginx listens on $PORT
     envVars:
+      - key: CONTAINER_ROLE
+        value: web
       - key: APP_NAME
         value: Julius Fitness Gym
       - key: APP_ENV

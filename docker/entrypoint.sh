@@ -5,6 +5,38 @@ cd /var/www/html
 
 echo "[entrypoint] Julius Fitness Gym — container startup (role=${CONTAINER_ROLE:-app})"
 
+# Ensure .env exists and APP_KEY is configured (Render has no .env file on disk).
+ensure_app_key() {
+    if [ ! -f .env ]; then
+        if [ -n "${RENDER:-}" ]; then
+            touch .env
+            echo "[entrypoint] Created .env for Render (config comes from environment variables)"
+        fi
+    fi
+
+    if [ -n "${APP_KEY:-}" ]; then
+        echo "[entrypoint] APP_KEY provided via environment"
+        if [ -f .env ] && ! grep -q '^APP_KEY=' .env 2>/dev/null; then
+            echo "APP_KEY=${APP_KEY}" >> .env
+        fi
+
+        return 0
+    fi
+
+    if [ -f .env ] && grep -q '^APP_KEY=base64:' .env 2>/dev/null; then
+        echo "[entrypoint] APP_KEY present in .env"
+
+        return 0
+    fi
+
+    if [ ! -f .env ]; then
+        touch .env
+    fi
+
+    echo "[entrypoint] Generating APP_KEY"
+    php artisan key:generate --force --no-interaction
+}
+
 # ── Render web: open HTTP port immediately (before DB wait / migrate) ────────
 if [ "${CONTAINER_ROLE}" = "web" ]; then
     if [ ! -f .env ] && [ -n "${RENDER:-}" ]; then
@@ -21,14 +53,7 @@ if [ "${CONTAINER_ROLE}" = "web" ]; then
         cp -a /.image/public/build/. public/build/
     fi
 
-    if [ -n "${APP_KEY:-}" ] && [ "${APP_KEY#base64:}" != "${APP_KEY}" ]; then
-        echo "[entrypoint] APP_KEY provided via environment"
-    elif [ -f .env ] && grep -q '^APP_KEY=base64:' .env 2>/dev/null; then
-        echo "[entrypoint] APP_KEY present in .env"
-    else
-        echo "[entrypoint] Generating APP_KEY"
-        php artisan key:generate --force --no-interaction
-    fi
+    ensure_app_key
 
     if [ ! -f storage/data/settingsData.json ] && [ -f storage/data/settingsData.json.example ]; then
         cp storage/data/settingsData.json.example storage/data/settingsData.json
@@ -52,6 +77,7 @@ fi
 # ── Environment file (compose / worker) ───────────────────────────────────────
 if [ ! -f .env ]; then
     if [ -n "${RENDER:-}" ]; then
+        touch .env
         echo "[entrypoint] Render deployment — using platform environment variables"
     elif [ -f .env.docker.example ]; then
         echo "[entrypoint] Creating .env from .env.docker.example"
@@ -123,14 +149,7 @@ if [ ! -f vendor/autoload.php ]; then
 fi
 
 # ── Application key ──────────────────────────────────────────────────────────
-if [ -n "${APP_KEY:-}" ] && [ "${APP_KEY#base64:}" != "${APP_KEY}" ]; then
-    echo "[entrypoint] APP_KEY provided via environment"
-elif [ -f .env ] && grep -q '^APP_KEY=base64:' .env 2>/dev/null; then
-    echo "[entrypoint] APP_KEY present in .env"
-else
-    echo "[entrypoint] Generating APP_KEY"
-    php artisan key:generate --force --no-interaction
-fi
+ensure_app_key
 
 # ── Settings JSON ────────────────────────────────────────────────────────────
 if [ ! -f storage/data/settingsData.json ] && [ -f storage/data/settingsData.json.example ]; then
