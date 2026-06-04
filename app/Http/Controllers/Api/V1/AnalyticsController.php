@@ -113,7 +113,7 @@ class AnalyticsController extends ApiController
         $this->requirePermission($request, 'ViewAny:Expense');
 
         $range = AnalyticsDateRange::fromFilters($request->all());
-        $rows = app(AnalyticsService::class)->expenseBreakdownByCategory($range, 10);
+        $rows = app(AnalyticsService::class)->expenseCategoryBreakdownForChart($range, 10);
 
         return response()->json([
             'data' => $rows->values()->all(),
