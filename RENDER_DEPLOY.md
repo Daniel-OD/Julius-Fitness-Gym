@@ -173,7 +173,11 @@ Simulate the Render image locally:
 
 ```bash
 docker build --target production -t julius-gym-render .
+```
 
+Build order in the `assets` stage: **composer install → npm ci → npm run build** (vendor must exist before Vite compiles `theme.css`).
+
+```bash
 docker run --rm -p 10000:10000 \
   -e PORT=10000 \
   -e APP_KEY=base64:YOUR_KEY_HERE \
@@ -235,7 +239,7 @@ php artisan app:cache
 
 | File | Purpose |
 |------|---------|
-| `Dockerfile` | Multi-stage build; **`production`** target for Render |
+| `Dockerfile` | Multi-stage build; **`assets`** stage runs composer then npm; **`production`** target for Render |
 | `render.yaml` | Render Blueprint (web + DB + worker) |
 | `.dockerignore` | Excludes dev files from build context |
 | `docker/entrypoint.sh` | Startup: DB wait, migrate, permissions, `$PORT` nginx |

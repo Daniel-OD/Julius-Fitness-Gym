@@ -1,11 +1,46 @@
 # syntax=docker/dockerfile:1
 
-# ── Stage 1: PHP dependencies (required before Vite / Filament theme build) ─
-FROM composer:2 AS vendor
+# ── Stage 1: Composer + Vite (composer MUST run before npm run build) ─────────
+FROM php:8.4-cli-bookworm AS assets
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    curl \
+    git \
+    gnupg \
+    unzip \
+    libzip-dev \
+    libpng-dev \
+    libjpeg62-turbo-dev \
+    libfreetype6-dev \
+    libicu-dev \
+    libonig-dev \
+    libxml2-dev \
+    && curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
+    && apt-get install -y --no-install-recommends nodejs \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j"$(nproc)" \
+        gd \
+        intl \
+        mbstring \
+        opcache \
+        pcntl \
+        xml \
+        zip
+
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+ENV COMPOSER_ALLOW_SUPERUSER=1 \
+    COMPOSER_NO_INTERACTION=1
 
 WORKDIR /app
 
-COPY composer.json composer.lock ./
+# Dependency manifests first (Docker layer cache)
+COPY composer.json composer.lock package.json package-lock.json ./
+
+# 1. Composer FIRST — vendor/ required for Filament theme.css @import
 RUN composer install \
     --no-dev \
     --no-interaction \
@@ -13,27 +48,16 @@ RUN composer install \
     --optimize-autoloader \
     --no-scripts
 
+# Application source (Vite @source paths, autoload classmap)
 COPY . .
+
 RUN composer dump-autoload --optimize
 
-# ── Stage 2: Frontend assets (Vite + Filament theme.css) ─────────────────────
-FROM node:22-bookworm-slim AS frontend
+# 2. NPM after vendor/ exists
+RUN npm ci --ignore-scripts \
+    && npm run build
 
-WORKDIR /app
-
-COPY package.json package-lock.json ./
-RUN npm ci --ignore-scripts
-
-COPY vite.config.js ./
-COPY resources ./resources
-COPY app/Filament ./app/Filament
-
-# theme.css imports vendor/filament/filament/resources/css/theme.css
-COPY --from=vendor /app/vendor ./vendor
-
-RUN npm run build
-
-# ── Stage 3: Application (PHP-FPM 8.4) ───────────────────────────────────────
+# ── Stage 2: Application (PHP-FPM 8.4) ───────────────────────────────────────
 FROM php:8.4-fpm-bookworm AS app
 
 LABEL org.opencontainers.image.title="Julius Fitness Gym"
@@ -73,12 +97,12 @@ COPY docker/php/php.ini /usr/local/etc/php/conf.d/99-julius-gym.ini
 WORKDIR /var/www/html
 
 COPY --chown=www-data:www-data . .
-COPY --from=vendor --chown=www-data:www-data /app/vendor ./vendor
-COPY --from=frontend --chown=www-data:www-data /app/public/build ./public/build
+COPY --from=assets --chown=www-data:www-data /app/vendor ./vendor
+COPY --from=assets --chown=www-data:www-data /app/public/build ./public/build
 
 # Image backups for bind-mount dev (entrypoint restores if host dirs are empty)
-COPY --from=vendor --chown=www-data:www-data /app/vendor /.image/vendor
-COPY --from=frontend --chown=www-data:www-data /app/public/build /.image/public/build
+COPY --from=assets --chown=www-data:www-data /app/vendor /.image/vendor
+COPY --from=assets --chown=www-data:www-data /app/public/build /.image/public/build
 
 RUN mkdir -p storage/framework/{cache/data,sessions,testing,views} \
     storage/app/public \
@@ -99,7 +123,7 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=90s --retries=3 \
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["php-fpm"]
 
-# ── Stage 4: Render Web Service (nginx + PHP-FPM on $PORT) ─────────────────────
+# ── Stage 3: Render Web Service (nginx + PHP-FPM on $PORT) ───────────────────
 FROM app AS production
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
