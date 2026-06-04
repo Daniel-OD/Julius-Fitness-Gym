@@ -243,8 +243,8 @@ php artisan app:cache
 | `render.yaml` | Render Blueprint (web + DB + worker) |
 | `.dockerignore` | Excludes dev files from build context |
 | `docker/entrypoint.sh` | Startup: DB wait, migrate, permissions, `$PORT` nginx |
+| `docker/start-web.sh` | Starts php-fpm (background) + nginx on `$PORT` (foreground) |
 | `docker/nginx/render.conf.template` | Nginx config with `${PORT}` |
-| `docker/supervisor/render-supervisord.conf` | nginx + php-fpm supervisor |
 | `.env.render.example` | Environment variable reference |
 
 ---

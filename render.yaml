@@ -21,6 +21,7 @@ services:
     dockerTarget: production
     healthCheckPath: /up
     autoDeploy: true
+    # Do not set PORT — Render assigns it automatically; nginx listens on $PORT
     envVars:
       - key: APP_NAME
         value: Julius Fitness Gym

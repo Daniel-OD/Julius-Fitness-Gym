@@ -112,14 +112,7 @@ fi
 
 rm -f public/hot
 
-# ── Render nginx (listens on $PORT) ───────────────────────────────────────────
-if [ "${CONTAINER_ROLE:-app}" = "web" ]; then
-    export PORT="${PORT:-10000}"
-    echo "[entrypoint] Configuring nginx for PORT=${PORT}"
-    envsubst '${PORT}' < /etc/nginx/templates/default.conf.template > /etc/nginx/conf.d/default.conf
-fi
-
-# ── App / web container: migrate & cache ─────────────────────────────────────
+# ── App / web: migrate & cache (before HTTP server starts) ───────────────────
 if [ "${CONTAINER_ROLE:-app}" = "app" ] || [ "${CONTAINER_ROLE}" = "web" ]; then
     echo "[entrypoint] Running migrations"
     php artisan migrate --force --no-interaction
@@ -127,6 +120,11 @@ if [ "${CONTAINER_ROLE:-app}" = "app" ] || [ "${CONTAINER_ROLE}" = "web" ]; then
     if [ "${APP_ENV:-production}" = "production" ]; then
         php artisan app:cache --no-interaction
     fi
+fi
+
+# ── Render: nginx on $PORT + php-fpm (foreground nginx for port detection) ───
+if [ "${CONTAINER_ROLE}" = "web" ]; then
+    exec /usr/local/bin/start-web.sh
 fi
 
 echo "[entrypoint] Ready — exec: $*"

@@ -128,20 +128,22 @@ FROM app AS production
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     nginx \
-    supervisor \
     gettext-base \
     wget \
     && rm -rf /var/lib/apt/lists/* \
     && rm -f /etc/nginx/sites-enabled/default
 
 COPY docker/nginx/render.conf.template /etc/nginx/templates/default.conf.template
-COPY docker/supervisor/render-supervisord.conf /etc/supervisor/conf.d/render.conf
+COPY docker/start-web.sh /usr/local/bin/start-web.sh
+RUN chmod +x /usr/local/bin/start-web.sh
 
 ENV CONTAINER_ROLE=web
 
+# Render injects PORT (e.g. 10000) — nginx binds to it in start-web.sh
 EXPOSE 10000
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=120s --retries=3 \
     CMD sh -c 'port="${PORT:-10000}"; wget -q -O /dev/null "http://127.0.0.1:${port}/up" || exit 1'
 
-CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/supervisord.conf"]
+# ENTRYPOINT runs setup; start-web.sh runs php-fpm -D + nginx foreground
+CMD ["nginx", "-g", "daemon off;"]
