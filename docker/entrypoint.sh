@@ -5,36 +5,20 @@ cd /var/www/html
 
 echo "[entrypoint] Julius Fitness Gym — container startup (role=${CONTAINER_ROLE:-app})"
 
-# Ensure .env exists and APP_KEY is configured (Render has no .env file on disk).
+# Ensure .env exists with APP_KEY and Render env vars (php-fpm does not always inherit env).
 ensure_app_key() {
-    if [ ! -f .env ]; then
-        if [ -n "${RENDER:-}" ]; then
-            touch .env
-            echo "[entrypoint] Created .env for Render (config comes from environment variables)"
-        fi
-    fi
-
-    if [ -n "${APP_KEY:-}" ]; then
-        echo "[entrypoint] APP_KEY provided via environment"
-        if [ -f .env ] && ! grep -q '^APP_KEY=' .env 2>/dev/null; then
-            echo "APP_KEY=${APP_KEY}" >> .env
-        fi
-
-        return 0
-    fi
-
-    if [ -f .env ] && grep -q '^APP_KEY=base64:' .env 2>/dev/null; then
-        echo "[entrypoint] APP_KEY present in .env"
-
-        return 0
-    fi
-
     if [ ! -f .env ]; then
         touch .env
     fi
 
-    echo "[entrypoint] Generating APP_KEY"
-    php artisan key:generate --force --no-interaction
+    php /usr/local/bin/ensure-env.php /var/www/html/.env
+
+    if grep -q '^APP_KEY=base64:' .env 2>/dev/null; then
+        echo "[entrypoint] APP_KEY is configured in .env"
+    else
+        echo "[entrypoint] ERROR: APP_KEY missing after ensure-env.php"
+        exit 1
+    fi
 }
 
 # ── Render web: open HTTP port immediately (before DB wait / migrate) ────────

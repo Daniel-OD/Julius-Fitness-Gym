@@ -113,6 +113,7 @@ RUN mkdir -p storage/framework/{cache/data,sessions,testing,views} \
     && chmod -R ug+rwx storage bootstrap/cache
 
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY docker/ensure-env.php /usr/local/bin/ensure-env.php
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 EXPOSE 9000

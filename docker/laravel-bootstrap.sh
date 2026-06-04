@@ -77,8 +77,10 @@ fi
 
 php artisan migrate --force --no-interaction || log "migrate failed (will retry on next deploy)"
 
-if [ "${APP_ENV:-production}" = "production" ]; then
-    php artisan app:cache --no-interaction || log "app:cache failed"
-fi
+    if [ "${APP_ENV:-production}" = "production" ] && grep -q '^APP_KEY=base64:' .env 2>/dev/null; then
+        php artisan app:cache --no-interaction || log "app:cache failed"
+    else
+        log "Skipping app:cache until APP_KEY is configured"
+    fi
 
 log "Background setup complete"
