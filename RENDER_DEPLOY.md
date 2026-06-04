@@ -215,7 +215,7 @@ php artisan migrate:status
 | Issue | Solution |
 |-------|----------|
 | **Build fails at npm run build** | Ensure `package-lock.json` is committed |
-| **502 / service unavailable** | Check logs — DB may still be provisioning; wait 2–3 min |
+| **No open ports / port scan timeout** | Ensure **Docker target = `production`**. HTTP must start before DB wait — see `docker/start-web.sh`. Check logs for `[start-web] Binding HTTP on 0.0.0.0:...` |
 | **500 on first request** | Verify `APP_KEY` and PostgreSQL env vars |
 | **CSS missing** | Assets are built in Docker image — rebuild service |
 | **Session lost after deploy** | Expected on ephemeral disk; use `SESSION_DRIVER=database` (default in blueprint) |

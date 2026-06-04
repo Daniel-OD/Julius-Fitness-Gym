@@ -3,9 +3,53 @@ set -e
 
 cd /var/www/html
 
-echo "[entrypoint] Julius Fitness Gym — container startup"
+echo "[entrypoint] Julius Fitness Gym — container startup (role=${CONTAINER_ROLE:-app})"
 
-# ── Environment file ─────────────────────────────────────────────────────────
+# ── Render web: open HTTP port immediately (before DB wait / migrate) ────────
+if [ "${CONTAINER_ROLE}" = "web" ]; then
+    if [ ! -f .env ] && [ -n "${RENDER:-}" ]; then
+        echo "[entrypoint] Render — using platform environment variables"
+    fi
+
+    if [ ! -f vendor/autoload.php ] && [ -d /.image/vendor ]; then
+        mkdir -p vendor
+        cp -a /.image/vendor/. vendor/
+    fi
+
+    if [ ! -f public/build/manifest.json ] && [ -d /.image/public/build ]; then
+        mkdir -p public/build
+        cp -a /.image/public/build/. public/build/
+    fi
+
+    if [ -n "${APP_KEY:-}" ] && [ "${APP_KEY#base64:}" != "${APP_KEY}" ]; then
+        echo "[entrypoint] APP_KEY provided via environment"
+    elif [ -f .env ] && grep -q '^APP_KEY=base64:' .env 2>/dev/null; then
+        echo "[entrypoint] APP_KEY present in .env"
+    else
+        echo "[entrypoint] Generating APP_KEY"
+        php artisan key:generate --force --no-interaction
+    fi
+
+    if [ ! -f storage/data/settingsData.json ] && [ -f storage/data/settingsData.json.example ]; then
+        cp storage/data/settingsData.json.example storage/data/settingsData.json
+    fi
+
+    mkdir -p storage/framework/{cache/data,sessions,testing,views} \
+        storage/app/public \
+        storage/data \
+        storage/logs \
+        bootstrap/cache
+
+    chown -R www-data:www-data storage bootstrap/cache 2>/dev/null || true
+    chmod -R ug+rwx storage bootstrap/cache 2>/dev/null || true
+
+    rm -f public/hot
+
+    echo "[entrypoint] Handing off to HTTP server (nginx on PORT=${PORT:-10000})"
+    exec /usr/local/bin/start-web.sh
+fi
+
+# ── Environment file (compose / worker) ───────────────────────────────────────
 if [ ! -f .env ]; then
     if [ -n "${RENDER:-}" ]; then
         echo "[entrypoint] Render deployment — using platform environment variables"
@@ -34,8 +78,8 @@ fi
 # ── Wait for database ────────────────────────────────────────────────────────
 db_connection="${DB_CONNECTION:-mysql}"
 
-if [ "$db_connection" = "mysql" ]; then
-    echo "[entrypoint] Waiting for MySQL at ${DB_HOST:-mysql}:${DB_PORT:-3306}..."
+if [ "$db_connection" = "mysql" ] && [ -n "${DB_HOST:-}" ]; then
+    echo "[entrypoint] Waiting for MySQL at ${DB_HOST}:${DB_PORT:-3306}..."
     until php -r "
         try {
             new PDO(
@@ -52,7 +96,7 @@ if [ "$db_connection" = "mysql" ]; then
         sleep 2
     done
     echo "[entrypoint] MySQL is ready"
-elif [ "$db_connection" = "pgsql" ]; then
+elif [ "$db_connection" = "pgsql" ] && [ -n "${DB_HOST:-}" ]; then
     echo "[entrypoint] Waiting for PostgreSQL at ${DB_HOST}:${DB_PORT:-5432}..."
     until php -r "
         try {
@@ -112,19 +156,14 @@ fi
 
 rm -f public/hot
 
-# ── App / web: migrate & cache (before HTTP server starts) ───────────────────
-if [ "${CONTAINER_ROLE:-app}" = "app" ] || [ "${CONTAINER_ROLE}" = "web" ]; then
+# ── App / queue: migrate & cache ─────────────────────────────────────────────
+if [ "${CONTAINER_ROLE:-app}" = "app" ]; then
     echo "[entrypoint] Running migrations"
     php artisan migrate --force --no-interaction
 
     if [ "${APP_ENV:-production}" = "production" ]; then
         php artisan app:cache --no-interaction
     fi
-fi
-
-# ── Render: nginx on $PORT + php-fpm (foreground nginx for port detection) ───
-if [ "${CONTAINER_ROLE}" = "web" ]; then
-    exec /usr/local/bin/start-web.sh
 fi
 
 echo "[entrypoint] Ready — exec: $*"
