@@ -33,6 +33,11 @@ server {
         fastcgi_read_timeout 120;
     }
 
+    # Livewire (and similar) serve JS through Laravel — not as static files under public/
+    location ^~ /livewire {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
     location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ {
         expires 7d;
         access_log off;
