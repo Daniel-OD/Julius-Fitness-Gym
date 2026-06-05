@@ -605,15 +605,6 @@ return [
         ],
     ],
 
-    'checkin' => [
-        'title' => 'Check-in',
-        'success' => 'Check-in reușit',
-        'expired' => 'Abonament expirat',
-        'invalid' => 'Cod QR invalid',
-        'checked_in_at' => 'Intrare la :time',
-        'redirect_hint' => 'Revenire acasă în 5 secunde…',
-    ],
-
     'widgets' => [
         'net_revenue' => 'Venit net',
         'total_collected' => 'Total încasat',
@@ -647,6 +638,11 @@ return [
     ],
 
     'checkin' => [
+        'title' => 'Check-in',
+        'expired' => 'Abonament expirat',
+        'invalid' => 'Cod QR invalid',
+        'checked_in_at' => 'Intrare la :time',
+        'redirect_hint' => 'Revenire acasă în 5 secunde…',
         'disabled' => 'Check-in-ul este dezactivat momentan.',
         'invalid_token' => 'Cod QR invalid sau necunoscut.',
         'success' => 'Bun venit, :name! Check-in înregistrat.',

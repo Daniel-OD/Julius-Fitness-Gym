@@ -605,15 +605,6 @@ return [
         ],
     ],
 
-    'checkin' => [
-        'title' => 'Check-in',
-        'success' => 'Check-in successful',
-        'expired' => 'Subscription expired',
-        'invalid' => 'Invalid QR code',
-        'checked_in_at' => 'Checked in at :time',
-        'redirect_hint' => 'Returning to home in 5 seconds…',
-    ],
-
     'widgets' => [
         'net_revenue' => 'Net Revenue',
         'total_collected' => 'Total Collected',
@@ -647,6 +638,11 @@ return [
     ],
 
     'checkin' => [
+        'title' => 'Check-in',
+        'expired' => 'Subscription expired',
+        'invalid' => 'Invalid QR code',
+        'checked_in_at' => 'Checked in at :time',
+        'redirect_hint' => 'Returning to home in 5 seconds…',
         'disabled' => 'Check-in is currently disabled.',
         'invalid_token' => 'Invalid or unknown QR code.',
         'success' => 'Welcome, :name! Check-in recorded.',

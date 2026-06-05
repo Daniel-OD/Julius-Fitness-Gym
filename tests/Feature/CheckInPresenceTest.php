@@ -123,3 +123,30 @@ it('rate limits qr check-in after checkout within 30 minutes', function (): void
 
     $this->getJson("/checkin/{$member->checkin_token}")->assertStatus(429);
 });
+
+it('creates a manual check-in when member has no open session', function (): void {
+    $member = presenceMember();
+    $service = app(CheckInService::class);
+
+    $checkIn = $service->createManualCheckIn($member->id);
+
+    expect($checkIn)->toBeInstanceOf(CheckIn::class)
+        ->and($checkIn->member_id)->toBe($member->id)
+        ->and($checkIn->method)->toBe('manual')
+        ->and($checkIn->checked_out_at)->toBeNull();
+});
+
+it('blocks manual check-in when member already has an open session', function (): void {
+    $member = presenceMember();
+    $now = presenceNow();
+    $service = app(CheckInService::class);
+
+    CheckIn::factory()->create([
+        'member_id' => $member->id,
+        'checked_in_at' => $now->copy()->subHour(),
+        'checked_out_at' => null,
+    ]);
+
+    expect($service->createManualCheckIn($member->id))->toBeNull()
+        ->and(CheckIn::where('member_id', $member->id)->count())->toBe(1);
+});
