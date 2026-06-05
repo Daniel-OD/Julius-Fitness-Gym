@@ -1,8 +1,7 @@
 <?php
 
-use App\Http\Middleware\AppendStudioSignature;
-use App\Http\Middleware\ForceJsonResponse;
-use App\Http\Middleware\SetAppLocale;
+declare(strict_types=1);
+
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -20,19 +19,17 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->trustProxies(at: '*');
-
         $middleware->web(prepend: [
-            SetAppLocale::class,
+            \App\Http\Middleware\SetAppLocale::class,
         ]);
 
         $middleware->api(prepend: [
-            SetAppLocale::class,
-            ForceJsonResponse::class,
+            \App\Http\Middleware\SetAppLocale::class,
+            \App\Http\Middleware\ForceJsonResponse::class,
         ]);
 
         $middleware->append([
-            AppendStudioSignature::class,
+            \App\Http\Middleware\AppendStudioSignature::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
