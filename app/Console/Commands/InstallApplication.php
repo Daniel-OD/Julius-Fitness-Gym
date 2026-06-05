@@ -74,19 +74,21 @@ class InstallApplication extends Command
         Artisan::call('permission:cache-reset');
 
         $this->writeCredentialsFile($email, $passwordGenerated);
+
         File::put(storage_path('app/.install-complete'), now()->toIso8601String());
 
         $this->newLine();
-        $this->line('  Application URL: '.(string) $this->option('url'));
-        $this->line('  Admin panel:     '.rtrim((string) $this->option('url'), '/').'/admin');
-        $this->line("  Email:           {$email}");
-        $this->line("  Password:        {$password}");
-        if ($passwordGenerated) {
-            $this->warn('  ⚠  Password was generated randomly. Save it now — it will NOT be stored.');
-            $this->warn('     You will be prompted to change it on first login.');
-        }
-        $this->newLine();
+        $this->line(' Application URL: '.(string) $this->option('url'));
+        $this->line(' Admin panel: '.rtrim((string) $this->option('url'), '/').'/admin');
+        $this->line(" Email: {$email}");
+        $this->line(" Password: {$password}");
 
+        if ($passwordGenerated) {
+            $this->warn(' ⚠ Password was generated randomly. Save it now — it will NOT be stored.');
+            $this->warn(' You will be prompted to change it on first login.');
+        }
+
+        $this->newLine();
         return self::SUCCESS;
     }
 
@@ -108,19 +110,26 @@ class InstallApplication extends Command
     private function configureEnvironment(string $url, string $name): void
     {
         $envPath = base_path('.env');
+        $freshInstall = ! is_file($envPath);
 
-        if (! is_file($envPath)) {
+        if ($freshInstall) {
             File::copy(base_path('.env.example'), $envPath);
         }
 
         $this->setEnvValue('APP_NAME', $name);
         $this->setEnvValue('APP_URL', $url);
-        $this->setEnvValue('APP_ENV', 'local');
 
-        $envContent = File::get($envPath);
+        // Only seed install defaults on a brand-new .env — never overwrite an
+        // already-configured environment (e.g. a MySQL dev setup). This keeps
+        // standalone installs on SQLite while protecting existing setups and
+        // test runs from having their database connection clobbered.
+        if ($freshInstall) {
+            $this->setEnvValue('APP_ENV', 'local');
 
-        if (! preg_match('/^DB_CONNECTION=mysql/m', $envContent)) {
-            $this->setEnvValue('DB_CONNECTION', 'sqlite');
+            $envContent = File::get($envPath);
+            if (! preg_match('/^DB_CONNECTION=mysql/m', $envContent)) {
+                $this->setEnvValue('DB_CONNECTION', 'sqlite');
+            }
         }
     }
 
@@ -129,6 +138,7 @@ class InstallApplication extends Command
         $envPath = base_path('.env');
         $escaped = str_contains($value, ' ') ? '"'.$value.'"' : $value;
         $line = "{$key}={$escaped}";
+
         $content = File::get($envPath);
 
         if (preg_match("/^{$key}=/m", $content)) {
@@ -147,7 +157,6 @@ class InstallApplication extends Command
         }
 
         $this->info('Generating Filament Shield permissions...');
-
         $this->call('shield:generate', [
             '--all' => true,
             '--panel' => 'admin',
@@ -165,7 +174,7 @@ class InstallApplication extends Command
         $body = implode(PHP_EOL, [
             'Julius Fitness Gym — Administrator',
             '====================================',
-            'URL:   '.(string) $this->option('url').'/admin',
+            'URL: '.(string) $this->option('url').'/admin',
             'Email: '.$email,
             '',
             $passwordNote,
