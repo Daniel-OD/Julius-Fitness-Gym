@@ -4,15 +4,19 @@ namespace App\Console\Commands;
 
 use App\Enums\Status;
 use App\Models\User;
+use Database\Seeders\EmployeeRoleSeeder;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 class InstallApplication extends Command
 {
     protected $signature = 'app:install
                             {--email=admin@julius.test : Admin email address}
-                            {--password=julius2024 : Admin password}
+                            {--password= : Admin password (generated randomly if omitted)}
                             {--name=Administrator : Admin display name}
                             {--url=http://julius-fitness-gym.test : Application URL}
                             {--force : Reset admin password when the user already exists}';
@@ -28,13 +32,9 @@ class InstallApplication extends Command
         );
 
         $email = strtolower((string) $this->option('email'));
-        $password = (string) $this->option('password');
-
-        if ($password === '') {
-            $this->error('Admin password cannot be empty.');
-
-            return self::FAILURE;
-        }
+        $explicitPassword = (string) $this->option('password');
+        $passwordGenerated = $explicitPassword === '';
+        $password = $passwordGenerated ? Str::password(16) : $explicitPassword;
 
         $role = Role::query()->firstOrCreate([
             'name' => 'super_admin',
@@ -50,13 +50,15 @@ class InstallApplication extends Command
                 'password' => $password,
                 'status' => Status::Active,
             ]);
+            $user->must_change_password = $passwordGenerated;
+            $user->save();
             $this->info("Admin user created: {$email}");
         } else {
             if ((bool) $this->option('force')) {
-                $user->update([
-                    'name' => (string) $this->option('name'),
-                    'password' => $password,
-                ]);
+                $user->name = (string) $this->option('name');
+                $user->password = $password;
+                $user->must_change_password = $passwordGenerated;
+                $user->save();
                 $this->warn("Admin user updated: {$email}");
             } else {
                 $this->warn("Admin user already exists: {$email}");
@@ -67,17 +69,26 @@ class InstallApplication extends Command
             $user->assignRole($role);
         }
 
-        $this->writeCredentialsFile($email, $password);
+        $this->ensureShieldPermissions();
+        (new EmployeeRoleSeeder)->run();
+        Artisan::call('permission:cache-reset');
+
+        $this->writeCredentialsFile($email, $passwordGenerated);
+
         File::put(storage_path('app/.install-complete'), now()->toIso8601String());
 
         $this->newLine();
-        $this->line('  Application URL: '.(string) $this->option('url'));
-        $this->line('  Admin panel:     '.rtrim((string) $this->option('url'), '/').'/admin');
-        $this->line("  Email:           {$email}");
-        $this->line("  Password:        {$password}");
-        $this->newLine();
-        $this->line('  Credentials saved to: storage/app/install-credentials.txt');
+        $this->line(' Application URL: '.(string) $this->option('url'));
+        $this->line(' Admin panel: '.rtrim((string) $this->option('url'), '/').'/admin');
+        $this->line(" Email: {$email}");
+        $this->line(" Password: {$password}");
 
+        if ($passwordGenerated) {
+            $this->warn(' ⚠ Password was generated randomly. Save it now — it will NOT be stored.');
+            $this->warn(' You will be prompted to change it on first login.');
+        }
+
+        $this->newLine();
         return self::SUCCESS;
     }
 
@@ -114,7 +125,11 @@ class InstallApplication extends Command
         // test runs from having their database connection clobbered.
         if ($freshInstall) {
             $this->setEnvValue('APP_ENV', 'local');
-            $this->setEnvValue('DB_CONNECTION', 'sqlite');
+
+            $envContent = File::get($envPath);
+            if (! preg_match('/^DB_CONNECTION=mysql/m', $envContent)) {
+                $this->setEnvValue('DB_CONNECTION', 'sqlite');
+            }
         }
     }
 
@@ -123,6 +138,7 @@ class InstallApplication extends Command
         $envPath = base_path('.env');
         $escaped = str_contains($value, ' ') ? '"'.$value.'"' : $value;
         $line = "{$key}={$escaped}";
+
         $content = File::get($envPath);
 
         if (preg_match("/^{$key}=/m", $content)) {
@@ -134,17 +150,37 @@ class InstallApplication extends Command
         File::put($envPath, $content);
     }
 
-    private function writeCredentialsFile(string $email, string $password): void
+    private function ensureShieldPermissions(): void
     {
+        if (Permission::query()->exists()) {
+            return;
+        }
+
+        $this->info('Generating Filament Shield permissions...');
+        $this->call('shield:generate', [
+            '--all' => true,
+            '--panel' => 'admin',
+            '--option' => 'permissions',
+            '--no-interaction' => true,
+        ]);
+    }
+
+    private function writeCredentialsFile(string $email, bool $passwordGenerated): void
+    {
+        $passwordNote = $passwordGenerated
+            ? 'Parola a fost generată aleator și afișată o singură dată în terminal.'
+            : 'Parola a fost setată manual la instalare.';
+
         $body = implode(PHP_EOL, [
             'Julius Fitness Gym — Administrator',
             '====================================',
-            'URL:      '.(string) $this->option('url').'/admin',
-            'Email:    '.$email,
-            'Password: '.$password,
+            'URL: '.(string) $this->option('url').'/admin',
+            'Email: '.$email,
             '',
-            'Schimbă parola după prima autentificare.',
-            'Generat:  '.now()->toDateTimeString(),
+            $passwordNote,
+            'Dacă ai uitat parola, folosește funcția "Forgot Password" din pagina de login.',
+            '',
+            'Generat: '.now()->toDateTimeString(),
             '',
         ]);
 

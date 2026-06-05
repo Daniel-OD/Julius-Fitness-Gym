@@ -4,12 +4,17 @@ namespace App\Providers;
 
 use App\Contracts\SequenceRepository;
 use App\Contracts\SettingsRepository;
+use App\Http\Responses\Filament\LoginResponse;
 use App\Services\JsonSequenceRepository;
 use App\Services\JsonSettingsRepository;
+use App\Support\FilamentSession;
 use App\Support\Studio;
+use Filament\Auth\Http\Responses\Contracts\LoginResponse as LoginResponseContract;
+use Illuminate\Auth\Events\Logout;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Console\AboutCommand;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
@@ -21,6 +26,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->singleton(SettingsRepository::class, JsonSettingsRepository::class);
         $this->app->singleton(SequenceRepository::class, JsonSequenceRepository::class);
+        $this->app->bind(LoginResponseContract::class, LoginResponse::class);
     }
 
     public function boot(): void
@@ -30,8 +36,12 @@ class AppServiceProvider extends ServiceProvider
         }
 
         $this->ensureStorageDirectoriesExist();
+        $this->configureLocalExecutionTimeLimit();
 
         RateLimiter::for('api-login', fn (Request $request) => Limit::perMinute(10)->by($request->ip()));
+        RateLimiter::for('api', fn (Request $request) => Limit::perMinute(60)->by($request->user()?->id ?: $request->ip()));
+
+        Event::listen(Logout::class, fn (): mixed => FilamentSession::forget());
 
         View::share('studio', Studio::meta());
 
@@ -57,5 +67,19 @@ class AppServiceProvider extends ServiceProvider
                 mkdir($directory, 0755, true);
             }
         }
+    }
+
+    /**
+     * Local `php artisan serve` on Windows often uses max_execution_time=30,
+     * which is too low for the analytics-heavy admin dashboard first load.
+     */
+    private function configureLocalExecutionTimeLimit(): void
+    {
+        if ($this->app->runningInConsole() || ! $this->app->environment('local')) {
+            return;
+        }
+
+        @ini_set('max_execution_time', '120');
+        @set_time_limit(120);
     }
 }

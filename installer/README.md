@@ -16,7 +16,7 @@ Instalare automată pentru **Windows** (`.exe`) și **macOS** (`.dmg` + `.app`),
 | Shortcut desktop (Windows) | ✅ Inno Setup |
 | Aplicație `.app` (macOS) | ✅ în DMG — deschide /admin, rulează install la prima utilizare |
 
-**Implicit admin:** `admin@julius.test` / `julius2024` — schimbă parola după login.
+**Admin implicit:** `admin@julius.test` — parola este **generată aleator** la instalare și afișată o singură dată în terminal. La primul login ești obligat să o schimbi.
 
 **Pe mașina client:** doar **Laravel Herd** este obligatoriu (pachetul include `vendor` + assets build-uite).
 

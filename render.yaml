@@ -1,0 +1,139 @@
+# Render Blueprint — Julius Fitness Gym
+# Docs: https://render.com/docs/blueprint-spec
+#
+# Deploy: connect this repo in Render Dashboard → New → Blueprint → select render.yaml
+
+databases:
+  - name: julius-gym-db
+    plan: free
+    databaseName: julius_gym
+    user: julius
+
+services:
+  # ── Web Service (Docker) ───────────────────────────────────────────────────
+  - type: web
+    name: julius-fitness-gym
+    runtime: docker
+    plan: free
+    region: frankfurt
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    dockerTarget: production
+    healthCheckPath: /up
+    autoDeploy: true
+    # Do not set PORT — Render assigns it automatically; nginx listens on $PORT
+    envVars:
+      - key: CONTAINER_ROLE
+        value: web
+      - key: APP_NAME
+        value: Julius Fitness Gym
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_KEY
+        generateValue: true
+      - key: APP_URL
+        sync: false
+      - key: APP_LOCALE
+        value: ro
+      - key: APP_FALLBACK_LOCALE
+        value: en
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: LOG_LEVEL
+        value: info
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_HOST
+        fromDatabase:
+          name: julius-gym-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: julius-gym-db
+          property: port
+      - key: DB_DATABASE
+        fromDatabase:
+          name: julius-gym-db
+          property: database
+      - key: DB_USERNAME
+        fromDatabase:
+          name: julius-gym-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: julius-gym-db
+          property: password
+      - key: DB_URL
+        fromDatabase:
+          name: julius-gym-db
+          property: connectionString
+      - key: SESSION_DRIVER
+        value: file
+      - key: CACHE_STORE
+        value: file
+      - key: QUEUE_CONNECTION
+        value: database
+      - key: FILESYSTEM_DISK
+        value: local
+      - key: MAIL_MAILER
+        value: log
+      - key: MAIL_FROM_ADDRESS
+        value: noreply@julius-gym.local
+      - key: MAIL_FROM_NAME
+        value: Julius Fitness Gym
+
+  # ── Queue Worker (optional — emails / PDF jobs) ──────────────────────────────
+  - type: worker
+    name: julius-gym-queue
+    runtime: docker
+    plan: free
+    region: frankfurt
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    dockerTarget: app
+    dockerCommand: php artisan queue:work --sleep=3 --tries=3 --max-time=3600 --no-interaction
+    autoDeploy: true
+    envVars:
+      - key: APP_NAME
+        value: Julius Fitness Gym
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_KEY
+        fromService:
+          type: web
+          name: julius-fitness-gym
+          envVarKey: APP_KEY
+      - key: APP_URL
+        sync: false
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_HOST
+        fromDatabase:
+          name: julius-gym-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: julius-gym-db
+          property: port
+      - key: DB_DATABASE
+        fromDatabase:
+          name: julius-gym-db
+          property: database
+      - key: DB_USERNAME
+        fromDatabase:
+          name: julius-gym-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: julius-gym-db
+          property: password
+      - key: QUEUE_CONNECTION
+        value: database
+      - key: CONTAINER_ROLE
+        value: queue

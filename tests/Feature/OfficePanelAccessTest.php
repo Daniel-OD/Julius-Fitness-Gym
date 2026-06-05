@@ -56,6 +56,38 @@ it('a user with no employee role still reaches admin', function (): void {
     expect($user->canAccessPanel(Filament::getPanel('admin')))->toBeTrue();
 });
 
+it('a user with no roles can access the office panel', function (): void {
+    $user = User::factory()->create();
+
+    expect($user->canAccessPanel(Filament::getPanel('office')))->toBeTrue();
+});
+
+it('super admin can access both panels', function (): void {
+    $user = roleUser('super_admin');
+
+    expect($user->canAccessPanel(Filament::getPanel('office')))->toBeTrue()
+        ->and($user->canAccessPanel(Filament::getPanel('admin')))->toBeTrue();
+});
+
+it('redirects employees to office after login regardless of login page', function (): void {
+    $employee = employeeUser();
+
+    expect($employee->postLoginPanelId('admin'))->toBe('office')
+        ->and($employee->postLoginPanelId('office'))->toBe('office');
+});
+
+it('redirects super admin to admin when signing in from admin', function (): void {
+    $admin = roleUser('super_admin');
+
+    expect($admin->postLoginPanelId('admin'))->toBe('admin');
+});
+
+it('redirects super admin to office when signing in from office', function (): void {
+    $admin = roleUser('super_admin');
+
+    expect($admin->postLoginPanelId('office'))->toBe('office');
+});
+
 // ─── Office panel surface ─────────────────────────────────────────────────────
 
 it('office panel exposes only the check-in resource', function (): void {

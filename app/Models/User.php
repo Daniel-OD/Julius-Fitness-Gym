@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use App\Enums\Status;
+use App\Filament\Auth\Login;
 use Database\Factories\UserFactory;
+use Filament\Facades\Filament;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Panel;
@@ -59,6 +61,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
             'password' => 'hashed',
             'dob' => 'date',
             'status' => Status::class,
+            'must_change_password' => 'boolean',
         ];
     }
 
@@ -85,19 +88,55 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
 
     public function canAccessPanel(Panel $panel): bool
     {
-        if ($panel->getId() === 'office') {
-            return $this->hasRole('employee')
-                || $this->hasRole('owner')
-                || $this->hasRole('super_admin');
+        if (request()->attributes->get(Login::RELAXED_PANEL_ACCESS_ATTRIBUTE)) {
+            return $this->canAccessAnyFilamentPanel();
         }
 
-        // Front-desk employees are confined to the office panel — never /admin.
-        if ($this->hasRole('employee')
-            && ! $this->hasRole('owner')
-            && ! $this->hasRole('super_admin')) {
-            return false;
+        if ($this->hasRole('super_admin') || $this->hasRole('owner')) {
+            return true;
+        }
+
+        if ($this->isEmployeeOnly()) {
+            return $panel->getId() === 'office';
         }
 
         return true;
+    }
+
+    public function canAccessAnyFilamentPanel(): bool
+    {
+        if ($this->hasRole('super_admin') || $this->hasRole('owner') || $this->hasRole('employee')) {
+            return true;
+        }
+
+        return ! $this->roles()->exists();
+    }
+
+    public function isEmployeeOnly(): bool
+    {
+        return $this->hasRole('employee')
+            && ! $this->hasRole('owner')
+            && ! $this->hasRole('super_admin');
+    }
+
+    /**
+     * Panel to open after login. Employees always land on office; managers on the panel they signed into.
+     */
+    public function postLoginPanelId(?string $loginPanelId = null): string
+    {
+        if ($this->isEmployeeOnly()) {
+            return 'office';
+        }
+
+        if ($loginPanelId === 'office') {
+            return 'office';
+        }
+
+        return 'admin';
+    }
+
+    public function postLoginUrl(?string $loginPanelId = null): string
+    {
+        return Filament::getPanel($this->postLoginPanelId($loginPanelId))->getUrl();
     }
 }

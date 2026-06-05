@@ -309,7 +309,7 @@ Automated setup for [Laravel Herd](https://herd.laravel.com): migrations, admin 
 | Windows | `installer\build-installer.bat` | `.exe` → shortcut on Desktop |
 | macOS | `./installer/build-dmg.sh` | DMG + `Julius Fitness Gym.app` |
 
-Default admin after install: `admin@julius.test` / `julius2024` (see `storage/app/install-credentials.txt`).
+Default admin after install: `admin@julius.test` — password is **randomly generated** at install time and shown once in the terminal. You are forced to change it on first login (see `storage/app/install-credentials.txt` for the URL and email).
 
 Quick install from git:
 

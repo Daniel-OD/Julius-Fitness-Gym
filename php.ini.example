@@ -1,0 +1,25 @@
+; Copiază ca php.ini lângă php.exe SAU setează PHPRC la calea acestui fișier.
+; Necesar pe Windows când extensiile SQLite/MBString nu sunt activate implicit.
+
+extension_dir = "ext"
+
+extension=mbstring
+extension=openssl
+extension=pdo_sqlite
+extension=sqlite3
+extension=fileinfo
+extension=curl
+extension=gd
+extension=zip
+
+; OPcache — încarcă PHP mult mai rapid (recomandat pentru test sală / producție)
+zend_extension=opcache
+opcache.enable=1
+opcache.enable_cli=1
+opcache.memory_consumption=128
+opcache.max_accelerated_files=10000
+opcache.validate_timestamps=1
+opcache.revalidate_freq=2
+
+; Dashboard-ul admin rulează multe widget-uri analytics — 30s e insuficient pe Windows
+max_execution_time=120

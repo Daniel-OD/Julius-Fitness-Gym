@@ -72,8 +72,9 @@ Julius Fitness Gym — Instalare macOS (automatizată)
 Site:  http://julius-fitness-gym.test
 Admin: http://julius-fitness-gym.test/admin
 
-Credențiale: storage/app/install-credentials.txt
-(Implicit: admin@julius.test / julius2024 — schimbă parola după login)
+Email admin: admin@julius.test
+Parola a fost afișată în terminal la instalare.
+Dacă o pierzi, folosește "Forgot Password" din pagina de login.
 EOF
 
 mkdir -p "${ROOT}/dist"

@@ -291,6 +291,14 @@ return [
         'handled_by' => 'Handled by',
         'refunded_at' => 'Refunded at',
         'to' => 'To',
+        'new_password' => 'New password',
+        'confirm_password' => 'Confirm password',
+    ],
+
+    'auth' => [
+        'change_password' => 'Change password',
+        'force_change_notice' => 'For security reasons, you must change your password before continuing.',
+        'password_changed' => 'Password changed successfully.',
     ],
 
     'actions' => [
