@@ -6,6 +6,7 @@ use App\Filament\Resources\CheckIns\Pages\ListCheckIns;
 use App\Models\CheckIn;
 use App\Models\Member;
 use App\Models\Subscription;
+use App\Services\CheckIns\CheckInService;
 use App\Support\AppConfig;
 use Carbon\CarbonImmutable;
 use Filament\Actions\Action;
@@ -173,6 +174,16 @@ class CheckInResource extends Resource
                     ->action(function (array $data): void {
                         $memberId = (int) $data['member_id'];
                         $member = Member::query()->findOrFail($memberId);
+
+                        if (app(CheckInService::class)->hasOpenSession($memberId)) {
+                            Notification::make()
+                                ->title(__('app.checkins.already_present_title'))
+                                ->body(__('app.checkins.already_present_body', ['name' => $member->name]))
+                                ->danger()
+                                ->send();
+
+                            return;
+                        }
 
                         CheckIn::create([
                             'member_id' => $memberId,

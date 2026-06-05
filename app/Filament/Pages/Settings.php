@@ -352,6 +352,17 @@ class Settings extends Page implements HasForms
                         ->minValue(1)
                         ->default(7)
                         ->required(),
+                    Section::make(__('app.settings.sections.checkin'))
+                        ->schema([
+                            TextInput::make('checkin.present_now_grace_minutes')
+                                ->label(__('app.settings.fields.present_now_grace_minutes'))
+                                ->numeric()
+                                ->minValue(0)
+                                ->maxValue(120)
+                                ->default(15)
+                                ->required()
+                                ->helperText(__('app.settings.hints.present_now_grace_minutes')),
+                        ]),
                 ]);
     }
 

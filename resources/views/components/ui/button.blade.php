@@ -17,9 +17,9 @@
     ];
 
     $sizes = [
-        'sm' => 'px-3 py-1.5 text-xs gap-1.5',
-        'md' => 'px-4 py-2 text-sm gap-2',
-        'lg' => 'px-6 py-2.5 text-sm gap-2',
+        'sm' => 'gap-1.5 px-3 py-2 text-xs min-h-[2.75rem] sm:min-h-0 sm:py-1.5',
+        'md' => 'gap-2 px-4 py-2.5 text-sm min-h-[2.75rem] sm:min-h-0 sm:py-2',
+        'lg' => 'gap-2 px-6 py-3.5 text-base min-h-[3rem] sm:min-h-0 sm:py-2.5',
     ];
 
     $base =

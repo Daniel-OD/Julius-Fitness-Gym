@@ -10,8 +10,8 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body {{ $attributes->merge(['class' => 'min-h-full bg-zinc-50 font-sans text-zinc-900 antialiased dark:bg-black dark:text-white']) }}>
-    <div class="mx-auto flex min-h-full max-w-lg flex-col px-4 py-8 sm:px-8 sm:py-10">
+<body {{ $attributes->merge(['class' => 'jf-min-h-screen bg-zinc-50 font-sans text-zinc-900 antialiased dark:bg-black dark:text-white']) }}>
+    <div class="jf-safe-x jf-safe-b mx-auto flex min-h-full max-w-lg flex-col px-4 py-8 sm:px-8 sm:py-10">
         <div class="mb-6 flex items-center justify-between gap-4 sm:mb-8">
             <a href="{{ url('/') }}"
                 class="text-sm font-medium text-zinc-500 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">

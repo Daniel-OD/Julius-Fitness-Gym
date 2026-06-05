@@ -6,6 +6,7 @@ use App\Helpers\Helpers;
 use App\Models\CheckIn;
 use App\Models\Member;
 use App\Models\Subscription;
+use App\Services\CheckIns\CheckInService;
 use App\Support\AppConfig;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
@@ -18,6 +19,10 @@ use Illuminate\Support\Facades\RateLimiter;
 class CheckInController extends Controller
 {
     private const RATE_LIMIT_MINUTES = 30;
+
+    public function __construct(
+        private readonly CheckInService $checkIns,
+    ) {}
 
     /**
      * Handle QR scan: validate token, find active subscription, record check-in.
@@ -35,6 +40,16 @@ class CheckInController extends Controller
 
         if (! $member) {
             return $this->respond($request, 'error', __('app.checkin.invalid_token'), null, 404);
+        }
+
+        if ($this->checkIns->hasOpenSession($member->id)) {
+            return $this->respond(
+                $request,
+                'already_present',
+                __('app.checkin.already_present', ['name' => $member->name]),
+                $member,
+                422,
+            );
         }
 
         // Rate limiting: 1 check-in per member per RATE_LIMIT_MINUTES

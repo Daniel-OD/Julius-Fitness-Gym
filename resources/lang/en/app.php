@@ -145,6 +145,7 @@ return [
             'backup_manual' => 'Manual Backup & History',
             'backup_restore' => 'Restore from Backup',
             'backup_restore_desc' => 'Upload a backup ZIP file to restore the database to a previous state. This action is irreversible — an automatic safety backup will be created first.',
+            'checkin' => 'Check-in & attendance',
         ],
         'fields' => [
             'gym_name' => 'Gym name',
@@ -163,6 +164,7 @@ return [
             'discount_percent_available' => 'Discount options (%)',
             'categories' => 'Expense categories',
             'expiring_days' => 'Warn expiring subscriptions (days)',
+            'present_now_grace_minutes' => 'Present now grace period (minutes)',
             'financial_year_start' => 'Financial year start',
             'financial_year_end' => 'Financial year end',
             'prefix' => 'Invoice number prefix',
@@ -200,6 +202,7 @@ return [
             'backup_path' => 'Enter the full path to your Google Drive or iCloud synced folder.',
             'backup_time_format' => 'Format: HH:MM (e.g. 22:00)',
             'restore_include_settings' => 'If enabled, application settings (currency, invoice prefix, etc.) will also be restored.',
+            'present_now_grace_minutes' => 'How long after check-out a member stays visible on the front-desk "Present now" list.',
         ],
         'backup' => [
             'no_path_set' => 'No backup path configured.',
@@ -580,6 +583,13 @@ return [
         'expired_subscriptions' => 'Expired subscriptions',
         'expired_since' => 'Expired since',
         'no_expired_subscriptions' => 'No expired subscriptions',
+        'entry_time' => 'Entry time',
+        'no_present_now' => 'No members currently checked in',
+        'presence_status' => 'Status',
+        'present_status_in' => 'In gym since :time',
+        'present_status_left' => 'Left :minutes min ago',
+        'expiring_soon' => 'Expiring soon',
+        'no_expiring_soon' => 'No subscriptions expiring soon',
     ],
 
     'members' => [
@@ -643,6 +653,7 @@ return [
         'no_active_subscription' => 'No active subscription found. Entry denied.',
         'no_active_subscription_warning' => 'Welcome, :name! No active subscription found.',
         'rate_limited' => 'Already checked in recently. Please wait :minutes min.',
+        'already_present' => ':name is already checked in. Please check out first.',
         'no_open_checkin' => 'No open check-in found.',
         'checkout_success' => 'Goodbye, :name! Visit recorded.',
     ],
@@ -677,6 +688,8 @@ return [
         'check_out' => 'Check out',
         'check_out_done' => 'Check-out recorded',
         'check_out_done_for' => ':name checked out',
+        'already_present_title' => 'Already in the gym',
+        'already_present_body' => ':name already has an open check-in. Check them out first.',
     ],
 
     'studio' => [

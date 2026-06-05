@@ -124,17 +124,17 @@ it('scan records check-in with warning when member has no active subscription', 
     expect(CheckIn::where('member_id', $member->id)->exists())->toBeTrue();
 });
 
-it('rate limits duplicate check-ins within 30 minutes', function (): void {
+it('rejects qr check-in when an open session already exists', function (): void {
     $member = memberWithToken();
     activeSubscription($member);
 
     RateLimiter::clear("checkin:{$member->id}");
 
-    // First scan — should succeed
     $this->getJson("/checkin/{$member->checkin_token}")->assertStatus(200);
 
-    // Second scan immediately — rate limited
-    $this->getJson("/checkin/{$member->checkin_token}")->assertStatus(429);
+    $this->getJson("/checkin/{$member->checkin_token}")
+        ->assertStatus(422)
+        ->assertJsonPath('status', 'already_present');
 });
 
 it('checkout records checked_out_at on open check-in', function (): void {

@@ -3,6 +3,38 @@
 use Illuminate\Support\Str;
 use Pdo\Mysql;
 
+/**
+ * Resolve the SQLite file path when DB_CONNECTION=sqlite.
+ *
+ * Herd (and some .env copies) may set DB_DATABASE to a MySQL schema name
+ * (e.g. julius_fitness_gym). That is invalid for the SQLite driver.
+ */
+$sqliteDatabasePath = (static function (): string {
+    $database = env('DB_DATABASE');
+
+    if (! is_string($database) || trim($database) === '') {
+        return database_path('database.sqlite');
+    }
+
+    $database = trim($database);
+
+    if (str_ends_with(strtolower($database), '.sqlite')) {
+        return $database[0] === '/' ? $database : base_path($database);
+    }
+
+    if (is_file($database)) {
+        return $database;
+    }
+
+    $fromBase = base_path($database);
+
+    if (is_file($fromBase)) {
+        return $fromBase;
+    }
+
+    return database_path('database.sqlite');
+})();
+
 return [
 
     /*
@@ -35,7 +67,7 @@ return [
         'sqlite' => [
             'driver' => 'sqlite',
             'url' => env('DB_URL'),
-            'database' => env('DB_DATABASE', database_path('database.sqlite')),
+            'database' => $sqliteDatabasePath,
             'prefix' => '',
             'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
             'busy_timeout' => null,

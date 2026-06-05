@@ -24,10 +24,16 @@ function initSidebar() {
         return;
     }
 
+    const desktopQuery = window.matchMedia('(min-width: 1024px)');
+
     const open = () => {
+        if (desktopQuery.matches) {
+            return;
+        }
+
         sidebar.classList.remove('-translate-x-full');
         backdrop?.classList.remove('hidden');
-        document.body.classList.add('overflow-hidden', 'lg:overflow-auto');
+        document.body.classList.add('overflow-hidden');
     };
 
     const close = () => {
@@ -39,6 +45,18 @@ function initSidebar() {
     openButtons.forEach((btn) => btn.addEventListener('click', open));
     closeButtons.forEach((btn) => btn.addEventListener('click', close));
     backdrop?.addEventListener('click', close);
+
+    desktopQuery.addEventListener('change', (event) => {
+        if (event.matches) {
+            close();
+        }
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+            close();
+        }
+    });
 }
 
 function initDropdowns() {

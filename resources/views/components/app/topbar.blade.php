@@ -1,7 +1,8 @@
 <header
     class="sticky top-0 z-20 flex h-14 items-center gap-3 border-b border-zinc-200 bg-white/80 px-4 backdrop-blur-xl dark:border-white/8 dark:bg-canvas/80 sm:h-16 sm:px-6 lg:px-8">
     <button type="button" data-sidebar-toggle
-        class="rounded-full p-2 text-zinc-500 transition-colors hover:bg-zinc-100 dark:text-white/50 dark:hover:bg-white/5 lg:hidden">
+        class="jf-touch-target -ms-1 rounded-full p-2 text-zinc-500 transition-colors hover:bg-zinc-100 dark:text-white/50 dark:hover:bg-white/5 lg:hidden"
+        aria-label="Open menu">
         <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
             stroke-linecap="round" stroke-linejoin="round">
             <path d="M4 12h16" /><path d="M4 6h16" /><path d="M4 18h16" />

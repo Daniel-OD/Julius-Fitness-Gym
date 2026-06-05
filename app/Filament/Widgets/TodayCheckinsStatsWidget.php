@@ -2,7 +2,7 @@
 
 namespace App\Filament\Widgets;
 
-use App\Services\Members\MemberCheckinService;
+use App\Services\CheckIns\CheckInService;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
@@ -27,7 +27,7 @@ class TodayCheckinsStatsWidget extends StatsOverviewWidget
      */
     protected function getStats(): array
     {
-        $count = app(MemberCheckinService::class)->todayCount();
+        $count = app(CheckInService::class)->todayCheckInCount();
 
         return [
             Stat::make(__('app.widgets.today_checkins'), (string) $count)

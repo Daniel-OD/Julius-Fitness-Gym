@@ -8,11 +8,11 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="min-h-screen bg-zinc-100 font-sans text-zinc-900 antialiased dark:bg-black dark:text-white">
+<body class="jf-min-h-screen bg-zinc-100 font-sans text-zinc-900 antialiased dark:bg-black dark:text-white">
     <header
-        class="fixed inset-x-0 top-0 z-50 border-b border-transparent bg-transparent transition-[background-color,border-color,backdrop-filter] duration-300"
+        class="jf-safe-t fixed inset-x-0 top-0 z-50 border-b border-transparent bg-transparent transition-[background-color,border-color,backdrop-filter] duration-300"
         data-public-header>
-        <div class="mx-auto flex h-14 max-w-7xl items-center gap-3 px-4 sm:h-16 sm:gap-4 sm:px-6 lg:px-8">
+        <div class="jf-safe-x mx-auto flex h-14 max-w-7xl items-center gap-2 px-4 sm:h-16 sm:gap-4 sm:px-6 lg:px-8">
             <a href="{{ url('/') }}" class="flex min-w-0 items-center gap-2.5">
                 <span
                     class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white">
@@ -25,7 +25,20 @@
                 <span class="truncate text-sm font-semibold tracking-tight text-white">Julius Fitness</span>
             </a>
 
-            <nav class="ml-2 hidden items-center gap-1 md:flex">
+            <button type="button" data-public-nav-toggle
+                class="jf-touch-target ml-auto inline-flex items-center justify-center rounded-full border border-white/15 p-2 text-white md:hidden"
+                aria-expanded="false" aria-controls="public-mobile-nav" aria-label="Menu">
+                <svg class="h-5 w-5" data-public-nav-icon-open viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round">
+                    <path d="M4 12h16" /><path d="M4 6h16" /><path d="M4 18h16" />
+                </svg>
+                <svg class="hidden h-5 w-5" data-public-nav-icon-close viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <path d="M18 6 6 18" /><path d="m6 6 12 12" />
+                </svg>
+            </button>
+
+            <nav class="ml-2 hidden flex-1 items-center gap-1 md:flex">
                 <a href="#servicii"
                     class="rounded-full px-3 py-2 text-sm font-medium text-white/60 transition-colors duration-200 hover:bg-white/5 hover:text-white">Servicii</a>
                 <a href="#program"
@@ -36,7 +49,7 @@
                     class="rounded-full px-3 py-2 text-sm font-medium text-white/60 transition-colors duration-200 hover:bg-white/5 hover:text-white">Contact</a>
             </nav>
 
-            <div class="ml-auto flex items-center gap-1 sm:gap-2">
+            <div class="ml-auto hidden items-center gap-1 sm:gap-2 md:flex">
                 <button type="button" data-theme-toggle
                     class="rounded-full border border-white/15 px-3 py-1.5 text-xs font-medium text-white/70 transition-colors hover:bg-white/5"
                     aria-label="{{ __('app.ui.toggle_theme') }}">
@@ -50,9 +63,33 @@
                 <x-ui.button href="#abonamente" variant="primary" size="md" class="text-xs sm:text-sm">Abonament</x-ui.button>
             </div>
         </div>
+
+        <nav id="public-mobile-nav" data-public-nav-panel
+            class="jf-mobile-nav-panel jf-safe-x border-t border-white/10 bg-black/90 backdrop-blur-xl md:hidden">
+            <div class="flex flex-col gap-1 px-4 py-4">
+                <a href="#servicii"
+                    class="jf-touch-target rounded-xl px-4 py-3 text-base font-medium text-white/80">Servicii</a>
+                <a href="#program"
+                    class="jf-touch-target rounded-xl px-4 py-3 text-base font-medium text-white/80">Program</a>
+                <a href="#abonamente"
+                    class="jf-touch-target rounded-xl px-4 py-3 text-base font-medium text-white/80">Abonamente</a>
+                <a href="#contact"
+                    class="jf-touch-target rounded-xl px-4 py-3 text-base font-medium text-white/80">Contact</a>
+                <div class="mt-2 flex flex-col gap-2 border-t border-white/10 pt-4">
+                    @if (Route::has('login'))
+                        <x-ui.button :href="route('login')" variant="ghost" size="md" class="w-full justify-center">
+                            Autentificare
+                        </x-ui.button>
+                    @endif
+                    <x-ui.button href="#abonamente" variant="primary" size="md" class="w-full justify-center">
+                        Abonament
+                    </x-ui.button>
+                </div>
+            </div>
+        </nav>
     </header>
 
-    <main>
+    <main class="jf-safe-x">
         {{ $slot }}
     </main>
 
@@ -121,6 +158,29 @@
         };
         onScroll();
         window.addEventListener('scroll', onScroll, { passive: true });
+
+        const navToggle = document.querySelector('[data-public-nav-toggle]');
+        const navPanel = document.querySelector('[data-public-nav-panel]');
+        const iconOpen = document.querySelector('[data-public-nav-icon-open]');
+        const iconClose = document.querySelector('[data-public-nav-icon-close]');
+
+        navToggle?.addEventListener('click', () => {
+            const open = navPanel?.classList.toggle('is-open');
+            navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+            iconOpen?.classList.toggle('hidden', open);
+            iconClose?.classList.toggle('hidden', !open);
+            document.body.classList.toggle('overflow-hidden', open);
+        });
+
+        navPanel?.querySelectorAll('a').forEach((link) => {
+            link.addEventListener('click', () => {
+                navPanel.classList.remove('is-open');
+                navToggle?.setAttribute('aria-expanded', 'false');
+                iconOpen?.classList.remove('hidden');
+                iconClose?.classList.add('hidden');
+                document.body.classList.remove('overflow-hidden');
+            });
+        });
     </script>
 </body>
 
