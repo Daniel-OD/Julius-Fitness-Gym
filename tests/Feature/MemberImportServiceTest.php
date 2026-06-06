@@ -2,6 +2,7 @@
 
 use App\Enums\MemberImportField;
 use App\Models\Member;
+use App\Models\User;
 use App\Services\Members\MemberImportColumnMapper;
 use App\Services\Members\MemberImportService;
 use App\Services\Members\MemberImportSpreadsheetReader;
@@ -103,4 +104,20 @@ it('flags rows without email or name in analysis', function (): void {
 
     expect($analysis->importableCount)->toBe(0)
         ->and($analysis->errorCount)->toBe(2);
+});
+
+it('serves a static member import template from public', function (): void {
+    $path = public_path('templates/membri-template.xlsx');
+
+    expect(is_file($path))->toBeTrue()
+        ->and(filesize($path))->toBeGreaterThan(100);
+});
+
+it('downloads member import template for authenticated users', function (): void {
+    $user = User::factory()->create();
+
+    $this->actingAs($user)
+        ->get(route('members.import.template'))
+        ->assertSuccessful()
+        ->assertDownload('membri-template.xlsx');
 });

@@ -119,6 +119,7 @@ return [
             ],
             'errors' => [
                 'file_required' => 'Please upload a file first.',
+                'storage_failed' => 'Could not save the uploaded file. Check that storage/app/private is writable on the server.',
                 'mapping_required' => 'Map at least Email or Name before continuing.',
                 'invalid_format' => 'Unsupported file format.',
                 'xls_unsupported' => 'Legacy .xls files are not supported. Save as .xlsx or .csv.',

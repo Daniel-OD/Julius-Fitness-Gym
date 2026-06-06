@@ -56,9 +56,16 @@ new class extends Component
     public function updatedImportFile(): void
     {
         $this->resetImportState(keepFile: false);
-        $this->validate([
-            'importFile' => 'required|file|mimes:csv,xlsx,xls|max:10240',
-        ]);
+
+        try {
+            $this->validate([
+                'importFile' => 'required|file|mimes:csv,xlsx,xls|max:10240',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $exception) {
+            $this->importFile = null;
+
+            throw $exception;
+        }
 
         $extension = strtolower($this->importFile->getClientOriginalExtension());
         $path = $this->importFile->storeAs(
@@ -66,6 +73,13 @@ new class extends Component
             Str::uuid().'.'.$extension,
             'local',
         );
+
+        if ($path === false) {
+            $this->importFile = null;
+            $this->addError('importFile', __('app.settings.import.errors.storage_failed'));
+
+            return;
+        }
 
         $this->storedFilePath = $path;
         $this->storedExtension = $extension;
@@ -393,9 +407,9 @@ new class extends Component
 
             <div class="jf-import-actions jf-import-actions--between">
                 <a
-                    href="{{ route('members.import.template') }}"
+                    href="{{ asset('templates/membri-template.xlsx') }}"
                     class="fi-btn fi-btn-size-md fi-color-gray fi-btn-outlined"
-                    download
+                    download="membri-template.xlsx"
                 >
                     <x-filament::icon icon="heroicon-m-arrow-down-tray" class="fi-btn-icon" />
                     {{ __('app.settings.import.download_template') }}

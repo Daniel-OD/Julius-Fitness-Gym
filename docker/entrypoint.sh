@@ -78,6 +78,7 @@ if [ "${CONTAINER_ROLE}" = "web" ]; then
 
     mkdir -p storage/framework/{cache/data,sessions,testing,views} \
         storage/app/public \
+        storage/app/private/livewire-tmp \
         storage/data \
         storage/logs \
         bootstrap/cache
@@ -177,6 +178,7 @@ fi
 # ── Storage structure & permissions ──────────────────────────────────────────
 mkdir -p storage/framework/{cache/data,sessions,testing,views} \
     storage/app/public \
+    storage/app/private/livewire-tmp \
     storage/data \
     storage/logs \
     bootstrap/cache
