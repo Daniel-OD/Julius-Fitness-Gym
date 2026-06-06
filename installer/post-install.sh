@@ -10,6 +10,13 @@ echo ""
 echo "  Configurare Julius Fitness Gym..."
 echo ""
 
+if [[ -f storage/app/.install-complete ]]; then
+    echo "  [OK] Instalarea a fost deja rulată — nu se reconfigurează automat."
+    echo "  Reset parolă: php artisan app:install --force --email=admin@julius.test --password=PAROLA_TA --url=http://julius-fitness-gym.test"
+    echo ""
+    exit 0
+fi
+
 bash "${APP_ROOT}/installer/check-prerequisites.sh" "${APP_ROOT}"
 
 if [[ ! -f database/database.sqlite ]]; then
@@ -56,7 +63,7 @@ else
 fi
 
 echo "  Creare utilizator admin..."
-php artisan app:install --no-interaction
+php artisan app:install --no-interaction --email=admin@julius.test --password='GymTest2026!' --url=http://julius-fitness-gym.test
 
 echo ""
 echo "  ========================================"

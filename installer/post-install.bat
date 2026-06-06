@@ -13,6 +13,14 @@ echo.
 echo  Configurare Julius Fitness Gym...
 echo.
 
+if exist "%APP_ROOT%\storage\app\.install-complete" (
+    echo  [OK] Instalarea a fost deja rulata — nu se reconfigureaza automat.
+    echo  Pentru reset parola admin, ruleaza in terminal:
+    echo    php artisan app:install --force --email=admin@julius.test --password=PAROLA_TA --url=http://julius-fitness-gym.test
+    echo.
+    exit /b 0
+)
+
 if not exist "%APP_ROOT%\database\database.sqlite" (
     echo  Creare baza de date SQLite...
     if not exist "%APP_ROOT%\database" mkdir "%APP_ROOT%\database"
@@ -67,7 +75,8 @@ if not errorlevel 1 (
 )
 
 echo  Creare utilizator admin...
-call php artisan app:install --no-interaction
+REM Parola explicita = fara ecran "Change password" la fiecare login (schimba-o din cont dupa prima utilizare)
+call php artisan app:install --no-interaction --email=admin@julius.test --password=GymTest2026! --url=http://julius-fitness-gym.test
 if errorlevel 1 goto :failed
 
 echo.
