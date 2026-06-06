@@ -13,7 +13,7 @@
         'client' => [
             'href' => route('client.dashboard'),
             'label' => __('app.navigation.dashboard_client'),
-            'active' => request()->routeIs('client.dashboard'),
+            'active' => request()->routeIs('client.*'),
         ],
     ];
 @endphp

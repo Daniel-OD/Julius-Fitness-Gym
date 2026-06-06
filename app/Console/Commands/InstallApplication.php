@@ -99,6 +99,8 @@ class InstallApplication extends Command
     {
         foreach ([
             storage_path('app'),
+            storage_path('app/private'),
+            storage_path('app/private/livewire-tmp'),
             storage_path('framework/views'),
             storage_path('framework/cache/data'),
             storage_path('framework/sessions'),

@@ -56,20 +56,29 @@ class Settings extends Page implements HasForms
      */
     public function mount(): void
     {
-        $settings = Helpers::getSettings();
-        $this->data = $settings;
-        $general = is_array($this->data['general'] ?? null) ? $this->data['general'] : [];
-
-        // Ensure gym_logo is always set correctly
-        foreach (['gym_logo'] as $logoType) {
-            if (! empty($general[$logoType]) && is_array($general[$logoType])) {
-                $general[$logoType] = $general[$logoType];
-            }
-        }
-
-        $this->data['general'] = $general;
+        $settings = $this->prepareSettingsForForm(Helpers::getSettings());
 
         $this->form->fill($settings);
+    }
+
+    /**
+     * @param  array<string, mixed>  $settings
+     * @return array<string, mixed>
+     */
+    private function prepareSettingsForForm(array $settings): array
+    {
+        $general = is_array($settings['general'] ?? null) ? $settings['general'] : [];
+
+        $logo = $general['gym_logo'] ?? null;
+        if (is_array($logo)) {
+            $general['gym_logo'] = filled($logo) ? array_values($logo) : null;
+        } elseif (! filled($logo)) {
+            $general['gym_logo'] = null;
+        }
+
+        $settings['general'] = $general;
+
+        return $settings;
     }
 
     public function getTitle(): string
@@ -91,6 +100,7 @@ class Settings extends Page implements HasForms
     {
         return [
             Tabs::make(__('app.settings.title'))
+                ->persistTabInQueryString('tab')
                 ->tabs([
                     $this->generalTab(),
                     $this->invoiceTab(),
@@ -104,14 +114,70 @@ class Settings extends Page implements HasForms
         ];
     }
 
+    private function guidePanel(string $tabId): View
+    {
+        return View::make('filament.components.admin-guide-panel')
+            ->viewData(['guideKey' => "admin.settings.tabs.{$tabId}"])
+            ->columnSpanFull();
+    }
+
+    /**
+     * Returns cascading country → state → city Selects when the world package is seeded,
+     * or plain TextInputs when it is not (avoids empty, unusable dropdowns).
+     *
+     * @return array<int, Component>
+     */
+    private function locationFields(): array
+    {
+        $worldAvailable = count(Helpers::getCountries()) > 1;
+
+        if ($worldAvailable) {
+            return [
+                Select::make('general.country')
+                    ->label(__('app.settings.fields.country'))
+                    ->options(fn (): array => Helpers::getCountries())
+                    ->searchable()
+                    ->preload()
+                    ->live()
+                    ->afterStateUpdated(fn ($state, callable $set) => [
+                        $set('general.state', null),
+                        $set('general.city', null),
+                    ]),
+                Select::make('general.state')
+                    ->label(__('app.settings.fields.state'))
+                    ->options(fn ($get): array => Helpers::getStates($get('general.country')))
+                    ->searchable()
+                    ->preload()
+                    ->live(),
+                Select::make('general.city')
+                    ->label(__('app.settings.fields.city'))
+                    ->options(fn ($get): array => Helpers::getCities($get('general.state')))
+                    ->searchable()
+                    ->preload()
+                    ->live(),
+            ];
+        }
+
+        return [
+            TextInput::make('general.country')
+                ->label(__('app.settings.fields.country')),
+            TextInput::make('general.state')
+                ->label(__('app.settings.fields.state')),
+            TextInput::make('general.city')
+                ->label(__('app.settings.fields.city')),
+        ];
+    }
+
     /**
      * General Tab Schema.
      */
     private function generalTab(): Tab
     {
         return Tab::make(__('app.settings.tabs.gym_info'))
+            ->id('gym_info')
             ->icon('heroicon-m-briefcase')
             ->schema([
+                $this->guidePanel('gym_info'),
                 Section::make(__('app.settings.sections.general_information'))
                     ->aside()
                     ->schema([
@@ -121,8 +187,9 @@ class Settings extends Page implements HasForms
                                     ->label(__('app.settings.fields.gym_name')),
                                 Select::make('general.currency')
                                     ->label(__('app.settings.fields.currency'))
-                                    ->options(Helpers::getCurrencies())
-                                    ->searchable(),
+                                    ->options(fn (): array => Helpers::getCurrencies())
+                                    ->searchable()
+                                    ->preload(),
                                 FileUpload::make('general.gym_logo')
                                     ->label(__('app.settings.fields.gym_logo'))
                                     ->disk('public')
@@ -158,25 +225,7 @@ class Settings extends Page implements HasForms
                             ]),
                         Grid::make(4)
                             ->schema([
-                                Select::make('general.country')
-                                    ->label(__('app.settings.fields.country'))
-                                    ->options(Helpers::getCountries())
-                                    ->searchable()
-                                    ->reactive()
-                                    ->afterStateUpdated(fn ($state, callable $set) => [
-                                        $set('general.state', null),
-                                        $set('general.city', null),
-                                    ]),
-                                Select::make('general.state')
-                                    ->label(__('app.settings.fields.state'))
-                                    ->options(fn ($get) => Helpers::getStates($get('general.country')))
-                                    ->searchable()
-                                    ->reactive(),
-                                Select::make('general.city')
-                                    ->label(__('app.settings.fields.city'))
-                                    ->options(fn ($get) => Helpers::getCities($get('general.state')))
-                                    ->searchable()
-                                    ->reactive(),
+                                ...$this->locationFields(),
                                 TextInput::make('general.zip')
                                     ->label(__('app.settings.fields.zip'))
                                     ->numeric()
@@ -210,7 +259,9 @@ class Settings extends Page implements HasForms
     {
         return
             Tab::make(__('app.settings.tabs.invoice'))->icon('heroicon-m-document-text')
+                ->id('invoice')
                 ->schema([
+                    $this->guidePanel('invoice'),
                     Grid::make(3)
                         ->schema([
                             TextInput::make('invoice.prefix')
@@ -270,7 +321,9 @@ class Settings extends Page implements HasForms
     {
         return
             Tab::make(__('app.settings.tabs.member'))->icon('heroicon-m-user-group')
+                ->id('member')
                 ->schema([
+                    $this->guidePanel('member'),
                     Grid::make(2)
                         ->schema([
                             TextInput::make('member.prefix')
@@ -291,7 +344,9 @@ class Settings extends Page implements HasForms
     {
         return
             Tab::make(__('app.settings.tabs.charges'))->icon('heroicon-m-currency-rupee')
+                ->id('charges')
                 ->schema([
+                    $this->guidePanel('charges'),
                     Grid::make(3)
                         ->schema([
                             TextInput::make('charges.admission_fee')
@@ -317,7 +372,9 @@ class Settings extends Page implements HasForms
     {
         return
             Tab::make(__('app.settings.tabs.expenses'))->icon('heroicon-m-banknotes')
+                ->id('expenses')
                 ->schema([
+                    $this->guidePanel('expenses'),
                     TagsInput::make('expenses.categories')
                         ->label(__('app.settings.fields.categories'))
                         ->hint(__('app.settings.hints.press_enter_to_add'))
@@ -332,8 +389,10 @@ class Settings extends Page implements HasForms
     private function importTab(): Tab
     {
         return Tab::make(__('app.settings.tabs.import'))
+            ->id('import')
             ->icon('heroicon-m-arrow-up-tray')
             ->schema([
+                $this->guidePanel('import'),
                 View::make('filament.settings.member-import-tab'),
             ]);
     }
@@ -345,13 +404,14 @@ class Settings extends Page implements HasForms
     {
         return
             Tab::make(__('app.settings.tabs.subscriptions'))->icon('heroicon-m-ticket')
+                ->id('subscriptions')
                 ->schema([
+                    $this->guidePanel('subscriptions'),
                     TextInput::make('subscriptions.expiring_days')
                         ->label(__('app.settings.fields.expiring_days'))
                         ->numeric()
                         ->minValue(1)
-                        ->default(7)
-                        ->required(),
+                        ->default(7),
                     Section::make(__('app.settings.sections.checkin'))
                         ->schema([
                             TextInput::make('checkin.present_now_grace_minutes')
@@ -360,7 +420,6 @@ class Settings extends Page implements HasForms
                                 ->minValue(0)
                                 ->maxValue(120)
                                 ->default(15)
-                                ->required()
                                 ->helperText(__('app.settings.hints.present_now_grace_minutes')),
                         ]),
                 ]);
@@ -372,8 +431,10 @@ class Settings extends Page implements HasForms
     private function backupTab(): Tab
     {
         return Tab::make(__('app.settings.tabs.backup'))
+            ->id('backup')
             ->icon('heroicon-m-archive-box')
             ->schema([
+                $this->guidePanel('backup'),
                 Section::make(__('app.settings.sections.backup_config'))
                     ->aside()
                     ->description(__('app.settings.sections.backup_config_desc'))
@@ -461,7 +522,7 @@ class Settings extends Page implements HasForms
      */
     public function runBackupNow(): void
     {
-        $settings = $this->data['backup'] ?? [];
+        $settings = $this->form->getState()['backup'] ?? [];
 
         if (empty($settings['enabled'])) {
             Notification::make()
@@ -626,7 +687,7 @@ class Settings extends Page implements HasForms
      */
     public function save(): void
     {
-        $settings = $this->data ?? [];
+        $settings = $this->form->getState();
         $general = is_array($settings['general'] ?? null) ? $settings['general'] : [];
 
         if (! empty($general['financial_year_start']) && is_string($general['financial_year_start'])) {
@@ -651,7 +712,7 @@ class Settings extends Page implements HasForms
 
         try {
             app(SettingsRepository::class)->put($settings);
-            $this->data = $settings;
+            $this->form->fill($this->prepareSettingsForForm($settings));
         } catch (\Throwable $exception) {
             report($exception);
 
@@ -669,6 +730,18 @@ class Settings extends Page implements HasForms
             ->body(__('app.notifications.success_settings_save'))
             ->success()
             ->send();
+    }
+
+    /**
+     * @return array<int, Action>
+     */
+    protected function getFormActions(): array
+    {
+        return [
+            Action::make('save')
+                ->label(__('app.settings.actions.save_settings'))
+                ->submit('save'),
+        ];
     }
 
     /**

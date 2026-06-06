@@ -6,7 +6,6 @@ declare(strict_types=1);
  * Build .env from .env.render.example + container environment (Render).
  * PHP-FPM workers may not inherit env vars; Laravel must read them from disk.
  */
-
 $envPath = $argv[1] ?? (getcwd().DIRECTORY_SEPARATOR.'.env');
 $templatePath = dirname($envPath).DIRECTORY_SEPARATOR.'.env.render.example';
 
@@ -28,6 +27,9 @@ $keys = [
     'DB_PASSWORD',
     'DB_URL',
     'SESSION_DRIVER',
+    'SESSION_LIFETIME',
+    'SESSION_ENCRYPT',
+    'SESSION_SECURE_COOKIE',
     'CACHE_STORE',
     'QUEUE_CONNECTION',
     'FILESYSTEM_DISK',
@@ -74,7 +76,6 @@ foreach (file($envPath, FILE_IGNORE_NEW_LINES) ?: [] as $line) {
 
 /**
  * @param  array<string, string>  $containerExport
- * @return string|false|null
  */
 function read_env(string $key, array $containerExport): string|false|null
 {

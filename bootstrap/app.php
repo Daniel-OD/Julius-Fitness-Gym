@@ -27,6 +27,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'dashboard.access' => EnsureDashboardAccess::class,
         ]);
 
+        // Render (and similar) terminate TLS at the edge — required for signed Livewire upload URLs.
+        $middleware->trustProxies(at: '*');
+
         $middleware->web(prepend: [
             SetAppLocale::class,
         ]);

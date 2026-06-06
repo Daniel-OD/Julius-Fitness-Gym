@@ -45,6 +45,8 @@ new class extends Component
 
     public int $updatedCount = 0;
 
+    public int $subscriptionsCreatedCount = 0;
+
     public int $failedCount = 0;
 
     public ?string $errorReportToken = null;
@@ -56,9 +58,16 @@ new class extends Component
     public function updatedImportFile(): void
     {
         $this->resetImportState(keepFile: false);
-        $this->validate([
-            'importFile' => 'required|file|mimes:csv,xlsx,xls|max:10240',
-        ]);
+
+        try {
+            $this->validate([
+                'importFile' => ['required', 'file', 'extensions:csv,xlsx,xls', 'max:10240'],
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $exception) {
+            $this->importFile = null;
+
+            throw $exception;
+        }
 
         $extension = strtolower($this->importFile->getClientOriginalExtension());
         $path = $this->importFile->storeAs(
@@ -66,6 +75,13 @@ new class extends Component
             Str::uuid().'.'.$extension,
             'local',
         );
+
+        if ($path === false) {
+            $this->importFile = null;
+            $this->addError('importFile', __('app.settings.import.errors.storage_failed'));
+
+            return;
+        }
 
         $this->storedFilePath = $path;
         $this->storedExtension = $extension;
@@ -152,6 +168,7 @@ new class extends Component
         $this->importedCount += $result->imported;
         $this->skippedCount += $result->skippedDuplicates;
         $this->updatedCount += $result->updated;
+        $this->subscriptionsCreatedCount += $result->subscriptionsCreated;
         $this->failedCount += $result->failed;
         $this->importProgress = min($offset + MemberImportService::CHUNK_SIZE, $this->importTotal);
 
@@ -187,6 +204,15 @@ new class extends Component
         $this->clearStoredFile();
         $this->importFile = null;
         $this->resetImportState(keepFile: false);
+    }
+
+    public function reportUploadError(?string $message = null): void
+    {
+        $this->importFile = null;
+        $this->addError(
+            'importFile',
+            filled($message) ? $message : __('app.settings.import.errors.upload_failed'),
+        );
     }
 
     #[Computed]
@@ -324,6 +350,7 @@ new class extends Component
         $this->importedCount = 0;
         $this->skippedCount = 0;
         $this->updatedCount = 0;
+        $this->subscriptionsCreatedCount = 0;
         $this->failedCount = 0;
         $this->errorReportToken = null;
     }
@@ -364,7 +391,16 @@ new class extends Component
                     dragging = false;
                     const file = $event.dataTransfer?.files?.[0];
                     if (file) {
-                        $wire.upload('importFile', file, () => {}, () => {}, () => {});
+                        $wire.upload(
+                            'importFile',
+                            file,
+                            () => {},
+                            (errors) => {
+                                const message = Array.isArray(errors) ? errors.join(' ') : String(errors ?? '');
+                                $wire.reportUploadError(message);
+                            },
+                            () => {},
+                        );
                     }
                 "
                 :class="{ 'jf-import-dropzone--active': dragging }"
@@ -393,9 +429,9 @@ new class extends Component
 
             <div class="jf-import-actions jf-import-actions--between">
                 <a
-                    href="{{ route('members.import.template') }}"
+                    href="{{ asset('templates/membri-template.xlsx') }}"
                     class="fi-btn fi-btn-size-md fi-color-gray fi-btn-outlined"
-                    download
+                    download="membri-template.xlsx"
                 >
                     <x-filament::icon icon="heroicon-m-arrow-down-tray" class="fi-btn-icon" />
                     {{ __('app.settings.import.download_template') }}
@@ -523,6 +559,8 @@ new class extends Component
                                     <th>{{ __('app.fields.contact') }}</th>
                                     <th>{{ __('app.fields.dob') }}</th>
                                     <th>{{ __('app.fields.status') }}</th>
+                                    <th>{{ __('app.settings.import.fields.plan_name') }}</th>
+                                    <th>{{ __('app.settings.import.fields.plan_amount') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -533,6 +571,8 @@ new class extends Component
                                         <td>{{ $row['contact'] ?? '—' }}</td>
                                         <td>{{ $row['dob'] ?? '—' }}</td>
                                         <td>{{ $row['status'] ?? '—' }}</td>
+                                        <td>{{ $row['plan_name'] ?? '—' }}</td>
+                                        <td>{{ $row['plan_amount'] ?? '—' }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -623,6 +663,12 @@ new class extends Component
                             <span class="jf-import-result-card__value">{{ $skippedCount }}</span>
                             <span class="jf-import-result-card__label">{{ __('app.settings.import.result_skipped') }}</span>
                         </div>
+                        @if ($subscriptionsCreatedCount > 0)
+                            <div class="jf-import-result-card jf-import-result-card--success">
+                                <span class="jf-import-result-card__value">{{ $subscriptionsCreatedCount }}</span>
+                                <span class="jf-import-result-card__label">{{ __('app.settings.import.result_subscriptions') }}</span>
+                            </div>
+                        @endif
                         <div class="jf-import-result-card jf-import-result-card--danger">
                             <span class="jf-import-result-card__value">{{ $failedCount }}</span>
                             <span class="jf-import-result-card__label">{{ __('app.settings.import.result_errors') }}</span>

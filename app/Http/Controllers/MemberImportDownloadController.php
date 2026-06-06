@@ -6,21 +6,24 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use OpenSpout\Common\Entity\Row;
 use OpenSpout\Writer\XLSX\Writer;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class MemberImportDownloadController extends Controller
 {
-    public function template(): StreamedResponse
+    public function template(): BinaryFileResponse|StreamedResponse
     {
         $staticPath = public_path('templates/membri-template.xlsx');
 
         if (is_file($staticPath)) {
-            return response()->download($staticPath, 'membri-template.xlsx');
+            return response()->download($staticPath, 'membri-template.xlsx', [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            ]);
         }
 
         return response()->streamDownload(function (): void {
             $writer = new Writer;
-            $writer->openToBrowser('membri-template.xlsx');
+            $writer->openToFile('php://output');
 
             $writer->addRow(Row::fromValues([
                 'Prenume',
@@ -38,24 +41,6 @@ class MemberImportDownloadController extends Controller
                 '0721234567',
                 '15/03/1990',
                 'Abonament anual',
-            ]));
-
-            $writer->addRow(Row::fromValues([
-                'Maria',
-                'Ionescu',
-                'maria.ionescu@example.ro',
-                '0732987654',
-                '22/07/1985',
-                '',
-            ]));
-
-            $writer->addRow(Row::fromValues([
-                'George',
-                'Dumitrescu',
-                'george.dumitrescu@example.ro',
-                '0744112233',
-                '01/11/1992',
-                'Preferă antrenament dimineața',
             ]));
 
             $writer->close();

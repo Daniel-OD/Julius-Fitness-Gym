@@ -19,6 +19,11 @@ class MemberImportColumnMapper
         MemberImportField::Dob->value => ['data nasterii', 'data nașterii', 'data nastere', 'dob', 'birth', 'birthday', 'date of birth'],
         MemberImportField::Status->value => ['status', 'stare', 'activ'],
         MemberImportField::Notes->value => ['note', 'notes', 'notite', 'notițe', 'observatii', 'observații', 'comments', 'comment'],
+        MemberImportField::PlanName->value => ['abonament', 'plan', 'tip abonament', 'plan name', 'membership', 'pachet'],
+        MemberImportField::PlanAmount->value => ['cost', 'pret', 'preț', 'price', 'amount', 'suma', 'tarif', 'valoare', 'plata', 'plată'],
+        MemberImportField::PlanDays->value => ['zile', 'durata', 'duration', 'days', 'plan days', 'durata zile'],
+        MemberImportField::SubscriptionStart->value => ['data start', 'start date', 'inceput', 'început', 'de la', 'valabil de la', 'subscription start'],
+        MemberImportField::SubscriptionEnd->value => ['data expirare', 'expirare', 'end date', 'expira', 'expiră', 'pana la', 'până la', 'valabil pana', 'subscription end'],
     ];
 
     /**

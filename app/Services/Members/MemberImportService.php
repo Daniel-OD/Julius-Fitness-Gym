@@ -8,7 +8,7 @@ use App\Models\Member;
 use App\Support\Members\MemberImportAnalysis;
 use App\Support\Members\MemberImportDataset;
 use App\Support\Members\MemberImportResult;
-use Carbon\Carbon;
+use App\Support\Members\MemberImportValueParser;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use League\Csv\Writer;
@@ -20,6 +20,8 @@ class MemberImportService
     public function __construct(
         private readonly MemberImportSpreadsheetReader $reader,
         private readonly MemberImportColumnMapper $mapper,
+        private readonly MemberImportValueParser $valueParser,
+        private readonly MemberImportSubscriptionProvisioner $subscriptionProvisioner,
     ) {}
 
     /**
@@ -46,6 +48,11 @@ class MemberImportService
                 'dob' => null,
                 'status' => null,
                 'notes' => null,
+                'plan_name' => null,
+                'plan_amount' => null,
+                'plan_days' => null,
+                'subscription_start' => null,
+                'subscription_end' => null,
             ];
 
             foreach ($columnMapping as $columnIndex => $field) {
@@ -111,6 +118,7 @@ class MemberImportService
         $skippedDuplicates = 0;
         $updated = 0;
         $failed = 0;
+        $subscriptionsCreated = 0;
         $errors = [];
 
         foreach ($slice as $row) {
@@ -125,28 +133,46 @@ class MemberImportService
 
             $attributes = $this->attributesFromRow($row);
             $email = $attributes['email'] ?? null;
+            $member = null;
+            $memberHandled = false;
 
             if (filled($email)) {
                 $existing = Member::query()->where('email', $email)->first();
 
                 if ($existing !== null) {
+                    $member = $existing;
+                    $memberHandled = true;
+
                     if ($duplicateAction === 'update') {
                         $existing->update($attributes);
                         $updated++;
                     } else {
                         $skippedDuplicates++;
                     }
+                }
+            }
+
+            if (! $memberHandled) {
+                try {
+                    $member = Member::query()->create($attributes);
+                    $imported++;
+                } catch (\Throwable $exception) {
+                    $failed++;
+                    $errors[] = $this->errorPayload($row, $exception->getMessage());
 
                     continue;
                 }
             }
 
-            try {
-                Member::query()->create($attributes);
-                $imported++;
-            } catch (\Throwable $exception) {
-                $failed++;
-                $errors[] = $this->errorPayload($row, $exception->getMessage());
+            if ($member !== null && $this->subscriptionProvisioner->hasSubscriptionData($row)) {
+                try {
+                    if ($this->subscriptionProvisioner->provision($member, $row)) {
+                        $subscriptionsCreated++;
+                    }
+                } catch (\Throwable $exception) {
+                    $failed++;
+                    $errors[] = $this->errorPayload($row, $exception->getMessage());
+                }
             }
         }
 
@@ -155,6 +181,7 @@ class MemberImportService
             skippedDuplicates: $skippedDuplicates,
             updated: $updated,
             failed: $failed,
+            subscriptionsCreated: $subscriptionsCreated,
             errors: $errors,
         );
     }
@@ -205,7 +232,7 @@ class MemberImportService
             'name' => $row['name'] ?? null,
             'email' => filled($row['email'] ?? null) ? Str::lower((string) $row['email']) : null,
             'contact' => $row['contact'] ?? null,
-            'dob' => $this->parseDate($row['dob'] ?? null),
+            'dob' => $this->valueParser->parseDate($row['dob'] ?? null),
             'status' => $status,
             'health_issue' => $row['notes'] ?? null,
             'gender' => 'other',
@@ -251,8 +278,35 @@ class MemberImportService
             return __('app.settings.import.errors.invalid_email');
         }
 
-        if (filled($row['dob'] ?? null) && $this->parseDate((string) $row['dob']) === null) {
+        if (filled($row['dob'] ?? null) && $this->valueParser->parseDate((string) $row['dob']) === null) {
             return __('app.settings.import.errors.invalid_dob');
+        }
+
+        if (! $this->subscriptionProvisioner->hasSubscriptionData($row)) {
+            return null;
+        }
+
+        $planName = filled($row['plan_name'] ?? null) ? trim((string) $row['plan_name']) : null;
+        $amount = $this->valueParser->parseAmount($row['plan_amount'] ?? null);
+
+        if ($planName === null && $amount === null) {
+            return __('app.settings.import.errors.missing_plan_identifier');
+        }
+
+        if (filled($row['plan_amount'] ?? null) && $amount === null) {
+            return __('app.settings.import.errors.invalid_plan_amount');
+        }
+
+        if (filled($row['plan_days'] ?? null) && $this->valueParser->parseDays((string) $row['plan_days']) === null) {
+            return __('app.settings.import.errors.invalid_plan_days');
+        }
+
+        if (filled($row['subscription_start'] ?? null) && $this->valueParser->parseDate((string) $row['subscription_start']) === null) {
+            return __('app.settings.import.errors.invalid_subscription_start');
+        }
+
+        if (filled($row['subscription_end'] ?? null) && $this->valueParser->parseDate((string) $row['subscription_end']) === null) {
+            return __('app.settings.import.errors.invalid_subscription_end');
         }
 
         return null;
@@ -270,33 +324,6 @@ class MemberImportService
             in_array($normalized, ['inactive', 'inactiv', '0', 'nu', 'no'], true) => Status::Inactive,
             default => Status::Active,
         };
-    }
-
-    private function parseDate(?string $value): ?string
-    {
-        if (! filled($value)) {
-            return null;
-        }
-
-        $formats = ['Y-m-d', 'd/m/Y', 'd-m-Y', 'd.m.Y', 'm/d/Y'];
-
-        foreach ($formats as $format) {
-            try {
-                $parsed = Carbon::createFromFormat($format, trim($value));
-
-                if ($parsed !== false) {
-                    return $parsed->toDateString();
-                }
-            } catch (\Throwable) {
-                continue;
-            }
-        }
-
-        try {
-            return Carbon::parse($value)->toDateString();
-        } catch (\Throwable) {
-            return null;
-        }
     }
 
     /**

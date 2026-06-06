@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Widgets\Analytics\AtRiskMembersTableWidget;
 use App\Filament\Widgets\Analytics\CashflowTrendChartWidget;
 use App\Filament\Widgets\Analytics\ExpenseCategoriesDoughnutChartWidget;
 use App\Filament\Widgets\Analytics\FinancialMetricsWidget;
@@ -174,6 +175,11 @@ class Dashboard extends \Filament\Pages\Dashboard
             Grid::make(1)->schema([
                 ...$this->getWidgetsSchemaComponents([
                     UninvoicedSubscriptionsTableWidget::class,
+                ]),
+            ]),
+            Grid::make(1)->schema([
+                ...$this->getWidgetsSchemaComponents([
+                    AtRiskMembersTableWidget::class,
                 ]),
             ]),
             Grid::make($columns)->schema(

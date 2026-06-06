@@ -93,6 +93,19 @@
         @apply w-full rounded-xl border px-3 py-2 text-sm transition-[border-color,box-shadow] duration-200 ease-out focus:border-brand-500/60 focus:outline-none focus:ring-1 focus:ring-brand-500/40;
         @apply border-zinc-200 bg-white text-zinc-900;
         @apply dark:border-white/10 dark:bg-surface-elevated dark:text-white;
+        color-scheme: light;
+    }
+
+    .dark .jf-select {
+        color-scheme: dark;
+    }
+
+    .jf-select option {
+        @apply bg-white text-zinc-900;
+    }
+
+    .dark .jf-select option {
+        @apply bg-surface-elevated text-white;
     }
 
     .jf-select--error {

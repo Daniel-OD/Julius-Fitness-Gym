@@ -12,6 +12,7 @@ final class MemberImportResult
         public readonly int $skippedDuplicates,
         public readonly int $updated,
         public readonly int $failed,
+        public readonly int $subscriptionsCreated,
         public readonly array $errors,
         public readonly ?string $errorReportPath = null,
     ) {}
