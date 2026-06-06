@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Subscriptions\Tables;
 
+use App\Filament\Resources\Plans\PlanResource;
 use App\Filament\Resources\Subscriptions\Schemas\SubscriptionForm;
 use App\Filament\Resources\Subscriptions\SubscriptionResource;
 use App\Helpers\Helpers;
@@ -42,10 +43,10 @@ class SubscriptionTable
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('member.name')
                     ->label(__('app.fields.member'))
-                    ->description(fn ($record): string => $record->member->code),
+                    ->description(fn ($record): string => $record->member?->code ?? '—'),
                 TextColumn::make('plan.name')
                     ->label(__('app.fields.plan'))
-                    ->description(fn ($record): string => $record->plan->code),
+                    ->description(fn ($record): string => $record->plan?->code ?? '—'),
                 TextColumn::make('plan.amount')
                     ->label(__('app.fields.amount'))
                     ->alignRight()
@@ -150,7 +151,7 @@ class SubscriptionTable
                 Action::make('create_plan')
                     ->icon('heroicon-o-plus')
                     ->label(__('app.actions.new', ['resource' => __('app.resources.plans.singular')]))
-                    ->url(fn () => route('filament.admin.resources.plans.create'))
+                    ->url(fn () => PlanResource::getUrl('index'))
                     ->hidden(fn () => Plan::exists()),
             ])
             ->filters([
@@ -265,6 +266,7 @@ class SubscriptionTable
                 ->withoutGlobalScopes([
                     SoftDeletingScope::class,
                 ])
+                ->with(['member', 'plan'])
                 ->withCount('renewals'));
     }
 }
