@@ -146,6 +146,7 @@ return [
                 'missing_identifier' => 'Row must have at least an email or a name.',
                 'invalid_email' => 'Invalid email address.',
                 'invalid_dob' => 'Invalid date of birth.',
+                'file_unavailable' => 'The import file is no longer available. Please re-upload and try again.',
                 'missing_plan_identifier' => 'Subscription row must include a plan name or cost.',
                 'invalid_plan_amount' => 'Invalid plan cost / price.',
                 'invalid_plan_days' => 'Invalid subscription duration (days).',

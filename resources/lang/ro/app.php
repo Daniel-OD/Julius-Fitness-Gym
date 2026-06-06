@@ -146,6 +146,7 @@ return [
                 'missing_identifier' => 'Rândul trebuie să aibă cel puțin email sau nume.',
                 'invalid_email' => 'Adresă email invalidă.',
                 'invalid_dob' => 'Dată naștere invalidă.',
+                'file_unavailable' => 'Fișierul de import nu mai este disponibil. Te rugăm să îl încarci din nou.',
                 'missing_plan_identifier' => 'Rândul cu abonament trebuie să aibă nume plan sau cost.',
                 'invalid_plan_amount' => 'Cost / preț invalid.',
                 'invalid_plan_days' => 'Durată abonament (zile) invalidă.',
