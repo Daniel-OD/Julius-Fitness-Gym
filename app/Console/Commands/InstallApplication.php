@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Enums\Status;
 use App\Models\User;
+use Database\Seeders\ClientRoleSeeder;
 use Database\Seeders\EmployeeRoleSeeder;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
@@ -71,6 +72,7 @@ class InstallApplication extends Command
 
         $this->ensureShieldPermissions();
         (new EmployeeRoleSeeder)->run();
+        (new ClientRoleSeeder)->run();
         Artisan::call('permission:cache-reset');
 
         $this->writeCredentialsFile($email, $passwordGenerated);
@@ -89,6 +91,7 @@ class InstallApplication extends Command
         }
 
         $this->newLine();
+
         return self::SUCCESS;
     }
 

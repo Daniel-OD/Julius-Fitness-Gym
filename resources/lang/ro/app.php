@@ -33,8 +33,23 @@ return [
         'outstanding_invoices_hint' => 'Sold restant pe facturi',
     ],
 
+    'roles' => [
+        'administrator' => 'Administrator',
+        'employee' => 'Angajat',
+        'client' => 'Client',
+    ],
+
+    'client_dashboard' => [
+        'title' => 'Dashboard Client',
+        'welcome' => 'Bun venit, :name',
+        'placeholder' => 'Detaliile abonamentului și codul QR pentru check-in vor apărea aici.',
+    ],
+
     'navigation' => [
         'dashboard' => 'Tablou de bord',
+        'dashboard_admin' => 'Dashboard Admin',
+        'dashboard_employee' => 'Dashboard Angajați',
+        'dashboard_client' => 'Dashboard Client',
         'office' => 'Recepție',
         'groups' => [
             'sales' => 'Vânzări',

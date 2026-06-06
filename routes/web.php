@@ -18,8 +18,12 @@ Route::post('/checkin/{qrToken}/checkout', [CheckinController::class, 'checkout'
     ->middleware('throttle:60,1');
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    return redirect(auth()->user()->defaultDashboardUrl());
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::view('/client', 'client.dashboard')
+    ->middleware(['auth', 'verified', 'dashboard.access:client'])
+    ->name('client.dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

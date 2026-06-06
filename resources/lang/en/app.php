@@ -33,8 +33,23 @@ return [
         'outstanding_invoices_hint' => 'Unpaid invoice balance',
     ],
 
+    'roles' => [
+        'administrator' => 'Administrator',
+        'employee' => 'Employee',
+        'client' => 'Client',
+    ],
+
+    'client_dashboard' => [
+        'title' => 'Client Dashboard',
+        'welcome' => 'Welcome, :name',
+        'placeholder' => 'Your membership details and check-in QR will appear here.',
+    ],
+
     'navigation' => [
         'dashboard' => 'Dashboard',
+        'dashboard_admin' => 'Admin Dashboard',
+        'dashboard_employee' => 'Employee Dashboard',
+        'dashboard_client' => 'Client Dashboard',
         'office' => 'Front desk',
         'groups' => [
             'sales' => 'Sales',

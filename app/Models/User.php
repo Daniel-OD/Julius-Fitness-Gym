@@ -119,6 +119,88 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
             && ! $this->hasRole('super_admin');
     }
 
+    public function isAdministrator(): bool
+    {
+        return $this->hasRole('super_admin') || $this->hasRole('owner');
+    }
+
+    public function isClientOnly(): bool
+    {
+        if ($this->isAdministrator() || $this->isEmployeeOnly()) {
+            return false;
+        }
+
+        return $this->hasRole('client');
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function accessibleDashboards(): array
+    {
+        if ($this->isAdministrator()) {
+            return ['admin', 'office', 'client'];
+        }
+
+        if ($this->isEmployeeOnly()) {
+            return ['office'];
+        }
+
+        if ($this->hasRole('client')) {
+            return ['client'];
+        }
+
+        if (! $this->roles()->exists()) {
+            return ['admin', 'office'];
+        }
+
+        return [];
+    }
+
+    public function dashboardUrl(string $dashboard): ?string
+    {
+        if (! in_array($dashboard, $this->accessibleDashboards(), true)) {
+            return null;
+        }
+
+        return match ($dashboard) {
+            'admin' => Filament::getPanel('admin')->getUrl(),
+            'office' => Filament::getPanel('office')->getUrl(),
+            'client' => route('client.dashboard'),
+            default => null,
+        };
+    }
+
+    public function defaultDashboardUrl(): string
+    {
+        $dashboards = $this->accessibleDashboards();
+
+        if ($dashboards === []) {
+            return route('dashboard');
+        }
+
+        return $this->dashboardUrl($dashboards[0]) ?? route('dashboard');
+    }
+
+    public function displayRoleName(): string
+    {
+        if ($this->isAdministrator()) {
+            return __('app.roles.administrator');
+        }
+
+        if ($this->isEmployeeOnly()) {
+            return __('app.roles.employee');
+        }
+
+        if ($this->hasRole('client')) {
+            return __('app.roles.client');
+        }
+
+        $role = $this->roles->first();
+
+        return $role !== null ? (string) $role->name : '';
+    }
+
     /**
      * Panel to open after login. Employees always land on office; managers on the panel they signed into.
      */
