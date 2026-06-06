@@ -920,6 +920,51 @@ html.fi.dark .jf-import-auto-badge {
     color: var(--jf-light-text-secondary, #6e6e73);
 }
 
+html.fi.dark .jf-import-mapping-samples {
+    color: rgb(255 255 255 / 0.45);
+}
+
+.jf-select {
+    width: 100%;
+    border-radius: 0.75rem;
+    border: 1px solid var(--jf-light-border, #e5e5e7);
+    background: var(--jf-light-surface, #ffffff);
+    color: var(--jf-light-text, #1c1c1e);
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    transition:
+        border-color 220ms ease,
+        box-shadow 220ms ease;
+}
+
+.jf-select:focus {
+    outline: none;
+    border-color: rgb(255 90 31 / 0.6);
+    box-shadow: 0 0 0 1px rgb(255 90 31 / 0.4);
+}
+
+html.fi:not(.dark) .jf-select {
+    color-scheme: light;
+}
+
+html.fi:not(.dark) .jf-select option {
+    background-color: #ffffff;
+    color: #1c1c1e;
+}
+
+html.fi.dark .jf-select {
+    border-color: rgb(255 255 255 / 0.1);
+    background: rgb(28 28 30);
+    color: #ffffff;
+    color-scheme: dark;
+}
+
+html.fi.dark .jf-select option {
+    background-color: rgb(28 28 30);
+    color: #ffffff;
+}
+
 .jf-import-select--required {
     border-color: rgb(255 90 31 / 0.5);
 }
