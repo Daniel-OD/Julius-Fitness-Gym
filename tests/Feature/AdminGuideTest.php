@@ -89,3 +89,36 @@ it('renders admin guide toggle in the user menu theme switcher row', function ()
         ->assertSee('fi-theme-switcher', false)
         ->assertSee('wire:click="toggle"', false);
 });
+
+it('loads settings tab guide content when guide is enabled', function (): void {
+    app(SettingsRepository::class)->put([
+        ...app(SettingsRepository::class)->get(),
+        'general' => ['admin_guide_enabled' => true, 'locale' => 'en'],
+    ]);
+
+    $user = User::factory()->create(['must_change_password' => false]);
+    $guide = AdminGuide::entryForKey('admin.settings.tabs.charges');
+
+    expect($guide)->not->toBeNull()
+        ->and($guide['steps'])->not->toBeEmpty();
+
+    $this->actingAs($user)
+        ->get(route('filament.admin.pages.settings'))
+        ->assertSuccessful()
+        ->assertSee($guide['title'], false)
+        ->assertSee('jf-admin-guide__steps', false);
+});
+
+it('shows settings overview guide at page top', function (): void {
+    app(SettingsRepository::class)->put([
+        ...app(SettingsRepository::class)->get(),
+        'general' => ['admin_guide_enabled' => true, 'locale' => 'en'],
+    ]);
+
+    $user = User::factory()->create(['must_change_password' => false]);
+
+    $this->actingAs($user)
+        ->get(route('filament.admin.pages.settings'))
+        ->assertSuccessful()
+        ->assertSee(AdminGuide::entryForKey('admin.settings.overview')['title'], false);
+});

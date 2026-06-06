@@ -11,6 +11,8 @@ return [
     'widgets_heading' => 'Grafice și widget-uri explicate',
     'collapse' => 'Ascunde ghidul',
     'expand' => 'Arată ghidul',
+    'steps_heading' => 'Urmează pașii',
+    'checklist_heading' => 'Lista ta de configurare',
 
     'pages' => [
 
@@ -237,18 +239,27 @@ return [
             'widgets' => [],
         ],
 
-        'admin.settings' => [
-            'title' => 'Setări — configurează sala',
-            'summary' => 'Configurarea aplicației: identitate sală, reguli facturare, import, backup.',
+        'admin.settings.overview' => [
+            'title' => 'Bine ai venit în Setări',
+            'greeting' => 'Ești în locul potrivit — aici înveți aplicația cum funcționează sala ta.',
+            'summary' => 'Folosește tab-urile de mai jos. Fiecare are ghid pas cu pas când becul e activ. Parcurge-le în ordine dacă configurezi prima dată.',
+            'steps' => [
+                [
+                    'title' => 'Ordine recomandată pentru sală nouă',
+                    'body' => 'Nu e obligatoriu, dar economisește timp:',
+                    'fields' => [
+                        ['name' => '1. Info sală', 'hint' => 'Nume, monedă, contact — baza pentru tot restul.'],
+                        ['name' => '2. Membru + Factură', 'hint' => 'Numerotare înainte de membri sau facturi.'],
+                        ['name' => '3. Taxe + Cheltuieli', 'hint' => 'TVA și categorii pentru contabilitate clară.'],
+                        ['name' => '4. Abonamente', 'hint' => 'Când avertizezi staff-ul despre expirări.'],
+                        ['name' => '5. Import / Backup', 'hint' => 'Date în masă și siguranță — când ești gata.'],
+                    ],
+                ],
+            ],
             'tips' => [
-                'Info sală: nume, logo, adresă, monedă — apare pe facturi.',
-                'Factură / Membru: prefixe numerotare documente.',
-                'Taxe: cote TVA, taxă înscriere, reduceri.',
-                'Cheltuieli: categorii pentru formular și grafice.',
-                'Abonamente: câte zile înainte de expirare să avertizeze staff-ul.',
-                'Import: încărcare membri din Excel.',
-                'Backup: programare și restaurare baze de date.',
-                'Comută iconița bec din meniul profilului (lângă light/dark) pentru a afișa sau ascunde ajutorul contextual.',
+                'Deschide un tab — ghidul de sus explică fiecare câmp pe limba ta.',
+                'Bifează checklist-ul pe măsură ce avansezi; progresul se salvează în browser.',
+                'Apasă mereu Salvează setările după ce editezi un tab (exceptând Import, care are buton propriu).',
             ],
             'widgets' => [],
         ],

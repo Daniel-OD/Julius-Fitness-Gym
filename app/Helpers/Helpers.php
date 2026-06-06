@@ -36,6 +36,29 @@ class Helpers
     ];
 
     /**
+     * @return array<string, string>
+     */
+    private static function fallbackCurrencies(): array
+    {
+        return [
+            'RON' => 'Romanian Leu',
+            'EUR' => 'Euro',
+            'USD' => 'US Dollar',
+            'GBP' => 'British Pound',
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private static function fallbackCountries(): array
+    {
+        return [
+            'Romania' => 'Romania',
+        ];
+    }
+
+    /**
      * @param  array<string, mixed>|null  $override
      */
     public static function setTestSettingsOverride(?array $override): void
@@ -80,13 +103,15 @@ class Helpers
         $response = self::worldResponse('countries');
 
         if (! $response->success) {
-            return [];
+            return self::fallbackCountries();
         }
 
-        return collect($response->data)
+        $countries = collect($response->data)
             ->pluck('name', 'name')
             ->mapWithKeys(fn (mixed $name, mixed $key): array => [Data::string($key) => Data::string($name)])
             ->all();
+
+        return $countries !== [] ? $countries : self::fallbackCountries();
     }
 
     /**
@@ -167,13 +192,15 @@ class Helpers
         $currencyResponse = self::worldResponse('currencies', ['fields' => 'name,code']);
 
         if (! $currencyResponse->success) {
-            return [];
+            return self::fallbackCurrencies();
         }
 
-        return collect($currencyResponse->data)
+        $currencies = collect($currencyResponse->data)
             ->pluck('name', 'code')
             ->mapWithKeys(fn (mixed $name, mixed $key): array => [Data::string($key) => Data::string($name)])
             ->all();
+
+        return $currencies !== [] ? $currencies : self::fallbackCurrencies();
     }
 
     public static function getCurrencyCode(): string

@@ -100,6 +100,7 @@ class Settings extends Page implements HasForms
     {
         return [
             Tabs::make(__('app.settings.title'))
+                ->persistTabInQueryString('tab')
                 ->tabs([
                     $this->generalTab(),
                     $this->invoiceTab(),
@@ -113,14 +114,23 @@ class Settings extends Page implements HasForms
         ];
     }
 
+    private function guidePanel(string $tabId): View
+    {
+        return View::make('filament.components.admin-guide-panel')
+            ->viewData(['guideKey' => "admin.settings.tabs.{$tabId}"])
+            ->columnSpanFull();
+    }
+
     /**
      * General Tab Schema.
      */
     private function generalTab(): Tab
     {
         return Tab::make(__('app.settings.tabs.gym_info'))
+            ->id('gym_info')
             ->icon('heroicon-m-briefcase')
             ->schema([
+                $this->guidePanel('gym_info'),
                 Section::make(__('app.settings.sections.general_information'))
                     ->aside()
                     ->schema([
@@ -130,8 +140,9 @@ class Settings extends Page implements HasForms
                                     ->label(__('app.settings.fields.gym_name')),
                                 Select::make('general.currency')
                                     ->label(__('app.settings.fields.currency'))
-                                    ->options(Helpers::getCurrencies())
-                                    ->searchable(),
+                                    ->options(fn (): array => Helpers::getCurrencies())
+                                    ->searchable()
+                                    ->preload(),
                                 FileUpload::make('general.gym_logo')
                                     ->label(__('app.settings.fields.gym_logo'))
                                     ->disk('public')
@@ -169,8 +180,9 @@ class Settings extends Page implements HasForms
                             ->schema([
                                 Select::make('general.country')
                                     ->label(__('app.settings.fields.country'))
-                                    ->options(Helpers::getCountries())
+                                    ->options(fn (): array => Helpers::getCountries())
                                     ->searchable()
+                                    ->preload()
                                     ->live()
                                     ->afterStateUpdated(fn ($state, callable $set) => [
                                         $set('general.state', null),
@@ -178,13 +190,15 @@ class Settings extends Page implements HasForms
                                     ]),
                                 Select::make('general.state')
                                     ->label(__('app.settings.fields.state'))
-                                    ->options(fn ($get) => Helpers::getStates($get('general.country')))
+                                    ->options(fn ($get): array => Helpers::getStates($get('general.country')))
                                     ->searchable()
+                                    ->preload()
                                     ->live(),
                                 Select::make('general.city')
                                     ->label(__('app.settings.fields.city'))
-                                    ->options(fn ($get) => Helpers::getCities($get('general.state')))
+                                    ->options(fn ($get): array => Helpers::getCities($get('general.state')))
                                     ->searchable()
+                                    ->preload()
                                     ->live(),
                                 TextInput::make('general.zip')
                                     ->label(__('app.settings.fields.zip'))
@@ -219,7 +233,9 @@ class Settings extends Page implements HasForms
     {
         return
             Tab::make(__('app.settings.tabs.invoice'))->icon('heroicon-m-document-text')
+                ->id('invoice')
                 ->schema([
+                    $this->guidePanel('invoice'),
                     Grid::make(3)
                         ->schema([
                             TextInput::make('invoice.prefix')
@@ -279,7 +295,9 @@ class Settings extends Page implements HasForms
     {
         return
             Tab::make(__('app.settings.tabs.member'))->icon('heroicon-m-user-group')
+                ->id('member')
                 ->schema([
+                    $this->guidePanel('member'),
                     Grid::make(2)
                         ->schema([
                             TextInput::make('member.prefix')
@@ -300,7 +318,9 @@ class Settings extends Page implements HasForms
     {
         return
             Tab::make(__('app.settings.tabs.charges'))->icon('heroicon-m-currency-rupee')
+                ->id('charges')
                 ->schema([
+                    $this->guidePanel('charges'),
                     Grid::make(3)
                         ->schema([
                             TextInput::make('charges.admission_fee')
@@ -326,7 +346,9 @@ class Settings extends Page implements HasForms
     {
         return
             Tab::make(__('app.settings.tabs.expenses'))->icon('heroicon-m-banknotes')
+                ->id('expenses')
                 ->schema([
+                    $this->guidePanel('expenses'),
                     TagsInput::make('expenses.categories')
                         ->label(__('app.settings.fields.categories'))
                         ->hint(__('app.settings.hints.press_enter_to_add'))
@@ -341,8 +363,10 @@ class Settings extends Page implements HasForms
     private function importTab(): Tab
     {
         return Tab::make(__('app.settings.tabs.import'))
+            ->id('import')
             ->icon('heroicon-m-arrow-up-tray')
             ->schema([
+                $this->guidePanel('import'),
                 View::make('filament.settings.member-import-tab'),
             ]);
     }
@@ -354,7 +378,9 @@ class Settings extends Page implements HasForms
     {
         return
             Tab::make(__('app.settings.tabs.subscriptions'))->icon('heroicon-m-ticket')
+                ->id('subscriptions')
                 ->schema([
+                    $this->guidePanel('subscriptions'),
                     TextInput::make('subscriptions.expiring_days')
                         ->label(__('app.settings.fields.expiring_days'))
                         ->numeric()
@@ -379,8 +405,10 @@ class Settings extends Page implements HasForms
     private function backupTab(): Tab
     {
         return Tab::make(__('app.settings.tabs.backup'))
+            ->id('backup')
             ->icon('heroicon-m-archive-box')
             ->schema([
+                $this->guidePanel('backup'),
                 Section::make(__('app.settings.sections.backup_config'))
                     ->aside()
                     ->description(__('app.settings.sections.backup_config_desc'))

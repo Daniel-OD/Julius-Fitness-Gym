@@ -1,11 +1,11 @@
 @php
-    $guide = \App\Support\AdminGuide::forCurrentPage();
+    $guide = \App\Support\AdminGuide::forContext($guideKey ?? '');
 @endphp
 
 @if ($guide !== null && ($guide['title'] !== '' || $guide['summary'] !== '' || ($guide['steps'] ?? []) !== []))
     @include('filament.components.admin-guide-content', [
         'guide' => $guide,
-        'contextKey' => \App\Support\AdminGuide::resolveKey(request()->route()?->getName()) ?? 'page',
-        'embedded' => false,
+        'contextKey' => $guideKey,
+        'embedded' => true,
     ])
 @endif

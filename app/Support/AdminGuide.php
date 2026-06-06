@@ -16,7 +16,7 @@ final class AdminGuide
     }
 
     /**
-     * @return array{title: string, summary: string, tips: list<string>, widgets: array<string, string>}|null
+     * @return array<string, mixed>|null
      */
     public static function forCurrentPage(): ?array
     {
@@ -30,7 +30,23 @@ final class AdminGuide
             return null;
         }
 
+        if ($key === 'admin.settings') {
+            return self::entryForKey('admin.settings.overview');
+        }
+
         return self::entryForKey($key);
+    }
+
+    /**
+     * @return array<string, mixed>|null
+     */
+    public static function forContext(string $contextKey): ?array
+    {
+        if (! self::isEnabled()) {
+            return null;
+        }
+
+        return self::entryForKey($contextKey);
     }
 
     public static function resolveKey(?string $routeName): ?string
@@ -71,12 +87,12 @@ final class AdminGuide
     }
 
     /**
-     * @return array{title: string, summary: string, tips: list<string>, widgets: array<string, string>}|null
+     * @return array<string, mixed>|null
      */
     public static function entryForKey(string $key): ?array
     {
         foreach (self::candidateKeys($key) as $candidate) {
-            $raw = self::pageDefinition($candidate);
+            $raw = self::definition($candidate);
 
             if ($raw === null) {
                 continue;
@@ -91,19 +107,29 @@ final class AdminGuide
     /**
      * @return array<string, mixed>|null
      */
-    private static function pageDefinition(string $key): ?array
+    private static function definition(string $key): ?array
     {
         /** @var mixed $pages */
         $pages = Lang::get('admin_guide.pages');
 
-        if (! is_array($pages) || ! array_key_exists($key, $pages) || ! is_array($pages[$key])) {
-            return null;
+        if (is_array($pages) && array_key_exists($key, $pages) && is_array($pages[$key])) {
+            /** @var array<string, mixed> $definition */
+            $definition = $pages[$key];
+
+            return $definition;
         }
 
-        /** @var array<string, mixed> $definition */
-        $definition = $pages[$key];
+        /** @var mixed $tabs */
+        $tabs = Lang::get('admin_guide_tabs');
 
-        return $definition;
+        if (is_array($tabs) && array_key_exists($key, $tabs) && is_array($tabs[$key])) {
+            /** @var array<string, mixed> $definition */
+            $definition = $tabs[$key];
+
+            return $definition;
+        }
+
+        return null;
     }
 
     /**
@@ -125,29 +151,102 @@ final class AdminGuide
 
     /**
      * @param  array<string, mixed>  $raw
-     * @return array{title: string, summary: string, tips: list<string>, widgets: array<string, string>}
+     * @return array<string, mixed>
      */
     private static function normalizeEntry(array $raw): array
     {
-        $tips = $raw['tips'] ?? [];
-        $widgets = $raw['widgets'] ?? [];
+        return [
+            'title' => trim((string) ($raw['title'] ?? '')),
+            'summary' => trim((string) ($raw['summary'] ?? '')),
+            'greeting' => trim((string) ($raw['greeting'] ?? '')),
+            'save_reminder' => trim((string) ($raw['save_reminder'] ?? '')),
+            'steps' => self::normalizeSteps($raw['steps'] ?? []),
+            'checklist' => self::normalizeStringList($raw['checklist'] ?? []),
+            'tips' => self::normalizeStringList($raw['tips'] ?? []),
+            'widgets' => self::normalizeWidgets($raw['widgets'] ?? []),
+        ];
+    }
 
-        if (! is_array($tips)) {
-            $tips = [];
+    /**
+     * @return list<array{title: string, body: string, fields: list<array{name: string, hint: string}>}>
+     */
+    private static function normalizeSteps(mixed $steps): array
+    {
+        if (! is_array($steps)) {
+            return [];
         }
 
+        $normalized = [];
+
+        foreach ($steps as $step) {
+            if (! is_array($step)) {
+                continue;
+            }
+
+            $title = trim((string) ($step['title'] ?? ''));
+            $body = trim((string) ($step['body'] ?? ''));
+
+            if ($title === '' && $body === '') {
+                continue;
+            }
+
+            $fields = [];
+
+            if (is_array($step['fields'] ?? null)) {
+                foreach ($step['fields'] as $field) {
+                    if (! is_array($field)) {
+                        continue;
+                    }
+
+                    $name = trim((string) ($field['name'] ?? ''));
+                    $hint = trim((string) ($field['hint'] ?? ''));
+
+                    if ($name === '') {
+                        continue;
+                    }
+
+                    $fields[] = [
+                        'name' => $name,
+                        'hint' => $hint,
+                    ];
+                }
+            }
+
+            $normalized[] = [
+                'title' => $title,
+                'body' => $body,
+                'fields' => $fields,
+            ];
+        }
+
+        return $normalized;
+    }
+
+    /**
+     * @return list<string>
+     */
+    private static function normalizeStringList(mixed $values): array
+    {
+        if (! is_array($values)) {
+            return [];
+        }
+
+        return array_values(array_filter(array_map(
+            fn (mixed $value): string => trim((string) $value),
+            $values,
+        ), fn (string $value): bool => $value !== ''));
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private static function normalizeWidgets(mixed $widgets): array
+    {
         if (! is_array($widgets)) {
-            $widgets = [];
+            return [];
         }
 
-        /** @var list<string> $normalizedTips */
-        $normalizedTips = array_values(array_filter(array_map(
-            fn (mixed $tip): string => trim((string) $tip),
-            $tips,
-        ), fn (string $tip): bool => $tip !== ''));
-
-        /** @var array<string, string> $normalizedWidgets */
-        $normalizedWidgets = [];
+        $normalized = [];
 
         foreach ($widgets as $widgetKey => $description) {
             if (! is_string($widgetKey) || ! is_scalar($description)) {
@@ -160,14 +259,9 @@ final class AdminGuide
                 continue;
             }
 
-            $normalizedWidgets[$widgetKey] = $text;
+            $normalized[$widgetKey] = $text;
         }
 
-        return [
-            'title' => trim((string) ($raw['title'] ?? '')),
-            'summary' => trim((string) ($raw['summary'] ?? '')),
-            'tips' => $normalizedTips,
-            'widgets' => $normalizedWidgets,
-        ];
+        return $normalized;
     }
 }
