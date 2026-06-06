@@ -8,6 +8,7 @@ use App\Models\Concerns\CascadesSoftDeletes;
 use Database\Factories\MemberFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
@@ -34,6 +35,7 @@ use Illuminate\Support\Str;
  * @property string|null $source
  * @property string|null $goal
  * @property Status|null $status
+ * @property int|null $user_id
  */
 class Member extends Model
 {
@@ -66,6 +68,24 @@ class Member extends Model
         'dob' => 'date',
         'status' => Status::class,
     ];
+
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function ensureCheckinToken(): void
+    {
+        if ($this->checkin_token) {
+            return;
+        }
+
+        $this->checkin_token = Str::random(32);
+        $this->save();
+    }
 
     /**
      * @return HasMany<Subscription, $this>

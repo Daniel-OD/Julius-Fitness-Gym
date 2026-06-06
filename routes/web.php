@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CheckinController;
+use App\Http\Controllers\ClientPortalController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\MemberImportDownloadController;
 use App\Http\Controllers\ProfileController;
@@ -21,9 +22,13 @@ Route::get('/dashboard', function () {
     return redirect(auth()->user()->defaultDashboardUrl());
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::view('/client', 'client.dashboard')
-    ->middleware(['auth', 'verified', 'dashboard.access:client'])
-    ->name('client.dashboard');
+Route::middleware(['auth', 'verified', 'dashboard.access:client'])
+    ->prefix('client')
+    ->name('client.')
+    ->group(function (): void {
+        Route::get('/', [ClientPortalController::class, 'index'])->name('dashboard');
+        Route::get('/qr', [ClientPortalController::class, 'qr'])->name('qr');
+    });
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

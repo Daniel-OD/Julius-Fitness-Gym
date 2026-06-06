@@ -46,6 +46,7 @@ return [
         'no_member_linked' => 'Contul tău nu este legat încă de un abonament. Contactează sala.',
         'subscription' => 'Abonament',
         'plan' => 'Plan',
+        'validity' => 'Valabilitate',
         'period' => 'Valabil :start – :end',
         'visits' => 'Vizite recente',
         'no_visits' => 'Niciun check-in înregistrat încă.',
@@ -57,6 +58,7 @@ return [
         'portal_account_created' => 'Cont portal creat pentru :name.',
         'portal_account_exists' => 'Acest membru are deja cont portal.',
         'portal_account_no_email' => 'Adaugă un email membrului înainte de a crea contul portal.',
+        'portal_account_email_taken' => 'Există deja un cont utilizator cu acest email.',
         'create_portal_account' => 'Creează cont portal',
     ],
 

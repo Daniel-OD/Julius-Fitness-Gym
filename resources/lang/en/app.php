@@ -46,6 +46,7 @@ return [
         'no_member_linked' => 'Your account is not linked to a membership yet. Please contact the gym.',
         'subscription' => 'Membership',
         'plan' => 'Plan',
+        'validity' => 'Validity',
         'period' => 'Valid :start – :end',
         'visits' => 'Recent visits',
         'no_visits' => 'No check-ins recorded yet.',
@@ -57,6 +58,7 @@ return [
         'portal_account_created' => 'Portal account created for :name.',
         'portal_account_exists' => 'This member already has a portal account.',
         'portal_account_no_email' => 'Add an email address to the member before creating a portal account.',
+        'portal_account_email_taken' => 'A user account with this email already exists.',
         'create_portal_account' => 'Create portal account',
     ],
 

@@ -10,7 +10,7 @@ class MemberQrCodeService
 {
     public function checkinUrl(Member $member): string
     {
-        return route('checkin.scan', ['token' => $member->checkin_token]);
+        return route('checkin.scan', ['qrToken' => $member->checkin_token]);
     }
 
     public function svg(string $data): string
