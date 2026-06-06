@@ -122,6 +122,53 @@ class Settings extends Page implements HasForms
     }
 
     /**
+     * Returns cascading country → state → city Selects when the world package is seeded,
+     * or plain TextInputs when it is not (avoids empty, unusable dropdowns).
+     *
+     * @return array<int, Component>
+     */
+    private function locationFields(): array
+    {
+        $worldAvailable = count(Helpers::getCountries()) > 1;
+
+        if ($worldAvailable) {
+            return [
+                Select::make('general.country')
+                    ->label(__('app.settings.fields.country'))
+                    ->options(fn (): array => Helpers::getCountries())
+                    ->searchable()
+                    ->preload()
+                    ->live()
+                    ->afterStateUpdated(fn ($state, callable $set) => [
+                        $set('general.state', null),
+                        $set('general.city', null),
+                    ]),
+                Select::make('general.state')
+                    ->label(__('app.settings.fields.state'))
+                    ->options(fn ($get): array => Helpers::getStates($get('general.country')))
+                    ->searchable()
+                    ->preload()
+                    ->live(),
+                Select::make('general.city')
+                    ->label(__('app.settings.fields.city'))
+                    ->options(fn ($get): array => Helpers::getCities($get('general.state')))
+                    ->searchable()
+                    ->preload()
+                    ->live(),
+            ];
+        }
+
+        return [
+            TextInput::make('general.country')
+                ->label(__('app.settings.fields.country')),
+            TextInput::make('general.state')
+                ->label(__('app.settings.fields.state')),
+            TextInput::make('general.city')
+                ->label(__('app.settings.fields.city')),
+        ];
+    }
+
+    /**
      * General Tab Schema.
      */
     private function generalTab(): Tab
@@ -178,28 +225,7 @@ class Settings extends Page implements HasForms
                             ]),
                         Grid::make(4)
                             ->schema([
-                                Select::make('general.country')
-                                    ->label(__('app.settings.fields.country'))
-                                    ->options(fn (): array => Helpers::getCountries())
-                                    ->searchable()
-                                    ->preload()
-                                    ->live()
-                                    ->afterStateUpdated(fn ($state, callable $set) => [
-                                        $set('general.state', null),
-                                        $set('general.city', null),
-                                    ]),
-                                Select::make('general.state')
-                                    ->label(__('app.settings.fields.state'))
-                                    ->options(fn ($get): array => Helpers::getStates($get('general.country')))
-                                    ->searchable()
-                                    ->preload()
-                                    ->live(),
-                                Select::make('general.city')
-                                    ->label(__('app.settings.fields.city'))
-                                    ->options(fn ($get): array => Helpers::getCities($get('general.state')))
-                                    ->searchable()
-                                    ->preload()
-                                    ->live(),
+                                ...$this->locationFields(),
                                 TextInput::make('general.zip')
                                     ->label(__('app.settings.fields.zip'))
                                     ->numeric()
