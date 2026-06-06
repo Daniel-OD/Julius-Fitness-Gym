@@ -59,7 +59,7 @@ new class extends Component
 
         try {
             $this->validate([
-                'importFile' => 'required|file|mimes:csv,xlsx,xls|max:10240',
+                'importFile' => ['required', 'file', 'extensions:csv,xlsx,xls', 'max:10240'],
             ]);
         } catch (\Illuminate\Validation\ValidationException $exception) {
             $this->importFile = null;
@@ -201,6 +201,15 @@ new class extends Component
         $this->clearStoredFile();
         $this->importFile = null;
         $this->resetImportState(keepFile: false);
+    }
+
+    public function reportUploadError(?string $message = null): void
+    {
+        $this->importFile = null;
+        $this->addError(
+            'importFile',
+            filled($message) ? $message : __('app.settings.import.errors.upload_failed'),
+        );
     }
 
     #[Computed]
@@ -378,7 +387,16 @@ new class extends Component
                     dragging = false;
                     const file = $event.dataTransfer?.files?.[0];
                     if (file) {
-                        $wire.upload('importFile', file, () => {}, () => {}, () => {});
+                        $wire.upload(
+                            'importFile',
+                            file,
+                            () => {},
+                            (errors) => {
+                                const message = Array.isArray(errors) ? errors.join(' ') : String(errors ?? '');
+                                $wire.reportUploadError(message);
+                            },
+                            () => {},
+                        );
                     }
                 "
                 :class="{ 'jf-import-dropzone--active': dragging }"

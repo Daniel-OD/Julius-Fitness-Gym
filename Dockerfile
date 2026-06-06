@@ -106,6 +106,7 @@ COPY --from=assets --chown=www-data:www-data /app/public/build /.image/public/bu
 
 RUN mkdir -p storage/framework/{cache/data,sessions,testing,views} \
     storage/app/public \
+    storage/app/private/livewire-tmp \
     storage/data \
     storage/logs \
     bootstrap/cache \

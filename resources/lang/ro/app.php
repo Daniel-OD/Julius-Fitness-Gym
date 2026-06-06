@@ -120,6 +120,7 @@ return [
             'errors' => [
                 'file_required' => 'Încarcă mai întâi un fișier.',
                 'storage_failed' => 'Fișierul nu a putut fi salvat. Verifică permisiunile pe storage/app/private pe server.',
+                'upload_failed' => 'Fișierul nu a putut fi încărcat. Reîmprospătează pagina și încearcă din nou.',
                 'mapping_required' => 'Mapează cel puțin Email sau Nume înainte de a continua.',
                 'invalid_format' => 'Format de fișier neacceptat.',
                 'xls_unsupported' => 'Fișierele .xls vechi nu sunt suportate. Salvează ca .xlsx sau .csv.',

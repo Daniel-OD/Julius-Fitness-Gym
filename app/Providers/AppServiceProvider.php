@@ -35,6 +35,10 @@ class AppServiceProvider extends ServiceProvider
             URL::forceHttps();
         }
 
+        if (str_starts_with((string) config('app.url'), 'https://')) {
+            config(['session.secure' => true]);
+        }
+
         $this->ensureStorageDirectoriesExist();
         $this->configureLocalExecutionTimeLimit();
 
@@ -60,6 +64,9 @@ class AppServiceProvider extends ServiceProvider
             storage_path('framework/cache/data'),
             storage_path('framework/sessions'),
             storage_path('logs'),
+            storage_path('app/private'),
+            storage_path('app/private/livewire-tmp'),
+            storage_path('app/public'),
         ];
 
         foreach ($directories as $directory) {
