@@ -140,6 +140,13 @@ class JsonSettingsRepository implements SettingsRepository
 
         $settings['checkin'] = $checkin;
 
+        /** @var array<string, mixed> $general */
+        $general = $settings['general'];
+        if (! array_key_exists('admin_guide_enabled', $general)) {
+            $general['admin_guide_enabled'] = false;
+        }
+        $settings['general'] = $general;
+
         /** @var array<string, mixed> $charges */
         $charges = $settings['charges'];
         $charges['discounts'] = $this->normalizeTagList($charges['discounts'] ?? []);

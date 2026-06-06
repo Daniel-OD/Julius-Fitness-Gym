@@ -56,6 +56,13 @@ class Helpers
         return app(SettingsRepository::class)->get();
     }
 
+    public static function isAdminGuideEnabled(): bool
+    {
+        $general = self::getSettings()['general'] ?? [];
+
+        return filter_var(is_array($general) ? ($general['admin_guide_enabled'] ?? false) : false, FILTER_VALIDATE_BOOL);
+    }
+
     public static function appTimezone(): string
     {
         return AppConfig::timezone();

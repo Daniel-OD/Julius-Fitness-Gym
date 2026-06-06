@@ -1271,4 +1271,194 @@ html.fi.dark .office-expiry-badge--recent.fi-badge {
     font-weight: 600;
 }
 
+/* ——— Admin guide banner ——— */
+
+.jf-admin-guide {
+    border: 1px solid rgb(255 90 31 / 0.25);
+    background: linear-gradient(135deg, rgb(255 90 31 / 0.08), rgb(255 90 31 / 0.02));
+    padding: 1rem 1.25rem;
+}
+
+html.fi.dark .jf-admin-guide,
+.fi.dark .jf-admin-guide {
+    border-color: rgb(255 90 31 / 0.35);
+    background: linear-gradient(135deg, rgb(255 90 31 / 0.12), rgb(255 90 31 / 0.04));
+}
+
+.jf-admin-guide__header {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.875rem;
+}
+
+.jf-admin-guide__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 9999px;
+    background: rgb(255 90 31 / 0.15);
+    color: #ff5a1f;
+}
+
+.jf-admin-guide__intro {
+    flex: 1;
+    min-width: 0;
+}
+
+.jf-admin-guide__badge {
+    display: inline-flex;
+    align-items: center;
+    margin-bottom: 0.25rem;
+    padding: 0.125rem 0.5rem;
+    border-radius: 9999px;
+    background: rgb(255 90 31 / 0.15);
+    color: #ff5a1f;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.jf-admin-guide__title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--jf-light-text, #1c1c1e);
+}
+
+html.fi.dark .jf-admin-guide__title,
+.fi.dark .jf-admin-guide__title {
+    color: #f5f5f7;
+}
+
+.jf-admin-guide__summary {
+    margin: 0.375rem 0 0;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--jf-light-text-secondary, #6e6e73);
+}
+
+html.fi.dark .jf-admin-guide__summary,
+.fi.dark .jf-admin-guide__summary {
+    color: #a1a1a6;
+}
+
+.jf-admin-guide__toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    flex-shrink: 0;
+    padding: 0.375rem 0.625rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--jf-light-text-secondary, #6e6e73);
+    transition: background-color 180ms ease, color 180ms ease;
+}
+
+.jf-admin-guide__toggle:hover {
+    background: rgb(0 0 0 / 0.05);
+    color: var(--jf-light-text, #1c1c1e);
+}
+
+html.fi.dark .jf-admin-guide__toggle,
+.fi.dark .jf-admin-guide__toggle {
+    color: #a1a1a6;
+}
+
+html.fi.dark .jf-admin-guide__toggle:hover,
+.fi.dark .jf-admin-guide__toggle:hover {
+    background: rgb(255 255 255 / 0.08);
+    color: #f5f5f7;
+}
+
+.jf-admin-guide__body {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgb(0 0 0 / 0.06);
+}
+
+html.fi.dark .jf-admin-guide__body,
+.fi.dark .jf-admin-guide__body {
+    border-top-color: rgb(255 255 255 / 0.08);
+}
+
+.jf-admin-guide__block + .jf-admin-guide__block {
+    margin-top: 1rem;
+}
+
+.jf-admin-guide__heading {
+    margin: 0 0 0.5rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--jf-light-text, #1c1c1e);
+}
+
+html.fi.dark .jf-admin-guide__heading,
+.fi.dark .jf-admin-guide__heading {
+    color: #f5f5f7;
+}
+
+.jf-admin-guide__list {
+    margin: 0;
+    padding-left: 1.125rem;
+    font-size: 0.8125rem;
+    line-height: 1.55;
+    color: var(--jf-light-text-secondary, #6e6e73);
+}
+
+html.fi.dark .jf-admin-guide__list,
+.fi.dark .jf-admin-guide__list {
+    color: #a1a1a6;
+}
+
+.jf-admin-guide__list li + li {
+    margin-top: 0.375rem;
+}
+
+.jf-admin-guide__widgets {
+    display: grid;
+    gap: 0.625rem;
+    margin: 0;
+}
+
+.jf-admin-guide__widget {
+    padding: 0.625rem 0.75rem;
+    border-radius: 0.625rem;
+    background: rgb(255 255 255 / 0.55);
+}
+
+html.fi.dark .jf-admin-guide__widget,
+.fi.dark .jf-admin-guide__widget {
+    background: rgb(255 255 255 / 0.04);
+}
+
+.jf-admin-guide__widget dt {
+    margin: 0;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--jf-light-text, #1c1c1e);
+}
+
+html.fi.dark .jf-admin-guide__widget dt,
+.fi.dark .jf-admin-guide__widget dt {
+    color: #f5f5f7;
+}
+
+.jf-admin-guide__widget dd {
+    margin: 0.25rem 0 0;
+    font-size: 0.8125rem;
+    line-height: 1.45;
+    color: var(--jf-light-text-secondary, #6e6e73);
+}
+
+html.fi.dark .jf-admin-guide__widget dd,
+.fi.dark .jf-admin-guide__widget dd {
+    color: #a1a1a6;
+}
+
 /* @studio daniel-od · Julius-Fitness-Gym · https://github.com/Daniel-OD */

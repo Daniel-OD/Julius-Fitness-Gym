@@ -148,8 +148,10 @@ return [
             'backup_restore' => 'Restaurare din backup',
             'backup_restore_desc' => 'Încarcă un fișier ZIP de backup pentru a restaura baza de date la o stare anterioară. Acțiunea este ireversibilă — un backup automat de siguranță va fi creat înainte.',
             'checkin' => 'Check-in & prezență',
+            'interface' => 'Interfață',
         ],
         'fields' => [
+            'admin_guide_enabled' => 'Afișează ghidul administrator pe pagini',
             'gym_name' => 'Numele sălii',
             'gym_logo' => 'Logo sală',
             'name_type' => 'Afișare brand',
@@ -205,6 +207,7 @@ return [
             'backup_time_format' => 'Format: HH:MM (ex. 22:00)',
             'restore_include_settings' => 'Dacă este activat, setările aplicației (monedă, prefix factură, etc.) vor fi și ele restaurate.',
             'present_now_grace_minutes' => 'Cât timp după check-out rămâne membrul vizibil la „Prezenți acum” pe recepție.',
+            'admin_guide_enabled' => 'Când e activ, un panou de ajutor contextual apare sus pe fiecare pagină și explică ce vezi și ce poți face.',
         ],
         'backup' => [
             'no_path_set' => 'Nicio cale de backup configurată.',

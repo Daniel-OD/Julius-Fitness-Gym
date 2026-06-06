@@ -148,8 +148,10 @@ return [
             'backup_restore' => 'Restore from Backup',
             'backup_restore_desc' => 'Upload a backup ZIP file to restore the database to a previous state. This action is irreversible — an automatic safety backup will be created first.',
             'checkin' => 'Check-in & attendance',
+            'interface' => 'Interface',
         ],
         'fields' => [
+            'admin_guide_enabled' => 'Show admin guide on pages',
             'gym_name' => 'Gym name',
             'gym_logo' => 'Gym logo',
             'name_type' => 'Brand display',
@@ -205,6 +207,7 @@ return [
             'backup_time_format' => 'Format: HH:MM (e.g. 22:00)',
             'restore_include_settings' => 'If enabled, application settings (currency, invoice prefix, etc.) will also be restored.',
             'present_now_grace_minutes' => 'How long after check-out a member stays visible on the front-desk "Present now" list.',
+            'admin_guide_enabled' => 'When enabled, a contextual help panel appears at the top of each page explaining what you see and what to do.',
         ],
         'backup' => [
             'no_path_set' => 'No backup path configured.',
