@@ -33,8 +33,15 @@ return [
         'outstanding_invoices_hint' => 'Sold restant pe facturi',
     ],
 
+    'roles' => [
+        'administrator' => 'Administrator',
+        'employee' => 'Angajat',
+    ],
+
     'navigation' => [
         'dashboard' => 'Tablou de bord',
+        'dashboard_admin' => 'Dashboard Admin',
+        'dashboard_employee' => 'Dashboard Angajați',
         'office' => 'Recepție',
         'groups' => [
             'sales' => 'Vânzări',

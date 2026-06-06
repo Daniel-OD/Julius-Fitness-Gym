@@ -33,8 +33,15 @@ return [
         'outstanding_invoices_hint' => 'Unpaid invoice balance',
     ],
 
+    'roles' => [
+        'administrator' => 'Administrator',
+        'employee' => 'Employee',
+    ],
+
     'navigation' => [
         'dashboard' => 'Dashboard',
+        'dashboard_admin' => 'Admin Dashboard',
+        'dashboard_employee' => 'Employee Dashboard',
         'office' => 'Front desk',
         'groups' => [
             'sales' => 'Sales',
