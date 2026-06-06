@@ -67,6 +67,7 @@ class AppServiceProvider extends ServiceProvider
             storage_path('app/private'),
             storage_path('app/private/livewire-tmp'),
             storage_path('app/public'),
+            storage_path('data'),
         ];
 
         foreach ($directories as $directory) {

@@ -84,6 +84,7 @@ class JsonSettingsRepository implements SettingsRepository
             'charges' => [],
             'expenses' => [],
             'subscriptions' => [],
+            'checkin' => [],
             'notifications' => [],
             'backup' => [],
         ], JSON_PRETTY_PRINT));
@@ -95,7 +96,7 @@ class JsonSettingsRepository implements SettingsRepository
      */
     private function normalize(array $settings): array
     {
-        foreach (['general', 'invoice', 'member', 'charges', 'expenses', 'subscriptions', 'payments', 'notifications', 'backup'] as $key) {
+        foreach (['general', 'invoice', 'member', 'charges', 'expenses', 'subscriptions', 'payments', 'notifications', 'backup', 'checkin'] as $key) {
             if (! array_key_exists($key, $settings) || ! is_array($settings[$key])) {
                 $settings[$key] = [];
             }
@@ -123,6 +124,51 @@ class JsonSettingsRepository implements SettingsRepository
 
         $settings['notifications']['email'] = $emailSettings;
 
+        /** @var array<string, mixed> $checkin */
+        $checkin = $settings['checkin'];
+        foreach ([
+            'enabled' => true,
+            'require_active_subscription' => false,
+            'auto_checkout_after_hours' => 3,
+            'alert_on_expired' => true,
+            'present_now_grace_minutes' => 15,
+        ] as $key => $default) {
+            if (! array_key_exists($key, $checkin)) {
+                $checkin[$key] = $default;
+            }
+        }
+
+        $settings['checkin'] = $checkin;
+
+        /** @var array<string, mixed> $charges */
+        $charges = $settings['charges'];
+        $charges['discounts'] = $this->normalizeTagList($charges['discounts'] ?? []);
+        $settings['charges'] = $charges;
+
+        /** @var array<string, mixed> $expenses */
+        $expenses = $settings['expenses'];
+        $expenses['categories'] = $this->normalizeTagList($expenses['categories'] ?? []);
+        $settings['expenses'] = $expenses;
+
         return $settings;
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function normalizeTagList(mixed $value): array
+    {
+        if (is_string($value)) {
+            $value = explode(',', $value);
+        }
+
+        if (! is_array($value)) {
+            return [];
+        }
+
+        return array_values(array_filter(array_map(
+            fn (mixed $item): string => trim((string) $item),
+            $value,
+        ), fn (string $item): bool => $item !== ''));
     }
 }

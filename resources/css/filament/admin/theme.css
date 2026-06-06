@@ -162,6 +162,21 @@ html.fi:not(.dark) .fi-input-wrp {
     border-color: var(--jf-light-border) !important;
 }
 
+html.fi:not(.dark) .fi-input-wrp .fi-input,
+html.fi:not(.dark) .fi-input-wrp input,
+html.fi:not(.dark) .fi-input-wrp textarea,
+html.fi:not(.dark) .fi-input-wrp select,
+html.fi:not(.dark) .fi-input-wrp .fi-select-input {
+    color: var(--jf-light-text) !important;
+    -webkit-text-fill-color: var(--jf-light-text);
+    background-color: transparent;
+}
+
+html.fi:not(.dark) .fi-input-wrp input::placeholder,
+html.fi:not(.dark) .fi-input-wrp textarea::placeholder {
+    color: var(--jf-light-text-secondary);
+}
+
 html.fi:not(.dark) .fi-btn.fi-outlined,
 html.fi:not(.dark) .fi-btn:not(.fi-color-primary):not(.fi-outlined) {
     border-color: var(--jf-light-border) !important;
@@ -360,6 +375,29 @@ html.fi.dark .fi-ta-header-description {
 html.fi.dark .fi-input-wrp {
     background-color: #111111 !important;
     border-color: rgb(255 255 255 / 0.1) !important;
+}
+
+html.fi.dark .fi-input-wrp .fi-input,
+html.fi.dark .fi-input-wrp input,
+html.fi.dark .fi-input-wrp textarea,
+html.fi.dark .fi-input-wrp select,
+html.fi.dark .fi-input-wrp .fi-select-input {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff;
+    background-color: transparent;
+}
+
+html.fi.dark .fi-input-wrp input::placeholder,
+html.fi.dark .fi-input-wrp textarea::placeholder {
+    color: rgb(255 255 255 / 0.45);
+}
+
+html.fi.dark .fi-input-wrp input:-webkit-autofill,
+html.fi.dark .fi-input-wrp input:-webkit-autofill:hover,
+html.fi.dark .fi-input-wrp input:-webkit-autofill:focus {
+    -webkit-text-fill-color: #ffffff;
+    box-shadow: 0 0 0 1000px #111111 inset;
+    caret-color: #ffffff;
 }
 
 html.fi.dark .fi-btn.fi-outlined,
