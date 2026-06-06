@@ -10,16 +10,25 @@ use App\Models\Member;
 use App\Models\Plan;
 use App\Models\Subscription;
 use App\Support\Analytics\AnalyticsDateRange;
+use App\Support\Analytics\SubscriptionRevenueProration;
 use App\Support\AppConfig;
 use App\Support\Data;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
+use Throwable;
+use TypeError;
 
 class AnalyticsService
 {
     private const CACHE_SECONDS = 90;
+
+    private const CACHE_PREFIX = 'analytics:v2:';
+
+    public function __construct(
+        private readonly SubscriptionRevenueProration $proration,
+    ) {}
 
     private function monthGroupExpression(string $column, string $driver): string
     {
@@ -117,16 +126,20 @@ class AnalyticsService
 
     public function uninvoicedSubscriptionsCollected(AnalyticsDateRange $range): float
     {
-        return Data::float(
-            $this->uninvoicedSubscriptionsQuery($range)
-                ->join('plans', 'plans.id', '=', 'subscriptions.plan_id')
-                ->sum('plans.amount'),
-        );
+        $total = 0.0;
+
+        foreach ($this->uninvoicedSubscriptionAmountRows($range) as $row) {
+            $total += $this->proratedUninvoicedAmount($row, $range);
+        }
+
+        return round($total, 2);
     }
 
     public function uninvoicedSubscriptionsCount(AnalyticsDateRange $range): int
     {
-        return $this->uninvoicedSubscriptionsQuery($range)->count();
+        return $this->uninvoicedSubscriptionAmountRows($range)
+            ->filter(fn (object $row): bool => $this->proratedUninvoicedAmount($row, $range) > 0)
+            ->count();
     }
 
     /**
@@ -136,10 +149,8 @@ class AnalyticsService
     {
         return Subscription::query()
             ->withoutInvoices()
-            ->whereBetween('start_date', [
-                $range->start->toDateString(),
-                $range->end->toDateString(),
-            ]);
+            ->whereDate('start_date', '<=', $range->end->toDateString())
+            ->whereDate('end_date', '>=', $range->start->toDateString());
     }
 
     /**
@@ -147,17 +158,89 @@ class AnalyticsService
      */
     public function uninvoicedCollectedTrendByDate(AnalyticsDateRange $range): array
     {
-        /** @var Collection<string, float> $rows */
-        $rows = $this->uninvoicedSubscriptionsQuery($range)
-            ->join('plans', 'plans.id', '=', 'subscriptions.plan_id')
-            ->selectRaw('subscriptions.start_date as day')
-            ->selectRaw('SUM(plans.amount) as total')
-            ->groupBy('subscriptions.start_date')
-            ->orderBy('subscriptions.start_date')
-            ->pluck('total', 'day')
-            ->map(fn ($value): float => Data::float($value));
+        $trend = [];
 
-        return $rows->all();
+        foreach ($this->uninvoicedSubscriptionAmountRows($range) as $row) {
+            $subStart = CarbonImmutable::parse((string) $row->start_date)->startOfDay();
+            $subEnd = CarbonImmutable::parse((string) $row->end_date)->startOfDay();
+
+            foreach ($this->proration->dailyBreakdown(
+                (float) $row->amount,
+                $subStart,
+                $subEnd,
+                $range->start->startOfDay(),
+                $range->end->startOfDay(),
+            ) as $day => $amount) {
+                $trend[$day] = ($trend[$day] ?? 0) + $amount;
+            }
+        }
+
+        ksort($trend);
+
+        return $trend;
+    }
+
+    /**
+     * @return Collection<int, object{start_date: string, end_date: string, amount: float, plan_id: int}>
+     */
+    private function uninvoicedSubscriptionAmountRows(AnalyticsDateRange $range): Collection
+    {
+        return $this->uninvoicedSubscriptionsQuery($range)
+            ->join('plans', 'plans.id', '=', 'subscriptions.plan_id')
+            ->select([
+                'subscriptions.start_date',
+                'subscriptions.end_date',
+                'plans.amount',
+                'plans.id as plan_id',
+            ])
+            ->get();
+    }
+
+    private function proratedUninvoicedAmount(object $row, AnalyticsDateRange $range): float
+    {
+        return $this->proration->proratedAmount(
+            (float) $row->amount,
+            CarbonImmutable::parse((string) $row->start_date)->startOfDay(),
+            CarbonImmutable::parse((string) $row->end_date)->startOfDay(),
+            $range->start->startOfDay(),
+            $range->end->startOfDay(),
+        );
+    }
+
+    /**
+     * @return array<string, float>
+     */
+    private function proratedUninvoicedTrendByMonth(AnalyticsDateRange $range): array
+    {
+        $trend = [];
+        $rows = $this->uninvoicedSubscriptionAmountRows($range);
+        $cursor = $range->start->startOfMonth();
+
+        while ($cursor->lessThanOrEqualTo($range->end)) {
+            $monthStart = $cursor->startOfMonth();
+            $monthEnd = $cursor->endOfMonth();
+            $monthKey = $monthStart->format('Y-m');
+            $monthRangeStart = $monthStart->greaterThan($range->start) ? $monthStart : $range->start->startOfDay();
+            $monthRangeEnd = $monthEnd->lessThan($range->end) ? $monthEnd : $range->end->startOfDay();
+
+            foreach ($rows as $row) {
+                $amount = $this->proration->proratedAmount(
+                    (float) $row->amount,
+                    CarbonImmutable::parse((string) $row->start_date)->startOfDay(),
+                    CarbonImmutable::parse((string) $row->end_date)->startOfDay(),
+                    $monthRangeStart,
+                    $monthRangeEnd,
+                );
+
+                if ($amount > 0) {
+                    $trend[$monthKey] = ($trend[$monthKey] ?? 0) + $amount;
+                }
+            }
+
+            $cursor = $cursor->addMonth();
+        }
+
+        return $trend;
     }
 
     /**
@@ -294,20 +377,7 @@ class AnalyticsService
 
         $trend = $rows->all();
 
-        $driver = Subscription::query()->getModel()->getConnection()->getDriverName();
-        $monthExpression = $this->monthGroupExpression('subscriptions.start_date', $driver);
-
-        /** @var Collection<string, float> $uninvoiced */
-        $uninvoiced = $this->uninvoicedSubscriptionsQuery($range)
-            ->join('plans', 'plans.id', '=', 'subscriptions.plan_id')
-            ->selectRaw("{$monthExpression} as month")
-            ->selectRaw('SUM(plans.amount) as total')
-            ->groupBy('month')
-            ->orderBy('month')
-            ->pluck('total', 'month')
-            ->map(fn ($value): float => Data::float($value));
-
-        foreach ($uninvoiced as $month => $amount) {
+        foreach ($this->proratedUninvoicedTrendByMonth($range) as $month => $amount) {
             $trend[$month] = ($trend[$month] ?? 0) + $amount;
         }
 
@@ -404,14 +474,20 @@ class AnalyticsService
             ->limit($limit)
             ->get();
 
-        $uninvoicedByPlan = $this->uninvoicedSubscriptionsQuery($range)
-            ->join('plans', 'plans.id', '=', 'subscriptions.plan_id')
-            ->selectRaw('plans.id as plan_id')
-            ->selectRaw('SUM(plans.amount) as uninvoiced_collected')
-            ->selectRaw('COUNT(subscriptions.id) as uninvoiced_count')
-            ->groupBy('plans.id')
-            ->get()
-            ->keyBy('plan_id');
+        $uninvoicedByPlan = $this->uninvoicedSubscriptionAmountRows($range)
+            ->groupBy('plan_id')
+            ->map(function (Collection $rows) use ($range): object {
+                $planId = (int) $rows->first()->plan_id;
+                $collected = $rows->sum(fn (object $row): float => $this->proratedUninvoicedAmount($row, $range));
+
+                return (object) [
+                    'plan_id' => $planId,
+                    'uninvoiced_collected' => $collected,
+                    'uninvoiced_count' => $rows->filter(
+                        fn (object $row): bool => $this->proratedUninvoicedAmount($row, $range) > 0,
+                    )->count(),
+                ];
+            });
 
         $mapped = $rows->map(function (object $row) use ($uninvoicedByPlan): array {
             $planId = (int) $row->plan_id;
@@ -502,10 +578,70 @@ class AnalyticsService
             return $callback();
         }
 
-        return Cache::remember(
-            'analytics:'.$key,
+        $cacheKey = self::CACHE_PREFIX.$key;
+
+        try {
+            $cached = Cache::get($cacheKey);
+
+            if ($cached !== null && $this->isValidCachedPayload($cached)) {
+                return $this->unpackCachedValue($cached);
+            }
+
+            if ($cached !== null) {
+                Cache::forget($cacheKey);
+            }
+        } catch (TypeError|Throwable) {
+            Cache::forget($cacheKey);
+        }
+
+        $value = $callback();
+
+        Cache::put(
+            $cacheKey,
+            $this->packCachedValue($value),
             now()->addSeconds(self::CACHE_SECONDS),
-            $callback,
         );
+
+        return $value;
+    }
+
+    private function isValidCachedPayload(mixed $cached): bool
+    {
+        if ($cached instanceof __PHP_Incomplete_Class) {
+            return false;
+        }
+
+        if (! is_array($cached) || ! isset($cached['t'], $cached['d'])) {
+            return false;
+        }
+
+        return in_array($cached['t'], ['array', 'collection'], true);
+    }
+
+    /**
+     * @return array{t: string, d: mixed}
+     */
+    private function packCachedValue(mixed $value): array
+    {
+        if ($value instanceof Collection) {
+            return [
+                't' => 'collection',
+                'd' => $value->values()->all(),
+            ];
+        }
+
+        return [
+            't' => 'array',
+            'd' => $value,
+        ];
+    }
+
+    private function unpackCachedValue(array $cached): mixed
+    {
+        if ($cached['t'] === 'collection') {
+            return collect($cached['d']);
+        }
+
+        return $cached['d'];
     }
 }

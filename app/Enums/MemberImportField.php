@@ -13,6 +13,11 @@ enum MemberImportField: string
     case Dob = 'dob';
     case Status = 'status';
     case Notes = 'notes';
+    case PlanName = 'plan_name';
+    case PlanAmount = 'plan_amount';
+    case PlanDays = 'plan_days';
+    case SubscriptionStart = 'subscription_start';
+    case SubscriptionEnd = 'subscription_end';
 
     /**
      * @return array<string, string>
@@ -36,6 +41,11 @@ enum MemberImportField: string
             self::Dob => __('app.settings.import.fields.dob'),
             self::Status => __('app.settings.import.fields.status'),
             self::Notes => __('app.settings.import.fields.notes'),
+            self::PlanName => __('app.settings.import.fields.plan_name'),
+            self::PlanAmount => __('app.settings.import.fields.plan_amount'),
+            self::PlanDays => __('app.settings.import.fields.plan_days'),
+            self::SubscriptionStart => __('app.settings.import.fields.subscription_start'),
+            self::SubscriptionEnd => __('app.settings.import.fields.subscription_end'),
         };
     }
 

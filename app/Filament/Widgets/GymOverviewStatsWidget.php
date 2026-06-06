@@ -61,7 +61,14 @@ class GymOverviewStatsWidget extends StatsOverviewWidget
                 ->color($expiringCount > 0 ? 'danger' : 'gray')
                 ->chart([2, 3, 2, 4, 3, $expiringCount, 2]),
             Stat::make(__('app.widgets.monthly_revenue'), Helpers::formatCurrency($financial['collected']))
-                ->description(__('app.widgets.monthly_revenue_hint', ['month' => $monthLabel]))
+                ->description(
+                    $financial['collected_from_uninvoiced'] > 0
+                        ? __('app.billing.collected_breakdown', [
+                            'invoiced' => Helpers::formatCurrency($financial['collected_from_invoices']),
+                            'uninvoiced' => Helpers::formatCurrency($financial['collected_from_uninvoiced']),
+                        ])
+                        : __('app.widgets.monthly_revenue_hint', ['month' => $monthLabel]),
+                )
                 ->descriptionIcon('heroicon-o-banknotes')
                 ->icon('heroicon-o-banknotes')
                 ->color('primary')

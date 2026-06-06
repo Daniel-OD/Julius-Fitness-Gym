@@ -45,6 +45,8 @@ new class extends Component
 
     public int $updatedCount = 0;
 
+    public int $subscriptionsCreatedCount = 0;
+
     public int $failedCount = 0;
 
     public ?string $errorReportToken = null;
@@ -166,6 +168,7 @@ new class extends Component
         $this->importedCount += $result->imported;
         $this->skippedCount += $result->skippedDuplicates;
         $this->updatedCount += $result->updated;
+        $this->subscriptionsCreatedCount += $result->subscriptionsCreated;
         $this->failedCount += $result->failed;
         $this->importProgress = min($offset + MemberImportService::CHUNK_SIZE, $this->importTotal);
 
@@ -347,6 +350,7 @@ new class extends Component
         $this->importedCount = 0;
         $this->skippedCount = 0;
         $this->updatedCount = 0;
+        $this->subscriptionsCreatedCount = 0;
         $this->failedCount = 0;
         $this->errorReportToken = null;
     }
@@ -555,6 +559,8 @@ new class extends Component
                                     <th>{{ __('app.fields.contact') }}</th>
                                     <th>{{ __('app.fields.dob') }}</th>
                                     <th>{{ __('app.fields.status') }}</th>
+                                    <th>{{ __('app.settings.import.fields.plan_name') }}</th>
+                                    <th>{{ __('app.settings.import.fields.plan_amount') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -565,6 +571,8 @@ new class extends Component
                                         <td>{{ $row['contact'] ?? '—' }}</td>
                                         <td>{{ $row['dob'] ?? '—' }}</td>
                                         <td>{{ $row['status'] ?? '—' }}</td>
+                                        <td>{{ $row['plan_name'] ?? '—' }}</td>
+                                        <td>{{ $row['plan_amount'] ?? '—' }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -655,6 +663,12 @@ new class extends Component
                             <span class="jf-import-result-card__value">{{ $skippedCount }}</span>
                             <span class="jf-import-result-card__label">{{ __('app.settings.import.result_skipped') }}</span>
                         </div>
+                        @if ($subscriptionsCreatedCount > 0)
+                            <div class="jf-import-result-card jf-import-result-card--success">
+                                <span class="jf-import-result-card__value">{{ $subscriptionsCreatedCount }}</span>
+                                <span class="jf-import-result-card__label">{{ __('app.settings.import.result_subscriptions') }}</span>
+                            </div>
+                        @endif
                         <div class="jf-import-result-card jf-import-result-card--danger">
                             <span class="jf-import-result-card__value">{{ $failedCount }}</span>
                             <span class="jf-import-result-card__label">{{ __('app.settings.import.result_errors') }}</span>
