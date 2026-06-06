@@ -664,6 +664,13 @@ return [
         'renewals' => 'Renewals',
         'expired_not_renewed' => 'Expired / Not Renewed',
         'vs_previous_period' => 'vs :count previous period',
+        'at_risk_members' => 'Paying but not visiting',
+        'at_risk_members_description' => 'Active members who haven\'t checked in for :days+ days — call them before they cancel.',
+        'at_risk_last_visit' => 'Last visit',
+        'at_risk_days_absent' => 'Days absent',
+        'at_risk_never_visited' => 'Never visited',
+        'no_at_risk_members' => 'Great retention!',
+        'no_at_risk_members_description' => 'Every active member has visited within the last :days days.',
     ],
 
     'checkin' => [

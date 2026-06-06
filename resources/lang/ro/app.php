@@ -664,6 +664,13 @@ return [
         'renewals' => 'Reînnoiri',
         'expired_not_renewed' => 'Expirate / neînnoite',
         'vs_previous_period' => 'vs :count perioada anterioară',
+        'at_risk_members' => 'Plătesc dar nu vin',
+        'at_risk_members_description' => 'Membri cu abonament activ care nu au mai venit de :days+ zile — sună-i înainte să anuleze.',
+        'at_risk_last_visit' => 'Ultima vizită',
+        'at_risk_days_absent' => 'Zile absent',
+        'at_risk_never_visited' => 'Niciodată vizitat',
+        'no_at_risk_members' => 'Retenție excelentă!',
+        'no_at_risk_members_description' => 'Fiecare membru activ a venit în ultimele :days zile.',
     ],
 
     'checkin' => [
