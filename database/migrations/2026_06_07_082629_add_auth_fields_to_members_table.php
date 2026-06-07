@@ -9,8 +9,6 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('members', function (Blueprint $table): void {
-            $table->string('password')->nullable()->after('email');
-            $table->rememberToken()->after('password');
             $table->timestamp('email_verified_at')->nullable()->after('remember_token');
         });
     }
@@ -18,7 +16,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('members', function (Blueprint $table): void {
-            $table->dropColumn(['password', 'remember_token', 'email_verified_at']);
+            $table->dropColumn('email_verified_at');
         });
     }
 };
