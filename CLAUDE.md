@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Julius Fitness Gym is a gym and fitness club management application built on Laravel 13 + Filament 5. The reference implementation lives in `Julius-Fitness-Gym/laravel-gymie/` — consult its `CLAUDE.md` for domain model details, API conventions, and scheduling patterns.
+Julius Fitness Gym is a gym and fitness club management application built on Laravel 13 + Filament 5.
 
 ## Commands
 

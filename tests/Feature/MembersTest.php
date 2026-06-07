@@ -161,3 +161,41 @@ it('destroy deletes photo from storage', function (): void {
 
     Storage::disk('public')->assertMissing($photo);
 });
+
+// ─── QR code ─────────────────────────────────────────────────────────────────
+
+it('qr page renders svg for authenticated user', function (): void {
+    $member = Member::factory()->create();
+
+    $this->get(route('web.members.qr', $member))
+        ->assertOk()
+        ->assertViewIs('members.qr')
+        ->assertSee($member->name, false)
+        ->assertSee('<svg', false);
+});
+
+it('qr page generates checkin_token for legacy members', function (): void {
+    $member = Member::factory()->create();
+    $member->forceFill(['checkin_token' => null])->saveQuietly();
+
+    $this->get(route('web.members.qr', $member))->assertOk();
+
+    expect($member->fresh()->checkin_token)->not->toBeNull();
+});
+
+it('qr download returns svg attachment', function (): void {
+    $member = Member::factory()->create();
+
+    $this->get(route('web.members.qr.download', $member))
+        ->assertOk()
+        ->assertHeader('content-type', 'image/svg+xml')
+        ->assertSee('<svg', false);
+});
+
+it('qr routes require authentication', function (): void {
+    auth()->logout();
+    $member = Member::factory()->create();
+
+    $this->get(route('web.members.qr', $member))->assertRedirect();
+    $this->get(route('web.members.qr.download', $member))->assertRedirect();
+});

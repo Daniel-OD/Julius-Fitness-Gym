@@ -266,6 +266,7 @@ return [
         'state' => 'State',
         'city' => 'City',
         'pincode' => 'Postcode',
+        'password' => 'Password',
         'source' => 'Source',
         'goal' => 'Goal',
         'status' => 'Status',
@@ -360,6 +361,39 @@ return [
         'mark_as_expiring' => 'Mark as expiring',
         'mark_as_done' => 'Mark as done',
         'mark_as_lost' => 'Mark as lost',
+        'logout' => 'Log out',
+        'send_portal_invitation' => 'Send portal invitation',
+        'notify_expiration' => 'Notify expiration',
+        'notify_expiration_bulk' => 'Notify expiration (selection)',
+        'send_expiration_notification_now' => 'Send notification now',
+    ],
+
+    'member_notifications' => [
+        'section_title' => 'Notifications',
+        'auto_hint' => 'Automatic notifications are sent 7 and 3 days before expiration.',
+    ],
+
+    'member_portal' => [
+        'login_title' => 'Member login · :gym',
+        'login_subtitle' => 'Sign in to view your membership',
+        'login_button' => 'Sign in',
+        'welcome' => 'Welcome, :name',
+        'dashboard_hint' => 'Your member portal dashboard',
+        'active_subscription' => 'Active subscription',
+        'no_active_subscription' => 'No active subscription — contact reception',
+        'subscription_badge_ok' => ':days days remaining',
+        'subscription_badge_soon' => 'Expires in :days days',
+        'subscription_badge_urgent' => 'Only :days days left',
+        'no_invoices' => 'No invoices yet',
+        'unpaid' => 'Unpaid',
+        'download_pdf' => 'Download PDF',
+        'first_login_set_password' => 'First login — set your password',
+        'set_password_title' => 'Set password · :gym',
+        'set_password_intro' => 'Welcome! Set a password for your account.',
+        'password_confirmation' => 'Confirm password',
+        'set_password_button' => 'Set password & sign in',
+        'back_to_login' => 'Back to login',
+        'password_already_set' => 'A password is already set for this account. Use login instead.',
     ],
 
     'options' => [
@@ -476,6 +510,11 @@ return [
         'invoice_email_queued_to' => 'Invoice email queued to :email',
         'receipt_email_queued_to' => 'Receipt email queued to :email',
         'email_queued' => 'Email queued',
+        'portal_invitation_queued' => 'Portal invitation email queued',
+        'expiring_email_confirm' => 'Send an expiration email to :member? The subscription expires on :expires_at.',
+        'expiring_email_sent' => 'Email sent to :email',
+        'member_has_no_email' => 'Member has no email set',
+        'expiring_email_bulk_result' => ':sent email(s) sent, :skipped skipped (no email)',
         'cannot_cancel' => 'Cannot cancel',
         'cannot_cancel_body' => 'Invoice :number cannot be cancelled in its current state.',
         'invalid_payment_amount' => 'Invalid payment amount',
@@ -633,15 +672,6 @@ return [
         ],
     ],
 
-    'checkin' => [
-        'title' => 'Check-in',
-        'success' => 'Check-in successful',
-        'expired' => 'Subscription expired',
-        'invalid' => 'Invalid QR code',
-        'checked_in_at' => 'Checked in at :time',
-        'redirect_hint' => 'Returning to home in 5 seconds…',
-    ],
-
     'widgets' => [
         'net_revenue' => 'Net Revenue',
         'total_collected' => 'Total Collected',
@@ -682,9 +712,15 @@ return [
     ],
 
     'checkin' => [
+        'title' => 'Check-in',
+        'success' => 'Welcome, :name! Check-in recorded.',
+        'expired' => 'Subscription expired',
+        'invalid' => 'Invalid QR code',
+        'checked_in_at' => 'Checked in at :time',
+        'redirect_hint' => 'Returning to home in 5 seconds…',
+        'checkout' => 'Check out',
         'disabled' => 'Check-in is currently disabled.',
         'invalid_token' => 'Invalid or unknown QR code.',
-        'success' => 'Welcome, :name! Check-in recorded.',
         'no_active_subscription' => 'No active subscription found. Entry denied.',
         'no_active_subscription_warning' => 'Welcome, :name! No active subscription found.',
         'rate_limited' => 'Already checked in recently. Please wait :minutes min.',
@@ -742,6 +778,9 @@ return [
         'subscription_expired_line' => 'Your <strong>:plan</strong> subscription expired on :date.',
         'subscription_expiring_subject' => 'Your subscription expires in :days day(s) — :gym',
         'subscription_expired_subject' => 'Your subscription has expired — :gym',
+        'portal_invitation_subject' => 'Set up your member portal — :gym',
+        'portal_invitation_line' => 'You have been invited to access the <strong>:gym</strong> member portal. Set your password using the button below.',
+        'portal_invitation_button' => 'Set my password',
     ],
 
 ];

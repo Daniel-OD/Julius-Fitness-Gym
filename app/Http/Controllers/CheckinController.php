@@ -179,6 +179,8 @@ class CheckInController extends Controller
             'member' => $member,
             'subscription' => $subscription,
             'checkIn' => $checkIn,
+            'qrToken' => $member?->checkin_token,
+            'canCheckout' => $member && $status === 'already_present',
         ]), $httpStatus);
     }
 }

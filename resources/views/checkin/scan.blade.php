@@ -21,9 +21,11 @@
     };
 @endphp
 
-@push('head')
-    <meta http-equiv="refresh" content="5;url={{ route('home') }}">
-@endpush
+@if (! in_array($status, ['already_present'], true))
+    @push('head')
+        <meta http-equiv="refresh" content="5;url={{ route('home') }}">
+    @endpush
+@endif
 
 <x-layouts.minimal :title="__('app.checkin.title') . ' · ' . config('app.name')">
     <div class="flex flex-1 flex-col items-center justify-center py-6 text-center sm:py-10">
@@ -74,8 +76,20 @@
             </dl>
         @endif
 
-        <p class="mt-10 text-xs text-zinc-400 dark:text-zinc-500">
-            {{ __('app.checkin.redirect_hint') }}
-        </p>
+        @if (($canCheckout ?? false) && filled($qrToken ?? null))
+            <form method="POST" action="{{ route('checkin.checkout', $qrToken) }}" class="mt-8 w-full max-w-xs">
+                @csrf
+                <button type="submit"
+                    class="inline-flex w-full items-center justify-center gap-2 rounded-full bg-zinc-900 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200">
+                    {{ __('app.checkin.checkout') }}
+                </button>
+            </form>
+        @endif
+
+        @if (! in_array($status, ['already_present'], true))
+            <p class="mt-10 text-xs text-zinc-400 dark:text-zinc-500">
+                {{ __('app.checkin.redirect_hint') }}
+            </p>
+        @endif
     </div>
 </x-layouts.minimal>

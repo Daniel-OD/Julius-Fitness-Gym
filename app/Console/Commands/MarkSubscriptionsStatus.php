@@ -10,7 +10,7 @@ use Illuminate\Support\Carbon;
 
 class MarkSubscriptionsStatus extends Command
 {
-    protected $signature = 'gymie:subscriptions
+    protected $signature = 'gym:subscriptions
                             {--mark-expired : Mark expired subscriptions}
                             {--mark-expiring : Mark subscriptions expiring within the configured window}';
 

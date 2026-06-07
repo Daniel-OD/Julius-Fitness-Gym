@@ -266,6 +266,7 @@ return [
         'state' => 'Județ',
         'city' => 'Oraș',
         'pincode' => 'Cod poștal',
+        'password' => 'Parolă',
         'source' => 'Sursă',
         'goal' => 'Obiectiv',
         'status' => 'Status',
@@ -360,6 +361,39 @@ return [
         'mark_as_expiring' => 'Marchează ca expirând',
         'mark_as_done' => 'Marchează ca finalizat',
         'mark_as_lost' => 'Marchează ca pierdut',
+        'logout' => 'Deconectare',
+        'send_portal_invitation' => 'Trimite invitație portal',
+        'notify_expiration' => 'Notifică expirare',
+        'notify_expiration_bulk' => 'Notifică expirare (selecție)',
+        'send_expiration_notification_now' => 'Trimite notificare acum',
+    ],
+
+    'member_notifications' => [
+        'section_title' => 'Notificări',
+        'auto_hint' => 'Notificările automate se trimit la 7 și 3 zile înainte de expirare.',
+    ],
+
+    'member_portal' => [
+        'login_title' => 'Autentificare membru · :gym',
+        'login_subtitle' => 'Conectează-te pentru a vedea abonamentul tău',
+        'login_button' => 'Autentificare',
+        'welcome' => 'Bun venit, :name',
+        'dashboard_hint' => 'Panoul tău de membru',
+        'active_subscription' => 'Abonament activ',
+        'no_active_subscription' => 'Niciun abonament activ — contactează recepția',
+        'subscription_badge_ok' => ':days zile rămase',
+        'subscription_badge_soon' => 'Expiră în :days zile',
+        'subscription_badge_urgent' => 'Doar :days zile rămase',
+        'no_invoices' => 'Nicio factură încă',
+        'unpaid' => 'Neplătită',
+        'download_pdf' => 'Descarcă PDF',
+        'first_login_set_password' => 'Primul login — setează-ți parola',
+        'set_password_title' => 'Setare parolă · :gym',
+        'set_password_intro' => 'Bine ai venit! Setează o parolă pentru contul tău.',
+        'password_confirmation' => 'Confirmă parola',
+        'set_password_button' => 'Setează parola și autentifică-te',
+        'back_to_login' => 'Înapoi la autentificare',
+        'password_already_set' => 'Există deja o parolă pentru acest cont. Folosește autentificarea.',
     ],
 
     'options' => [
@@ -476,6 +510,11 @@ return [
         'invoice_email_queued_to' => 'Email factură trimis către :email',
         'receipt_email_queued_to' => 'Email chitanță trimis către :email',
         'email_queued' => 'Email în așteptare',
+        'portal_invitation_queued' => 'Email invitație portal adăugat în coadă',
+        'expiring_email_confirm' => 'Trimiți email de expirare lui :member? Abonamentul expiră pe :expires_at.',
+        'expiring_email_sent' => 'Email trimis către :email',
+        'member_has_no_email' => 'Membrul nu are email setat',
+        'expiring_email_bulk_result' => ':sent emailuri trimise, :skipped sărite (fără email)',
         'cannot_cancel' => 'Nu se poate anula',
         'cannot_cancel_body' => 'Factura :number nu poate fi anulată în starea curentă.',
         'invalid_payment_amount' => 'Sumă de plată invalidă',
@@ -633,15 +672,6 @@ return [
         ],
     ],
 
-    'checkin' => [
-        'title' => 'Check-in',
-        'success' => 'Check-in reușit',
-        'expired' => 'Abonament expirat',
-        'invalid' => 'Cod QR invalid',
-        'checked_in_at' => 'Intrare la :time',
-        'redirect_hint' => 'Revenire acasă în 5 secunde…',
-    ],
-
     'widgets' => [
         'net_revenue' => 'Venit net',
         'total_collected' => 'Total încasat',
@@ -682,9 +712,15 @@ return [
     ],
 
     'checkin' => [
+        'title' => 'Check-in',
+        'success' => 'Bun venit, :name! Check-in înregistrat.',
+        'expired' => 'Abonament expirat',
+        'invalid' => 'Cod QR invalid',
+        'checked_in_at' => 'Intrare la :time',
+        'redirect_hint' => 'Revenire acasă în 5 secunde…',
+        'checkout' => 'Check-out',
         'disabled' => 'Check-in-ul este dezactivat momentan.',
         'invalid_token' => 'Cod QR invalid sau necunoscut.',
-        'success' => 'Bun venit, :name! Check-in înregistrat.',
         'no_active_subscription' => 'Niciun abonament activ. Acces refuzat.',
         'no_active_subscription_warning' => 'Bun venit, :name! Niciun abonament activ găsit.',
         'rate_limited' => 'Ai efectuat deja un check-in recent. Așteptați :minutes min.',
@@ -742,6 +778,9 @@ return [
         'subscription_expired_line' => 'Abonamentul tău <strong>:plan</strong> a expirat pe :date.',
         'subscription_expiring_subject' => 'Abonamentul tău expiră în :days zi(le) — :gym',
         'subscription_expired_subject' => 'Abonamentul tău a expirat — :gym',
+        'portal_invitation_subject' => 'Configurează portalul de membru — :gym',
+        'portal_invitation_line' => 'Ai fost invitat să accesezi portalul de membru <strong>:gym</strong>. Setează parola folosind butonul de mai jos.',
+        'portal_invitation_button' => 'Setează parola',
     ],
 
 ];

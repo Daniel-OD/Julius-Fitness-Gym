@@ -111,8 +111,15 @@
                         </x-ui.badge>
                     </td>
                     <td class="whitespace-nowrap px-5 py-4 text-right">
-                        <a href="{{ route('web.members.show', $member) }}"
-                            class="text-sm font-medium text-brand-400 hover:text-brand-300">{{ __('app.actions.view') }}</a>
+                        <div class="flex items-center justify-end gap-3">
+                            <a href="{{ route('web.members.qr', $member) }}"
+                                class="text-sm font-medium text-white/55 hover:text-white"
+                                title="{{ __('app.members.qr.title') }}">
+                                QR
+                            </a>
+                            <a href="{{ route('web.members.show', $member) }}"
+                                class="text-sm font-medium text-brand-400 hover:text-brand-300">{{ __('app.actions.view') }}</a>
+                        </div>
                     </td>
                 </tr>
             @empty

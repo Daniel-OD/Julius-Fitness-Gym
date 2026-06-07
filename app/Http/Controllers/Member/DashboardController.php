@@ -1,0 +1,69 @@
+<?php
+
+namespace App\Http\Controllers\Member;
+
+use App\Enums\Status;
+use App\Http\Controllers\Controller;
+use App\Models\Invoice;
+use App\Models\Member;
+use App\Services\Members\MemberQrCodeService;
+use App\Support\AppConfig;
+use Carbon\CarbonImmutable;
+use Illuminate\View\View;
+
+class DashboardController extends Controller
+{
+    public function index(MemberQrCodeService $qrCodeService): View
+    {
+        /** @var Member $member */
+        $member = auth('member')->user();
+
+        $today = CarbonImmutable::today(AppConfig::timezone());
+
+        $activeSubscription = $member->subscriptions()
+            ->with('plan')
+            ->whereDate('start_date', '<=', $today->toDateString())
+            ->whereDate('end_date', '>=', $today->toDateString())
+            ->whereNotIn('status', [
+                Status::Cancelled->value,
+                Status::Renewed->value,
+                Status::Expired->value,
+            ])
+            ->orderByDesc('end_date')
+            ->first();
+
+        $daysRemaining = null;
+        $subscriptionBadgeTone = null;
+
+        if ($activeSubscription !== null) {
+            $daysRemaining = (int) $today->diffInDays(
+                CarbonImmutable::parse($activeSubscription->end_date, AppConfig::timezone())->startOfDay(),
+                false,
+            );
+
+            $subscriptionBadgeTone = match (true) {
+                $daysRemaining > 7 => 'green',
+                $daysRemaining >= 3 => 'orange',
+                default => 'red',
+            };
+        }
+
+        $member->ensureCheckinToken();
+        $qrSvg = $qrCodeService->svgForMember($member);
+
+        $invoices = Invoice::query()
+            ->whereHas('subscription', fn ($query) => $query->where('member_id', $member->id))
+            ->orderByDesc('date')
+            ->limit(10)
+            ->get();
+
+        return view('member.dashboard.index', [
+            'member' => $member,
+            'activeSubscription' => $activeSubscription,
+            'daysRemaining' => $daysRemaining,
+            'subscriptionBadgeTone' => $subscriptionBadgeTone,
+            'qrSvg' => $qrSvg,
+            'invoices' => $invoices,
+        ]);
+    }
+}

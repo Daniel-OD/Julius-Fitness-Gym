@@ -137,6 +137,18 @@ it('rejects qr check-in when an open session already exists', function (): void 
         ->assertJsonPath('status', 'already_present');
 });
 
+it('scan html shows checkout button when member is already present', function (): void {
+    $member = memberWithToken();
+    activeSubscription($member);
+    RateLimiter::clear("checkin:{$member->id}");
+
+    $this->getJson("/checkin/{$member->checkin_token}")->assertStatus(200);
+
+    $this->get("/checkin/{$member->checkin_token}")
+        ->assertStatus(422)
+        ->assertSee(__('app.checkin.checkout'), false);
+});
+
 it('checkout records checked_out_at on open check-in', function (): void {
     $member = memberWithToken();
     $checkIn = CheckIn::factory()->create([

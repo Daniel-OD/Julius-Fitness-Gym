@@ -197,16 +197,16 @@ Autentificare Sanctum (`POST /api/v1/auth/login`). Resurse: users, members, plan
 
 | Comandă | Rol |
 |---------|-----|
-| `gymie:invoices --mark-overdue` | Facturi restante |
-| `gymie:subscriptions` | Actualizare status abonamente |
-| `gymie:subscription-expiry-notifications` | Notificări expirare |
+| `gym:invoices --mark-overdue` | Facturi restante |
+| `gym:subscriptions` | Actualizare status abonamente |
+| `gym:subscription-expiry-notifications` | Notificări expirare |
 | `app:backup` | Backup ZIP (dacă activat în Setări) |
 
 Pentru test de o zi, rulează manual dacă e nevoie:
 
 ```bash
-php artisan gymie:subscriptions
-php artisan gymie:invoices --mark-overdue
+php artisan gym:subscriptions
+php artisan gym:invoices --mark-overdue
 ```
 
 ---
@@ -403,7 +403,7 @@ php artisan db:seed
 php artisan serve
 php artisan app:backup --force
 php artisan app:restore "cale\backup.zip" --include-settings
-php artisan gymie:subscriptions
+php artisan gym:subscriptions
 php artisan optimize:clear
 ```
 

@@ -3,12 +3,14 @@
 declare(strict_types=1);
 
 use App\Http\Middleware\AppendStudioSignature;
+use App\Http\Middleware\EnsureMemberIsAuthenticated;
 use App\Http\Middleware\ForceJsonResponse;
 use App\Http\Middleware\SetAppLocale;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Spatie\QueryBuilder\Exceptions\InvalidFilterQuery;
 use Spatie\QueryBuilder\Exceptions\InvalidIncludeQuery;
 use Spatie\QueryBuilder\Exceptions\InvalidQuery;
@@ -37,6 +39,18 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->append([
             AppendStudioSignature::class,
         ]);
+
+        $middleware->alias([
+            'member.auth' => EnsureMemberIsAuthenticated::class,
+        ]);
+
+        $middleware->redirectUsersTo(function (Request $request): string {
+            if (Auth::guard('member')->check()) {
+                return '/member/dashboard';
+            }
+
+            return route('dashboard');
+        });
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->render(function (InvalidQuery $exception, Request $request) {

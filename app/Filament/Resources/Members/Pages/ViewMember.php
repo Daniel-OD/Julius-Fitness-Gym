@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Members\Pages;
 
 use App\Filament\Resources\Members\MemberResource;
 use App\Models\Member;
+use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ViewRecord;
@@ -18,6 +19,11 @@ class ViewMember extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+            Action::make('qr')
+                ->label(__('app.members.qr.title'))
+                ->icon('heroicon-o-qr-code')
+                ->url(fn (Member $record): string => route('web.members.qr', $record))
+                ->openUrlInNewTab(),
             EditAction::make(),
             DeleteAction::make(),
         ];

@@ -3,8 +3,12 @@
 namespace App\Filament\Resources\Members\Schemas;
 
 use App\Models\Member;
+use App\Services\Subscriptions\SubscriptionExpiringEmailService;
+use Filament\Actions\Action;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Notifications\Notification;
+use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -88,6 +92,55 @@ class MemberInfolist
                             ])
                             ->columnSpan(2)
                             ->columns(4),
+                    ]),
+                Section::make(__('app.member_notifications.section_title'))
+                    ->schema([
+                        TextEntry::make('expiring_notifications_hint')
+                            ->hiddenLabel()
+                            ->state(fn (): string => __('app.member_notifications.auto_hint')),
+                        Actions::make([
+                            Action::make('send_expiring_notification')
+                                ->label(__('app.actions.send_expiration_notification_now'))
+                                ->icon('heroicon-o-envelope')
+                                ->color('info')
+                                ->requiresConfirmation()
+                                ->modalHeading(__('app.actions.send_expiration_notification_now'))
+                                ->modalDescription(function (Member $record): string {
+                                    $subscription = app(SubscriptionExpiringEmailService::class)
+                                        ->findActiveSubscriptionForMember($record);
+
+                                    return __('app.notifications.expiring_email_confirm', [
+                                        'member' => $record->name ?? '—',
+                                        'expires_at' => $subscription?->end_date?->translatedFormat('d M Y') ?? '—',
+                                    ]);
+                                })
+                                ->visible(fn (Member $record): bool => app(SubscriptionExpiringEmailService::class)
+                                    ->findActiveSubscriptionForMember($record) !== null)
+                                ->action(function (Member $record): void {
+                                    $service = app(SubscriptionExpiringEmailService::class);
+                                    $subscription = $service->findActiveSubscriptionForMember($record);
+
+                                    if ($subscription === null) {
+                                        return;
+                                    }
+
+                                    $result = $service->dispatchExpiringEmail($subscription);
+
+                                    if ($result['sent']) {
+                                        Notification::make()
+                                            ->title(__('app.notifications.expiring_email_sent', ['email' => $result['email']]))
+                                            ->success()
+                                            ->send();
+
+                                        return;
+                                    }
+
+                                    Notification::make()
+                                        ->title(__('app.notifications.member_has_no_email'))
+                                        ->warning()
+                                        ->send();
+                                }),
+                        ]),
                     ]),
 
             ]);

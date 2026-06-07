@@ -3,9 +3,10 @@
 use App\Helpers\Helpers;
 use Illuminate\Support\Facades\Schedule;
 
-Schedule::command('gymie:invoices --mark-overdue')->dailyAt('00:05');
-Schedule::command('gymie:subscriptions')->dailyAt('00:10');
-Schedule::command('gymie:subscription-expiry-notifications')->dailyAt('09:00');
+Schedule::command('gym:invoices --mark-overdue')->dailyAt('00:05');
+Schedule::command('gym:subscriptions')->dailyAt('00:10');
+Schedule::command('gym:subscription-expiry-notifications')->dailyAt('09:00');
+Schedule::command('gym:send-expiring-emails')->dailyAt('09:00');
 
 // Daily backup — runs only when backup is enabled and trigger includes end-of-day
 (function (): void {

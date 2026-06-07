@@ -1,6 +1,10 @@
 <?php
 
 use App\Http\Controllers\CheckinController;
+use App\Http\Controllers\Member\AuthController as MemberAuthController;
+use App\Http\Controllers\Member\DashboardController as MemberDashboardController;
+use App\Http\Controllers\Member\InvoiceController as MemberInvoiceController;
+use App\Http\Controllers\Member\QrController as MemberQrController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\MemberImportDownloadController;
 use App\Http\Controllers\ProfileController;
@@ -16,6 +20,26 @@ Route::get('/checkin/{qrToken}', [CheckinController::class, 'scan'])
 Route::post('/checkin/{qrToken}/checkout', [CheckinController::class, 'checkout'])
     ->name('checkin.checkout')
     ->middleware('throttle:60,1');
+
+Route::prefix('member')->group(function (): void {
+    Route::middleware('guest:member')->group(function (): void {
+        Route::get('login', [MemberAuthController::class, 'showLogin'])->name('member.login');
+        Route::post('login', [MemberAuthController::class, 'login']);
+
+        Route::get('set-password', [MemberAuthController::class, 'showSetPassword'])->name('member.set-password');
+        Route::post('set-password', [MemberAuthController::class, 'setPassword'])->name('member.set-password.store');
+    });
+
+    Route::post('logout', [MemberAuthController::class, 'logout'])
+        ->middleware('member.auth')
+        ->name('member.logout');
+
+    Route::middleware('member.auth')->group(function (): void {
+        Route::get('dashboard', [MemberDashboardController::class, 'index'])->name('member.dashboard');
+        Route::get('qr/download', [MemberQrController::class, 'download'])->name('member.qr.download');
+        Route::get('invoices/{invoice}/pdf', [MemberInvoiceController::class, 'pdf'])->name('member.invoices.pdf');
+    });
+});
 
 Route::get('/dashboard', function () {
     return redirect(auth()->user()->defaultDashboardUrl());

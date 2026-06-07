@@ -9,7 +9,7 @@ use Illuminate\Support\Carbon;
 
 class MarkInvoiceOverdue extends Command
 {
-    protected $signature = 'gymie:invoices {--mark-overdue : Mark invoices as overdue based on due date}';
+    protected $signature = 'gym:invoices {--mark-overdue : Mark invoices as overdue based on due date}';
 
     protected $description = 'Perform operations on invoices (e.g., mark as overdue)';
 
