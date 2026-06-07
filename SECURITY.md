@@ -20,7 +20,9 @@ Report vulnerabilities privately to the maintainer:
 ### Authentication & Access Control
 
 - **API:** Sanctum bearer-token authentication on all `/api/v1` routes except `/auth/login`.
-- **Admin panel:** Filament Shield (Spatie Permission) with explicit role/permission grants. `super_admin.define_via_gate = false` — no implicit gate bypass.
+- **Staff (admin):** Filament login at `/staff/login` only. Legacy `/login` returns 404. Public self-registration is disabled.
+- **Members:** Separate guard and login at `/member/login` (not staff).
+- **Admin panel:** Filament Shield (Spatie Permission) with explicit role/permission grants. Users without a Spatie role cannot access Filament panels.
 - **Office panel:** Role-based access (`employee` role restricts access to `/office` only).
 - **First-login:** Users created via `app:install` with a generated password are forced to change it before accessing any panel page (`RequirePasswordChange` middleware).
 

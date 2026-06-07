@@ -1,6 +1,8 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 /*
@@ -44,7 +46,12 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-function something()
+function adminPanelUser(): User
 {
-    // ..
+    $role = Role::firstOrCreate(['name' => 'super_admin', 'guard_name' => 'web']);
+
+    $user = User::factory()->create(['must_change_password' => false]);
+    $user->assignRole($role);
+
+    return $user;
 }

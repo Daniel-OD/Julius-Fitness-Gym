@@ -44,6 +44,14 @@ return Application::configure(basePath: dirname(__DIR__))
             'member.auth' => EnsureMemberIsAuthenticated::class,
         ]);
 
+        $middleware->redirectGuestsTo(function (Request $request): string {
+            if ($request->is('member', 'member/*')) {
+                return route('member.login');
+            }
+
+            return route('filament.admin.auth.login');
+        });
+
         $middleware->redirectUsersTo(function (Request $request): string {
             if (Auth::guard('member')->check()) {
                 return '/member/dashboard';

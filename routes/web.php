@@ -11,6 +11,10 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SubscriptionController;
 use Illuminate\Support\Facades\Route;
 
+// Legacy Breeze login URL — staff use /staff/login (Filament).
+Route::get('/login', fn () => abort(404));
+Route::post('/login', fn () => abort(404));
+
 Route::view('/', 'home')->name('home');
 
 // Public check-in routes (no auth — used by QR scanners and member phones)

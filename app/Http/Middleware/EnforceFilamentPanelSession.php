@@ -40,6 +40,11 @@ class EnforceFilamentPanelSession
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->to($panel->getLoginUrl());
+        $loginUrl = $panel->getLoginUrl() ?? match ($panel->getId()) {
+            'admin' => route('filament.admin.auth.login'),
+            default => '/',
+        };
+
+        return redirect()->to($loginUrl);
     }
 }

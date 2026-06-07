@@ -59,7 +59,7 @@
         ['value' => '7/7', 'label' => 'Deschis zilnic'],
     ];
 
-    $membershipCta = Route::has('register') ? route('register') : (Route::has('login') ? route('login') : '#abonamente');
+    $membershipCta = Route::has('member.login') ? route('member.login') : '#abonamente';
 @endphp
 
 <x-layouts.public title="Julius Fitness Gym">

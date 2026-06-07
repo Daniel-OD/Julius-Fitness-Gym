@@ -2,7 +2,6 @@
 
 use App\Contracts\SettingsRepository;
 use App\Filament\Livewire\AdminGuideToggle;
-use App\Models\User;
 use App\Support\AdminGuide;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
@@ -32,9 +31,7 @@ it('does not expose guide content when disabled', function (): void {
         ],
     ]);
 
-    $user = User::factory()->create(['must_change_password' => false]);
-
-    $this->actingAs($user)
+    $this->actingAs(adminPanelUser())
         ->get(route('filament.admin.pages.dashboard'))
         ->assertSuccessful()
         ->assertDontSee(__('admin_guide.badge'), false);
@@ -49,9 +46,7 @@ it('shows contextual guide banner when enabled', function (): void {
         ],
     ]);
 
-    $user = User::factory()->create(['must_change_password' => false]);
-
-    $this->actingAs($user)
+    $this->actingAs(adminPanelUser())
         ->get(route('filament.admin.pages.dashboard'))
         ->assertSuccessful()
         ->assertSee(__('admin_guide.badge'), false)
@@ -81,9 +76,7 @@ it('persists admin guide toggle from profile menu control', function (): void {
 });
 
 it('renders admin guide toggle in the user menu theme switcher row', function (): void {
-    $user = User::factory()->create(['must_change_password' => false]);
-
-    $this->actingAs($user)
+    $this->actingAs(adminPanelUser())
         ->get(route('filament.admin.pages.dashboard'))
         ->assertSuccessful()
         ->assertSee('fi-theme-switcher', false)
@@ -96,13 +89,12 @@ it('loads settings tab guide content when guide is enabled', function (): void {
         'general' => ['admin_guide_enabled' => true, 'locale' => 'en'],
     ]);
 
-    $user = User::factory()->create(['must_change_password' => false]);
     $guide = AdminGuide::entryForKey('admin.settings.tabs.charges');
 
     expect($guide)->not->toBeNull()
         ->and($guide['steps'])->not->toBeEmpty();
 
-    $this->actingAs($user)
+    $this->actingAs(adminPanelUser())
         ->get(route('filament.admin.pages.settings'))
         ->assertSuccessful()
         ->assertSee($guide['title'], false)
@@ -115,9 +107,7 @@ it('shows settings overview guide at page top', function (): void {
         'general' => ['admin_guide_enabled' => true, 'locale' => 'en'],
     ]);
 
-    $user = User::factory()->create(['must_change_password' => false]);
-
-    $this->actingAs($user)
+    $this->actingAs(adminPanelUser())
         ->get(route('filament.admin.pages.settings'))
         ->assertSuccessful()
         ->assertSee(AdminGuide::entryForKey('admin.settings.overview')['title'], false);

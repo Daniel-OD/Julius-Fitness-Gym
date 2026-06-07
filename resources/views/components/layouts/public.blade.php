@@ -56,7 +56,7 @@
                     <span class="hidden dark:inline">{{ __('app.ui.light_mode') }}</span>
                     <span class="dark:hidden">{{ __('app.ui.dark_mode') }}</span>
                 </button>
-                <x-ui.button :href="Route::has('login') ? route('login') : '#'" variant="ghost" size="md"
+                <x-ui.button :href="Route::has('member.login') ? route('member.login') : '#'" variant="ghost" size="md"
                     class="hidden sm:inline-flex">
                     Autentificare
                 </x-ui.button>
@@ -76,8 +76,8 @@
                 <a href="#contact"
                     class="jf-touch-target rounded-xl px-4 py-3 text-base font-medium text-white/80">Contact</a>
                 <div class="mt-2 flex flex-col gap-2 border-t border-white/10 pt-4">
-                    @if (Route::has('login'))
-                        <x-ui.button :href="route('login')" variant="ghost" size="md" class="w-full justify-center">
+                    @if (Route::has('member.login'))
+                        <x-ui.button :href="route('member.login')" variant="ghost" size="md" class="w-full justify-center">
                             Autentificare
                         </x-ui.button>
                     @endif

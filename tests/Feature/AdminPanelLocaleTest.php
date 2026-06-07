@@ -3,7 +3,6 @@
 use App\Contracts\SettingsRepository;
 use App\Filament\Resources\Members\MemberResource;
 use App\Http\Middleware\SetAppLocale;
-use App\Models\User;
 use Filament\Facades\Filament;
 
 it('includes locale middleware on the admin panel stack', function (): void {
@@ -21,9 +20,7 @@ it('renders the admin dashboard in romanian when settings locale is ro', functio
         ],
     ]);
 
-    $user = User::factory()->create();
-
-    $this->actingAs($user)
+    $this->actingAs(adminPanelUser())
         ->get('/admin/dashboard')
         ->assertSuccessful()
         ->assertSee('Membri', false)
