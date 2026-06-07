@@ -43,7 +43,10 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+<<<<<<< HEAD
 
+=======
+>>>>>>> a7c1e36 (Add member portal with email verification and admin notification)
         'member' => [
             'driver' => 'session',
             'provider' => 'members',
@@ -72,16 +75,22 @@ return [
             'driver' => 'eloquent',
             'model' => env('AUTH_MODEL', User::class),
         ],
+<<<<<<< HEAD
 
+=======
+>>>>>>> a7c1e36 (Add member portal with email verification and admin notification)
         'members' => [
             'driver' => 'eloquent',
             'model' => Member::class,
         ],
+<<<<<<< HEAD
 
         // 'users' => [
         //     'driver' => 'database',
         //     'table' => 'users',
         // ],
+=======
+>>>>>>> a7c1e36 (Add member portal with email verification and admin notification)
     ],
 
     /*

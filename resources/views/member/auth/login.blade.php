@@ -69,6 +69,13 @@
                 </button>
             </form>
         </div>
+
+        <p class="mt-6 text-center text-sm text-zinc-500 dark:text-zinc-400">
+            {{ __('app.member.auth.no_account') }}
+            <a href="{{ route('member.register') }}" class="font-medium text-brand-500 hover:text-brand-400">
+                {{ __('app.member.auth.register') }}
+            </a>
+        </p>
     </div>
 </body>
 

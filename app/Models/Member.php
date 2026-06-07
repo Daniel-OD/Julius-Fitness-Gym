@@ -5,7 +5,9 @@ namespace App\Models;
 use App\Enums\Status;
 use App\Helpers\Helpers;
 use App\Models\Concerns\CascadesSoftDeletes;
+use App\Notifications\Member\MemberVerifyEmailNotification;
 use Database\Factories\MemberFactory;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -22,6 +24,7 @@ use Illuminate\Support\Str;
  * @property string|null $checkin_token
  * @property string|null $name
  * @property string|null $email
+ * @property Carbon|null $email_verified_at
  * @property string|null $password
  * @property string|null $remember_token
  * @property string|null $contact
@@ -38,7 +41,7 @@ use Illuminate\Support\Str;
  * @property string|null $goal
  * @property Status|null $status
  */
-class Member extends Authenticatable
+class Member extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<MemberFactory> */
     use CascadesSoftDeletes, HasFactory, Notifiable, SoftDeletes;
@@ -47,22 +50,10 @@ class Member extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-        'photo',
-        'name',
-        'email',
-        'contact',
-        'emergency_contact',
-        'health_issue',
-        'gender',
-        'dob',
-        'address',
-        'country',
-        'state',
-        'city',
-        'pincode',
-        'source',
-        'goal',
-        'status',
+        'photo', 'name', 'email', 'password', 'contact',
+        'emergency_contact', 'health_issue', 'gender', 'dob',
+        'address', 'country', 'state', 'city', 'pincode',
+        'source', 'goal', 'status',
     ];
 
     /**
@@ -79,9 +70,10 @@ class Member extends Authenticatable
     protected function casts(): array
     {
         return [
-            'dob' => 'date',
-            'password' => 'hashed',
-            'status' => Status::class,
+            'dob'               => 'date',
+            'email_verified_at' => 'datetime',
+            'password'          => 'hashed',
+            'status'            => Status::class,
         ];
     }
 
@@ -93,12 +85,27 @@ class Member extends Authenticatable
         return $this->hasMany(Subscription::class);
     }
 
-    /**
-     * @return HasMany<CheckIn, $this>
-     */
+    /** @return HasMany<CheckIn, $this> */
     public function checkIns(): HasMany
     {
         return $this->hasMany(CheckIn::class);
+    }
+
+    public function sendEmailVerificationNotification(): void
+    {
+        $this->notify(new MemberVerifyEmailNotification);
+    }
+
+    /**
+     * Ensure a check-in token exists (for legacy members created before QR support).
+     */
+    public function ensureCheckinToken(): void
+    {
+        if (filled($this->checkin_token)) {
+            return;
+        }
+
+        $this->forceFill(['checkin_token' => Str::random(32)])->save();
     }
 
     protected static function boot(): void
@@ -123,18 +130,6 @@ class Member extends Authenticatable
                 Artisan::call('app:backup', ['--trigger' => 'after_member']);
             }
         });
-    }
-
-    /**
-     * Ensure a check-in token exists (for legacy members created before QR support).
-     */
-    public function ensureCheckinToken(): void
-    {
-        if (filled($this->checkin_token)) {
-            return;
-        }
-
-        $this->forceFill(['checkin_token' => Str::random(32)])->save();
     }
 
     /**

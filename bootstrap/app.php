@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Http\Middleware\AppendStudioSignature;
 use App\Http\Middleware\EnsureMemberIsAuthenticated;
 use App\Http\Middleware\ForceJsonResponse;
+use App\Http\Middleware\Member\EnsureEmailIsVerified;
 use App\Http\Middleware\SetAppLocale;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -41,7 +42,8 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->alias([
-            'member.auth' => EnsureMemberIsAuthenticated::class,
+            'member.auth'     => EnsureMemberIsAuthenticated::class,
+            'member.verified' => EnsureEmailIsVerified::class,
         ]);
 
         $middleware->redirectGuestsTo(function (Request $request): string {

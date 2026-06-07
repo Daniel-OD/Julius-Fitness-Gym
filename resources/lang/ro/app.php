@@ -323,9 +323,12 @@ return [
         'handled_by' => 'Gestionat de',
         'refunded_at' => 'Rambursat la',
         'to' => 'Către',
+        'password' => 'Parolă',
         'new_password' => 'Parolă nouă',
         'confirm_password' => 'Confirmare parolă',
     ],
+
+    'optional' => 'opțional',
 
     'auth' => [
         'change_password' => 'Schimbă parola',
@@ -761,6 +764,34 @@ return [
         'check_out_done_for' => ':name — check-out înregistrat',
         'already_present_title' => 'Deja în sală',
         'already_present_body' => ':name are deja un check-in deschis. Efectuați check-out mai întâi.',
+    ],
+
+    'member' => [
+        'auth' => [
+            'login' => 'Autentificare',
+            'login_subtitle' => 'Accesează portalul tău de membru.',
+            'register' => 'Creare cont',
+            'register_subtitle' => 'Alătură-te Julius Fitness Gym.',
+            'create_account' => 'Crează cont',
+            'already_registered' => 'Ai deja un cont?',
+            'no_account' => 'Nu ai cont încă?',
+            'sign_in' => 'Autentifică-te',
+            'remember_me' => 'Ține-mă minte',
+            'failed' => 'Aceste date nu corespund niciunui cont.',
+            'verify_email' => 'Verifică adresa de email',
+            'verify_email_hint' => 'Am trimis un link de verificare la adresa ta de email. Dă click pe el pentru a-ți activa contul.',
+            'verification_sent' => 'Un nou link de verificare a fost trimis.',
+            'resend_verification' => 'Retrimite emailul de verificare',
+            'logout' => 'Ieșire',
+        ],
+        'plans' => [
+            'title' => 'Alege un abonament',
+            'subtitle' => 'Selectează abonamentul potrivit pentru tine.',
+            'days' => 'zile',
+            'choose' => 'Alege',
+            'subscribed' => 'Abonament activat! Bine ai venit la Julius Fitness.',
+            'no_plans' => 'Nu există planuri active momentan.',
+        ],
     ],
 
     'studio' => [

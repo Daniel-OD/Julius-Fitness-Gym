@@ -323,9 +323,12 @@ return [
         'handled_by' => 'Handled by',
         'refunded_at' => 'Refunded at',
         'to' => 'To',
+        'password' => 'Password',
         'new_password' => 'New password',
         'confirm_password' => 'Confirm password',
     ],
+
+    'optional' => 'optional',
 
     'auth' => [
         'change_password' => 'Change password',
@@ -761,6 +764,34 @@ return [
         'check_out_done_for' => ':name checked out',
         'already_present_title' => 'Already in the gym',
         'already_present_body' => ':name already has an open check-in. Check them out first.',
+    ],
+
+    'member' => [
+        'auth' => [
+            'login' => 'Sign in',
+            'login_subtitle' => 'Access your membership portal.',
+            'register' => 'Create account',
+            'register_subtitle' => 'Join Julius Fitness Gym.',
+            'create_account' => 'Create account',
+            'already_registered' => 'Already have an account?',
+            'no_account' => 'No account yet?',
+            'sign_in' => 'Sign in',
+            'remember_me' => 'Remember me',
+            'failed' => 'These credentials do not match our records.',
+            'verify_email' => 'Verify your email',
+            'verify_email_hint' => 'We sent a verification link to your email address. Click it to activate your account.',
+            'verification_sent' => 'A new verification link has been sent.',
+            'resend_verification' => 'Resend verification email',
+            'logout' => 'Sign out',
+        ],
+        'plans' => [
+            'title' => 'Choose a plan',
+            'subtitle' => 'Pick the membership that works for you.',
+            'days' => 'days',
+            'choose' => 'Choose',
+            'subscribed' => 'Subscription activated! Welcome to Julius Fitness.',
+            'no_plans' => 'No active plans available at the moment.',
+        ],
     ],
 
     'studio' => [

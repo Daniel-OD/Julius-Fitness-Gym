@@ -60,6 +60,12 @@
                     class="hidden sm:inline-flex">
                     Autentificare
                 </x-ui.button>
+                @if (Route::has('member.register'))
+                    <x-ui.button :href="route('member.register')" variant="ghost" size="md"
+                        class="hidden sm:inline-flex">
+                        Înregistrare
+                    </x-ui.button>
+                @endif
                 <x-ui.button href="#abonamente" variant="primary" size="md" class="text-xs sm:text-sm">Abonament</x-ui.button>
             </div>
         </div>
@@ -76,11 +82,28 @@
                 <a href="#contact"
                     class="jf-touch-target rounded-xl px-4 py-3 text-base font-medium text-white/80">Contact</a>
                 <div class="mt-2 flex flex-col gap-2 border-t border-white/10 pt-4">
-                    @if (Route::has('member.login'))
-                        <x-ui.button :href="route('member.login')" variant="ghost" size="md" class="w-full justify-center">
-                            Autentificare
-                        </x-ui.button>
-                    @endif
+                    <div x-data="{ open: false }" class="flex flex-col">
+                        <button type="button" @click="open = !open"
+                            class="jf-touch-target flex items-center justify-between rounded-xl px-4 py-3 text-base font-medium text-white/80">
+                            Cont
+                            <svg class="h-4 w-4 transition-transform duration-200" :class="open && 'rotate-180'"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="m6 9 6 6 6-6" />
+                            </svg>
+                        </button>
+                        <div x-show="open" class="flex flex-col gap-1 px-2 pb-2">
+                            <x-ui.button :href="Route::has('member.login') ? route('member.login') : '#'"
+                                variant="ghost" size="md" class="w-full justify-center">
+                                Autentificare
+                            </x-ui.button>
+                            @if (Route::has('member.register'))
+                                <x-ui.button :href="route('member.register')"
+                                    variant="ghost" size="md" class="w-full justify-center">
+                                    Înregistrare
+                                </x-ui.button>
+                            @endif
+                        </div>
+                    </div>
                     <x-ui.button href="#abonamente" variant="primary" size="md" class="w-full justify-center">
                         Abonament
                     </x-ui.button>
