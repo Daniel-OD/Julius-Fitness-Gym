@@ -8,8 +8,8 @@
 
 <head>
     <x-layouts.partials.head-meta
-        :title="$title ?? config('app.name', 'Julius Fitness Gym')"
-        :description="$description ?? 'Julius Fitness Gym — forță, condiționare și clase de grup. Alătură-te azi.'" />
+        :title="$title ?? __('public.meta.title')"
+        :description="$description ?? __('public.meta.description')" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
@@ -32,7 +32,7 @@
 
             <button type="button" data-public-nav-toggle
                 class="jf-touch-target ml-auto inline-flex items-center justify-center rounded-full border border-white/15 p-2 text-white md:hidden"
-                aria-expanded="false" aria-controls="public-mobile-nav" aria-label="Menu">
+                aria-expanded="false" aria-controls="public-mobile-nav" aria-label="{{ __('public.nav.menu') }}">
                 <svg class="h-5 w-5" data-public-nav-icon-open viewBox="0 0 24 24" fill="none" stroke="currentColor"
                     stroke-width="2" stroke-linecap="round">
                     <path d="M4 12h16" /><path d="M4 6h16" /><path d="M4 18h16" />
@@ -45,34 +45,35 @@
 
             <nav class="ml-2 hidden flex-1 items-center gap-1 md:flex">
                 <a href="#servicii"
-                    class="rounded-full px-3 py-2 text-sm font-medium text-white/60 transition-colors duration-200 hover:bg-white/5 hover:text-white">Servicii</a>
+                    class="rounded-full px-3 py-2 text-sm font-medium text-white/60 transition-colors duration-200 hover:bg-white/5 hover:text-white">{{ __('public.nav.services') }}</a>
                 <a href="#program"
-                    class="rounded-full px-3 py-2 text-sm font-medium text-white/60 transition-colors duration-200 hover:bg-white/5 hover:text-white">Program</a>
+                    class="rounded-full px-3 py-2 text-sm font-medium text-white/60 transition-colors duration-200 hover:bg-white/5 hover:text-white">{{ __('public.nav.schedule') }}</a>
                 <a href="#abonamente"
-                    class="rounded-full px-3 py-2 text-sm font-medium text-white/60 transition-colors duration-200 hover:bg-white/5 hover:text-white">Abonamente</a>
+                    class="rounded-full px-3 py-2 text-sm font-medium text-white/60 transition-colors duration-200 hover:bg-white/5 hover:text-white">{{ __('public.nav.memberships') }}</a>
                 <a href="#contact"
-                    class="rounded-full px-3 py-2 text-sm font-medium text-white/60 transition-colors duration-200 hover:bg-white/5 hover:text-white">Contact</a>
+                    class="rounded-full px-3 py-2 text-sm font-medium text-white/60 transition-colors duration-200 hover:bg-white/5 hover:text-white">{{ __('public.nav.contact') }}</a>
             </nav>
 
             <div class="ml-auto hidden items-center gap-2 md:flex">
+                <x-public.locale-switcher />
                 <button type="button" data-theme-toggle
                     class="rounded-full border border-white/15 px-3 py-1.5 text-xs font-medium text-white/70 transition-colors hover:bg-white/5"
-                    aria-label="{{ __('app.ui.toggle_theme') }}">
-                    <span class="hidden dark:inline">{{ __('app.ui.light_mode') }}</span>
-                    <span class="dark:hidden">{{ __('app.ui.dark_mode') }}</span>
+                    aria-label="{{ __('public.ui.toggle_theme') }}">
+                    <span class="hidden dark:inline">{{ __('public.ui.light_mode') }}</span>
+                    <span class="dark:hidden">{{ __('public.ui.dark_mode') }}</span>
                 </button>
                 @auth('member')
                     <x-ui.button :href="route('member.dashboard')" variant="ghost" size="md">
-                        {{ __('app.public.portal') }}
+                        {{ __('public.nav.portal') }}
                     </x-ui.button>
                 @else
                     @if (Route::has('member.login'))
                         <x-ui.button :href="route('member.login')" variant="ghost" size="md">
-                            {{ __('app.member.auth.login') }}
+                            {{ __('public.nav.login') }}
                         </x-ui.button>
                     @endif
                     <x-ui.button :href="$membershipCta" variant="primary" size="md" class="text-xs sm:text-sm">
-                        {{ __('app.public.membership_cta') }}
+                        {{ __('public.nav.membership_cta') }}
                     </x-ui.button>
                 @endauth
             </div>
@@ -82,26 +83,29 @@
             class="jf-mobile-nav-panel jf-safe-x border-t border-white/10 bg-black/90 backdrop-blur-xl md:hidden">
             <div class="flex flex-col gap-1 px-4 py-4">
                 <a href="#servicii"
-                    class="jf-touch-target rounded-xl px-4 py-3 text-base font-medium text-white/80">Servicii</a>
+                    class="jf-touch-target rounded-xl px-4 py-3 text-base font-medium text-white/80">{{ __('public.nav.services') }}</a>
                 <a href="#program"
-                    class="jf-touch-target rounded-xl px-4 py-3 text-base font-medium text-white/80">Program</a>
+                    class="jf-touch-target rounded-xl px-4 py-3 text-base font-medium text-white/80">{{ __('public.nav.schedule') }}</a>
                 <a href="#abonamente"
-                    class="jf-touch-target rounded-xl px-4 py-3 text-base font-medium text-white/80">Abonamente</a>
+                    class="jf-touch-target rounded-xl px-4 py-3 text-base font-medium text-white/80">{{ __('public.nav.memberships') }}</a>
                 <a href="#contact"
-                    class="jf-touch-target rounded-xl px-4 py-3 text-base font-medium text-white/80">Contact</a>
+                    class="jf-touch-target rounded-xl px-4 py-3 text-base font-medium text-white/80">{{ __('public.nav.contact') }}</a>
                 <div class="mt-2 flex flex-col gap-2 border-t border-white/10 pt-4">
+                    <div class="px-2">
+                        <x-public.locale-switcher />
+                    </div>
                     @auth('member')
                         <x-ui.button :href="route('member.dashboard')" variant="ghost" size="md" class="w-full justify-center">
-                            {{ __('app.public.portal') }}
+                            {{ __('public.nav.portal') }}
                         </x-ui.button>
                     @else
                         @if (Route::has('member.login'))
                             <x-ui.button :href="route('member.login')" variant="ghost" size="md" class="w-full justify-center">
-                                {{ __('app.member.auth.login') }}
+                                {{ __('public.nav.login') }}
                             </x-ui.button>
                         @endif
                         <x-ui.button :href="$membershipCta" variant="primary" size="md" class="w-full justify-center">
-                            {{ __('app.public.membership_cta') }}
+                            {{ __('public.nav.membership_cta') }}
                         </x-ui.button>
                     @endauth
                 </div>
@@ -129,29 +133,29 @@
                         <span class="font-semibold tracking-tight text-zinc-900 dark:text-white">Julius Fitness</span>
                     </div>
                     <p class="mt-4 max-w-xs text-sm leading-relaxed text-zinc-600 dark:text-white/45">
-                        Antrenează inteligent. Rămâi constant. Obține rezultate.
+                        {{ __('public.footer.tagline') }}
                     </p>
                 </div>
                 <div>
-                    <h4 class="text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-white/35">Sală</h4>
+                    <h4 class="text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-white/35">{{ __('public.footer.gym') }}</h4>
                     <ul class="mt-4 space-y-2 text-sm text-zinc-600 dark:text-white/55">
-                        <li><a href="#servicii" class="transition-colors hover:text-zinc-900 dark:hover:text-white">Servicii</a></li>
-                        <li><a href="#program" class="transition-colors hover:text-zinc-900 dark:hover:text-white">Program</a></li>
-                        <li><a href="#abonamente" class="transition-colors hover:text-zinc-900 dark:hover:text-white">Abonamente</a></li>
+                        <li><a href="#servicii" class="transition-colors hover:text-zinc-900 dark:hover:text-white">{{ __('public.nav.services') }}</a></li>
+                        <li><a href="#program" class="transition-colors hover:text-zinc-900 dark:hover:text-white">{{ __('public.nav.schedule') }}</a></li>
+                        <li><a href="#abonamente" class="transition-colors hover:text-zinc-900 dark:hover:text-white">{{ __('public.nav.memberships') }}</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h4 class="text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-white/35">Suport</h4>
+                    <h4 class="text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-white/35">{{ __('public.footer.support') }}</h4>
                     <ul class="mt-4 space-y-2 text-sm text-zinc-600 dark:text-white/55">
-                        <li><a href="#contact" class="transition-colors hover:text-zinc-900 dark:hover:text-white">Contact</a></li>
+                        <li><a href="#contact" class="transition-colors hover:text-zinc-900 dark:hover:text-white">{{ __('public.nav.contact') }}</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h4 class="text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-white/35">Program</h4>
+                    <h4 class="text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-white/35">{{ __('public.footer.hours_title') }}</h4>
                     <ul class="mt-4 space-y-2 text-sm text-zinc-600 dark:text-white/55">
-                        <li>Lun–Vin: 06:00 – 23:00</li>
-                        <li>Sâm: 08:00 – 20:00</li>
-                        <li>Dum: 08:00 – 18:00</li>
+                        <li>{{ __('public.footer.hours.weekdays') }}</li>
+                        <li>{{ __('public.footer.hours.saturday') }}</li>
+                        <li>{{ __('public.footer.hours.sunday') }}</li>
                     </ul>
                 </div>
             </div>

@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Support\AppLocale;
+use App\Support\PublicLocale;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,7 +15,11 @@ class SetAppLocale
      */
     public function handle(Request $request, Closure $next): Response
     {
-        AppLocale::apply($request);
+        if (PublicLocale::shouldApply($request)) {
+            PublicLocale::apply($request);
+        } else {
+            AppLocale::apply($request);
+        }
 
         return $next($request);
     }

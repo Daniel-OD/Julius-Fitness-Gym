@@ -28,7 +28,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Render (and similar) terminate TLS at the edge — required for signed Livewire upload URLs.
         $middleware->trustProxies(at: '*');
 
-        $middleware->web(prepend: [
+        $middleware->web(append: [
             SetAppLocale::class,
         ]);
 
@@ -42,7 +42,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->alias([
-            'member.auth'     => EnsureMemberIsAuthenticated::class,
+            'member.auth' => EnsureMemberIsAuthenticated::class,
             'member.verified' => EnsureEmailIsVerified::class,
         ]);
 

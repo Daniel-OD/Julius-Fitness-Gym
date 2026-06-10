@@ -9,6 +9,7 @@ use App\Http\Controllers\Member\QrController as MemberQrController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\MemberImportDownloadController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PublicLocaleController;
 use App\Http\Controllers\SubscriptionController;
 use Illuminate\Support\Facades\Route;
 
@@ -17,6 +18,7 @@ Route::get('/login', fn () => abort(404));
 Route::post('/login', fn () => abort(404));
 
 Route::get('/', HomeController::class)->name('home');
+Route::get('/locale/{locale}', PublicLocaleController::class)->name('public.locale');
 
 // Public check-in routes (no auth — used by QR scanners and member phones)
 Route::get('/checkin/{qrToken}', [CheckinController::class, 'scan'])

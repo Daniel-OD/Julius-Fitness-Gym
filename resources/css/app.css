@@ -137,6 +137,10 @@
     }
 }
 
+[x-cloak] {
+    display: none !important;
+}
+
 @layer utilities {
     .jf-glow-accent {
         box-shadow: 0 0 0 1px rgb(255 90 31 / 0.2);

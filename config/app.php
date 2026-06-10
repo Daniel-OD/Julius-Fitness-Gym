@@ -82,6 +82,10 @@ return [
 
     'supported_locales' => ['en', 'ro'],
 
+    'public_locales' => ['ro', 'en', 'it', 'hu'],
+
+    'public_locale' => env('APP_PUBLIC_LOCALE', 'ro'),
+
     'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),
 
     'faker_locale' => env('APP_FAKER_LOCALE', 'en_US'),
