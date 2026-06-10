@@ -7,28 +7,38 @@ use App\Models\Member;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class RegisterController extends Controller
 {
-    public function show(): View
+    public function showRegister(): View
     {
-        return view('member.auth.register');
+        return view('member.auth.index', [
+            'mode' => 'register',
+        ]);
     }
 
     public function register(Request $request): RedirectResponse
     {
-        $validated = $request->validate([
+        $validator = validator($request->all(), [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:members'],
-            'contact' => ['nullable', 'string', 'max:20'],
+            'contact' => ['required', 'string', 'max:20'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
+
+        if ($validator->fails()) {
+            throw (new ValidationException($validator))
+                ->redirectTo(route('member.register'));
+        }
+
+        $validated = $validator->validated();
 
         $member = Member::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
-            'contact' => $validated['contact'] ?? null,
+            'contact' => $validated['contact'],
             'password' => $validated['password'],
         ]);
 
@@ -36,6 +46,8 @@ class RegisterController extends Controller
 
         auth('member')->login($member);
 
-        return redirect()->route('member.verify-email');
+        return redirect()
+            ->route('member.verify-email')
+            ->with('status', __('app.member.auth.verify_before_continue'));
     }
 }

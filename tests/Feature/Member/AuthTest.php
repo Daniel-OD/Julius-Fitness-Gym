@@ -1,6 +1,9 @@
 <?php
 
 use App\Models\Member;
+use App\Models\Plan;
+use App\Models\Subscription;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -56,6 +59,16 @@ it('denies dashboard access after logout', function (): void {
     $member = Member::factory()->create([
         'email' => 'member@example.com',
         'password' => 'secret-password',
+        'email_verified_at' => now(),
+    ]);
+
+    $plan = Plan::factory()->create();
+    Subscription::factory()->create([
+        'member_id' => $member->id,
+        'plan_id' => $plan->id,
+        'start_date' => Carbon::today()->subDays(5)->toDateString(),
+        'end_date' => Carbon::today()->addDays(20)->toDateString(),
+        'status' => 'ongoing',
     ]);
 
     $this->actingAs($member, 'member');

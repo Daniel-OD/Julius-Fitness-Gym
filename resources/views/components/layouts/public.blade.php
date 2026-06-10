@@ -1,3 +1,8 @@
+@php
+    $membershipCta = auth('member')->check()
+        ? route('member.plans')
+        : (Route::has('member.register') ? route('member.register') : '#abonamente');
+@endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth dark">
 
@@ -61,12 +66,11 @@
                     Autentificare
                 </x-ui.button>
                 @if (Route::has('member.register'))
-                    <x-ui.button :href="route('member.register')" variant="ghost" size="md"
-                        class="hidden sm:inline-flex">
+                    <x-ui.button :href="route('member.register')" variant="ghost" size="md">
                         Înregistrare
                     </x-ui.button>
                 @endif
-                <x-ui.button href="#abonamente" variant="primary" size="md" class="text-xs sm:text-sm">Abonament</x-ui.button>
+                <x-ui.button :href="$membershipCta" variant="primary" size="md" class="text-xs sm:text-sm">Abonament</x-ui.button>
             </div>
         </div>
 
@@ -104,7 +108,7 @@
                             @endif
                         </div>
                     </div>
-                    <x-ui.button href="#abonamente" variant="primary" size="md" class="w-full justify-center">
+                    <x-ui.button :href="$membershipCta" variant="primary" size="md" class="w-full justify-center">
                         Abonament
                     </x-ui.button>
                 </div>

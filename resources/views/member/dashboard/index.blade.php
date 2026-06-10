@@ -16,6 +16,12 @@
 @extends('member.layouts.app')
 
 @section('content')
+    @if (session('success'))
+        <div class="mb-6 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700 dark:border-green-800/40 dark:bg-green-900/20 dark:text-green-400">
+            {{ session('success') }}
+        </div>
+    @endif
+
     <div class="mb-8">
         <h1 class="text-2xl font-semibold tracking-tight">
             {{ __('app.member_portal.welcome', ['name' => $member->name]) }}

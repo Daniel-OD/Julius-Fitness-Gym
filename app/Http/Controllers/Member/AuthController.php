@@ -17,15 +17,24 @@ class AuthController extends Controller
 {
     public function showLogin(): View
     {
-        return view('member.auth.login');
+        return view('member.auth.index', [
+            'mode' => 'login',
+        ]);
     }
 
     public function login(Request $request): RedirectResponse
     {
-        $credentials = $request->validate([
+        $validator = validator($request->all(), [
             'email' => ['required', 'string', 'email'],
             'password' => ['required', 'string'],
         ]);
+
+        if ($validator->fails()) {
+            throw (new ValidationException($validator))
+                ->redirectTo(route('member.login'));
+        }
+
+        $credentials = $validator->validated();
 
         $this->ensureIsNotRateLimited($request);
 
@@ -47,7 +56,7 @@ class AuthController extends Controller
 
             throw ValidationException::withMessages([
                 'email' => trans('auth.failed'),
-            ]);
+            ])->redirectTo(route('member.login'));
         }
 
         RateLimiter::clear($this->throttleKey($request));
@@ -120,7 +129,7 @@ class AuthController extends Controller
                 'seconds' => $seconds,
                 'minutes' => ceil($seconds / 60),
             ]),
-        ]);
+        ])->redirectTo(route('member.login'));
     }
 
     private function throttleKey(Request $request): string

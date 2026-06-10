@@ -5,7 +5,8 @@
         Salut,
     </div>
     <div style="font-size: 14px; color: #111827; margin-top: 12px;">
-        Un nou membru s-a înregistrat și a ales un plan pe <strong>{{ $gymName }}</strong>.
+        Membru nou: <strong>{{ $memberName }}</strong>, {{ $memberEmail }}, {{ filled($memberPhone) ? $memberPhone : '—' }}.
+        Plan ales: <strong>{{ $planName }}</strong>.
     </div>
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0"
            style="margin-top: 18px; border-top: 1px solid #e5e7eb;">

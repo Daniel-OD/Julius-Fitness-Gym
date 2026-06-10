@@ -11,7 +11,7 @@
             {{ __('app.member.auth.verify_email') }}
         </h1>
         <p class="mt-3 max-w-sm text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">
-            {{ __('app.member.auth.verify_email_hint') }}
+            {{ __('app.member.auth.verify_email_sent_to', ['email' => auth('member')->user()->email]) }}
         </p>
 
         @if (session('status') === 'verification-link-sent')
@@ -21,7 +21,7 @@
         @endif
 
         <div class="mt-8 flex w-full flex-col gap-3">
-            <form method="POST" action="{{ route('member.verification.send') }}">
+            <form method="POST" action="{{ route('member.verification.resend') }}">
                 @csrf
                 <x-ui.button type="submit" variant="primary" size="md" class="w-full">
                     {{ __('app.member.auth.resend_verification') }}

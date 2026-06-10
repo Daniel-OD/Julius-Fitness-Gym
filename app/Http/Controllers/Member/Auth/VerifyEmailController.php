@@ -11,7 +11,7 @@ use Illuminate\View\View;
 
 class VerifyEmailController extends Controller
 {
-    public function show(): View
+    public function showVerifyEmail(): View
     {
         return view('member.auth.verify-email');
     }
@@ -29,7 +29,7 @@ class VerifyEmailController extends Controller
             event(new Verified($member));
         }
 
-        return redirect()->route('member.plans');
+        return redirect()->route('member.dashboard');
     }
 
     public function resend(Request $request): RedirectResponse

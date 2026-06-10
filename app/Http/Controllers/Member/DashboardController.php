@@ -9,14 +9,19 @@ use App\Models\Member;
 use App\Services\Members\MemberQrCodeService;
 use App\Support\AppConfig;
 use Carbon\CarbonImmutable;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
-    public function index(MemberQrCodeService $qrCodeService): View
+    public function index(MemberQrCodeService $qrCodeService): View|RedirectResponse
     {
         /** @var Member $member */
         $member = auth('member')->user();
+
+        if (! $member->subscriptions()->exists()) {
+            return redirect()->route('member.plans');
+        }
 
         $today = CarbonImmutable::today(AppConfig::timezone());
 
@@ -28,6 +33,7 @@ class DashboardController extends Controller
                 Status::Cancelled->value,
                 Status::Renewed->value,
                 Status::Expired->value,
+                Status::PendingPayment->value,
             ])
             ->orderByDesc('end_date')
             ->first();
