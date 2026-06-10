@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CheckinController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Member\AuthController as MemberAuthController;
 use App\Http\Controllers\Member\DashboardController as MemberDashboardController;
 use App\Http\Controllers\Member\InvoiceController as MemberInvoiceController;
@@ -15,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/login', fn () => abort(404));
 Route::post('/login', fn () => abort(404));
 
-Route::view('/', 'home')->name('home');
+Route::get('/', HomeController::class)->name('home');
 
 // Public check-in routes (no auth — used by QR scanners and member phones)
 Route::get('/checkin/{qrToken}', [CheckinController::class, 'scan'])

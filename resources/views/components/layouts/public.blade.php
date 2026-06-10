@@ -1,7 +1,7 @@
 @php
     $membershipCta = auth('member')->check()
         ? route('member.plans')
-        : (Route::has('member.register') ? route('member.register') : '#abonamente');
+        : url('/#abonamente');
 @endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth dark">
@@ -54,23 +54,27 @@
                     class="rounded-full px-3 py-2 text-sm font-medium text-white/60 transition-colors duration-200 hover:bg-white/5 hover:text-white">Contact</a>
             </nav>
 
-            <div class="ml-auto hidden items-center gap-1 sm:gap-2 md:flex">
+            <div class="ml-auto hidden items-center gap-2 md:flex">
                 <button type="button" data-theme-toggle
                     class="rounded-full border border-white/15 px-3 py-1.5 text-xs font-medium text-white/70 transition-colors hover:bg-white/5"
                     aria-label="{{ __('app.ui.toggle_theme') }}">
                     <span class="hidden dark:inline">{{ __('app.ui.light_mode') }}</span>
                     <span class="dark:hidden">{{ __('app.ui.dark_mode') }}</span>
                 </button>
-                <x-ui.button :href="Route::has('member.login') ? route('member.login') : '#'" variant="ghost" size="md"
-                    class="hidden sm:inline-flex">
-                    Autentificare
-                </x-ui.button>
-                @if (Route::has('member.register'))
-                    <x-ui.button :href="route('member.register')" variant="ghost" size="md">
-                        Înregistrare
+                @auth('member')
+                    <x-ui.button :href="route('member.dashboard')" variant="ghost" size="md">
+                        {{ __('app.public.portal') }}
                     </x-ui.button>
-                @endif
-                <x-ui.button :href="$membershipCta" variant="primary" size="md" class="text-xs sm:text-sm">Abonament</x-ui.button>
+                @else
+                    @if (Route::has('member.login'))
+                        <x-ui.button :href="route('member.login')" variant="ghost" size="md">
+                            {{ __('app.member.auth.login') }}
+                        </x-ui.button>
+                    @endif
+                    <x-ui.button :href="$membershipCta" variant="primary" size="md" class="text-xs sm:text-sm">
+                        {{ __('app.public.membership_cta') }}
+                    </x-ui.button>
+                @endauth
             </div>
         </div>
 
@@ -86,31 +90,20 @@
                 <a href="#contact"
                     class="jf-touch-target rounded-xl px-4 py-3 text-base font-medium text-white/80">Contact</a>
                 <div class="mt-2 flex flex-col gap-2 border-t border-white/10 pt-4">
-                    <div x-data="{ open: false }" class="flex flex-col">
-                        <button type="button" @click="open = !open"
-                            class="jf-touch-target flex items-center justify-between rounded-xl px-4 py-3 text-base font-medium text-white/80">
-                            Cont
-                            <svg class="h-4 w-4 transition-transform duration-200" :class="open && 'rotate-180'"
-                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="m6 9 6 6 6-6" />
-                            </svg>
-                        </button>
-                        <div x-show="open" class="flex flex-col gap-1 px-2 pb-2">
-                            <x-ui.button :href="Route::has('member.login') ? route('member.login') : '#'"
-                                variant="ghost" size="md" class="w-full justify-center">
-                                Autentificare
+                    @auth('member')
+                        <x-ui.button :href="route('member.dashboard')" variant="ghost" size="md" class="w-full justify-center">
+                            {{ __('app.public.portal') }}
+                        </x-ui.button>
+                    @else
+                        @if (Route::has('member.login'))
+                            <x-ui.button :href="route('member.login')" variant="ghost" size="md" class="w-full justify-center">
+                                {{ __('app.member.auth.login') }}
                             </x-ui.button>
-                            @if (Route::has('member.register'))
-                                <x-ui.button :href="route('member.register')"
-                                    variant="ghost" size="md" class="w-full justify-center">
-                                    Înregistrare
-                                </x-ui.button>
-                            @endif
-                        </div>
-                    </div>
-                    <x-ui.button :href="$membershipCta" variant="primary" size="md" class="w-full justify-center">
-                        Abonament
-                    </x-ui.button>
+                        @endif
+                        <x-ui.button :href="$membershipCta" variant="primary" size="md" class="w-full justify-center">
+                            {{ __('app.public.membership_cta') }}
+                        </x-ui.button>
+                    @endauth
                 </div>
             </div>
         </nav>

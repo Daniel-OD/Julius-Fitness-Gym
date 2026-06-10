@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Member\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\Member;
+use App\Support\MemberPlanIntent;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -12,10 +13,19 @@ use Illuminate\View\View;
 
 class RegisterController extends Controller
 {
-    public function showRegister(): View
+    public function __construct(private MemberPlanIntent $planIntent) {}
+
+    public function showRegister(Request $request): View
     {
+        $planId = $request->integer('plan');
+
+        if ($planId > 0) {
+            $this->planIntent->store($planId);
+        }
+
         return view('member.auth.index', [
             'mode' => 'register',
+            'intendedPlan' => $this->planIntent->resolvePlan(),
         ]);
     }
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Member;
 
 use App\Http\Controllers\Controller;
 use App\Models\Member;
+use App\Support\MemberPlanIntent;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -15,10 +16,19 @@ use Illuminate\View\View;
 
 class AuthController extends Controller
 {
-    public function showLogin(): View
+    public function __construct(private MemberPlanIntent $planIntent) {}
+
+    public function showLogin(Request $request): View
     {
+        $planId = $request->integer('plan');
+
+        if ($planId > 0) {
+            $this->planIntent->store($planId);
+        }
+
         return view('member.auth.index', [
             'mode' => 'login',
+            'intendedPlan' => $this->planIntent->resolvePlan(),
         ]);
     }
 

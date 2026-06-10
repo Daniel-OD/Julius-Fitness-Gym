@@ -22,6 +22,20 @@
         </div>
     @endif
 
+    @if ($pendingPaymentSubscription?->plan)
+        <div class="mb-6 rounded-2xl border border-brand-200 bg-brand-50 px-5 py-4 dark:border-brand-500/20 dark:bg-brand-500/10">
+            <h2 class="text-sm font-semibold text-brand-900 dark:text-brand-100">
+                {{ __('app.member.plans.pending_payment_title') }}
+            </h2>
+            <p class="mt-2 text-sm text-brand-800 dark:text-brand-200">
+                {{ __('app.member.plans.pending_payment_plan', ['plan' => $pendingPaymentSubscription->plan->name]) }}
+            </p>
+            <p class="mt-2 text-sm text-brand-700/90 dark:text-brand-200/90">
+                {{ __('app.member.plans.pay_at_reception') }}
+            </p>
+        </div>
+    @endif
+
     <div class="mb-8">
         <h1 class="text-2xl font-semibold tracking-tight">
             {{ __('app.member_portal.welcome', ['name' => $member->name]) }}

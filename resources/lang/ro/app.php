@@ -766,12 +766,19 @@ return [
         'already_present_body' => ':name are deja un check-in deschis. Efectuați check-out mai întâi.',
     ],
 
+    'public' => [
+        'membership_cta' => 'Abonament',
+        'portal' => 'Portal',
+        'account' => 'Cont',
+    ],
+
     'member' => [
         'auth' => [
             'login' => 'Autentificare',
             'login_subtitle' => 'Accesează portalul tău de membru.',
             'register' => 'Creare cont',
             'register_subtitle' => 'Alătură-te Julius Fitness Gym.',
+            'register_verify_hint' => 'După înregistrare vei primi un email de confirmare înainte de a accesa portalul.',
             'create_account' => 'Crează cont',
             'already_registered' => 'Ai deja un cont?',
             'no_account' => 'Nu ai cont încă?',
@@ -792,6 +799,16 @@ return [
             'days' => 'zile',
             'choose' => 'Alege',
             'choose_plan' => 'Alege acest plan',
+            'choose_plan_named' => 'Alege :name',
+            'popular' => 'Popular',
+            'per_visit' => '/ vizită',
+            'per_month' => '/ lună',
+            'per_days' => '/ :days zile',
+            'intended' => 'Ai selectat :plan. Creează-ți contul pentru a continua.',
+            'intended_after_verify' => 'După verificarea emailului, abonamentul :plan și factura vor fi create automat.',
+            'pending_payment_title' => 'Așteaptă plata',
+            'pending_payment_plan' => 'Plan selectat: :plan',
+            'pay_at_reception' => 'Vino la recepție pentru a finaliza plata și a activa abonamentul. Poți descărca factura mai jos.',
             'selected' => 'Plan selectat! Factura ta a fost generată.',
             'subscribed' => 'Abonament activat! Bine ai venit la Julius Fitness.',
             'no_plans' => 'Nu există planuri active momentan.',

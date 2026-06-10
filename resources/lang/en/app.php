@@ -766,12 +766,19 @@ return [
         'already_present_body' => ':name already has an open check-in. Check them out first.',
     ],
 
+    'public' => [
+        'membership_cta' => 'Subscribe',
+        'portal' => 'Portal',
+        'account' => 'Account',
+    ],
+
     'member' => [
         'auth' => [
             'login' => 'Sign in',
             'login_subtitle' => 'Access your membership portal.',
             'register' => 'Create account',
             'register_subtitle' => 'Join Julius Fitness Gym.',
+            'register_verify_hint' => 'After signing up you will receive a confirmation email before accessing the portal.',
             'create_account' => 'Create account',
             'already_registered' => 'Already have an account?',
             'no_account' => 'No account yet?',
@@ -792,6 +799,16 @@ return [
             'days' => 'days',
             'choose' => 'Choose',
             'choose_plan' => 'Choose this plan',
+            'choose_plan_named' => 'Choose :name',
+            'popular' => 'Popular',
+            'per_visit' => '/ visit',
+            'per_month' => '/ month',
+            'per_days' => '/ :days days',
+            'intended' => 'You selected :plan. Create your account to continue.',
+            'intended_after_verify' => 'After verifying your email, your :plan membership and invoice will be created automatically.',
+            'pending_payment_title' => 'Awaiting payment',
+            'pending_payment_plan' => 'Selected plan: :plan',
+            'pay_at_reception' => 'Visit reception to complete payment and activate your membership. You can download your invoice below.',
             'selected' => 'Plan selected! Your invoice has been generated.',
             'subscribed' => 'Subscription activated! Welcome to Julius Fitness.',
             'no_plans' => 'No active plans available at the moment.',

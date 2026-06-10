@@ -14,6 +14,12 @@
             {{ __('app.member.auth.verify_email_sent_to', ['email' => auth('member')->user()->email]) }}
         </p>
 
+        @if (! empty($intendedPlan))
+            <div class="mt-5 w-full rounded-2xl border border-brand-200 bg-brand-50 px-4 py-3 text-sm text-brand-900 dark:border-brand-500/20 dark:bg-brand-500/10 dark:text-brand-100">
+                {{ __('app.member.plans.intended_after_verify', ['plan' => $intendedPlan->name]) }}
+            </div>
+        @endif
+
         @if (session('status') === 'verification-link-sent')
             <div class="mt-5 w-full rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700 dark:border-green-800/40 dark:bg-green-900/20 dark:text-green-400">
                 {{ __('app.member.auth.verification_sent') }}
