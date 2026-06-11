@@ -130,7 +130,6 @@ class JsonSettingsRepository implements SettingsRepository
             'enabled' => true,
             'require_active_subscription' => false,
             'auto_checkout_after_hours' => 3,
-            'alert_on_expired' => true,
             'present_now_grace_minutes' => 15,
         ] as $key => $default) {
             if (! array_key_exists($key, $checkin)) {

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\CheckIns;
 
+use App\Enums\CheckInStatus;
 use App\Filament\Resources\CheckIns\Pages\ListCheckIns;
 use App\Models\CheckIn;
 use App\Models\Member;
@@ -12,16 +13,20 @@ use Carbon\CarbonImmutable;
 use Filament\Actions\Action;
 use Filament\Actions\ViewAction;
 use Filament\Facades\Filament;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Size;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\HtmlString;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class CheckInResource extends Resource
 {
@@ -91,10 +96,16 @@ class CheckInResource extends Resource
                     ->sortable(),
                 TextColumn::make('duration')
                     ->label(__('app.checkins.duration'))
-                    ->state(fn (CheckIn $record): string => $record->durationMinutes() !== null
+                    ->state(fn (CheckIn $record): string => $record->status !== CheckInStatus::Blocked && $record->durationMinutes() !== null
                         ? __('app.checkins.minutes', ['min' => $record->durationMinutes()])
                         : '—')
                     ->sortable(false),
+                TextColumn::make('status')
+                    ->label(__('app.checkins.status'))
+                    ->badge()
+                    ->description(fn (CheckIn $record): ?string => $record->denied_reason
+                        ? __('app.checkins.denied_reasons.'.$record->denied_reason)
+                        : null),
                 TextColumn::make('subscription.plan.name')
                     ->label(__('app.fields.plan'))
                     ->placeholder('—'),
@@ -123,8 +134,63 @@ class CheckInResource extends Resource
                 SelectFilter::make('method')
                     ->label(__('app.fields.method'))
                     ->options(['qr' => 'QR', 'manual' => 'Manual']),
+                SelectFilter::make('status')
+                    ->label(__('app.checkins.status'))
+                    ->options(CheckInStatus::class),
+                Filter::make('checked_in_between')
+                    ->schema([
+                        DatePicker::make('from')
+                            ->label(__('app.checkins.from')),
+                        DatePicker::make('until')
+                            ->label(__('app.checkins.until')),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when($data['from'] ?? null, fn (Builder $query, string $date): Builder => $query->whereDate('checked_in_at', '>=', $date))
+                            ->when($data['until'] ?? null, fn (Builder $query, string $date): Builder => $query->whereDate('checked_in_at', '<=', $date));
+                    }),
             ])
             ->headerActions([
+                Action::make('exportCsv')
+                    ->label(__('app.checkins.export_csv'))
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->color('gray')
+                    ->action(function (HasTable $livewire): StreamedResponse {
+                        $query = ($livewire->getFilteredTableQuery() ?? CheckIn::query())
+                            ->with(['member', 'subscription.plan'])
+                            ->reorder();
+
+                        return response()->streamDownload(function () use ($query): void {
+                            $handle = fopen('php://output', 'w');
+
+                            fputcsv($handle, [
+                                __('app.fields.member'),
+                                __('app.checkins.checked_in'),
+                                __('app.checkins.checked_out'),
+                                __('app.checkins.status'),
+                                __('app.checkins.denied_reason'),
+                                __('app.fields.plan'),
+                                __('app.fields.method'),
+                            ]);
+
+                            foreach ($query->lazyById(200) as $checkIn) {
+                                /** @var CheckIn $checkIn */
+                                fputcsv($handle, [
+                                    $checkIn->member?->name ?? '—',
+                                    $checkIn->checked_in_at->format('Y-m-d H:i'),
+                                    $checkIn->checked_out_at?->format('Y-m-d H:i') ?? '',
+                                    $checkIn->status->getLabel(),
+                                    $checkIn->denied_reason
+                                        ? __('app.checkins.denied_reasons.'.$checkIn->denied_reason)
+                                        : '',
+                                    $checkIn->subscription?->plan?->name ?? '',
+                                    $checkIn->method,
+                                ]);
+                            }
+
+                            fclose($handle);
+                        }, 'check-ins-'.now()->format('Y-m-d-His').'.csv', ['Content-Type' => 'text/csv']);
+                    }),
                 Action::make('manualCheckIn')
                     ->label(__('app.checkins.manual_checkin'))
                     ->icon('heroicon-o-check-circle')
@@ -220,7 +286,8 @@ class CheckInResource extends Resource
                         );
                     })
                     ->modalSubmitActionLabel(__('app.checkins.confirm_checkout_submit'))
-                    ->visible(fn (CheckIn $record): bool => $record->checked_out_at === null)
+                    ->visible(fn (CheckIn $record): bool => $record->checked_out_at === null
+                        && $record->status !== CheckInStatus::Blocked)
                     ->action(function (CheckIn $record): void {
                         $record->update(['checked_out_at' => now()]);
 

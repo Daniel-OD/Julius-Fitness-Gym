@@ -112,16 +112,21 @@ it('scan returns 404 for unknown token', function (): void {
         ->assertJsonPath('status', 'error');
 });
 
-it('scan records check-in with warning when member has no active subscription', function (): void {
+it('scan blocks a member who never had a subscription', function (): void {
     $member = memberWithToken();
     RateLimiter::clear("checkin:{$member->id}");
 
     $response = $this->getJson("/checkin/{$member->checkin_token}");
 
-    $response->assertStatus(200)
-        ->assertJsonPath('status', 'warning');
+    $response->assertUnprocessable()
+        ->assertJsonPath('status', 'blocked');
 
-    expect(CheckIn::where('member_id', $member->id)->exists())->toBeTrue();
+    expect(
+        CheckIn::where('member_id', $member->id)
+            ->where('status', 'blocked')
+            ->where('denied_reason', 'no_subscription')
+            ->exists(),
+    )->toBeTrue();
 });
 
 it('rejects qr check-in when an open session already exists', function (): void {

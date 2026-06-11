@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\CheckInStatus;
 use Database\Factories\CheckInFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -15,6 +16,8 @@ use Illuminate\Support\Carbon;
  * @property int|null $subscription_id
  * @property Carbon $checked_in_at
  * @property Carbon|null $checked_out_at
+ * @property CheckInStatus $status
+ * @property string|null $denied_reason
  * @property string $method
  * @property string|null $note
  */
@@ -31,6 +34,8 @@ class CheckIn extends Model
         'subscription_id',
         'checked_in_at',
         'checked_out_at',
+        'status',
+        'denied_reason',
         'method',
         'note',
     ];
@@ -38,6 +43,7 @@ class CheckIn extends Model
     protected $casts = [
         'checked_in_at' => 'datetime',
         'checked_out_at' => 'datetime',
+        'status' => CheckInStatus::class,
     ];
 
     /**

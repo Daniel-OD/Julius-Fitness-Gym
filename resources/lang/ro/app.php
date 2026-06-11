@@ -750,7 +750,8 @@ return [
         'disabled' => 'Check-in-ul este dezactivat momentan.',
         'invalid_token' => 'Cod QR invalid sau necunoscut.',
         'no_active_subscription' => 'Niciun abonament activ. Acces refuzat.',
-        'no_active_subscription_warning' => 'Bun venit, :name! Niciun abonament activ găsit.',
+        'grace_entry' => 'Bun venit, :name! Abonament expirat — intrare de grație unică acordată.',
+        'blocked_expired' => 'Acces refuzat pentru :name — abonament expirat, intrarea de grație a fost deja folosită.',
         'rate_limited' => 'Ai efectuat deja un check-in recent. Așteptați :minutes min.',
         'already_present' => ':name este deja în sală. Efectuați check-out mai întâi.',
         'no_open_checkin' => 'Niciun check-in deschis găsit.',
@@ -789,6 +790,32 @@ return [
         'check_out_done_for' => ':name — check-out înregistrat',
         'already_present_title' => 'Deja în sală',
         'already_present_body' => ':name are deja un check-in deschis. Efectuați check-out mai întâi.',
+        'status' => 'Status',
+        'denied_reason' => 'Motiv refuz',
+        'export_csv' => 'Export CSV',
+        'from' => 'De la',
+        'until' => 'Până la',
+        'statuses' => [
+            'success' => 'OK',
+            'grace_entry' => 'Intrare de grație',
+            'blocked' => 'Blocat',
+        ],
+        'denied_reasons' => [
+            'no_subscription' => 'Fără abonament activ',
+            'expired_grace_used' => 'Expirat — grația a fost folosită',
+        ],
+    ],
+
+    'reception' => [
+        'title' => 'Scanare recepție',
+        'subtitle' => 'Îndreptați codul QR al membrului spre cameră',
+        'scanning' => 'Se scanează…',
+        'camera_error' => 'Camera nu este disponibilă. Permiteți accesul la cameră și reîncărcați pagina.',
+        'manual_label' => 'Sau introduceți codul QR manual',
+        'manual_placeholder' => 'Cod QR sau token',
+        'submit' => 'Check-in',
+        'open_scanner' => 'Deschide panoul de scanare',
+        'back' => 'Înapoi la panou',
     ],
 
     'public' => [

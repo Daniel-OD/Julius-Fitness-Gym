@@ -7,6 +7,7 @@ use App\Filament\Auth\Login;
 use App\Filament\Office\Pages\Dashboard;
 use App\Filament\Resources\CheckIns\CheckInResource;
 use Filament\Navigation\NavigationBuilder;
+use Filament\Navigation\NavigationItem;
 use Filament\Panel;
 
 /**
@@ -43,7 +44,7 @@ class OfficePanelProvider extends AdminPanelProvider
     }
 
     /**
-     * Minimal front-desk navigation: dashboard + check-ins only.
+     * Minimal front-desk navigation: dashboard, check-ins and the scan panel.
      */
     protected function buildOfficeNavigation(NavigationBuilder $builder): NavigationBuilder
     {
@@ -51,6 +52,10 @@ class OfficePanelProvider extends AdminPanelProvider
             ->items([
                 ...Dashboard::getNavigationItems(),
                 ...CheckInResource::getNavigationItems(),
+                NavigationItem::make('reception-scan')
+                    ->label(fn (): string => __('app.reception.open_scanner'))
+                    ->icon('heroicon-o-qr-code')
+                    ->url(fn (): string => route('reception.scan'), shouldOpenInNewTab: true),
             ]);
     }
 }

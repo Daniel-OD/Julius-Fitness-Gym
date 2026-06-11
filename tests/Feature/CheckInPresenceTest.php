@@ -3,6 +3,8 @@
 use App\Helpers\Helpers;
 use App\Models\CheckIn;
 use App\Models\Member;
+use App\Models\Plan;
+use App\Models\Subscription;
 use App\Services\CheckIns\CheckInService;
 use App\Support\AppConfig;
 use Carbon\Carbon;
@@ -116,6 +118,15 @@ it('rejects qr check-in when member already has an open session', function (): v
 it('rate limits qr check-in after checkout within 30 minutes', function (): void {
     $member = presenceMember();
     RateLimiter::clear("checkin:{$member->id}");
+
+    Subscription::factory()->create([
+        'member_id' => $member->id,
+        'plan_id' => Plan::factory()->create(['days' => 30, 'status' => 'active'])->id,
+        'start_date' => Carbon::today()->subDays(5)->toDateString(),
+        'end_date' => Carbon::today()->addDays(25)->toDateString(),
+        'status' => 'ongoing',
+        'type' => 'official',
+    ]);
 
     $this->getJson("/checkin/{$member->checkin_token}")->assertOk();
 

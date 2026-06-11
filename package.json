@@ -22,5 +22,8 @@
         "postcss": "^8.4.31",
         "tailwindcss": "^4.1.18",
         "vite": "^8.0.0"
+    },
+    "dependencies": {
+        "jsqr": "^1.4.0"
     }
 }

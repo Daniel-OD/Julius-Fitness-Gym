@@ -750,7 +750,8 @@ return [
         'disabled' => 'Check-in is currently disabled.',
         'invalid_token' => 'Invalid or unknown QR code.',
         'no_active_subscription' => 'No active subscription found. Entry denied.',
-        'no_active_subscription_warning' => 'Welcome, :name! No active subscription found.',
+        'grace_entry' => 'Welcome, :name! Subscription expired — one-time grace entry granted.',
+        'blocked_expired' => 'Entry denied for :name — subscription expired and the grace entry was already used.',
         'rate_limited' => 'Already checked in recently. Please wait :minutes min.',
         'already_present' => ':name is already checked in. Please check out first.',
         'no_open_checkin' => 'No open check-in found.',
@@ -789,6 +790,32 @@ return [
         'check_out_done_for' => ':name checked out',
         'already_present_title' => 'Already in the gym',
         'already_present_body' => ':name already has an open check-in. Check them out first.',
+        'status' => 'Status',
+        'denied_reason' => 'Denied reason',
+        'export_csv' => 'Export CSV',
+        'from' => 'From',
+        'until' => 'Until',
+        'statuses' => [
+            'success' => 'OK',
+            'grace_entry' => 'Grace entry',
+            'blocked' => 'Blocked',
+        ],
+        'denied_reasons' => [
+            'no_subscription' => 'No active subscription',
+            'expired_grace_used' => 'Expired — grace already used',
+        ],
+    ],
+
+    'reception' => [
+        'title' => 'Reception scan',
+        'subtitle' => 'Point the member QR code at the camera',
+        'scanning' => 'Scanning…',
+        'camera_error' => 'Camera unavailable. Allow camera access and reload the page.',
+        'manual_label' => 'Or enter the QR code manually',
+        'manual_placeholder' => 'QR code or token',
+        'submit' => 'Check in',
+        'open_scanner' => 'Open scan panel',
+        'back' => 'Back to dashboard',
     ],
 
     'public' => [

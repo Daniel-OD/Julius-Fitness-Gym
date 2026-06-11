@@ -6,7 +6,7 @@
             'bg' => 'bg-emerald-500/10',
             'text' => 'text-emerald-600 dark:text-emerald-400',
         ],
-        'warning', 'rate_limited' => [
+        'grace_entry', 'rate_limited' => [
             'icon' => '⚠️',
             'ring' => 'ring-orange-500/30',
             'bg' => 'bg-orange-500/10',

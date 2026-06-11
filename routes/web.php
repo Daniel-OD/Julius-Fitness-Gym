@@ -11,6 +11,7 @@ use App\Http\Controllers\MemberController;
 use App\Http\Controllers\MemberImportDownloadController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PublicLocaleController;
+use App\Http\Controllers\Reception\ReceptionScanController;
 use App\Http\Controllers\SubscriptionController;
 use Illuminate\Support\Facades\Route;
 
@@ -28,6 +29,17 @@ Route::get('/checkin/{qrToken}', [CheckinController::class, 'scan'])
 Route::post('/checkin/{qrToken}/checkout', [CheckinController::class, 'checkout'])
     ->name('checkin.checkout')
     ->middleware('throttle:60,1');
+
+// Front-desk scanning panel (staff only — webcam + jsQR)
+Route::middleware(['auth', 'can:viewAny,App\Models\CheckIn'])
+    ->prefix('reception')
+    ->name('reception.')
+    ->group(function (): void {
+        Route::get('/scan', [ReceptionScanController::class, 'index'])->name('scan');
+        Route::post('/scan', [ReceptionScanController::class, 'store'])
+            ->middleware('throttle:120,1')
+            ->name('scan.store');
+    });
 
 Route::prefix('member')->group(function (): void {
     Route::middleware('guest:member')->group(function (): void {
