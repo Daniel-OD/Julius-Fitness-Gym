@@ -5,12 +5,15 @@ namespace App\Models;
 use App\Enums\Status;
 use App\Helpers\Helpers;
 use App\Models\Concerns\CascadesSoftDeletes;
+use App\Notifications\Member\MemberVerifyEmailNotification;
 use Database\Factories\MemberFactory;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Str;
@@ -22,6 +25,9 @@ use Illuminate\Support\Str;
  * @property string|null $checkin_token
  * @property string|null $name
  * @property string|null $email
+ * @property Carbon|null $email_verified_at
+ * @property string|null $password
+ * @property string|null $remember_token
  * @property string|null $contact
  * @property string|null $emergency_contact
  * @property string|null $health_issue
@@ -37,37 +43,41 @@ use Illuminate\Support\Str;
  * @property Status|null $status
  * @property int|null $user_id
  */
-class Member extends Model
+class Member extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<MemberFactory> */
-    use CascadesSoftDeletes, HasFactory, SoftDeletes;
+    use CascadesSoftDeletes, HasFactory, Notifiable, SoftDeletes;
 
     /**
      * @var list<string>
      */
     protected $fillable = [
-        'photo',
-        'name',
-        'email',
-        'contact',
-        'emergency_contact',
-        'health_issue',
-        'gender',
-        'dob',
-        'address',
-        'country',
-        'state',
-        'city',
-        'pincode',
-        'source',
-        'goal',
-        'status',
+        'photo', 'name', 'email', 'password', 'contact',
+        'emergency_contact', 'health_issue', 'gender', 'dob',
+        'address', 'country', 'state', 'city', 'pincode',
+        'source', 'goal', 'status',
     ];
 
-    protected $casts = [
-        'dob' => 'date',
-        'status' => Status::class,
+    /**
+     * @var list<string>
+     */
+    protected $hidden = [
+        'password',
+        'remember_token',
     ];
+
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'dob' => 'date',
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+            'status' => Status::class,
+        ];
+    }
 
     /**
      * @return BelongsTo<User, $this>
@@ -75,16 +85,6 @@ class Member extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function ensureCheckinToken(): void
-    {
-        if ($this->checkin_token) {
-            return;
-        }
-
-        $this->checkin_token = Str::random(32);
-        $this->save();
     }
 
     /**
@@ -95,12 +95,27 @@ class Member extends Model
         return $this->hasMany(Subscription::class);
     }
 
-    /**
-     * @return HasMany<CheckIn, $this>
-     */
+    /** @return HasMany<CheckIn, $this> */
     public function checkIns(): HasMany
     {
         return $this->hasMany(CheckIn::class);
+    }
+
+    public function sendEmailVerificationNotification(): void
+    {
+        $this->notify(new MemberVerifyEmailNotification);
+    }
+
+    /**
+     * Ensure a check-in token exists (for legacy members created before QR support).
+     */
+    public function ensureCheckinToken(): void
+    {
+        if (filled($this->checkin_token)) {
+            return;
+        }
+
+        $this->forceFill(['checkin_token' => Str::random(32)])->save();
     }
 
     protected static function boot(): void

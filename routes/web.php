@@ -2,13 +2,24 @@
 
 use App\Http\Controllers\CheckinController;
 use App\Http\Controllers\ClientPortalController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Member\AuthController as MemberAuthController;
+use App\Http\Controllers\Member\DashboardController as MemberDashboardController;
+use App\Http\Controllers\Member\InvoiceController as MemberInvoiceController;
+use App\Http\Controllers\Member\QrController as MemberQrController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\MemberImportDownloadController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PublicLocaleController;
 use App\Http\Controllers\SubscriptionController;
 use Illuminate\Support\Facades\Route;
 
-Route::view('/', 'home')->name('home');
+// Legacy Breeze login URL — staff use /staff/login (Filament).
+Route::get('/login', fn () => abort(404));
+Route::post('/login', fn () => abort(404));
+
+Route::get('/', HomeController::class)->name('home');
+Route::get('/locale/{locale}', PublicLocaleController::class)->name('public.locale');
 
 // Public check-in routes (no auth — used by QR scanners and member phones)
 Route::get('/checkin/{qrToken}', [CheckinController::class, 'scan'])
@@ -17,6 +28,26 @@ Route::get('/checkin/{qrToken}', [CheckinController::class, 'scan'])
 Route::post('/checkin/{qrToken}/checkout', [CheckinController::class, 'checkout'])
     ->name('checkin.checkout')
     ->middleware('throttle:60,1');
+
+Route::prefix('member')->group(function (): void {
+    Route::middleware('guest:member')->group(function (): void {
+        Route::get('login', [MemberAuthController::class, 'showLogin'])->name('member.login');
+        Route::post('login', [MemberAuthController::class, 'login']);
+
+        Route::get('set-password', [MemberAuthController::class, 'showSetPassword'])->name('member.set-password');
+        Route::post('set-password', [MemberAuthController::class, 'setPassword'])->name('member.set-password.store');
+    });
+
+    Route::post('logout', [MemberAuthController::class, 'logout'])
+        ->middleware('member.auth')
+        ->name('member.logout');
+
+    Route::middleware(['member.auth', 'member.verified'])->group(function (): void {
+        Route::get('dashboard', [MemberDashboardController::class, 'index'])->name('member.dashboard');
+        Route::get('qr/download', [MemberQrController::class, 'download'])->name('member.qr.download');
+        Route::get('invoices/{invoice}/pdf', [MemberInvoiceController::class, 'pdf'])->name('member.invoices.pdf');
+    });
+});
 
 Route::get('/dashboard', function () {
     return redirect(auth()->user()->defaultDashboardUrl());
@@ -63,3 +94,4 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+require __DIR__.'/member.php';

@@ -3,7 +3,6 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Auth\ForcePasswordChange;
-use App\Filament\Auth\Login;
 use App\Filament\Office\Pages\Dashboard as OfficeDashboard;
 use App\Filament\Pages\Dashboard;
 use App\Filament\Pages\Settings;
@@ -20,6 +19,7 @@ use App\Filament\Resources\Users\UserResource;
 use App\Http\Middleware\EnforceFilamentPanelSession;
 use App\Http\Middleware\RequirePasswordChange;
 use App\Http\Middleware\SetAppLocale;
+use App\Providers\Filament\Concerns\RegistersAdminStaffLoginRoute;
 use App\Support\AppLocale;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use BezhanSalleh\FilamentShield\Resources\Roles\RoleResource;
@@ -49,6 +49,13 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
  */
 class AdminPanelProvider extends PanelProvider
 {
+    use RegistersAdminStaffLoginRoute;
+
+    public function boot(): void
+    {
+        $this->registerAdminStaffLoginRoute();
+    }
+
     /**
      * Configure the panel.
      */
@@ -64,7 +71,6 @@ class AdminPanelProvider extends PanelProvider
     protected function sharedPanel(Panel $panel): Panel
     {
         return $panel
-            ->login(Login::class)
             ->passwordReset()
             ->brandName('Julius Fitness Gym')
             ->unsavedChangesAlerts()
@@ -132,6 +138,8 @@ class AdminPanelProvider extends PanelProvider
      */
     protected function basePanel(Panel $panel): Panel
     {
+        // ->login() is intentionally omitted: Filament would register /admin/login.
+        // Staff authenticate at /staff/login (see RegistersAdminStaffLoginRoute).
         return $this->sharedPanel($panel)
             ->default()
             ->id('admin')

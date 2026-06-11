@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Laravel'),
+    'name' => env('APP_NAME', 'Julius Fitness Gym'),
 
     /*
     |--------------------------------------------------------------------------
@@ -81,6 +81,10 @@ return [
     'locale' => env('APP_LOCALE', 'en'),
 
     'supported_locales' => ['en', 'ro'],
+
+    'public_locales' => ['ro', 'en', 'it', 'hu'],
+
+    'public_locale' => env('APP_PUBLIC_LOCALE', 'ro'),
 
     'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),
 

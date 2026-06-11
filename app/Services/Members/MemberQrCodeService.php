@@ -22,7 +22,26 @@ class MemberQrCodeService
             'addQuietzone' => true,
         ]);
 
-        return (new QRCode($options))->render($data);
+        $output = (new QRCode($options))->render($data);
+
+        return $this->normalizeSvgOutput($output);
+    }
+
+    private function normalizeSvgOutput(string $output): string
+    {
+        if (! str_starts_with($output, 'data:image/svg+xml')) {
+            return $output;
+        }
+
+        if (preg_match('/base64,(.+)$/s', $output, $matches) === 1) {
+            return (string) base64_decode($matches[1], true);
+        }
+
+        if (preg_match('/charset=utf-8,(.+)$/s', $output, $matches) === 1) {
+            return rawurldecode($matches[1]);
+        }
+
+        return $output;
     }
 
     public function svgForMember(Member $member): string

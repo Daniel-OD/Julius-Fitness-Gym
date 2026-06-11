@@ -1,10 +1,12 @@
 <?php
 
+use App\Filament\Auth\Login;
 use App\Models\User;
 use Database\Seeders\ClientRoleSeeder;
 use Database\Seeders\EmployeeRoleSeeder;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Livewire\Livewire;
 use Spatie\Permission\Models\Role;
 
 uses(RefreshDatabase::class);
@@ -62,19 +64,29 @@ it('client sees only client dashboard link in navigation', function (): void {
 it('redirects super admin to admin dashboard after login', function (): void {
     $user = dashboardNavUser('super_admin');
 
-    $this->post('/login', [
-        'email' => $user->email,
-        'password' => 'password',
-    ])->assertRedirect(Filament::getPanel('admin')->getUrl());
+    $this->get('/staff/login');
+
+    Livewire::test(Login::class)
+        ->fillForm([
+            'email' => $user->email,
+            'password' => 'password',
+        ])
+        ->call('authenticate')
+        ->assertRedirect(Filament::getPanel('admin')->getUrl());
 });
 
 it('redirects employee to office dashboard after login', function (): void {
     $user = dashboardNavUser('employee');
 
-    $this->post('/login', [
-        'email' => $user->email,
-        'password' => 'password',
-    ])->assertRedirect(Filament::getPanel('office')->getUrl());
+    $this->get('/office/login');
+
+    Livewire::test(Login::class)
+        ->fillForm([
+            'email' => $user->email,
+            'password' => 'password',
+        ])
+        ->call('authenticate')
+        ->assertRedirect(Filament::getPanel('office')->getUrl());
 });
 
 it('redirects client to client dashboard after login', function (): void {

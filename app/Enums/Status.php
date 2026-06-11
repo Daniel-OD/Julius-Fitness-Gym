@@ -22,6 +22,7 @@ enum Status: string implements HasColor, HasLabel
     case Expiring = 'expiring';
     case Expired = 'expired';
     case Renewed = 'renewed';
+    case PendingPayment = 'pending_payment';
     case Lead = 'lead';
     case Lost = 'lost';
     case Member = 'member';
@@ -42,6 +43,7 @@ enum Status: string implements HasColor, HasLabel
         self::Expiring->value => 'warning',
         self::Expired->value => 'danger',
         self::Renewed->value => 'success',
+        self::PendingPayment->value => 'warning',
         self::Lead->value => 'info',
         self::Lost->value => 'danger',
         self::Member->value => 'success',

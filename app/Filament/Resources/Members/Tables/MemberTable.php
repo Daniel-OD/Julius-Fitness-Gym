@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Members\Tables;
 
 use App\Models\Member;
+use App\Services\Email\MemberPortalEmailService;
 use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
@@ -185,6 +186,27 @@ class MemberTable
                             ->label(__('app.actions.record_actions'))
                             ->disabled()
                             ->color('gray'),
+                        Action::make('send_portal_invitation')
+                            ->label(__('app.actions.send_portal_invitation'))
+                            ->icon('heroicon-o-envelope')
+                            ->requiresConfirmation()
+                            ->visible(fn (Member $record): bool => filled($record->email))
+                            ->action(function (Member $record): void {
+                                app(MemberPortalEmailService::class)->queuePortalInvitation(
+                                    $record->id,
+                                    auth()->id(),
+                                );
+
+                                Notification::make()
+                                    ->title(__('app.notifications.portal_invitation_queued'))
+                                    ->success()
+                                    ->send();
+                            }),
+                        Action::make('qr')
+                            ->label(__('app.members.qr.title'))
+                            ->icon('heroicon-o-qr-code')
+                            ->url(fn (Member $record): string => route('web.members.qr', $record))
+                            ->openUrlInNewTab(),
                         ViewAction::make(),
                         EditAction::make()->hiddenLabel(),
                         DeleteAction::make()->hiddenLabel(),

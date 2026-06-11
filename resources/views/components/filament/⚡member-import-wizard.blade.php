@@ -85,6 +85,7 @@ new class extends Component
 
         $this->storedFilePath = $path;
         $this->storedExtension = $extension;
+        $this->importFile = null;
 
         try {
             $dataset = $this->spreadsheetReader()->read(
@@ -157,10 +158,28 @@ new class extends Component
         $this->importProgress = 0;
     }
 
+    public function cancelImport(): void
+    {
+        $this->importing = false;
+    }
+
     public function importChunk(int $offset): array
     {
+        try {
+            $mappedRows = $this->mappedRows();
+        } catch (\Throwable $e) {
+            $this->importing = false;
+            \Filament\Notifications\Notification::make()
+                ->title(__('app.settings.import.errors.file_unavailable'))
+                ->body($e->getMessage())
+                ->danger()
+                ->send();
+
+            return ['done' => true, 'progress' => 0, 'total' => 0];
+        }
+
         $result = $this->importService()->importChunk(
-            $this->mappedRows(),
+            $mappedRows,
             $offset,
             $this->duplicateAction,
         );
@@ -629,15 +648,17 @@ new class extends Component
                             $wire.startImport().then(() => {
                                 let offset = 0;
                                 const run = () => {
-                                    $wire.importChunk(offset).then((result) => {
-                                        offset += {{ \App\Services\Members\MemberImportService::CHUNK_SIZE }};
-                                        if (! result.done) {
-                                            run();
-                                        }
-                                    });
+                                    $wire.importChunk(offset)
+                                        .then((result) => {
+                                            offset += {{ \App\Services\Members\MemberImportService::CHUNK_SIZE }};
+                                            if (! result.done) {
+                                                run();
+                                            }
+                                        })
+                                        .catch(() => $wire.cancelImport());
                                 };
                                 run();
-                            });
+                            }).catch(() => $wire.cancelImport());
                         "
                     >
                         {{ __('app.settings.import.import_now') }}

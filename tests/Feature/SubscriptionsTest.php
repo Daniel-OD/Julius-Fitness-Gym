@@ -108,7 +108,7 @@ it('expired subscriptions are found by MarkSubscriptionsStatus command', functio
         'status' => 'ongoing',
     ]);
 
-    $this->artisan('gymie:subscriptions --mark-expired')->assertSuccessful();
+    $this->artisan('gym:subscriptions --mark-expired')->assertSuccessful();
 
     expect(Subscription::where('member_id', $member->id)->where('status', 'expired')->exists())->toBeTrue();
 });
@@ -125,7 +125,7 @@ it('ongoing subscriptions far from expiry are not marked expiring', function ():
         'status' => 'ongoing',
     ]);
 
-    $this->artisan('gymie:subscriptions --mark-expiring')->assertSuccessful();
+    $this->artisan('gym:subscriptions --mark-expiring')->assertSuccessful();
 
     expect($sub->fresh()->status->value)->toBe('ongoing');
 });

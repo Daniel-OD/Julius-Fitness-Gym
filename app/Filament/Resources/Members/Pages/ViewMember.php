@@ -22,6 +22,11 @@ class ViewMember extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+            Action::make('qr')
+                ->label(__('app.members.qr.title'))
+                ->icon('heroicon-o-qr-code')
+                ->url(fn (Member $record): string => route('web.members.qr', $record))
+                ->openUrlInNewTab(),
             Action::make('createPortalAccount')
                 ->label(__('app.client_portal.create_portal_account'))
                 ->icon('heroicon-o-user-plus')

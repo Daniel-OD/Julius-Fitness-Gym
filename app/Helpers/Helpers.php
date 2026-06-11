@@ -79,6 +79,21 @@ class Helpers
         return app(SettingsRepository::class)->get();
     }
 
+    public static function gymName(): string
+    {
+        try {
+            $general = is_array(self::getSettings()['general'] ?? null) ? self::getSettings()['general'] : [];
+            $name = $general['gym_name'] ?? '';
+            if (! empty($name)) {
+                return (string) $name;
+            }
+        } catch (\Throwable) {
+            // settings unavailable (e.g. CLI without DB)
+        }
+
+        return config('app.name', 'Julius Fitness Gym');
+    }
+
     public static function isAdminGuideEnabled(): bool
     {
         $general = self::getSettings()['general'] ?? [];

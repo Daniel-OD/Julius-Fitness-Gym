@@ -119,16 +119,12 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
             return $panel->getId() === 'office';
         }
 
-        return true;
+        return $this->roles()->exists();
     }
 
     public function canAccessAnyFilamentPanel(): bool
     {
-        if ($this->hasRole('super_admin') || $this->hasRole('owner') || $this->hasRole('employee')) {
-            return true;
-        }
-
-        return ! $this->roles()->exists();
+        return $this->roles()->exists();
     }
 
     public function isEmployeeOnly(): bool
@@ -167,10 +163,6 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
 
         if ($this->hasRole('client')) {
             return ['client'];
-        }
-
-        if (! $this->roles()->exists()) {
-            return ['admin', 'office'];
         }
 
         return [];

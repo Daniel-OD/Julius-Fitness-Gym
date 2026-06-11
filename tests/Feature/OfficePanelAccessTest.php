@@ -50,16 +50,16 @@ it('owner can access both panels', function (): void {
         ->and($owner->canAccessPanel(Filament::getPanel('admin')))->toBeTrue();
 });
 
-it('a user with no employee role still reaches admin', function (): void {
+it('a user without roles cannot access the admin panel', function (): void {
     $user = User::factory()->create();
 
-    expect($user->canAccessPanel(Filament::getPanel('admin')))->toBeTrue();
+    expect($user->canAccessPanel(Filament::getPanel('admin')))->toBeFalse();
 });
 
-it('a user with no roles can access the office panel', function (): void {
+it('a user without roles cannot access the office panel', function (): void {
     $user = User::factory()->create();
 
-    expect($user->canAccessPanel(Filament::getPanel('office')))->toBeTrue();
+    expect($user->canAccessPanel(Filament::getPanel('office')))->toBeFalse();
 });
 
 it('super admin can access both panels', function (): void {

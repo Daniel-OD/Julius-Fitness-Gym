@@ -1,0 +1,117 @@
+<?php
+
+use App\Models\Member;
+use App\Notifications\Member\MemberVerifyEmailNotification;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\URL;
+
+uses(RefreshDatabase::class);
+
+it('shows the register page', function (): void {
+    $this->get(route('member.register'))
+        ->assertOk()
+        ->assertViewIs('member.auth.index')
+        ->assertViewHas('mode', 'register');
+});
+
+it('registers a new member with valid data', function (): void {
+    $this->post(route('member.register'), [
+        'name' => 'Test Member',
+        'email' => 'test@example.com',
+        'contact' => '0712345678',
+        'password' => 'password123',
+        'password_confirmation' => 'password123',
+    ])->assertRedirect(route('member.verify-email'));
+
+    $this->assertDatabaseHas('members', ['email' => 'test@example.com']);
+    $this->assertAuthenticatedAs(Member::where('email', 'test@example.com')->first(), 'member');
+});
+
+it('rejects duplicate email on registration', function (): void {
+    Member::factory()->create(['email' => 'existing@example.com']);
+
+    $this->post(route('member.register'), [
+        'name' => 'Another',
+        'email' => 'existing@example.com',
+        'contact' => '0712345678',
+        'password' => 'password123',
+        'password_confirmation' => 'password123',
+    ])->assertSessionHasErrors('email');
+});
+
+it('sends verification email after registration', function (): void {
+    Notification::fake();
+
+    $this->post(route('member.register'), [
+        'name' => 'Test Member',
+        'email' => 'test@example.com',
+        'contact' => '0712345678',
+        'password' => 'password123',
+        'password_confirmation' => 'password123',
+    ]);
+
+    $member = Member::where('email', 'test@example.com')->first();
+
+    Notification::assertSentTo($member, MemberVerifyEmailNotification::class);
+});
+
+it('blocks dashboard without verified email', function (): void {
+    $member = Member::factory()->create([
+        'password' => 'password',
+        'email_verified_at' => null,
+    ]);
+
+    $this->actingAs($member, 'member')
+        ->get(route('member.dashboard'))
+        ->assertRedirect(route('member.verify-email'));
+});
+
+it('verifies account via signed link', function (): void {
+    $member = Member::factory()->create([
+        'password' => 'password',
+        'email_verified_at' => null,
+    ]);
+
+    $url = URL::temporarySignedRoute(
+        'member.verification.verify',
+        now()->addMinutes(60),
+        ['id' => $member->id, 'hash' => sha1($member->email)]
+    );
+
+    $this->actingAs($member, 'member')
+        ->get($url)
+        ->assertRedirect(route('member.dashboard'));
+
+    expect($member->fresh()->hasVerifiedEmail())->toBeTrue();
+});
+
+it('shows the login page', function (): void {
+    $this->get(route('member.login'))
+        ->assertOk()
+        ->assertViewIs('member.auth.index')
+        ->assertViewHas('mode', 'login');
+});
+
+it('shows plans page for verified member', function (): void {
+    $member = Member::factory()->create([
+        'password' => 'password',
+        'email_verified_at' => now(),
+    ]);
+
+    $this->actingAs($member, 'member')
+        ->get(route('member.plans'))
+        ->assertOk()
+        ->assertViewIs('member.plans.index');
+});
+
+it('redirects unverified member away from plans page', function (): void {
+    $member = Member::factory()->create([
+        'password' => 'password',
+        'email_verified_at' => null,
+    ]);
+
+    $this->actingAs($member, 'member')
+        ->get(route('member.plans'))
+        ->assertRedirect(route('member.verify-email'));
+});

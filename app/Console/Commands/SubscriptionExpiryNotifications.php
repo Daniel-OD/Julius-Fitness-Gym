@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Cache;
  */
 class SubscriptionExpiryNotifications extends Command
 {
-    protected $signature = 'gymie:subscription-expiry-notifications
+    protected $signature = 'gym:subscription-expiry-notifications
                             {--dry-run : List matching subscriptions without dispatching}';
 
     protected $description = 'Send expiry notifications for subscriptions at 7, 3, 1, and 0 days';

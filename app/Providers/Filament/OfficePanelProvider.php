@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Auth\ForcePasswordChange;
+use App\Filament\Auth\Login;
 use App\Filament\Office\Pages\Dashboard;
 use App\Filament\Resources\CheckIns\CheckInResource;
 use Filament\Navigation\NavigationBuilder;
@@ -22,6 +23,7 @@ class OfficePanelProvider extends AdminPanelProvider
     public function panel(Panel $panel): Panel
     {
         return $this->sharedPanel($panel)
+            ->login(Login::class)
             ->default(false)
             ->id('office')
             ->path('office')

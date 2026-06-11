@@ -9,10 +9,12 @@ use App\Helpers\Helpers;
 use App\Models\Member;
 use App\Models\Plan;
 use App\Models\Subscription;
+use App\Services\Subscriptions\SubscriptionExpiringEmailService;
 use App\Support\AppConfig;
 use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
@@ -28,6 +30,7 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class SubscriptionTable
@@ -217,6 +220,36 @@ class SubscriptionTable
                             ->label(__('app.actions.record_actions'))
                             ->disabled()
                             ->color('gray'),
+                        Action::make('notify_expiration')
+                            ->label(__('app.actions.notify_expiration'))
+                            ->icon('heroicon-o-envelope')
+                            ->color('info')
+                            ->requiresConfirmation()
+                            ->modalHeading(__('app.actions.notify_expiration'))
+                            ->modalDescription(fn (Subscription $record): string => __('app.notifications.expiring_email_confirm', [
+                                'member' => $record->member?->name ?? '—',
+                                'expires_at' => $record->end_date?->translatedFormat('d M Y') ?? '—',
+                            ]))
+                            ->visible(fn (Subscription $record): bool => app(SubscriptionExpiringEmailService::class)
+                                ->isEligibleForManualNotification($record))
+                            ->action(function (Subscription $record): void {
+                                $service = app(SubscriptionExpiringEmailService::class);
+                                $result = $service->dispatchExpiringEmail($record);
+
+                                if ($result['sent']) {
+                                    Notification::make()
+                                        ->title(__('app.notifications.expiring_email_sent', ['email' => $result['email']]))
+                                        ->success()
+                                        ->send();
+
+                                    return;
+                                }
+
+                                Notification::make()
+                                    ->title(__('app.notifications.member_has_no_email'))
+                                    ->warning()
+                                    ->send();
+                            }),
                         Action::make('renew')
                             ->label(__('app.actions.renew'))
                             ->icon('heroicon-m-arrow-path')
@@ -257,6 +290,39 @@ class SubscriptionTable
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
+                    BulkAction::make('notify_expiration')
+                        ->label(__('app.actions.notify_expiration_bulk'))
+                        ->icon('heroicon-o-envelope')
+                        ->requiresConfirmation()
+                        ->action(function (Collection $records): void {
+                            $service = app(SubscriptionExpiringEmailService::class);
+                            $sent = 0;
+                            $skipped = 0;
+
+                            foreach ($records as $subscription) {
+                                if (! $subscription instanceof Subscription) {
+                                    $skipped++;
+
+                                    continue;
+                                }
+
+                                $result = $service->dispatchExpiringEmail($subscription);
+
+                                if ($result['sent']) {
+                                    $sent++;
+                                } else {
+                                    $skipped++;
+                                }
+                            }
+
+                            Notification::make()
+                                ->title(__('app.notifications.expiring_email_bulk_result', [
+                                    'sent' => $sent,
+                                    'skipped' => $skipped,
+                                ]))
+                                ->success()
+                                ->send();
+                        }),
                     DeleteBulkAction::make(),
                     ForceDeleteBulkAction::make(),
                     RestoreBulkAction::make(),

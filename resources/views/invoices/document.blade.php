@@ -467,7 +467,7 @@
         </div>
 
         <div class="footer">
-            {{ __('app.invoices.pdf.footer_tagline', ['domain' => filled($gymDomain) ? $gymDomain : 'gymie']) }}
+            {{ __('app.invoices.pdf.footer_tagline', ['domain' => filled($gymDomain) ? $gymDomain : \App\Helpers\Helpers::gymName()]) }}
         </div>
     </div>
 </body>
