@@ -4,7 +4,7 @@
         : url('/#abonamente');
 @endphp
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth dark">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth">
 
 <head>
     <x-layouts.partials.head-meta
@@ -13,25 +13,25 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="jf-min-h-screen bg-zinc-100 font-sans text-zinc-900 antialiased dark:bg-black dark:text-white">
+<body class="jf-min-h-screen bg-zinc-50 font-sans text-zinc-900 antialiased dark:bg-black dark:text-white">
     <header
         class="jf-safe-t fixed inset-x-0 top-0 z-50 border-b border-transparent bg-transparent transition-[background-color,border-color,backdrop-filter] duration-300"
         data-public-header>
         <div class="jf-safe-x mx-auto flex h-14 max-w-7xl items-center gap-2 px-4 sm:h-16 sm:gap-4 sm:px-6 lg:px-8">
             <a href="{{ url('/') }}" class="flex min-w-0 items-center gap-2.5">
                 <span
-                    class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white">
+                    class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-zinc-200 bg-zinc-100 text-zinc-900 dark:border-white/10 dark:bg-white/5 dark:text-white">
                     <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round">
                         <path d="M6.5 6.5 17.5 17.5" /><path d="m21 21-1-1" /><path d="m3 3 1 1" />
                         <path d="m18 22 4-4" /><path d="m2 6 4-4" /><path d="m3 10 7-7" /><path d="m14 21 7-7" />
                     </svg>
                 </span>
-                <span class="truncate text-sm font-semibold tracking-tight text-white">Julius Fitness</span>
+                <span class="truncate text-sm font-semibold tracking-tight text-zinc-900 dark:text-white">Julius Fitness</span>
             </a>
 
             <button type="button" data-public-nav-toggle
-                class="jf-touch-target ml-auto inline-flex items-center justify-center rounded-full border border-white/15 p-2 text-white md:hidden"
+                class="jf-touch-target ml-auto inline-flex items-center justify-center rounded-full border border-zinc-200 p-2 text-zinc-700 dark:border-white/15 dark:text-white md:hidden"
                 aria-expanded="false" aria-controls="public-mobile-nav" aria-label="{{ __('public.nav.menu') }}">
                 <svg class="h-5 w-5" data-public-nav-icon-open viewBox="0 0 24 24" fill="none" stroke="currentColor"
                     stroke-width="2" stroke-linecap="round">
@@ -45,19 +45,19 @@
 
             <nav class="ml-2 hidden flex-1 items-center gap-1 md:flex">
                 <a href="#servicii"
-                    class="rounded-full px-3 py-2 text-sm font-medium text-white/60 transition-colors duration-200 hover:bg-white/5 hover:text-white">{{ __('public.nav.services') }}</a>
+                    class="rounded-full px-3 py-2 text-sm font-medium text-zinc-600 transition-colors duration-200 hover:bg-zinc-100 hover:text-zinc-900 dark:text-white/60 dark:hover:bg-white/5 dark:hover:text-white">{{ __('public.nav.services') }}</a>
                 <a href="#program"
-                    class="rounded-full px-3 py-2 text-sm font-medium text-white/60 transition-colors duration-200 hover:bg-white/5 hover:text-white">{{ __('public.nav.schedule') }}</a>
+                    class="rounded-full px-3 py-2 text-sm font-medium text-zinc-600 transition-colors duration-200 hover:bg-zinc-100 hover:text-zinc-900 dark:text-white/60 dark:hover:bg-white/5 dark:hover:text-white">{{ __('public.nav.schedule') }}</a>
                 <a href="#abonamente"
-                    class="rounded-full px-3 py-2 text-sm font-medium text-white/60 transition-colors duration-200 hover:bg-white/5 hover:text-white">{{ __('public.nav.memberships') }}</a>
+                    class="rounded-full px-3 py-2 text-sm font-medium text-zinc-600 transition-colors duration-200 hover:bg-zinc-100 hover:text-zinc-900 dark:text-white/60 dark:hover:bg-white/5 dark:hover:text-white">{{ __('public.nav.memberships') }}</a>
                 <a href="#contact"
-                    class="rounded-full px-3 py-2 text-sm font-medium text-white/60 transition-colors duration-200 hover:bg-white/5 hover:text-white">{{ __('public.nav.contact') }}</a>
+                    class="rounded-full px-3 py-2 text-sm font-medium text-zinc-600 transition-colors duration-200 hover:bg-zinc-100 hover:text-zinc-900 dark:text-white/60 dark:hover:bg-white/5 dark:hover:text-white">{{ __('public.nav.contact') }}</a>
             </nav>
 
             <div class="ml-auto hidden items-center gap-2 md:flex">
                 <x-public.locale-switcher />
                 <button type="button" data-theme-toggle
-                    class="rounded-full border border-white/15 px-3 py-1.5 text-xs font-medium text-white/70 transition-colors hover:bg-white/5"
+                    class="rounded-full border border-zinc-200 px-3 py-1.5 text-xs font-medium text-zinc-600 transition-colors hover:bg-zinc-100 dark:border-white/15 dark:text-white/70 dark:hover:bg-white/5"
                     aria-label="{{ __('public.ui.toggle_theme') }}">
                     <span class="hidden dark:inline">{{ __('public.ui.light_mode') }}</span>
                     <span class="dark:hidden">{{ __('public.ui.dark_mode') }}</span>
@@ -80,17 +80,17 @@
         </div>
 
         <nav id="public-mobile-nav" data-public-nav-panel
-            class="jf-mobile-nav-panel jf-safe-x border-t border-white/10 bg-black/90 backdrop-blur-xl md:hidden">
+            class="jf-mobile-nav-panel jf-safe-x border-t border-zinc-200 bg-white/95 backdrop-blur-xl dark:border-white/10 dark:bg-black/90 md:hidden">
             <div class="flex flex-col gap-1 px-4 py-4">
                 <a href="#servicii"
-                    class="jf-touch-target rounded-xl px-4 py-3 text-base font-medium text-white/80">{{ __('public.nav.services') }}</a>
+                    class="jf-touch-target rounded-xl px-4 py-3 text-base font-medium text-zinc-700 dark:text-white/80">{{ __('public.nav.services') }}</a>
                 <a href="#program"
-                    class="jf-touch-target rounded-xl px-4 py-3 text-base font-medium text-white/80">{{ __('public.nav.schedule') }}</a>
+                    class="jf-touch-target rounded-xl px-4 py-3 text-base font-medium text-zinc-700 dark:text-white/80">{{ __('public.nav.schedule') }}</a>
                 <a href="#abonamente"
-                    class="jf-touch-target rounded-xl px-4 py-3 text-base font-medium text-white/80">{{ __('public.nav.memberships') }}</a>
+                    class="jf-touch-target rounded-xl px-4 py-3 text-base font-medium text-zinc-700 dark:text-white/80">{{ __('public.nav.memberships') }}</a>
                 <a href="#contact"
-                    class="jf-touch-target rounded-xl px-4 py-3 text-base font-medium text-white/80">{{ __('public.nav.contact') }}</a>
-                <div class="mt-2 flex flex-col gap-2 border-t border-white/10 pt-4">
+                    class="jf-touch-target rounded-xl px-4 py-3 text-base font-medium text-zinc-700 dark:text-white/80">{{ __('public.nav.contact') }}</a>
+                <div class="mt-2 flex flex-col gap-2 border-t border-zinc-200 pt-4 dark:border-white/10">
                     <div class="px-2">
                         <x-public.locale-switcher />
                     </div>
@@ -117,7 +117,7 @@
         {{ $slot }}
     </main>
 
-    <footer class="border-t border-zinc-200 bg-zinc-100 dark:border-white/8 dark:bg-canvas">
+    <footer class="border-t border-zinc-200 bg-zinc-50 dark:border-white/8 dark:bg-canvas">
         <div class="mx-auto max-w-7xl px-4 py-12 sm:py-16 sm:px-6 lg:px-8">
             <div class="grid grid-cols-2 gap-8 sm:gap-10 md:grid-cols-4">
                 <div class="col-span-2 md:col-span-1">
@@ -175,9 +175,15 @@
         const onScroll = () => {
             if (!header) return;
             if (window.scrollY > 24) {
-                header.classList.add('border-white/8', 'bg-black/75', 'backdrop-blur-xl');
+                header.classList.add(
+                    'border-zinc-200/80', 'bg-white/85', 'backdrop-blur-xl',
+                    'dark:border-white/8', 'dark:bg-black/75',
+                );
             } else {
-                header.classList.remove('border-white/8', 'bg-black/75', 'backdrop-blur-xl');
+                header.classList.remove(
+                    'border-zinc-200/80', 'bg-white/85', 'backdrop-blur-xl',
+                    'dark:border-white/8', 'dark:bg-black/75',
+                );
             }
         };
         onScroll();

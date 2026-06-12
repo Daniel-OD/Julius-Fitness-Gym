@@ -39,15 +39,15 @@
     <section class="relative flex min-h-screen flex-col items-center justify-center overflow-hidden">
         <div class="absolute inset-0 jf-hero-gradient"></div>
         <div class="absolute inset-0 jf-hero-noise opacity-60"></div>
-        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,#000000_72%)]"></div>
+        <div class="jf-hero-vignette absolute inset-0"></div>
 
         <div class="relative z-10 mx-auto max-w-5xl px-4 pb-24 pt-[max(5rem,calc(env(safe-area-inset-top,0px)+4rem))] text-center sm:px-6 sm:pb-32 sm:pt-28">
-            <p class="text-xs font-semibold uppercase tracking-[0.35em] text-white/40">{{ __('public.hero.eyebrow') }}</p>
-            <h1 class="text-balance mt-6 text-4xl font-extrabold leading-[1.05] tracking-tight text-white sm:text-6xl lg:text-8xl">
+            <p class="text-xs font-semibold uppercase tracking-[0.35em] text-zinc-500 dark:text-white/40">{{ __('public.hero.eyebrow') }}</p>
+            <h1 class="text-balance mt-6 text-4xl font-extrabold leading-[1.05] tracking-tight text-zinc-900 sm:text-6xl lg:text-8xl dark:text-white">
                 {{ __('public.hero.title_train') }}<br>
-                <span class="text-brand-400">{{ __('public.hero.title_transform') }}</span>
+                <span class="text-brand-500 dark:text-brand-400">{{ __('public.hero.title_transform') }}</span>
             </h1>
-            <p class="mx-auto mt-8 max-w-xl text-lg leading-relaxed text-white/55 sm:text-xl">
+            <p class="mx-auto mt-8 max-w-xl text-lg leading-relaxed text-zinc-600 sm:text-xl dark:text-white/55">
                 {{ __('public.hero.subtitle') }}
             </p>
             <div class="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row">
@@ -61,7 +61,7 @@
         </div>
 
         <a href="#servicii"
-            class="absolute bottom-10 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-2 text-white/30 transition-colors duration-200 hover:text-white/60"
+            class="absolute bottom-10 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-2 text-zinc-400 transition-colors duration-200 hover:text-zinc-600 dark:text-white/30 dark:hover:text-white/60"
             aria-label="{{ __('public.ui.scroll') }}">
             <span class="text-[10px] font-medium uppercase tracking-[0.25em]">{{ __('public.ui.scroll') }}</span>
             <svg class="h-5 w-5 animate-bounce" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -103,21 +103,21 @@
         </div>
     </section>
 
-    <section id="program" class="scroll-mt-24 border-t border-white/8 bg-black py-28">
+    <section id="program" class="scroll-mt-24 border-t border-zinc-200 bg-zinc-50 py-28 dark:border-white/8 dark:bg-black">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div class="jf-reveal mx-auto max-w-2xl text-center">
-                <h2 class="text-4xl font-bold tracking-tight text-white sm:text-5xl">{{ __('public.schedule.title') }}</h2>
-                <p class="mt-5 text-lg text-white/50">{{ __('public.schedule.subtitle') }}</p>
+                <h2 class="text-4xl font-bold tracking-tight text-zinc-900 sm:text-5xl dark:text-white">{{ __('public.schedule.title') }}</h2>
+                <p class="mt-5 text-lg text-zinc-600 dark:text-white/50">{{ __('public.schedule.subtitle') }}</p>
             </div>
 
-            <div class="jf-reveal mx-auto mt-14 max-w-3xl overflow-hidden rounded-2xl border border-white/8 bg-surface-elevated">
+            <div class="jf-reveal mx-auto mt-14 max-w-3xl overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm dark:border-white/8 dark:bg-surface-elevated dark:shadow-none">
                 @foreach ($schedule as $row)
-                    <div class="flex flex-col gap-2 border-b border-white/6 px-6 py-6 last:border-b-0 sm:flex-row sm:items-center sm:justify-between">
+                    <div class="flex flex-col gap-2 border-b border-zinc-100 px-6 py-6 last:border-b-0 sm:flex-row sm:items-center sm:justify-between dark:border-white/6">
                         <div>
-                            <p class="font-semibold text-white">{{ $row['days'] }}</p>
-                            <p class="mt-1 text-sm text-white/40">{{ $row['note'] }}</p>
+                            <p class="font-semibold text-zinc-900 dark:text-white">{{ $row['days'] }}</p>
+                            <p class="mt-1 text-sm text-zinc-500 dark:text-white/40">{{ $row['note'] }}</p>
                         </div>
-                        <p class="text-xl font-bold tabular-nums tracking-tight text-brand-400">{{ $row['hours'] }}</p>
+                        <p class="text-xl font-bold tabular-nums tracking-tight text-brand-500 dark:text-brand-400">{{ $row['hours'] }}</p>
                     </div>
                 @endforeach
             </div>

@@ -25,8 +25,8 @@ return [
     ],
 
     'ui' => [
-        'light_mode' => 'Light',
-        'dark_mode' => 'Dark',
+        'light_mode' => 'Luminos',
+        'dark_mode' => 'Întunecat',
         'toggle_theme' => 'Comută tema',
         'scroll' => 'Scroll',
         'currency' => 'lei',
