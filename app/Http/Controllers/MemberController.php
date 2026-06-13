@@ -24,9 +24,11 @@ class MemberController extends Controller
     {
         $members = Member::query()
             ->with(['subscriptions.plan'])
-            ->when($request->search, fn ($q, $s) => $q->where('name', 'like', "%{$s}%")
-                ->orWhere('email', 'like', "%{$s}%")
-                ->orWhere('code', 'like', "%{$s}%"))
+            ->when($request->search, fn ($q, $s) => $q->where(function ($query) use ($s): void {
+                $query->where('name', 'like', "%{$s}%")
+                    ->orWhere('email', 'like', "%{$s}%")
+                    ->orWhere('code', 'like', "%{$s}%");
+            }))
             ->when($request->status, fn ($q, $s) => $q->where('status', $s))
             ->latest()
             ->paginate(15)

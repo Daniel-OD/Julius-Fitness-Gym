@@ -22,6 +22,7 @@ class MemberImportService
         private readonly MemberImportColumnMapper $mapper,
         private readonly MemberImportValueParser $valueParser,
         private readonly MemberImportSubscriptionProvisioner $subscriptionProvisioner,
+        private readonly MemberStatusSyncService $statusSync,
     ) {}
 
     /**
@@ -169,6 +170,8 @@ class MemberImportService
                     if ($this->subscriptionProvisioner->provision($member, $row)) {
                         $subscriptionsCreated++;
                     }
+
+                    $this->statusSync->syncMember($member);
                 } catch (\Throwable $exception) {
                     $failed++;
                     $errors[] = $this->errorPayload($row, $exception->getMessage());

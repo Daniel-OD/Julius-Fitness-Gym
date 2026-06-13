@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Helpers\Helpers;
 use App\Models\Subscription;
+use App\Services\Members\MemberStatusSyncService;
 use App\Support\AppConfig;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
@@ -14,9 +15,9 @@ class MarkSubscriptionsStatus extends Command
                             {--mark-expired : Mark expired subscriptions}
                             {--mark-expiring : Mark subscriptions expiring within the configured window}';
 
-    protected $description = 'Mark subscriptions as expiring or expired';
+    protected $description = 'Mark subscriptions as expiring or expired and sync member statuses';
 
-    public function handle(): int
+    public function handle(MemberStatusSyncService $memberStatusSync): int
     {
         $timezone = AppConfig::timezone();
         $today = Carbon::today($timezone);
@@ -82,6 +83,18 @@ class MarkSubscriptionsStatus extends Command
 
             if ($ongoingCount > 0) {
                 $summary[] = "{$ongoingCount} ongoing";
+            }
+        }
+
+        if ($runAll) {
+            $memberSync = $memberStatusSync->syncAll();
+
+            if ($memberSync['activated'] > 0) {
+                $summary[] = "{$memberSync['activated']} members activated";
+            }
+
+            if ($memberSync['deactivated'] > 0) {
+                $summary[] = "{$memberSync['deactivated']} members deactivated";
             }
         }
 

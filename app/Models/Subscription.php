@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use App\Enums\Status;
+use App\Observers\SubscriptionObserver;
 use Database\Factories\SubscriptionFactory;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -23,6 +25,7 @@ use Illuminate\Support\Carbon;
  * @property string $type official|internal
  * @property string|null $internal_note
  */
+#[ObservedBy(SubscriptionObserver::class)]
 class Subscription extends Model
 {
     /** @use HasFactory<SubscriptionFactory> */

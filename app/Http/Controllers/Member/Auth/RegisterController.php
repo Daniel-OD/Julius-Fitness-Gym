@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Member\Auth;
 
+use App\Enums\Status;
 use App\Http\Controllers\Controller;
 use App\Models\Member;
 use App\Support\MemberPlanIntent;
@@ -50,6 +51,7 @@ class RegisterController extends Controller
             'email' => $validated['email'],
             'contact' => $validated['contact'],
             'password' => $validated['password'],
+            'status' => Status::Inactive,
         ]);
 
         event(new Registered($member));
