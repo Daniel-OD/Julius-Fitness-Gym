@@ -421,6 +421,9 @@ return [
         'password_confirmation' => 'Confirm password',
         'set_password_button' => 'Set password & sign in',
         'back_to_login' => 'Back to login',
+        'back_to_dashboard' => 'Back',
+        'show_qr' => 'Show QR at entrance',
+        'qr_scan_hint' => 'Show this screen to reception to check in.',
         'password_already_set' => 'A password is already set for this account. Use login instead.',
     ],
 

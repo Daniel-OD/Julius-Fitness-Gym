@@ -421,6 +421,9 @@ return [
         'password_confirmation' => 'Confirmă parola',
         'set_password_button' => 'Setează parola și autentifică-te',
         'back_to_login' => 'Înapoi la autentificare',
+        'back_to_dashboard' => 'Înapoi',
+        'show_qr' => 'Prezintă QR la intrare',
+        'qr_scan_hint' => 'Arată acest ecran recepției pentru a te înregistra.',
         'password_already_set' => 'Există deja o parolă pentru acest cont. Folosește autentificarea.',
     ],
 

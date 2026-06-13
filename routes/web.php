@@ -56,6 +56,7 @@ Route::prefix('member')->group(function (): void {
 
     Route::middleware(['member.auth', 'member.verified'])->group(function (): void {
         Route::get('dashboard', [MemberDashboardController::class, 'index'])->name('member.dashboard');
+        Route::get('qr', [MemberQrController::class, 'show'])->name('member.qr.show');
         Route::get('qr/download', [MemberQrController::class, 'download'])->name('member.qr.download');
         Route::get('invoices/{invoice}/pdf', [MemberInvoiceController::class, 'pdf'])->name('member.invoices.pdf');
     });

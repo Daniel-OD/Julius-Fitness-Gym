@@ -99,15 +99,24 @@
                 <p class="mt-3 text-xs text-zinc-500 dark:text-zinc-400">{{ $member->code }}</p>
             </div>
 
-            <div class="mt-5 flex flex-col gap-2 sm:flex-row">
-                <a href="{{ route('member.qr.download') }}"
-                    class="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-zinc-200 px-4 py-2.5 text-sm font-semibold text-zinc-900 transition hover:bg-zinc-50 dark:border-white/15 dark:text-white dark:hover:bg-white/5">
-                    {{ __('app.members.qr.download') }}
+            <div class="mt-5 flex flex-col gap-2">
+                <a href="{{ route('member.qr.show') }}"
+                    class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H4a1 1 0 01-1-1v-4zM14 4a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V4zM14 15a1 1 0 00-1 1v4a1 1 0 001 1h4a1 1 0 001-1v-4a1 1 0 00-1-1h-4z" />
+                    </svg>
+                    {{ __('app.member_portal.show_qr') }}
                 </a>
-                <button type="button" onclick="window.print()"
-                    class="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200">
-                    {{ __('app.members.qr.print') }}
-                </button>
+                <div class="flex gap-2">
+                    <a href="{{ route('member.qr.download') }}"
+                        class="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-zinc-200 px-4 py-2.5 text-sm font-semibold text-zinc-900 transition hover:bg-zinc-50 dark:border-white/15 dark:text-white dark:hover:bg-white/5">
+                        {{ __('app.members.qr.download') }}
+                    </a>
+                    <button type="button" onclick="window.print()"
+                        class="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-zinc-200 px-4 py-2.5 text-sm font-semibold text-zinc-900 transition hover:bg-zinc-50 dark:border-white/15 dark:text-white dark:hover:bg-white/5">
+                        {{ __('app.members.qr.print') }}
+                    </button>
+                </div>
             </div>
         </section>
 
