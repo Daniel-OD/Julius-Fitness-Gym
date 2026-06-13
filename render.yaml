@@ -111,8 +111,14 @@ services:
           envVarKey: APP_KEY
       - key: APP_URL
         sync: false
+      - key: APP_LOCALE
+        value: ro
+      - key: APP_FALLBACK_LOCALE
+        value: en
       - key: LOG_CHANNEL
         value: stderr
+      - key: LOG_LEVEL
+        value: info
       - key: DB_CONNECTION
         value: pgsql
       - key: DB_HOST
@@ -137,5 +143,24 @@ services:
           property: password
       - key: QUEUE_CONNECTION
         value: database
+      - key: CACHE_STORE
+        value: file
+      - key: FILESYSTEM_DISK
+        value: local
+      - key: MAIL_MAILER
+        fromService:
+          type: web
+          name: julius-fitness-gym
+          envVarKey: MAIL_MAILER
+      - key: MAIL_FROM_ADDRESS
+        fromService:
+          type: web
+          name: julius-fitness-gym
+          envVarKey: MAIL_FROM_ADDRESS
+      - key: MAIL_FROM_NAME
+        fromService:
+          type: web
+          name: julius-fitness-gym
+          envVarKey: MAIL_FROM_NAME
       - key: CONTAINER_ROLE
         value: queue

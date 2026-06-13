@@ -8,11 +8,6 @@
 .agents
 .cursorignore
 *.md
-!DOCKER_SETUP.md
-!GYM_DEPLOYMENT_GUIDE.md
-!GYM_TEST_README.md
-!DOCKER_AUDIT_REPORT.md
-!RENDER_DEPLOY.md
 
 # Local Docker Compose (not used on Render)
 docker-compose.yml
