@@ -3,10 +3,8 @@
 namespace App\Console\Commands;
 
 use App\Jobs\SendSubscriptionExpiringEmail;
-use App\Models\Subscription;
-use App\Support\AppConfig;
+use App\Support\Subscriptions\ExpiringSubscriptionsQuery;
 use Illuminate\Console\Command;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -23,19 +21,14 @@ class SendSubscriptionExpiringEmails extends Command
 
     public function handle(): int
     {
-        $timezone = AppConfig::timezone();
-        $today = Carbon::today($timezone);
         $dispatched = 0;
         $skipped = 0;
         $processedIds = [];
 
         foreach (self::TRIGGER_DAYS as $daysLeft) {
-            $targetDate = $today->copy()->addDays($daysLeft)->toDateString();
-
-            $subscriptions = Subscription::query()
+            $subscriptions = ExpiringSubscriptionsQuery::dueOn($daysLeft)
                 ->with('member')
                 ->whereIn('status', ['ongoing', 'expiring'])
-                ->whereDate('end_date', $targetDate)
                 ->get();
 
             foreach ($subscriptions as $subscription) {

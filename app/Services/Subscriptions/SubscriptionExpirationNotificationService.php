@@ -8,8 +8,7 @@ use App\Helpers\Helpers;
 use App\Models\Subscription;
 use App\Models\SubscriptionExpirationNotificationRead;
 use App\Models\User;
-use App\Support\AppConfig;
-use Carbon\CarbonImmutable;
+use App\Support\Subscriptions\ExpiringSubscriptionsQuery;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
@@ -29,14 +28,8 @@ class SubscriptionExpirationNotificationService
      */
     public function expiringSoonQuery(): Builder
     {
-        $today = CarbonImmutable::today(AppConfig::timezone());
-        $end = $today->addDays(Helpers::getSubscriptionExpiringDays());
-
-        return Subscription::query()
+        return ExpiringSubscriptionsQuery::dueWithin(Helpers::getSubscriptionExpiringDays())
             ->with(['member', 'plan'])
-            ->whereDate('start_date', '<=', $today->toDateString())
-            ->whereDate('end_date', '>=', $today->toDateString())
-            ->whereDate('end_date', '<=', $end->toDateString())
             ->orderBy('end_date');
     }
 
@@ -64,11 +57,8 @@ class SubscriptionExpirationNotificationService
             ->pluck('subscription_id')
             ->all();
 
-        $today = CarbonImmutable::today(AppConfig::timezone());
-
-        return $subscriptions->map(function (Subscription $subscription) use ($readIds, $today): SubscriptionExpirationNotificationItem {
-            $endDate = CarbonImmutable::parse($subscription->end_date, AppConfig::timezone())->startOfDay();
-            $daysLeft = (int) max($today->diffInDays($endDate, false), 0);
+        return $subscriptions->map(function (Subscription $subscription) use ($readIds): SubscriptionExpirationNotificationItem {
+            $daysLeft = max(ExpiringSubscriptionsQuery::daysLeft($subscription), 0);
             $expiresToday = $daysLeft === 0;
             $urgency = $this->resolveUrgency($daysLeft, $expiresToday);
             $member = $subscription->member;
