@@ -101,6 +101,29 @@ function read_env(string $key, array $containerExport): string|false|null
     return null;
 }
 
+/**
+ * Wrap a value in double quotes if it contains characters that would
+ * break dotenv parsing (spaces, #, ", etc.).
+ */
+function dotenv_quote(string $value): string
+{
+    if ($value === '') {
+        return '""';
+    }
+
+    // Already quoted
+    if (str_starts_with($value, '"') && str_ends_with($value, '"')) {
+        return $value;
+    }
+
+    // Quote if the value contains spaces, #, or double-quote characters
+    if (preg_match('/[\s#"\\\\]/', $value)) {
+        return '"' . addcslashes($value, '"\\') . '"';
+    }
+
+    return $value;
+}
+
 foreach ($keys as $key) {
     $value = read_env($key, $containerExport);
 
@@ -108,13 +131,13 @@ foreach ($keys as $key) {
         continue;
     }
 
-    $lines[$key] = $key.'='.$value;
+    $lines[$key] = $key.'='.dotenv_quote($value);
 }
 
 $databaseUrl = read_env('DATABASE_URL', $containerExport);
 
 if ($databaseUrl !== null && ! isset($lines['DB_URL'])) {
-    $lines['DB_URL'] = 'DB_URL='.$databaseUrl;
+    $lines['DB_URL'] = 'DB_URL='.dotenv_quote($databaseUrl);
 }
 
 $renderExternalUrl = read_env('RENDER_EXTERNAL_URL', $containerExport);
@@ -123,7 +146,7 @@ if ($renderExternalUrl !== null && ! isset($lines['APP_URL'])) {
     $host = str_starts_with($renderExternalUrl, 'http')
         ? $renderExternalUrl
         : 'https://'.$renderExternalUrl;
-    $lines['APP_URL'] = 'APP_URL='.$host;
+    $lines['APP_URL'] = 'APP_URL='.dotenv_quote($host);
 }
 
 $appKeyLine = $lines['APP_KEY'] ?? '';
