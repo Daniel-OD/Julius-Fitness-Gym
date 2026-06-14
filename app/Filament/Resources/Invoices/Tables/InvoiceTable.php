@@ -10,6 +10,7 @@ use App\Models\Invoice;
 use App\Models\InvoiceTransaction;
 use App\Models\Subscription;
 use App\Services\Email\InvoiceEmailService;
+use App\Support\AppConfig;
 use App\Support\Billing\PaymentMethod;
 use App\Support\Data;
 use Filament\Actions\Action;
@@ -196,8 +197,8 @@ class InvoiceTable
                                 DateTimePicker::make('occurred_at')
                                     ->label(__('app.fields.paid_at'))
                                     ->seconds(false)
-                                    ->timezone(\App\Support\AppConfig::timezone())
-                                    ->default(fn (): string => now()->timezone(\App\Support\AppConfig::timezone())->format('Y-m-d H:i:s'))
+                                    ->timezone(AppConfig::timezone())
+                                    ->default(fn (): string => now()->timezone(AppConfig::timezone())->format('Y-m-d H:i:s'))
                                     ->required(),
                                 Select::make('payment_method')
                                     ->label(__('app.fields.payment_method'))
@@ -225,7 +226,7 @@ class InvoiceTable
                                 $record->transactions()->create([
                                     'type' => 'payment',
                                     'amount' => $amount,
-                                    'occurred_at' => $data['occurred_at'] ?? now()->timezone(\App\Support\AppConfig::timezone()),
+                                    'occurred_at' => $data['occurred_at'] ?? now()->timezone(AppConfig::timezone()),
                                     'payment_method' => $data['payment_method'] ?? null,
                                     'note' => $data['note'] ?? null,
                                     'created_by' => auth()->id(),
@@ -263,8 +264,8 @@ class InvoiceTable
                                 DateTimePicker::make('occurred_at')
                                     ->label(__('app.fields.refunded_at'))
                                     ->seconds(false)
-                                    ->timezone(\App\Support\AppConfig::timezone())
-                                    ->default(fn (): string => now()->timezone(\App\Support\AppConfig::timezone())->format('Y-m-d H:i:s'))
+                                    ->timezone(AppConfig::timezone())
+                                    ->default(fn (): string => now()->timezone(AppConfig::timezone())->format('Y-m-d H:i:s'))
                                     ->required(),
                                 Textarea::make('note')
                                     ->label(__('app.fields.note'))
@@ -287,7 +288,7 @@ class InvoiceTable
                                 $record->transactions()->create([
                                     'type' => 'refund',
                                     'amount' => $amount,
-                                    'occurred_at' => $data['occurred_at'] ?? now()->timezone(\App\Support\AppConfig::timezone()),
+                                    'occurred_at' => $data['occurred_at'] ?? now()->timezone(AppConfig::timezone()),
                                     'note' => $data['note'] ?? null,
                                     'created_by' => auth()->id(),
                                 ]);
@@ -403,7 +404,7 @@ class InvoiceTable
                                             ->limit(5)
                                             ->get()
                                             ->mapWithKeys(function (InvoiceTransaction $transaction): array {
-                                                $occurredAt = $transaction->occurred_at?->timezone(\App\Support\AppConfig::timezone())->format('d/m/Y H:i') ?? '—';
+                                                $occurredAt = $transaction->occurred_at?->timezone(AppConfig::timezone())->format('d/m/Y H:i') ?? '—';
 
                                                 return [
                                                     Data::int($transaction->getKey()) => "{$occurredAt} - ".Helpers::formatCurrency((float) ($transaction->amount ?? 0)),

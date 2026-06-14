@@ -3,10 +3,8 @@
 namespace App\Console\Commands;
 
 use App\Jobs\SendSubscriptionExpiryNotification;
-use App\Models\Subscription;
-use App\Support\AppConfig;
+use App\Support\Subscriptions\ExpiringSubscriptionsQuery;
 use Illuminate\Console\Command;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 
 /**
@@ -28,17 +26,13 @@ class SubscriptionExpiryNotifications extends Command
 
     public function handle(): int
     {
-        $timezone = AppConfig::timezone();
-        $today = Carbon::today($timezone);
+        $today = ExpiringSubscriptionsQuery::today();
         $dryRun = (bool) $this->option('dry-run');
         $total = 0;
 
         foreach (self::TRIGGER_DAYS as $days) {
-            $targetDate = $today->copy()->addDays($days)->toDateString();
-
-            $subscriptions = Subscription::query()
+            $subscriptions = ExpiringSubscriptionsQuery::dueOn($days)
                 ->with(['member', 'plan'])
-                ->whereDate('end_date', $targetDate)
                 ->whereNotIn('status', ['renewed', 'cancelled'])
                 ->get();
 

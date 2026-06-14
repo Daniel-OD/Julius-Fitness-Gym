@@ -10,6 +10,7 @@ use App\Models\Invoice;
 use App\Models\Subscription;
 use App\Support\Billing\InvoiceCalculator;
 use App\Support\Billing\PaymentMethod;
+use App\Support\Data;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
@@ -236,16 +237,16 @@ class InvoiceForm
 
     private static function stringState(Get $get, string $path): ?string
     {
-        return \App\Support\Data::nullableString($get($path));
+        return Data::nullableString($get($path));
     }
 
     private static function intState(Get $get, string $path): int
     {
-        return \App\Support\Data::int($get($path));
+        return Data::int($get($path));
     }
 
     private static function floatState(Get $get, string $path): float
     {
-        return \App\Support\Data::float($get($path));
+        return Data::float($get($path));
     }
 }

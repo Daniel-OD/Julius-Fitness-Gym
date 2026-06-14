@@ -7,6 +7,7 @@ use App\Jobs\SendSubscriptionExpiringEmail;
 use App\Models\Member;
 use App\Models\Subscription;
 use App\Support\AppConfig;
+use App\Support\Subscriptions\ExpiringSubscriptionsQuery;
 use Illuminate\Support\Carbon;
 
 /**
@@ -51,10 +52,7 @@ final class SubscriptionExpiringEmailService
 
     public function calculateDaysLeft(Subscription $subscription): int
     {
-        $today = Carbon::today(AppConfig::timezone());
-        $endDate = Carbon::parse($subscription->end_date, AppConfig::timezone())->startOfDay();
-
-        return (int) $today->diffInDays($endDate, false);
+        return ExpiringSubscriptionsQuery::daysLeft($subscription);
     }
 
     public function findActiveSubscriptionForMember(Member $member): ?Subscription

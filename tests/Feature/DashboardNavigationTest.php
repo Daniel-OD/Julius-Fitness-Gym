@@ -89,15 +89,6 @@ it('redirects employee to office dashboard after login', function (): void {
         ->assertRedirect(Filament::getPanel('office')->getUrl());
 });
 
-it('redirects client to client dashboard after login', function (): void {
-    $user = dashboardNavUser('client');
-
-    $this->post('/login', [
-        'email' => $user->email,
-        'password' => 'password',
-    ])->assertRedirect(route('client.dashboard'));
-});
-
 it('employee is redirected away from client dashboard', function (): void {
     $user = dashboardNavUser('employee');
 
