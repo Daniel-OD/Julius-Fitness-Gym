@@ -5,6 +5,8 @@ use App\Services\Members\MemberImportColumnMapper;
 use App\Services\Members\MemberImportService;
 use App\Services\Members\MemberImportSpreadsheetReader;
 use App\Support\Members\MemberImportDataset;
+use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
@@ -50,6 +52,8 @@ new class extends Component
     public int $failedCount = 0;
 
     public ?string $errorReportToken = null;
+
+    public ?string $importToken = null;
 
     public ?int $summaryImportable = null;
 
@@ -131,7 +135,14 @@ new class extends Component
             return;
         }
 
-        $analysis = $this->importService()->analyze($this->mappedRows());
+        try {
+            $analysis = $this->importService()->analyze($this->mappedRows());
+        } catch (\Throwable $exception) {
+            $this->notifyFileUnavailable($exception);
+
+            return;
+        }
+
         $this->summaryImportable = $analysis->importableCount;
         $this->summaryErrors = $analysis->errorCount;
         $this->step = 3;
@@ -150,12 +161,28 @@ new class extends Component
         $this->resetImportProgress();
     }
 
-    public function startImport(): void
+    public function startImport(): bool
     {
         $this->resetImportProgress();
+
+        try {
+            $rows = $this->mappedRows();
+        } catch (\Throwable $exception) {
+            $this->notifyFileUnavailable($exception);
+
+            return false;
+        }
+
+        // Persist the parsed rows in the (database) cache so the chunked import no longer
+        // depends on the uploaded file still being present on local disk between requests.
+        $this->importToken = (string) Str::uuid();
+        Cache::put($this->importCacheKey(), $rows, now()->addHour());
+
         $this->importing = true;
-        $this->importTotal = count($this->mappedRows());
+        $this->importTotal = count($rows);
         $this->importProgress = 0;
+
+        return true;
     }
 
     public function cancelImport(): void
@@ -165,17 +192,20 @@ new class extends Component
 
     public function importChunk(int $offset): array
     {
-        try {
-            $mappedRows = $this->mappedRows();
-        } catch (\Throwable $e) {
-            $this->importing = false;
-            \Filament\Notifications\Notification::make()
-                ->title(__('app.settings.import.errors.file_unavailable'))
-                ->body($e->getMessage())
-                ->danger()
-                ->send();
+        $mappedRows = $this->importToken !== null
+            ? Cache::get($this->importCacheKey())
+            : null;
 
-            return ['done' => true, 'progress' => 0, 'total' => 0];
+        if (! is_array($mappedRows)) {
+            // Cache expired or the import was never started cleanly — fall back to the file.
+            try {
+                $mappedRows = $this->mappedRows();
+            } catch (\Throwable $e) {
+                $this->importing = false;
+                $this->notifyFileUnavailable($e);
+
+                return ['done' => true, 'progress' => 0, 'total' => 0];
+            }
         }
 
         $result = $this->importService()->importChunk(
@@ -208,6 +238,7 @@ new class extends Component
                 $this->errorReportToken = $token;
             }
 
+            $this->clearImportCache();
             $this->clearStoredFile();
         }
 
@@ -372,6 +403,32 @@ new class extends Component
         $this->subscriptionsCreatedCount = 0;
         $this->failedCount = 0;
         $this->errorReportToken = null;
+        $this->clearImportCache();
+    }
+
+    private function importCacheKey(): string
+    {
+        return 'member-import:rows:'.$this->importToken;
+    }
+
+    private function clearImportCache(): void
+    {
+        if ($this->importToken !== null) {
+            Cache::forget($this->importCacheKey());
+            $this->importToken = null;
+        }
+    }
+
+    private function notifyFileUnavailable(\Throwable $exception): void
+    {
+        $this->importing = false;
+
+        Notification::make()
+            ->title(__('app.settings.import.errors.file_unavailable'))
+            ->body($exception->getMessage())
+            ->danger()
+            ->persistent()
+            ->send();
     }
 };
 ?>
@@ -392,7 +449,7 @@ new class extends Component
                 <span class="jf-import-step__label">{{ $label }}</span>
             </div>
             @if (! $loop->last)
-                <div @class(['jf-import-step__connector', 'jf-import-step__connector--complete' => $step > $number])"></div>
+                <div @class(['jf-import-step__connector', 'jf-import-step__connector--complete' => $step > $number])></div>
             @endif
         @endforeach
     </nav>
@@ -645,13 +702,16 @@ new class extends Component
                         class="jf-import-btn-primary"
                         x-data
                         x-on:click="
-                            $wire.startImport().then(() => {
+                            $wire.startImport().then((started) => {
+                                if (! started) {
+                                    return;
+                                }
                                 let offset = 0;
                                 const run = () => {
                                     $wire.importChunk(offset)
                                         .then((result) => {
                                             offset += {{ \App\Services\Members\MemberImportService::CHUNK_SIZE }};
-                                            if (! result.done) {
+                                            if (result && ! result.done) {
                                                 run();
                                             }
                                         })
