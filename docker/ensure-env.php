@@ -118,7 +118,25 @@ function dotenv_quote(string $value): string
 
     // Quote if the value contains spaces, #, or double-quote characters
     if (preg_match('/[\s#"\\\\]/', $value)) {
-        return '"' . addcslashes($value, '"\\') . '"';
+        return '"'.addcslashes($value, '"\\').'"';
+    }
+
+    return $value;
+}
+
+/**
+ * Extract the (unquoted) value portion of a `KEY=value` .env line.
+ */
+function env_line_value(string $line): string
+{
+    if (! str_contains($line, '=')) {
+        return '';
+    }
+
+    $value = substr($line, strpos($line, '=') + 1);
+
+    if (strlen($value) >= 2 && str_starts_with($value, '"') && str_ends_with($value, '"')) {
+        $value = stripcslashes(substr($value, 1, -1));
     }
 
     return $value;
@@ -138,6 +156,38 @@ $databaseUrl = read_env('DATABASE_URL', $containerExport);
 
 if ($databaseUrl !== null && ! isset($lines['DB_URL'])) {
     $lines['DB_URL'] = 'DB_URL='.dotenv_quote($databaseUrl);
+}
+
+/**
+ * Fallback: fill empty DB_* connection vars from Railway's native Postgres
+ * variables (PG* / POSTGRES_*). Railway does not share vars between services
+ * unless referenced, so a half-wired service can leave DB_HOST empty even
+ * though the database exists — that produced cryptic "could not translate
+ * host name" 500s. Harmless when DB_URL is set (Laravel's url wins).
+ *
+ * @var array<string, list<string>> $dbFallbacks
+ */
+$dbFallbacks = [
+    'DB_HOST' => ['PGHOST'],
+    'DB_PORT' => ['PGPORT'],
+    'DB_DATABASE' => ['PGDATABASE', 'POSTGRES_DB'],
+    'DB_USERNAME' => ['PGUSER', 'POSTGRES_USER'],
+    'DB_PASSWORD' => ['PGPASSWORD', 'POSTGRES_PASSWORD'],
+];
+
+foreach ($dbFallbacks as $key => $sources) {
+    if (isset($lines[$key]) && env_line_value($lines[$key]) !== '') {
+        continue;
+    }
+
+    foreach ($sources as $source) {
+        $value = read_env($source, $containerExport);
+
+        if ($value !== null && $value !== '') {
+            $lines[$key] = $key.'='.dotenv_quote($value);
+            break;
+        }
+    }
 }
 
 $renderExternalUrl = read_env('RENDER_EXTERNAL_URL', $containerExport);
@@ -160,7 +210,9 @@ if ($appKeyValue === '' || ! str_starts_with($appKeyValue, 'base64:')) {
 
 file_put_contents($envPath, implode("\n", $lines)."\n");
 
-$dbConfigured = isset($lines['DB_HOST']) || isset($lines['DB_URL']);
+$dbHostValue = isset($lines['DB_HOST']) ? env_line_value($lines['DB_HOST']) : '';
+$dbUrlValue = isset($lines['DB_URL']) ? env_line_value($lines['DB_URL']) : '';
+$dbConfigured = $dbHostValue !== '' || $dbUrlValue !== '';
 
 echo '[ensure-env] Wrote '.count($lines).' variables to '.$envPath.PHP_EOL;
 
@@ -173,6 +225,13 @@ if ($onRender && count($lines) < 10) {
     exit(1);
 }
 
-if ($onRender && ! $dbConfigured) {
-    fwrite(STDERR, '[ensure-env] WARNING: DB_HOST/DB_URL missing — link PostgreSQL to this web service in Render'.PHP_EOL);
+if (! $dbConfigured) {
+    fwrite(STDERR, str_repeat('=', 72).PHP_EOL);
+    fwrite(STDERR, '[ensure-env] ERROR: no database connection configured — every DB-backed'.PHP_EOL);
+    fwrite(STDERR, '             request will return HTTP 500 (only /up will work).'.PHP_EOL);
+    fwrite(STDERR, '             Neither DB_URL nor a non-empty DB_HOST resolved, and no'.PHP_EOL);
+    fwrite(STDERR, '             Railway PG*/POSTGRES_* fallback was found.'.PHP_EOL);
+    fwrite(STDERR, '             Railway: add a Variable Reference DATABASE_URL = ${{ <db-service>.DATABASE_URL }}'.PHP_EOL);
+    fwrite(STDERR, '             Render:  link the PostgreSQL service to this web service.'.PHP_EOL);
+    fwrite(STDERR, str_repeat('=', 72).PHP_EOL);
 }
