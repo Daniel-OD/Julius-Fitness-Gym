@@ -111,6 +111,41 @@ it('binds form input and persists settings on save', function (): void {
         ->and((int) $saved['checkin']['present_now_grace_minutes'])->toBe(20);
 });
 
+it('persists mail settings and keeps api key when left blank on save', function (): void {
+    Livewire::actingAs(settingsAdmin())
+        ->test(Settings::class)
+        ->fillForm([
+            'mail' => [
+                'driver' => 'resend',
+                'resend_api_key' => 're_new_key',
+                'from_address' => 'noreply@gym.test',
+                'from_name' => 'Gym Test',
+            ],
+        ])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    $saved = app(SettingsRepository::class)->get()['mail'];
+
+    expect($saved['driver'])->toBe('resend')
+        ->and($saved['resend_api_key'])->toBe('re_new_key')
+        ->and($saved['from_address'])->toBe('noreply@gym.test');
+
+    Livewire::actingAs(settingsAdmin())
+        ->test(Settings::class)
+        ->fillForm([
+            'mail' => [
+                'driver' => 'resend',
+                'resend_api_key' => '',
+                'from_address' => 'noreply@gym.test',
+            ],
+        ])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    expect(app(SettingsRepository::class)->get()['mail']['resend_api_key'])->toBe('re_new_key');
+});
+
 it('updates gym name when set on the livewire data property', function (): void {
     $gymName = 'Direct Data '.now()->timestamp;
 

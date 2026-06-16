@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * Build .env from .env.render.example + container environment (Render).
+ * Build .env from .env.render.example + container environment (Render / Railway).
  * PHP-FPM workers may not inherit env vars; Laravel must read them from disk.
  */
 $envPath = $argv[1] ?? (getcwd().DIRECTORY_SEPARATOR.'.env');
@@ -37,6 +37,7 @@ $keys = [
     'MAIL_MAILER',
     'MAIL_FROM_ADDRESS',
     'MAIL_FROM_NAME',
+    'RESEND_API_KEY',
 ];
 
 if (is_file($templatePath)) {

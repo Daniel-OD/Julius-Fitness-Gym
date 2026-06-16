@@ -8,6 +8,7 @@ use App\Http\Responses\Filament\LoginResponse;
 use App\Services\JsonSequenceRepository;
 use App\Services\JsonSettingsRepository;
 use App\Support\FilamentSession;
+use App\Support\MailConfigurator;
 use App\Support\Studio;
 use Filament\Auth\Http\Responses\Contracts\LoginResponse as LoginResponseContract;
 use Illuminate\Auth\Events\Logout;
@@ -41,6 +42,7 @@ class AppServiceProvider extends ServiceProvider
 
         $this->ensureStorageDirectoriesExist();
         $this->configureLocalExecutionTimeLimit();
+        $this->configureMailFromSettings();
 
         RateLimiter::for('api-login', fn (Request $request) => Limit::perMinute(10)->by($request->ip()));
         RateLimiter::for('api', fn (Request $request) => Limit::perMinute(60)->by($request->user()?->id ?: $request->ip()));
@@ -89,5 +91,18 @@ class AppServiceProvider extends ServiceProvider
 
         @ini_set('max_execution_time', '120');
         @set_time_limit(120);
+    }
+
+    private function configureMailFromSettings(): void
+    {
+        if ($this->app->runningUnitTests()) {
+            return;
+        }
+
+        try {
+            MailConfigurator::apply();
+        } catch (\Throwable $exception) {
+            report($exception);
+        }
     }
 }

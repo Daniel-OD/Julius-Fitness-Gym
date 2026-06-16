@@ -90,6 +90,44 @@ return [
         'save_reminder' => 'Save settings after changing numbering — the next invoice uses these values immediately.',
     ],
 
+    'admin.settings.tabs.mail' => [
+        'title' => 'Email delivery (SMTP / Resend)',
+        'greeting' => 'Configure how the gym sends emails: invoices, member verification, portal invitations, and reminders.',
+        'summary' => 'Set this up before enabling automatic invoice emails or member registration on production.',
+        'steps' => [
+            [
+                'title' => 'Choose transport',
+                'body' => 'Pick how mail leaves the server. Hosted on Render, Railway, or Docker? Use Environment (.env) and set RESEND_API_KEY in the platform dashboard. Local Windows/macOS? Use Resend or SMTP here.',
+                'fields' => [
+                    ['name' => 'Mail transport', 'hint' => 'Environment = .env / platform variables. Resend = API key. SMTP = classic mail server. Log = development only (writes to logs).'],
+                    ['name' => 'From address', 'hint' => 'Must match a verified domain (Resend) or allowed sender (SMTP). Example: noreply@yourgym.com'],
+                    ['name' => 'From name', 'hint' => 'How recipients see the sender — usually your gym name.'],
+                ],
+            ],
+            [
+                'title' => 'Resend or SMTP credentials',
+                'body' => 'Resend: paste API key from resend.com after verifying your domain. SMTP: host, port, username, password from your email provider (Gmail, Office 365, etc.).',
+                'fields' => [
+                    ['name' => 'Resend API key', 'hint' => 'Starts with re_. Leave blank when saving to keep the existing key.'],
+                    ['name' => 'SMTP host / port', 'hint' => 'Common: smtp.gmail.com:587 with TLS.'],
+                ],
+            ],
+            [
+                'title' => 'Test before going live',
+                'body' => 'Click Send test email — it goes to your admin account inbox. Fix errors before enabling auto-send on the Invoice tab.',
+                'fields' => [
+                    ['name' => 'Send test email', 'hint' => 'Uses current form values (save after testing if it works).'],
+                ],
+            ],
+        ],
+        'checklist' => [
+            'Transport chosen and credentials saved',
+            'Test email received in inbox',
+            'Queue worker running on production (emails are queued)',
+        ],
+        'save_reminder' => 'Save settings after changing mail transport — queued jobs use the saved configuration.',
+    ],
+
     'admin.settings.tabs.member' => [
         'title' => 'Member codes',
         'greeting' => 'Every member gets a unique code — like an invoice prefix, but for people.',

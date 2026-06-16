@@ -23,7 +23,7 @@ fi
 # Ensure .env exists with APP_KEY and Render env vars (php-fpm does not always inherit env).
 ensure_app_key() {
     if [ -n "${JULIUS_ON_RENDER:-}" ]; then
-        env | grep -E '^(APP_|DB_|LOG_|SESSION_|CACHE_|QUEUE_|FILESYSTEM_|MAIL_|DATABASE_URL|RENDER_EXTERNAL_URL|RENDER|RENDER_SERVICE_ID)=' \
+        env | grep -E '^(APP_|DB_|LOG_|SESSION_|CACHE_|QUEUE_|FILESYSTEM_|MAIL_|RESEND_|DATABASE_URL|RENDER_EXTERNAL_URL|RENDER|RENDER_SERVICE_ID)=' \
             > /tmp/render-container.env 2>/dev/null || true
     fi
 

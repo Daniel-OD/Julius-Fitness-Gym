@@ -95,6 +95,7 @@ return [
             'backup_now' => 'Backup acum',
             'restore_now' => 'Restaurează din backup',
             'restore_confirm' => 'Da, restaurează acum',
+            'send_test_email' => 'Trimite email de test',
         ],
         'tabs' => [
             'gym_info' => 'Info sală',
@@ -105,6 +106,7 @@ return [
             'subscriptions' => 'Abonamente',
             'import' => 'Import',
             'backup' => 'Backup',
+            'mail' => 'Trimitere email',
         ],
         'import' => [
             'steps_label' => 'Pași import',
@@ -197,6 +199,11 @@ return [
             'backup_restore_desc' => 'Încarcă un fișier ZIP de backup pentru a restaura baza de date la o stare anterioară. Acțiunea este ireversibilă — un backup automat de siguranță va fi creat înainte.',
             'checkin' => 'Check-in & prezență',
             'interface' => 'Interfață',
+            'mail_delivery' => 'Trimitere email',
+            'mail_delivery_desc' => 'Alege cum trimite aplicația emailurile (facturi, verificare, notificări). Folosește „Mediu (.env)” pe Render, Railway sau Docker cu RESEND_API_KEY / SMTP în variabilele platformei.',
+            'mail_resend' => 'API Resend',
+            'mail_smtp' => 'Server SMTP',
+            'mail_test' => 'Test configurare',
         ],
         'fields' => [
             'admin_guide_enabled' => 'Afișează ghidul administrator pe pagini',
@@ -233,6 +240,15 @@ return [
             'backup_keep' => 'Păstrează ultimele N backup-uri',
             'restore_zip' => 'Fișier ZIP de backup',
             'restore_include_settings' => 'Restaurează și setările aplicației',
+            'mail_driver' => 'Transport email',
+            'mail_from_address' => 'Adresă expeditor',
+            'mail_from_name' => 'Nume expeditor',
+            'resend_api_key' => 'Cheie API Resend',
+            'smtp_host' => 'Host SMTP',
+            'smtp_port' => 'Port SMTP',
+            'smtp_username' => 'Utilizator SMTP',
+            'smtp_password' => 'Parolă SMTP',
+            'smtp_encryption' => 'Criptare',
         ],
         'options' => [
             'name_type' => [
@@ -243,6 +259,16 @@ return [
                 'after_member' => 'După fiecare client înregistrat',
                 'end_of_day' => 'La sfârșitul zilei (programat)',
                 'both' => 'Ambele',
+            ],
+            'mail_driver' => [
+                'env' => 'Mediu (.env / platformă)',
+                'resend' => 'Resend (cheie API)',
+                'smtp' => 'SMTP',
+                'log' => 'Doar log (dezvoltare)',
+                'sendmail' => 'Sendmail (server)',
+            ],
+            'smtp_encryption' => [
+                'none' => 'Fără',
             ],
         ],
         'hints' => [
@@ -256,6 +282,8 @@ return [
             'restore_include_settings' => 'Dacă este activat, setările aplicației (monedă, prefix factură, etc.) vor fi și ele restaurate.',
             'present_now_grace_minutes' => 'Cât timp după check-out rămâne membrul vizibil la „Prezenți acum” pe recepție.',
             'admin_guide_enabled' => 'Când e activ, un panou de ajutor contextual apare sus pe fiecare pagină și explică ce vezi și ce poți face.',
+            'mail_driver' => 'Pe Render/Railway/Docker, păstrează „Mediu” și setează RESEND_API_KEY în dashboard. Local (Windows/macOS), alege Resend sau SMTP și salvează aici.',
+            'resend_api_key' => 'Creează o cheie API pe resend.com. Lasă gol la salvare pentru a păstra cheia existentă.',
         ],
         'backup' => [
             'no_path_set' => 'Nicio cale de backup configurată.',
@@ -273,6 +301,18 @@ return [
             'invoice_email_subject' => 'ex. Factură #{invoice_number} de la {gym_name}',
             'receipt_email_subject' => 'ex. Chitanță de plată de la {gym_name}',
             'backup_path' => 'ex. C:\Users\Admin\Google Drive\Backup Sala',
+            'mail_from_address' => 'noreply@domeniul-tau-verificat.ro',
+            'mail_from_name' => 'Julius Fitness Gym',
+            'resend_api_key' => 're_...',
+        ],
+        'mail' => [
+            'test_subject' => 'Email de test de la :gym',
+            'test_body' => 'Acesta este un mesaj de test de la :gym. Dacă l-ai primit, configurarea email funcționează.',
+            'test_sent_title' => 'Email de test trimis',
+            'test_sent_body' => 'Verifică inbox-ul pentru :email.',
+            'test_failed_title' => 'Trimiterea emailului de test a eșuat',
+            'test_failed_body' => 'Nu s-a putut trimite emailul de test. Verifică transportul, cheia API și adresa expeditor (domeniu verificat).',
+            'test_no_recipient' => 'Contul tău de utilizator nu are adresă de email.',
         ],
     ],
 

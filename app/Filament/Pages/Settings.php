@@ -4,6 +4,8 @@ namespace App\Filament\Pages;
 
 use App\Contracts\SettingsRepository;
 use App\Helpers\Helpers;
+use App\Mail\TestMailConfigurationMail;
+use App\Support\MailConfigurator;
 use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
@@ -29,6 +31,7 @@ use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use ZipArchive;
 
@@ -78,6 +81,11 @@ class Settings extends Page implements HasForms
 
         $settings['general'] = $general;
 
+        $mail = is_array($settings['mail'] ?? null) ? $settings['mail'] : [];
+        $mail['resend_api_key'] = '';
+        $mail['smtp_password'] = '';
+        $settings['mail'] = $mail;
+
         return $settings;
     }
 
@@ -104,6 +112,7 @@ class Settings extends Page implements HasForms
                 ->tabs([
                     $this->generalTab(),
                     $this->invoiceTab(),
+                    $this->mailTab(),
                     $this->memberTab(),
                     $this->chargesTab(),
                     $this->expensesTab(),
@@ -312,6 +321,104 @@ class Settings extends Page implements HasForms
                                 ->columnSpan(['default' => 1, 'md' => 2]),
                         ]),
                 ]);
+    }
+
+    /**
+     * Mail delivery tab (transport: env, Resend, SMTP, log, sendmail).
+     */
+    private function mailTab(): Tab
+    {
+        return Tab::make(__('app.settings.tabs.mail'))
+            ->id('mail')
+            ->icon('heroicon-m-envelope')
+            ->schema([
+                $this->guidePanel('mail'),
+                Section::make(__('app.settings.sections.mail_delivery'))
+                    ->description(__('app.settings.sections.mail_delivery_desc'))
+                    ->aside()
+                    ->schema([
+                        Select::make('mail.driver')
+                            ->label(__('app.settings.fields.mail_driver'))
+                            ->native(false)
+                            ->options([
+                                MailConfigurator::DRIVER_ENV => __('app.settings.options.mail_driver.env'),
+                                MailConfigurator::DRIVER_RESEND => __('app.settings.options.mail_driver.resend'),
+                                MailConfigurator::DRIVER_SMTP => __('app.settings.options.mail_driver.smtp'),
+                                MailConfigurator::DRIVER_LOG => __('app.settings.options.mail_driver.log'),
+                                MailConfigurator::DRIVER_SENDMAIL => __('app.settings.options.mail_driver.sendmail'),
+                            ])
+                            ->default(MailConfigurator::DRIVER_ENV)
+                            ->live()
+                            ->helperText(__('app.settings.hints.mail_driver')),
+                        Grid::make(2)
+                            ->schema([
+                                TextInput::make('mail.from_address')
+                                    ->label(__('app.settings.fields.mail_from_address'))
+                                    ->email()
+                                    ->placeholder(__('app.settings.placeholders.mail_from_address')),
+                                TextInput::make('mail.from_name')
+                                    ->label(__('app.settings.fields.mail_from_name'))
+                                    ->placeholder(__('app.settings.placeholders.mail_from_name')),
+                            ]),
+                    ])
+                    ->columnSpan(3),
+                Section::make(__('app.settings.sections.mail_resend'))
+                    ->aside()
+                    ->visible(fn ($get): bool => $get('mail.driver') === MailConfigurator::DRIVER_RESEND)
+                    ->schema([
+                        TextInput::make('mail.resend_api_key')
+                            ->label(__('app.settings.fields.resend_api_key'))
+                            ->password()
+                            ->revealable()
+                            ->dehydrated(fn (?string $state): bool => filled($state))
+                            ->placeholder(__('app.settings.placeholders.resend_api_key'))
+                            ->helperText(__('app.settings.hints.resend_api_key')),
+                    ])
+                    ->columnSpan(3),
+                Section::make(__('app.settings.sections.mail_smtp'))
+                    ->aside()
+                    ->visible(fn ($get): bool => $get('mail.driver') === MailConfigurator::DRIVER_SMTP)
+                    ->schema([
+                        Grid::make(2)
+                            ->schema([
+                                TextInput::make('mail.smtp_host')
+                                    ->label(__('app.settings.fields.smtp_host'))
+                                    ->placeholder('smtp.example.com'),
+                                TextInput::make('mail.smtp_port')
+                                    ->label(__('app.settings.fields.smtp_port'))
+                                    ->numeric()
+                                    ->default(587),
+                                TextInput::make('mail.smtp_username')
+                                    ->label(__('app.settings.fields.smtp_username')),
+                                TextInput::make('mail.smtp_password')
+                                    ->label(__('app.settings.fields.smtp_password'))
+                                    ->password()
+                                    ->revealable()
+                                    ->dehydrated(fn (?string $state): bool => filled($state)),
+                                Select::make('mail.smtp_encryption')
+                                    ->label(__('app.settings.fields.smtp_encryption'))
+                                    ->native(false)
+                                    ->options([
+                                        'tls' => 'TLS',
+                                        'ssl' => 'SSL',
+                                        'none' => __('app.settings.options.smtp_encryption.none'),
+                                    ])
+                                    ->default('tls'),
+                            ]),
+                    ])
+                    ->columnSpan(3),
+                Section::make(__('app.settings.sections.mail_test'))
+                    ->schema([
+                        Actions::make([
+                            Action::make('sendTestEmail')
+                                ->label(__('app.settings.actions.send_test_email'))
+                                ->icon('heroicon-o-paper-airplane')
+                                ->color('gray')
+                                ->action(fn () => $this->sendTestEmail()),
+                        ]),
+                    ])
+                    ->columnSpan(3),
+            ]);
     }
 
     /**
@@ -710,6 +817,20 @@ class Settings extends Page implements HasForms
 
         $settings['general'] = $general;
 
+        $existing = app(SettingsRepository::class)->get();
+        $existingMail = is_array($existing['mail'] ?? null) ? $existing['mail'] : [];
+        $mail = is_array($settings['mail'] ?? null) ? $settings['mail'] : [];
+
+        if (! filled($mail['resend_api_key'] ?? null)) {
+            $mail['resend_api_key'] = (string) ($existingMail['resend_api_key'] ?? '');
+        }
+
+        if (! filled($mail['smtp_password'] ?? null)) {
+            $mail['smtp_password'] = (string) ($existingMail['smtp_password'] ?? '');
+        }
+
+        $settings['mail'] = $mail;
+
         try {
             app(SettingsRepository::class)->put($settings);
             $this->form->fill($this->prepareSettingsForForm($settings));
@@ -730,6 +851,46 @@ class Settings extends Page implements HasForms
             ->body(__('app.notifications.success_settings_save'))
             ->success()
             ->send();
+    }
+
+    /**
+     * Send a test email using the current form mail settings (saved or unsaved).
+     */
+    public function sendTestEmail(): void
+    {
+        $user = auth()->user();
+
+        if ($user === null || ! filled($user->email)) {
+            Notification::make()
+                ->title(__('app.notifications.failed'))
+                ->body(__('app.settings.mail.test_no_recipient'))
+                ->danger()
+                ->send();
+
+            return;
+        }
+
+        MailConfigurator::apply($this->form->getState());
+
+        $gymName = (string) (data_get($this->form->getState(), 'general.gym_name') ?: config('app.name'));
+
+        try {
+            Mail::to($user->email)->send(new TestMailConfigurationMail($gymName));
+
+            Notification::make()
+                ->title(__('app.settings.mail.test_sent_title'))
+                ->body(__('app.settings.mail.test_sent_body', ['email' => $user->email]))
+                ->success()
+                ->send();
+        } catch (\Throwable $exception) {
+            report($exception);
+
+            Notification::make()
+                ->title(__('app.settings.mail.test_failed_title'))
+                ->body(__('app.settings.mail.test_failed_body'))
+                ->danger()
+                ->send();
+        }
     }
 
     /**

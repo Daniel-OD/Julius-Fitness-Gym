@@ -164,7 +164,7 @@ Util când sală are internet dar **fără IP public** sau fără deschidere por
 | **Admin** | Bookmark **/admin/login**; logout la schimb tură |
 | **Parolă** | `GymTest2026!` doar demo — schimbă în prima zi |
 | **Queue** | Container `queue` activ în Docker; local: `php artisan queue:work` |
-| **Email** | `MAIL_MAILER=log` — suficient pentru test |
+| **Email** | Resend (`MAIL_MAILER=resend`, `RESEND_API_KEY` în Environment); local: `MAIL_MAILER=log` |
 
 ### Flux zi de test
 

@@ -95,6 +95,7 @@ return [
             'backup_now' => 'Backup now',
             'restore_now' => 'Restore from backup',
             'restore_confirm' => 'Yes, restore now',
+            'send_test_email' => 'Send test email',
         ],
         'tabs' => [
             'gym_info' => 'Gym Info',
@@ -105,6 +106,7 @@ return [
             'subscriptions' => 'Subscriptions',
             'import' => 'Import',
             'backup' => 'Backup',
+            'mail' => 'Email delivery',
         ],
         'import' => [
             'steps_label' => 'Import steps',
@@ -197,6 +199,11 @@ return [
             'backup_restore_desc' => 'Upload a backup ZIP file to restore the database to a previous state. This action is irreversible — an automatic safety backup will be created first.',
             'checkin' => 'Check-in & attendance',
             'interface' => 'Interface',
+            'mail_delivery' => 'Outbound mail',
+            'mail_delivery_desc' => 'Choose how the application sends emails (invoices, verification, notifications). Use "Environment (.env)" when hosting on Render, Railway, or Docker with RESEND_API_KEY / SMTP in platform variables.',
+            'mail_resend' => 'Resend API',
+            'mail_smtp' => 'SMTP server',
+            'mail_test' => 'Test configuration',
         ],
         'fields' => [
             'admin_guide_enabled' => 'Show admin guide on pages',
@@ -233,6 +240,15 @@ return [
             'backup_keep' => 'Keep last N backups',
             'restore_zip' => 'Backup ZIP file',
             'restore_include_settings' => 'Also restore application settings',
+            'mail_driver' => 'Mail transport',
+            'mail_from_address' => 'From email address',
+            'mail_from_name' => 'From name',
+            'resend_api_key' => 'Resend API key',
+            'smtp_host' => 'SMTP host',
+            'smtp_port' => 'SMTP port',
+            'smtp_username' => 'SMTP username',
+            'smtp_password' => 'SMTP password',
+            'smtp_encryption' => 'Encryption',
         ],
         'options' => [
             'name_type' => [
@@ -243,6 +259,16 @@ return [
                 'after_member' => 'After each member registration',
                 'end_of_day' => 'At end of day (scheduled)',
                 'both' => 'Both',
+            ],
+            'mail_driver' => [
+                'env' => 'Environment (.env / platform)',
+                'resend' => 'Resend (API key)',
+                'smtp' => 'SMTP',
+                'log' => 'Log only (development)',
+                'sendmail' => 'Sendmail (server)',
+            ],
+            'smtp_encryption' => [
+                'none' => 'None',
             ],
         ],
         'hints' => [
@@ -256,6 +282,8 @@ return [
             'restore_include_settings' => 'If enabled, application settings (currency, invoice prefix, etc.) will also be restored.',
             'present_now_grace_minutes' => 'How long after check-out a member stays visible on the front-desk "Present now" list.',
             'admin_guide_enabled' => 'When enabled, a contextual help panel appears at the top of each page explaining what you see and what to do.',
+            'mail_driver' => 'On Render/Railway/Docker, keep "Environment" and set RESEND_API_KEY in the platform dashboard. For local Windows/macOS, choose Resend or SMTP and save here.',
+            'resend_api_key' => 'Create an API key at resend.com. Leave blank when saving to keep the existing key.',
         ],
         'backup' => [
             'no_path_set' => 'No backup path configured.',
@@ -273,6 +301,18 @@ return [
             'invoice_email_subject' => 'e.g. Invoice #{invoice_number} from {gym_name}',
             'receipt_email_subject' => 'e.g. Payment receipt from {gym_name}',
             'backup_path' => 'e.g. C:\Users\Admin\Google Drive\Gym Backup',
+            'mail_from_address' => 'noreply@your-verified-domain.com',
+            'mail_from_name' => 'Julius Fitness Gym',
+            'resend_api_key' => 're_...',
+        ],
+        'mail' => [
+            'test_subject' => 'Test email from :gym',
+            'test_body' => 'This is a test message from :gym. If you received it, your mail configuration works.',
+            'test_sent_title' => 'Test email sent',
+            'test_sent_body' => 'Check the inbox for :email.',
+            'test_failed_title' => 'Test email failed',
+            'test_failed_body' => 'Could not send the test email. Check transport settings, API key, and from address (verified domain).',
+            'test_no_recipient' => 'Your user account has no email address.',
         ],
     ],
 

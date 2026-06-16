@@ -264,7 +264,7 @@ php artisan gym:invoices --mark-overdue
 | Limitare | Detaliu |
 |----------|---------|
 | **SQLite** | Un singur fișier DB — pot apărea lock-uri rare la trafic mare; OK pentru demo. |
-| **Email** | `MAIL_MAILER=log` — emailurile nu se trimit real; apar în `storage/logs/laravel.log`. |
+| **Email** | Local: `MAIL_MAILER=log` (în `storage/logs`). Producție: Resend — `MAIL_MAILER=resend` + `RESEND_API_KEY`. |
 | **Queue** | Fără `queue:work`, emailurile/PDF-urile queued pot întârzia. |
 | **CSS lipsă** | Fără `npm run build`, panourile Filament apar fără stil. |
 | **Parolă installer** | `install.bat` fără `--password` → parolă aleatorie, o singură afișare. |

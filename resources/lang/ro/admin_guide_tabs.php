@@ -90,6 +90,44 @@ return [
         'save_reminder' => 'Salvează după modificarea numerotării — următoarea factură folosește noile valori.',
     ],
 
+    'admin.settings.tabs.mail' => [
+        'title' => 'Trimitere email (SMTP / Resend)',
+        'greeting' => 'Configurează cum trimite sala emailuri: facturi, verificare membri, invitații portal și remindere.',
+        'summary' => 'Setează înainte de a activa trimiterea automată a facturilor sau înregistrarea membrilor în producție.',
+        'steps' => [
+            [
+                'title' => 'Alege transportul',
+                'body' => 'Cum pleacă emailul de pe server. Pe Render, Railway sau Docker? Folosește Mediu (.env) și setează RESEND_API_KEY în dashboard. Local Windows/macOS? Folosește Resend sau SMTP aici.',
+                'fields' => [
+                    ['name' => 'Transport email', 'hint' => 'Mediu = .env / variabile platformă. Resend = cheie API. SMTP = server clasic. Log = doar dezvoltare (în logs).'],
+                    ['name' => 'Adresă expeditor', 'hint' => 'Trebuie să fie de pe domeniu verificat (Resend) sau expeditor permis (SMTP). Ex: noreply@sala-ta.ro'],
+                    ['name' => 'Nume expeditor', 'hint' => 'Cum te văd destinatarii — de obicei numele sălii.'],
+                ],
+            ],
+            [
+                'title' => 'Credențiale Resend sau SMTP',
+                'body' => 'Resend: lipește cheia API de pe resend.com după verificarea domeniului. SMTP: host, port, utilizator, parolă de la furnizorul de email.',
+                'fields' => [
+                    ['name' => 'Cheie API Resend', 'hint' => 'Începe cu re_. Lasă gol la salvare pentru a păstra cheia existentă.'],
+                    ['name' => 'Host / port SMTP', 'hint' => 'Frecvent: smtp.gmail.com:587 cu TLS.'],
+                ],
+            ],
+            [
+                'title' => 'Testează înainte de producție',
+                'body' => 'Apasă Trimite email de test — merge în inbox-ul contului tău de admin. Rezolvă erorile înainte de auto-trimitere pe tab-ul Factură.',
+                'fields' => [
+                    ['name' => 'Trimite email de test', 'hint' => 'Folosește valorile curente din formular (salvează după test dacă merge).'],
+                ],
+            ],
+        ],
+        'checklist' => [
+            'Transport ales și credențiale salvate',
+            'Email de test primit în inbox',
+            'Queue worker activ în producție (emailurile sunt în coadă)',
+        ],
+        'save_reminder' => 'Salvează după modificarea transportului — joburile din coadă folosesc configurația salvată.',
+    ],
+
     'admin.settings.tabs.member' => [
         'title' => 'Coduri membri',
         'greeting' => 'Fiecare membru primește un cod unic — ca un prefix de factură, dar pentru persoane.',

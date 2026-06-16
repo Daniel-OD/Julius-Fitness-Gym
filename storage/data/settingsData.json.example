@@ -61,5 +61,16 @@
             "invoice_subject_template": "Invoice {invoice_number} - {status}",
             "receipt_subject_template": "Payment received - {invoice_number}"
         }
+    },
+    "mail": {
+        "driver": "env",
+        "from_address": "",
+        "from_name": "",
+        "resend_api_key": "",
+        "smtp_host": "",
+        "smtp_port": 587,
+        "smtp_username": "",
+        "smtp_password": "",
+        "smtp_encryption": "tls"
     }
 }

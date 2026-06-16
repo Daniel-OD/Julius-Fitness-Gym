@@ -87,6 +87,7 @@ class JsonSettingsRepository implements SettingsRepository
             'checkin' => [],
             'notifications' => [],
             'backup' => [],
+            'mail' => [],
         ], JSON_PRETTY_PRINT));
     }
 
@@ -96,7 +97,7 @@ class JsonSettingsRepository implements SettingsRepository
      */
     private function normalize(array $settings): array
     {
-        foreach (['general', 'invoice', 'member', 'charges', 'expenses', 'subscriptions', 'payments', 'notifications', 'backup', 'checkin'] as $key) {
+        foreach (['general', 'invoice', 'member', 'charges', 'expenses', 'subscriptions', 'payments', 'notifications', 'backup', 'checkin', 'mail'] as $key) {
             if (! array_key_exists($key, $settings) || ! is_array($settings[$key])) {
                 $settings[$key] = [];
             }
@@ -123,6 +124,26 @@ class JsonSettingsRepository implements SettingsRepository
         }
 
         $settings['notifications']['email'] = $emailSettings;
+
+        /** @var array<string, mixed> $mail */
+        $mail = $settings['mail'];
+        foreach ([
+            'driver' => 'env',
+            'from_address' => '',
+            'from_name' => '',
+            'resend_api_key' => '',
+            'smtp_host' => '',
+            'smtp_port' => 587,
+            'smtp_username' => '',
+            'smtp_password' => '',
+            'smtp_encryption' => 'tls',
+        ] as $key => $default) {
+            if (! array_key_exists($key, $mail)) {
+                $mail[$key] = $default;
+            }
+        }
+
+        $settings['mail'] = $mail;
 
         /** @var array<string, mixed> $checkin */
         $checkin = $settings['checkin'];
