@@ -64,7 +64,6 @@ Gym and fitness club management application built on Laravel 13, with a Filament
 ```bash
 git clone https://github.com/Daniel-OD/Julius-Fitness-Gym.git
 cd Julius-Fitness-Gym
-git checkout 2026-06-01-byv4   # active development branch
 
 composer run setup              # install, .env, key, migrate, npm build
 ```
@@ -231,16 +230,15 @@ php artisan tinker
 
 | Branch | Purpose |
 |--------|---------|
-| `main` | Stable baseline (production-ready) |
-| `2026-06-01-byv4` | Active development (Filament v5, i18n, iOS UI) |
+| `main` | Active development and production deployments |
 
 ### Contributing
 
-Work on **feature branches** off `2026-06-01-byv4` and open PRs unless agreed otherwise:
+Work on **feature branches** off `main` and open PRs:
 
 ```bash
-git checkout 2026-06-01-byv4
-git pull origin 2026-06-01-byv4
+git checkout main
+git pull origin main
 git checkout -b feature/your-feature-name
 # ... make changes ...
 git push origin feature/your-feature-name
@@ -326,7 +324,7 @@ Please ensure:
 2. Tests pass: `php artisan test --compact`
 3. Code is formatted: `vendor/bin/pint --dirty`
 4. Commit messages are descriptive
-5. PRs target the active development branch
+5. PRs target `main`
 
 For detailed contributor guidelines, see `CLAUDE.md` and `AGENTS.md`.
 
