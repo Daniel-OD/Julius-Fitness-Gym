@@ -3,11 +3,11 @@
 declare(strict_types=1);
 
 /**
- * Build .env from .env.render.example + container environment (Render / Railway).
+ * Build .env from env/render.env.example + container environment (Render / Railway).
  * PHP-FPM workers may not inherit env vars; Laravel must read them from disk.
  */
 $envPath = $argv[1] ?? (getcwd().DIRECTORY_SEPARATOR.'.env');
-$templatePath = dirname($envPath).DIRECTORY_SEPARATOR.'.env.render.example';
+$templatePath = dirname($envPath).DIRECTORY_SEPARATOR.'env'.DIRECTORY_SEPARATOR.'render.env.example';
 
 $keys = [
     'APP_NAME',
@@ -222,7 +222,7 @@ $onRender = read_env('RENDER', $containerExport) !== null
     || read_env('RENDER_EXTERNAL_URL', $containerExport) !== null;
 
 if ($onRender && count($lines) < 10) {
-    fwrite(STDERR, '[ensure-env] ERROR: .env.render.example missing from image — only '.count($lines)." variables written\n");
+    fwrite(STDERR, '[ensure-env] ERROR: env/render.env.example missing from image — only '.count($lines)." variables written\n");
     exit(1);
 }
 

@@ -12,7 +12,7 @@ Ghid practic pentru instalarea aplicației în diferite medii, cu focus pe **tes
 2. Clonează repo-ul sau copiază pe stick
 3. Urmează [DOCKER_SETUP.md](./DOCKER_SETUP.md):
    ```bat
-   copy .env.docker.example .env
+   copy env\docker.env.example .env
    docker compose up -d --build
    docker compose exec app php artisan app:install --force --email=admin@julius.test --password=GymTest2026! --url=http://localhost
    docker compose exec app php artisan db:seed --force
@@ -59,7 +59,7 @@ sudo usermod -aG docker $USER
 ```bash
 git clone https://github.com/Daniel-OD/Julius-Fitness-Gym.git
 cd Julius-Fitness-Gym
-cp .env.docker.example .env
+cp env/docker.env.example .env
 nano .env   # APP_URL=https://gym.domeniu.ro, parole sigure
 docker compose up -d --build
 docker compose exec app php artisan app:install --force \

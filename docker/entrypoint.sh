@@ -40,7 +40,7 @@ ensure_app_key() {
         var_count=$(grep -cE '^[A-Z_]+=' .env 2>/dev/null || echo 0)
         echo "[entrypoint] .env: ${var_count} variables, APP_URL=$(grep '^APP_URL=' .env | cut -d= -f2- | head -1), DB_HOST=$(grep '^DB_HOST=' .env | cut -d= -f2- | head -1)"
         if [ "$var_count" -lt 10 ]; then
-            echo "[entrypoint] ERROR: .env incomplete — redeploy with latest image (.env.render.example must be in the image)"
+            echo "[entrypoint] ERROR: .env incomplete — redeploy with latest image (env/render.env.example must be in the image)"
             exit 1
         fi
     fi
@@ -49,7 +49,7 @@ ensure_app_key() {
 # ── Render web: open HTTP port immediately (before DB wait / migrate) ────────
 if [ "${CONTAINER_ROLE}" = "web" ]; then
     if [ -n "${JULIUS_ON_RENDER:-}" ]; then
-        echo "[entrypoint] Render — building .env from .env.render.example + platform variables"
+        echo "[entrypoint] Render — building .env from env/render.env.example + platform variables"
     fi
 
     if [ ! -f vendor/autoload.php ] && [ -d /.image/vendor ]; then
@@ -95,13 +95,13 @@ fi
 # ── Environment file (compose / worker) ───────────────────────────────────────
 if [ ! -f .env ]; then
     if [ -n "${JULIUS_ON_RENDER:-}" ]; then
-        echo "[entrypoint] Render deployment — building .env from .env.render.example"
+        echo "[entrypoint] Render deployment — building .env from env/render.env.example"
         php /usr/local/bin/ensure-env.php /var/www/html/.env
-    elif [ -f .env.docker.example ]; then
-        echo "[entrypoint] Creating .env from .env.docker.example"
-        cp .env.docker.example .env
+    elif [ -f env/docker.env.example ]; then
+        echo "[entrypoint] Creating .env from env/docker.env.example"
+        cp env/docker.env.example .env
     else
-        echo "[entrypoint] ERROR: .env missing and .env.docker.example not found"
+        echo "[entrypoint] ERROR: .env missing and env/docker.env.example not found"
         exit 1
     fi
 fi

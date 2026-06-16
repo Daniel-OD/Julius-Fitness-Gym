@@ -14,6 +14,7 @@ Gym and fitness club management application built on Laravel 13, with a Filament
 - [Quick Start](#quick-start)
 - [Development](#development)
 - [Project Layout](#project-layout)
+- [Documentation](#documentation)
 - [API](#api)
 - [Localization](#localization)
 - [Branching](#branching)
@@ -157,36 +158,35 @@ php artisan route:list --path=api
 ## Project Layout
 
 ```
-app/                           # Models, Filament resources, services, API
-├── Filament/                  # Admin resources & pages
-├── Models/                    # Eloquent models
-├── Services/                  # Business logic
-└── Http/Controllers/          # API controllers
+app/                    # Models, Filament, services, API
+database/               # Migrations, factories, seeders
+resources/              # Views, CSS/JS, translations
+routes/                 # web.php, api.php
+storage/data/           # settingsData.json (runtime settings)
+tests/                  # Pest tests
 
-database/
-├── migrations/                # Database schema
-├── factories/                 # Model factories
-└── seeders/                   # Database seeders
+docs/                   # Guides (test, deploy, Docker, Render) — see docs/README.md
+env/                    # Platform .env templates (docker, render, railway)
+docker/                 # Dockerfile helpers (entrypoint, nginx, PHP)
+scripts/                # install, cache-warm, open-local
+installer/              # Windows/macOS packaged installers
 
-resources/
-├── css/
-│   └── filament/admin/        # Custom Filament theme
-├── js/                        # JavaScript assets
-├── views/                     # Blade templates (Breeze, Filament overrides, emails)
-└── lang/                      # en/ro app translations (app.php)
+.env.example            # Local dev environment (Laravel standard)
+docker-compose.yml      # Local Docker stack
+Dockerfile                # Production image (Render / Railway)
+render.yaml               # Render blueprint
 
-routes/
-├── web.php                    # Web routes (Breeze, Admin)
-└── api.php                    # REST API routes (Sanctum)
-
-storage/
-└── data/                      # settingsData.json (runtime settings)
-
-tests/                         # Pest feature & unit tests
-
-CLAUDE.md                      # Agent-oriented contributor notes
-AGENTS.md                      # Laravel Boost guidelines
+AGENTS.md / CLAUDE.md    # AI agent guidelines (keep at root for tooling)
 ```
+
+## Documentation
+
+Detailed guides live in **[docs/](docs/README.md)**:
+
+- [Local testing](docs/GYM_TEST_README.md) — Windows/macOS without Docker
+- [Deployment](docs/GYM_DEPLOYMENT_GUIDE.md) — production & gym floor setup
+- [Docker](docs/DOCKER_SETUP.md) · [Render](docs/RENDER_DEPLOY.md)
+- [Environment templates](env/README.md) — `env/*.env.example`
 
 ## API
 

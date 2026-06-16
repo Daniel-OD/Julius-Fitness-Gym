@@ -90,9 +90,9 @@ Render sets automatically:
 | Variable | Purpose |
 |----------|---------|
 | `PORT` | HTTP port nginx listens on (do **not** override) |
-| `RENDER` | Detected by entrypoint — skips local `.env.docker.example` |
+| `RENDER` | Detected by entrypoint — skips local `env/docker.env.example` |
 
-See `.env.render.example` for a full template.
+See `env/render.env.example` for a full template.
 
 ---
 
@@ -245,7 +245,7 @@ php artisan app:cache
 | `docker/entrypoint.sh` | Startup: DB wait, migrate, permissions, `$PORT` nginx |
 | `docker/start-web.sh` | Starts php-fpm (background) + nginx on `$PORT` (foreground) |
 | `docker/nginx/render.conf.template` | Nginx config with `${PORT}` |
-| `.env.render.example` | Environment variable reference |
+| `env/render.env.example` | Environment variable reference |
 
 ---
 
@@ -256,7 +256,7 @@ php artisan app:cache
 | Database | MySQL 8 | PostgreSQL |
 | Docker target | `app` + separate nginx | `production` (all-in-one) |
 | Port | 80 | `$PORT` (Render-assigned) |
-| Env file | `.env.docker.example` | Render Dashboard / `render.yaml` |
+| Env file | `env/docker.env.example` | Render Dashboard / `render.yaml` |
 
 Use `docker compose up` for local multi-container dev; use Render Blueprint for cloud deployment.
 

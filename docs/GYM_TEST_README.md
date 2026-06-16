@@ -25,7 +25,7 @@ Julius Fitness Gym este o aplicație de management pentru săli de fitness. Perm
 | Componentă | Minim | Recomandat |
 |------------|-------|------------|
 | **PHP** | 8.4+ | Laravel Herd (include PHP + SQLite) |
-| **Extensii PHP** | `pdo_sqlite`, `mbstring`, `openssl`, `fileinfo`, `curl`, `zip` | Vezi `php.ini.example` pe Windows |
+| **Extensii PHP** | `pdo_sqlite`, `mbstring`, `openssl`, `fileinfo`, `curl`, `zip` | Vezi `docs/php.ini.example` pe Windows |
 | **Composer** | 2.x | [getcomposer.org](https://getcomposer.org) |
 | **Node.js** | 20+ LTS | [nodejs.org](https://nodejs.org) — necesar pentru `npm run build` |
 | **Bază de date** | SQLite (`database/database.sqlite`) | Nu necesită MySQL pentru test local |
@@ -332,8 +332,8 @@ Restore-ul creează automat un backup de siguranță înainte (dacă backup-ul e
 | **Pagină fără design** | `npm install && npm run build` |
 | **Pagină se încarcă foarte greu (10–30 s)** | Fișierul `public/hot` indică Vite pe `:5173` fără server activ. Șterge `public/hot` sau rulează `npm run dev` / `composer run dev`. După `npm run build`, șterge mereu `public/hot` dacă nu folosești Vite. |
 | **Pagini lente în general** | Rulează `php artisan app:cache` sau `scripts\cache-warm.bat` — cache-uiește rute, config și Filament. După modificări cod: `php artisan app:cache --clear` apoi rebuild. |
-| **500 / Maximum execution time on dashboard** | Dashboard-ul analytics e greu; limita PHP e 30s pe Windows. Rulează `php artisan app:cache --clear`, repornește serverul, sau setează `max_execution_time=120` în `php.ini` (vezi `php.ini.example`). |
-| **could not find driver (sqlite)** | Activează `pdo_sqlite` în PHP; pe Windows vezi `php.ini.example` |
+| **500 / Maximum execution time on dashboard** | Dashboard-ul analytics e greu; limita PHP e 30s pe Windows. Rulează `php artisan app:cache --clear`, repornește serverul, sau setează `max_execution_time=120` în `php.ini` (vezi `docs/php.ini.example`). |
+| **could not find driver (sqlite)** | Activează `pdo_sqlite` în PHP; pe Windows vezi `docs/php.ini.example` |
 | **Vite manifest missing** | `npm run build` |
 | **500 la Setări / țări** | Rulează `WorldSeeder` sau completează manual moneda în setări |
 | **Parolă uitată** | `php artisan app:install --force --email=admin@julius.test --password=GymTest2026!` |

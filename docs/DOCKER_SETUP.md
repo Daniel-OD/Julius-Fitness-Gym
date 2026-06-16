@@ -55,7 +55,7 @@ cd Julius-Fitness-Gym
 ### 2. Creează fișierul `.env`
 
 ```bash
-cp .env.docker.example .env
+cp env/docker.env.example .env
 ```
 
 Editează dacă e nevoie (parole MySQL, `APP_URL`).
@@ -83,7 +83,7 @@ Aplicația: **http://localhost/admin/login**
 
 La pornirea containerului **app**:
 
-1. Creează `.env` din `.env.docker.example` (dacă lipsește)
+1. Creează `.env` din `env/docker.env.example` (dacă lipsește)
 2. Așteaptă MySQL
 3. Restaurează `vendor/` și `public/build/` din imagine (dacă bind-mount-ul le golește)
 4. Generează `APP_KEY` (dacă lipsește)
@@ -284,7 +284,7 @@ docker compose --profile redis up -d
 | `docker/nginx/default.conf` | Config nginx Laravel |
 | `docker/php/php.ini` | PHP 512M, opcache, upload 64M |
 | `docker/entrypoint.sh` | Setup automat la pornire |
-| `.env.docker.example` | Template mediu Docker |
+| `env/docker.env.example` | Template mediu Docker |
 
 ---
 

@@ -23,8 +23,7 @@ docker-compose.yml
 # Environment & secrets
 .env
 .env.*
-!.env.docker.example
-!.env.render.example
+!.env.example
 
 # Storage runtime (ephemeral on Render unless a disk is attached)
 /storage/*.key

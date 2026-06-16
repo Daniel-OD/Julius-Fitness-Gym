@@ -28,7 +28,7 @@ Aplicația Laravel 13 + Filament 5 a fost pregătită pentru deploy Docker cu ar
 | `Dockerfile` | Build multi-stage: Node 22 (Vite) → Composer 2 → PHP 8.4-FPM cu extensii necesare |
 | `docker-compose.yml` | Servicii: `app`, `nginx` (:80), `mysql`, `queue`, `redis` (profil) |
 | `.dockerignore` | Exclude vendor, node_modules, .env, storage runtime, teste |
-| `.env.docker.example` | Template mediu MySQL + queue/cache/session pe database |
+| `env/docker.env.example` | Template mediu MySQL + queue/cache/session pe database |
 | `docker/nginx/default.conf` | Nginx → FastCGI `app:9000` |
 | `docker/php/php.ini` | memory 512M, opcache, upload 64M |
 | `docker/entrypoint.sh` | Setup automat la pornire |
@@ -88,7 +88,7 @@ Port 80 → nginx → app:9000 (PHP-FPM)
 4. **WorldSeeder** — necesită `php -d memory_limit=512M`; documentat în DOCKER_SETUP.md, nu automatizat în entrypoint.
 5. **Filament Shield** — după `app:install`, permisiunile se generează automat; resurse noi necesită `shield:generate` manual.
 6. **Scheduler Laravel** — nu există container cron; pe producție adaugă cron host sau serviciu separat: `* * * * * docker compose exec app php artisan schedule:run`.
-7. **Email producție** — `.env.docker.example` folosește `MAIL_MAILER=log`; configurează SMTP real pentru producție.
+7. **Email producție** — `env/docker.env.example` folosește `MAIL_MAILER=log`; configurează SMTP real pentru producție.
 8. **Healthcheck MySQL** — parola root din healthcheck depinde de variabila `MYSQL_ROOT_PASSWORD` din `.env`; asigură consistența la schimbare parolă.
 
 ---
@@ -97,7 +97,7 @@ Port 80 → nginx → app:9000 (PHP-FPM)
 
 1. **Test complet Docker:**
    ```bash
-   cp .env.docker.example .env
+   cp env/docker.env.example .env
    docker compose up -d --build
    docker compose exec app php artisan app:install --force --email=admin@test.local --password='Test1234!' --url=http://localhost
    ```
