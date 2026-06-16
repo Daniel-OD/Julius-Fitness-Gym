@@ -165,8 +165,7 @@ routes/                 # web.php, api.php
 storage/data/           # settingsData.json (runtime settings)
 tests/                  # Pest tests
 
-docs/                   # Guides (test, deploy, Docker, Render) — see docs/README.md
-env/                    # Platform .env templates (docker, render, railway)
+docs/                   # Guides (test, deploy, Docker, Render)
 docker/                 # Dockerfile helpers (entrypoint, nginx, PHP)
 scripts/                # install, cache-warm, open-local
 installer/              # Windows/macOS packaged installers
@@ -181,12 +180,12 @@ AGENTS.md / CLAUDE.md    # AI agent guidelines (keep at root for tooling)
 
 ## Documentation
 
-Detailed guides live in **[docs/](docs/README.md)**:
+Detailed guides live in **[docs/](docs/)**:
 
 - [Local testing](docs/GYM_TEST_README.md) — Windows/macOS without Docker
 - [Deployment](docs/GYM_DEPLOYMENT_GUIDE.md) — production & gym floor setup
 - [Docker](docs/DOCKER_SETUP.md) · [Render](docs/RENDER_DEPLOY.md)
-- [Environment templates](env/README.md) — `env/*.env.example`
+- Environment templates at root: `.env.docker.example`, `.env.render.example`, `.env.railway.example`
 
 ## API
 
