@@ -35,7 +35,7 @@ installer\build-installer.bat
 ### macOS (pe Mac)
 
 ```bash
-chmod +x installer/build-dmg.sh install.sh installer/*.sh
+chmod +x installer/build-dmg.sh scripts/install.sh installer/*.sh
 ./installer/build-dmg.sh
 ```
 
@@ -65,8 +65,8 @@ chmod +x installer/build-dmg.sh install.sh installer/*.sh
 
 ```bash
 cd ~/Herd/julius-fitness-gym
-./install.sh
-./open.command
+./scripts/install.sh
+./scripts/open.command
 ```
 
 Sau: `composer run setup` apoi `php artisan app:install`.
@@ -86,9 +86,9 @@ php artisan app:install --email=... --password=...
 
 | Fișier | Rol |
 |--------|-----|
-| `install.bat` / `install.sh` | Intrare instalare |
+| `scripts/install.bat` / `scripts/install.sh` | Intrare instalare |
 | `installer/post-install.*` | Logică completă |
 | `installer/check-prerequisites.*` | Verificări (Herd obligatoriu) |
 | `app/Console/Commands/InstallApplication.php` | Admin + `.env` + credențiale |
 | `herd.yml` | Config Herd (`herd init`) |
-| `open.bat` / `open.command` | Deschide `/admin` |
+| `scripts/open.bat` / `scripts/open.command` | Deschide `/admin` |

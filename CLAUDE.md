@@ -105,32 +105,27 @@ After creating a new Filament Resource, run `php artisan shield:generate --resou
 
 # Laravel Boost Guidelines
 
-The Laravel Boost guidelines are specifically curated by Laravel maintainers for this application. These guidelines should be followed closely to ensure the best experience when building Laravel a[...]
+The Laravel Boost guidelines are specifically curated by Laravel maintainers for this application. These guidelines should be followed closely to ensure the best experience when building Laravel applications.
 
 ## Foundational Context
 
 This application is a Laravel application and its main Laravel ecosystems package & versions are below. You are an expert with them all. Ensure you abide by these specific packages & versions.
 
-- php - 8.4
-- barryvdh/laravel-dompdf - v3.1
-- bezhansalleh/filament-shield - v4.0
+- php - 8.5
 - filament/filament (FILAMENT) - v5
-- laravel/framework (LARAVEL) - v13.8
+- laravel/framework (LARAVEL) - v13
+- laravel/prompts (PROMPTS) - v0
 - laravel/sanctum (SANCTUM) - v4
-- laravel/tinker (TINKER) - v3
-- nnjeim/world (WORLD) - v1.1
-- spatie/laravel-query-builder (QUERYBUILDER) - v6.4
+- livewire/livewire (LIVEWIRE) - v4
 - laravel/boost (BOOST) - v2
-- laravel/breeze (BREEZE) - v2.4
-- laravel/pail (PAIL) - v1.2.5
-- laravel/pao (PAO) - v1.0.6
-- laravel/pint (PINT) - v1.27
-- pestphp/pest (PEST) - v4.7
-- pestphp/pest-plugin-laravel - v4.1
-- fakerphp/faker - v1.23
-- mockery/mockery - v1.6
-- nunomaduro/collision - v8.6
-- tailwindcss (TAILWINDCSS) - v4.1.18
+- laravel/breeze (BREEZE) - v2
+- laravel/mcp (MCP) - v0
+- laravel/pail (PAIL) - v1
+- laravel/pint (PINT) - v1
+- pestphp/pest (PEST) - v4
+- phpunit/phpunit (PHPUNIT) - v12
+- alpinejs (ALPINEJS) - v3
+- tailwindcss (TAILWINDCSS) - v4
 
 ## Skills Activation
 
@@ -191,13 +186,13 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 
 ## Artisan
 
-- Run Artisan commands directly via the command line (e.g., `php artisan route:list`). Use `php artisan list` to discover available commands and `php artisan [command] --help` to check parameters[...]
+- Run Artisan commands directly via the command line (e.g., `php artisan route:list`). Use `php artisan list` to discover available commands and `php artisan [command] --help` to check parameters.
 - Inspect routes with `php artisan route:list`. Filter with: `--method=GET`, `--name=users`, `--path=api`, `--except-vendor`, `--only-vendor`.
 - Read configuration values using dot notation: `php artisan config:show app.name`, `php artisan config:show database.default`. Or read config files directly from the `config/` directory.
 
 ## Tinker
 
-- Execute PHP in app context for debugging and testing code. Do not create models without user approval, prefer tests with factories instead. Prefer existing Artisan commands over custom tinker c[...]
+- Execute PHP in app context for debugging and testing code. Do not create models without user approval, prefer tests with factories instead. Prefer existing Artisan commands over custom tinker code.
 - Always use single quotes to prevent shell expansion: `php artisan tinker --execute 'Your::code();'`
   - Double quotes for PHP strings inside: `php artisan tinker --execute 'User::where("active", true)->count();'`
 
@@ -208,7 +203,7 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 - Always use curly braces for control structures, even for single-line bodies.
 - Use PHP 8 constructor property promotion: `public function __construct(public GitHub $github) { }`. Do not leave empty zero-parameter `__construct()` methods unless the constructor is private.
 - Use explicit return type declarations and type hints for all method parameters: `function isAccessible(User $user, ?string $path = null): bool`
-- Follow existing application Enum naming conventions.
+- Use TitleCase for Enum keys: `FavoritePerson`, `BestLake`, `Monthly`.
 - Prefer PHPDoc blocks over inline comments. Only add inline comments for exceptionally complex logic.
 - Use array shape type definitions in PHPDoc blocks.
 
@@ -218,11 +213,18 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 
 - Laravel can be deployed using [Laravel Cloud](https://cloud.laravel.com/), which is the fastest way to deploy and scale production Laravel applications.
 
+=== tests rules ===
+
+# Test Enforcement
+
+- Every change must be programmatically tested. Write a new test or update an existing test, then run the affected tests to make sure they pass.
+- Run the minimum number of tests needed to ensure code quality and speed. Use `php artisan test --compact` with a specific filename or filter.
+
 === laravel/core rules ===
 
 # Do Things the Laravel Way
 
-- Use `php artisan make:` commands to create new files (i.e. migrations, controllers, models, etc.). You can list available Artisan commands using `php artisan list` and check their parameters wi[...]
+- Use `php artisan make:` commands to create new files (i.e. migrations, controllers, models, etc.). You can list available Artisan commands using `php artisan list` and check their parameters with `php artisan [command] --help`.
 - If you're creating a generic PHP class, use `php artisan make:class`.
 - Pass `--no-interaction` to all Artisan commands to ensure they work without user input. You should also pass the correct `--options` to ensure correct behavior.
 

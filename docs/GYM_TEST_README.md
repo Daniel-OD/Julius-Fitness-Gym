@@ -69,10 +69,10 @@ php artisan storage:link
 ### Variantă C — Installer existent (Herd / Inno Setup)
 
 ```bat
-install.bat
+scripts\install.bat
 ```
 
-sau pe Mac: `./install.sh`
+sau pe Mac: `./scripts/install.sh`
 
 Instalatorul rulează `installer/post-install.*`: migrări, `app:install`, link Herd. **Atenție:** fără `--password`, `app:install` generează o **parolă aleatorie** afișată o singură dată în terminal — noteaz-o imediat.
 
@@ -107,7 +107,7 @@ Deschide:
 - **Admin:** http://127.0.0.1:8000/admin/login  
 - **Recepție:** http://127.0.0.1:8000/office/login  
 
-Shortcut Windows: dublu-click `open-local.bat`
+Shortcut Windows: dublu-click `scripts\open-local.bat`
 
 ### Cu Herd (dacă e instalat)
 
@@ -115,7 +115,7 @@ Shortcut Windows: dublu-click `open-local.bat`
 herd link julius-fitness-gym
 ```
 
-Apoi: http://julius-fitness-gym.test/admin/login (sau `open.bat` / `open.command`)
+Apoi: http://julius-fitness-gym.test/admin/login (sau `scripts\open.bat` / `scripts/open.command`)
 
 ### Development complet (server + Vite + queue + loguri)
 
@@ -267,7 +267,7 @@ php artisan gym:invoices --mark-overdue
 | **Email** | Local: `MAIL_MAILER=log` (în `storage/logs`). Producție: Resend — `MAIL_MAILER=resend` + `RESEND_API_KEY`. |
 | **Queue** | Fără `queue:work`, emailurile/PDF-urile queued pot întârzia. |
 | **CSS lipsă** | Fără `npm run build`, panourile Filament apar fără stil. |
-| **Parolă installer** | `install.bat` fără `--password` → parolă aleatorie, o singură afișare. |
+| **Parolă installer** | `scripts\install.bat` fără `--password` → parolă aleatorie, o singură afișare. |
 | **Herd vs serve** | `APP_URL` trebuie să corespundă URL-ului folosit (127.0.0.1 vs julius-fitness-gym.test). |
 | **WorldSeeder** | Necesită ~512 MB RAM; opțional pentru test minim. |
 | **PC partajat** | Dacă admin rămâne logat pe `/admin`, angajatul poate accesa admin dacă știe URL-ul — folosește logout sau PC separat la recepție. |

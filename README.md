@@ -314,8 +314,8 @@ Default admin after install: `admin@julius.test` — password is **randomly gene
 Quick install from git:
 
 ```bash
-./install.sh
-./open.command
+./scripts/install.sh
+./scripts/open.command
 ```
 
 See [installer/README.md](installer/README.md) for full steps.

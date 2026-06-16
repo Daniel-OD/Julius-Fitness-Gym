@@ -5,11 +5,41 @@ window.Alpine = Alpine;
 
 Alpine.start();
 
+function debugThemeState(trigger, hypothesisId) {
+    const programSection = document.querySelector('#program');
+    const scheduleLabel = programSection?.querySelector('p.font-semibold');
+    const labelStyle = scheduleLabel ? getComputedStyle(scheduleLabel) : null;
+    const sectionStyle = programSection ? getComputedStyle(programSection) : null;
+
+    // #region agent log
+    fetch('http://127.0.0.1:7897/ingest/d6f991e9-d6f3-4d92-be2e-7338c0dd4be4', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '45e8fc' },
+        body: JSON.stringify({
+            sessionId: '45e8fc',
+            location: 'app.js:debugThemeState',
+            message: 'theme runtime state',
+            data: {
+                trigger,
+                hypothesisId,
+                htmlHasDark: document.documentElement.classList.contains('dark'),
+                storedTheme: localStorage.getItem('theme'),
+                scheduleTextColor: labelStyle?.color ?? null,
+                scheduleSectionBg: sectionStyle?.backgroundColor ?? null,
+                hasVignetteClass: !!document.querySelector('.jf-hero-vignette'),
+            },
+            timestamp: Date.now(),
+        }),
+    }).catch(() => {});
+    // #endregion
+}
+
 function initThemeToggles() {
     document.querySelectorAll('[data-theme-toggle]').forEach((button) => {
         button.addEventListener('click', () => {
             const isDark = document.documentElement.classList.toggle('dark');
             localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            debugThemeState('theme-toggle-click', 'H-B');
         });
     });
 }
@@ -141,6 +171,7 @@ function initReveal() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    debugThemeState('dom-content-loaded', 'H-C');
     initThemeToggles();
     initSidebar();
     initDropdowns();

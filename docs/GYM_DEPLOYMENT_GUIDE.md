@@ -31,7 +31,7 @@ php artisan serve
 ### Varianta C — Installer Windows (Herd)
 
 ```bat
-install.bat
+scripts\install.bat
 ```
 
 Necesită [Laravel Herd](https://herd.laravel.com/windows).

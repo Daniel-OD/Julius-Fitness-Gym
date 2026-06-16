@@ -3,6 +3,8 @@
 /Julius-Fitness-Gym
 .env
 .env.backup
+.env.bak.*
+composer.phar
 .env.production
 .phpactor.json
 .phpunit.result.cache
