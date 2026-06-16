@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Contracts\SettingsRepository;
+use App\Support\MailConfigurator;
 
 class JsonSettingsRepository implements SettingsRepository
 {
@@ -127,17 +128,7 @@ class JsonSettingsRepository implements SettingsRepository
 
         /** @var array<string, mixed> $mail */
         $mail = $settings['mail'];
-        foreach ([
-            'driver' => 'env',
-            'from_address' => '',
-            'from_name' => '',
-            'resend_api_key' => '',
-            'smtp_host' => '',
-            'smtp_port' => 587,
-            'smtp_username' => '',
-            'smtp_password' => '',
-            'smtp_encryption' => 'tls',
-        ] as $key => $default) {
+        foreach (MailConfigurator::defaultMailSettings() as $key => $default) {
             if (! array_key_exists($key, $mail)) {
                 $mail[$key] = $default;
             }

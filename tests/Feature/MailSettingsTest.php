@@ -2,6 +2,7 @@
 
 use App\Contracts\SettingsRepository;
 use App\Support\MailConfigurator;
+use Resend\Contracts\Client;
 
 it('normalizes mail settings defaults', function (): void {
     app(SettingsRepository::class)->put([
@@ -58,6 +59,19 @@ it('applies smtp transport from settings', function (): void {
         ->and(config('mail.mailers.smtp.port'))->toBe(465)
         ->and(config('mail.mailers.smtp.scheme'))->toBe('smtps');
 });
+
+it('skips resend transport when package is unavailable', function (): void {
+    config(['mail.default' => 'log']);
+
+    MailConfigurator::apply([
+        'mail' => [
+            'driver' => 'resend',
+            'resend_api_key' => 're_test_key',
+        ],
+    ]);
+
+    expect(config('mail.default'))->toBe('log');
+})->skip(interface_exists(Client::class), 'Resend package is installed in this environment.');
 
 it('keeps env mailer when driver is env', function (): void {
     config(['mail.default' => 'array']);

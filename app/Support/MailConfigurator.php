@@ -3,6 +3,7 @@
 namespace App\Support;
 
 use App\Contracts\SettingsRepository;
+use Resend\Contracts\Client;
 
 /**
  * Applies outbound mail transport settings from application settings (settingsData.json).
@@ -20,6 +21,29 @@ final class MailConfigurator
     public const DRIVER_SMTP = 'smtp';
 
     public const DRIVER_SENDMAIL = 'sendmail';
+
+    /**
+     * @return array<string, mixed>
+     */
+    public static function defaultMailSettings(): array
+    {
+        return [
+            'driver' => self::DRIVER_ENV,
+            'from_address' => '',
+            'from_name' => '',
+            'resend_api_key' => '',
+            'smtp_host' => '',
+            'smtp_port' => 587,
+            'smtp_username' => '',
+            'smtp_password' => '',
+            'smtp_encryption' => 'tls',
+        ];
+    }
+
+    public static function resendIsAvailable(): bool
+    {
+        return interface_exists(Client::class);
+    }
 
     /**
      * @param  array<string, mixed>|null  $settings
@@ -49,6 +73,12 @@ final class MailConfigurator
         }
 
         if ($driver === self::DRIVER_RESEND) {
+            if (! self::resendIsAvailable()) {
+                self::applyFromAddress($mail);
+
+                return;
+            }
+
             $apiKey = trim((string) ($mail['resend_api_key'] ?? ''));
 
             if ($apiKey !== '') {

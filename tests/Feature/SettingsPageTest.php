@@ -34,7 +34,8 @@ it('renders the settings form inside a single livewire form', function (): void 
         ->test(Settings::class)
         ->html();
 
-    expect(substr_count($html, 'wire:submit="save"'))->toBe(1);
+    expect(substr_count($html, 'wire:submit="save"'))->toBe(1)
+        ->and($html)->toContain(__('app.settings.tabs.mail'));
 });
 
 it('binds and saves with sparse settings file like fresh install', function (): void {

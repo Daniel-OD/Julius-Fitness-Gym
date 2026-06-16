@@ -81,7 +81,10 @@ class Settings extends Page implements HasForms
 
         $settings['general'] = $general;
 
-        $mail = is_array($settings['mail'] ?? null) ? $settings['mail'] : [];
+        $mail = array_merge(
+            MailConfigurator::defaultMailSettings(),
+            is_array($settings['mail'] ?? null) ? $settings['mail'] : [],
+        );
         $mail['resend_api_key'] = '';
         $mail['smtp_password'] = '';
         $settings['mail'] = $mail;
