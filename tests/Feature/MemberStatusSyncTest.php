@@ -4,7 +4,6 @@ use App\Enums\Status;
 use App\Models\Member;
 use App\Models\Plan;
 use App\Models\Subscription;
-use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
@@ -113,20 +112,4 @@ it('registers portal members as inactive until they get a subscription', functio
 
     expect($member)->not->toBeNull()
         ->and($member->status)->toBe(Status::Inactive);
-});
-
-// ─── Members list filters ────────────────────────────────────────────────────
-
-it('combines search and status filters correctly on the members list', function (): void {
-    $this->actingAs(User::factory()->create());
-
-    Member::factory()->create(['name' => 'Ana Activa', 'status' => 'active']);
-    Member::factory()->create(['name' => 'Ana Inactiva', 'status' => 'inactive']);
-    Member::factory()->create(['name' => 'Bogdan Activ', 'status' => 'active']);
-
-    $this->get(route('web.members.index', ['search' => 'Ana', 'status' => 'inactive']))
-        ->assertSuccessful()
-        ->assertSee('Ana Inactiva')
-        ->assertDontSee('Ana Activa')
-        ->assertDontSee('Bogdan Activ');
 });

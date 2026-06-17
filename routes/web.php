@@ -12,7 +12,6 @@ use App\Http\Controllers\MemberImportDownloadController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PublicLocaleController;
 use App\Http\Controllers\Reception\ReceptionScanController;
-use App\Http\Controllers\SubscriptionController;
 use Illuminate\Support\Facades\Route;
 
 // Legacy Breeze login URL — staff use /staff/login (Filament).
@@ -86,24 +85,6 @@ Route::middleware('auth')->group(function () {
 
     Route::get('members/{member}/qr', [MemberController::class, 'qr'])->name('web.members.qr');
     Route::get('members/{member}/qr/download', [MemberController::class, 'qrDownload'])->name('web.members.qr.download');
-    Route::resource('members', MemberController::class)->names([
-        'index' => 'web.members.index',
-        'create' => 'web.members.create',
-        'store' => 'web.members.store',
-        'show' => 'web.members.show',
-        'edit' => 'web.members.edit',
-        'update' => 'web.members.update',
-        'destroy' => 'web.members.destroy',
-    ]);
-    Route::resource('subscriptions', SubscriptionController::class)->names([
-        'index' => 'web.subscriptions.index',
-        'create' => 'web.subscriptions.create',
-        'store' => 'web.subscriptions.store',
-        'show' => 'web.subscriptions.show',
-        'edit' => 'web.subscriptions.edit',
-        'update' => 'web.subscriptions.update',
-        'destroy' => 'web.subscriptions.destroy',
-    ]);
 });
 
 require __DIR__.'/auth.php';
