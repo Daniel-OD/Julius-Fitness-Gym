@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Users\Pages;
 
+use App\Filament\Resources\Users\Actions\ResetUserPasswordAction;
 use App\Filament\Resources\Users\UserResource;
 use App\Models\User;
 use Filament\Actions\DeleteAction;
@@ -27,6 +28,7 @@ class ViewUser extends ViewRecord
     {
         return [
             EditAction::make(),
+            ResetUserPasswordAction::make(),
             DeleteAction::make(),
         ];
     }

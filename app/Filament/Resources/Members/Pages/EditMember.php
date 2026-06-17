@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Members\Pages;
 
+use App\Filament\Resources\Members\Actions\ResetMemberPasswordAction;
 use App\Filament\Resources\Members\MemberResource;
 use App\Models\Member;
 use Filament\Actions\DeleteAction;
@@ -21,6 +22,7 @@ class EditMember extends EditRecord
     {
         return [
             ViewAction::make(),
+            ResetMemberPasswordAction::make(),
             DeleteAction::make(),
             ForceDeleteAction::make(),
             RestoreAction::make(),

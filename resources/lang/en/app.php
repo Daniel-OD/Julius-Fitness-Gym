@@ -399,6 +399,8 @@ return [
         'change_password' => 'Change password',
         'force_change_notice' => 'For security reasons, you must change your password before continuing.',
         'password_changed' => 'Password changed successfully.',
+        'reset_password_confirm' => 'A new random password will be generated and emailed to this user. They will be asked to change it on next login.',
+        'reset_member_password_confirm' => 'A new random password will be generated and emailed to this member for the member portal.',
     ],
 
     'actions' => [
@@ -431,6 +433,7 @@ return [
         'mark_as_lost' => 'Mark as lost',
         'logout' => 'Log out',
         'send_portal_invitation' => 'Send portal invitation',
+        'reset_password' => 'Reset password',
         'notify_expiration' => 'Notify expiration',
         'notify_expiration_bulk' => 'Notify expiration (selection)',
         'send_expiration_notification_now' => 'Send notification now',
@@ -465,6 +468,11 @@ return [
         'show_qr' => 'Show QR at entrance',
         'qr_scan_hint' => 'Show this screen to reception to check in.',
         'password_already_set' => 'A password is already set for this account. Use login instead.',
+        'forgot_password_title' => 'Forgot password',
+        'forgot_password_intro' => 'Enter your email address and we will send you a new password.',
+        'forgot_password_button' => 'Email new password',
+        'forgot_password_link' => 'Forgot your password?',
+        'password_reset_sent' => 'If an account exists for that email, a new password has been sent.',
     ],
 
     'options' => [
@@ -582,6 +590,8 @@ return [
         'receipt_email_queued_to' => 'Receipt email queued to :email',
         'email_queued' => 'Email queued',
         'portal_invitation_queued' => 'Portal invitation email queued',
+        'password_reset_queued' => 'Password reset email sent',
+        'password_reset_queued_body' => 'A new password was emailed to :email.',
         'expiring_email_confirm' => 'Send an expiration email to :member? The subscription expires on :expires_at.',
         'expiring_email_sent' => 'Email sent to :email',
         'member_has_no_email' => 'Member has no email set',
@@ -928,6 +938,13 @@ return [
         'portal_invitation_subject' => 'Set up your member portal — :gym',
         'portal_invitation_line' => 'You have been invited to access the <strong>:gym</strong> member portal. Set your password using the button below.',
         'portal_invitation_button' => 'Set my password',
+        'password_reset_subject' => 'Your new password — :gym',
+        'password_reset_password_label' => 'Your new password',
+        'password_reset_member_line' => 'Your member portal password for <strong>:gym</strong> has been reset. Use the password below to sign in.',
+        'password_reset_member_button' => 'Sign in to member portal',
+        'password_reset_user_line' => 'Your staff account password for <strong>:gym</strong> has been reset. Use the password below to sign in.',
+        'password_reset_user_button' => 'Sign in to admin',
+        'password_reset_security_note' => 'For security, change this password after signing in if you can.',
     ],
 
 ];

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Users\Tables;
 
+use App\Filament\Resources\Users\Actions\ResetUserPasswordAction;
 use App\Models\User;
 use Carbon\Carbon;
 use Filament\Actions\Action;
@@ -186,6 +187,7 @@ class UserTable
                             ->color('gray'),
                         ViewAction::make(),
                         EditAction::make(),
+                        ResetUserPasswordAction::make(),
                         DeleteAction::make(),
                         RestoreAction::make(),
                     ])->dropdown(false),
