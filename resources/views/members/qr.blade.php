@@ -46,7 +46,7 @@
             </a>
         </div>
 
-        <a href="{{ route('web.members.show', $member) }}"
+        <a href="{{ route('filament.admin.resources.members.view', $member) }}"
             class="mt-8 text-sm font-medium text-zinc-500 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
             ← {{ __('app.members.qr.back') }}
         </a>
