@@ -873,9 +873,14 @@ class Settings extends Page implements HasForms
             return;
         }
 
-        MailConfigurator::apply($this->form->getState());
+        $formState = $this->form->getState();
 
-        $gymName = (string) (data_get($this->form->getState(), 'general.gym_name') ?: config('app.name'));
+        MailConfigurator::apply($formState);
+
+        // Force-purge any cached mailer so the new config (API key, host, etc.) is picked up.
+        Mail::forgetMailers();
+
+        $gymName = (string) (data_get($formState, 'general.gym_name') ?: config('app.name'));
 
         try {
             Mail::to($user->email)->send(new TestMailConfigurationMail($gymName));
@@ -890,10 +895,26 @@ class Settings extends Page implements HasForms
 
             Notification::make()
                 ->title(__('app.settings.mail.test_failed_title'))
-                ->body(__('app.settings.mail.test_failed_body'))
+                ->body($this->formatMailException($exception))
                 ->danger()
                 ->send();
         }
+    }
+
+    private function formatMailException(\Throwable $exception): string
+    {
+        $message = $exception->getMessage();
+
+        // Surface the Resend API error body when available (e.g. domain not verified, invalid key).
+        if ($exception->getPrevious() !== null) {
+            $inner = $exception->getPrevious()->getMessage();
+            if (filled($inner) && strlen($inner) < 300) {
+                $message = $inner;
+            }
+        }
+
+        // Trim to a readable length for the notification body.
+        return mb_strlen($message) > 250 ? mb_substr($message, 0, 247).'…' : $message;
     }
 
     /**
