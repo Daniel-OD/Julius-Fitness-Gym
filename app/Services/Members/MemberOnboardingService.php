@@ -17,17 +17,43 @@ use Illuminate\Support\Facades\DB;
 class MemberOnboardingService
 {
     /**
+     * Create a member, subscription and invoice directly (no source enquiry).
+     *
+     * @param  array<string, mixed>  $data
+     */
+    public function create(array $data): Member
+    {
+        return $this->createMemberWithSubscription($data);
+    }
+
+    /**
      * Create a member, subscription and invoice from wizard form data and
      * update the source enquiry to status 'member'.
      *
-     * Member status is intentionally left to the SubscriptionObserver —
-     * it calls MemberStatusSyncService after every Subscription save.
-     *
-     * @param  array<string, mixed>  $data  Flat form data from the onboarding wizard
+     * @param  array<string, mixed>  $data
      */
     public function createFromEnquiry(Enquiry $enquiry, array $data): Member
     {
-        return DB::transaction(function () use ($enquiry, $data): Member {
+        $member = $this->createMemberWithSubscription($data);
+
+        $enquiry->update(['status' => 'member']);
+
+        return $member;
+    }
+
+    /**
+     * Core transaction: create Member → Subscription → Invoice.
+     *
+     * Member status is intentionally left to SubscriptionObserver —
+     * it calls MemberStatusSyncService after every Subscription save.
+     * Invoice totals (tax, total_amount, due_amount) are computed by
+     * Invoice::boot()::saving() via InvoiceCalculator.
+     *
+     * @param  array<string, mixed>  $data
+     */
+    private function createMemberWithSubscription(array $data): Member
+    {
+        return DB::transaction(function () use ($data): Member {
             $member = Member::create([
                 'name' => Data::string($data['name']),
                 'email' => Data::nullableString($data['email'] ?? null),
@@ -81,8 +107,6 @@ class MemberOnboardingService
                 'subscription_fee' => round((float) $plan->amount, 2),
                 'status' => 'issued',
             ]);
-
-            $enquiry->update(['status' => 'member']);
 
             return $member;
         });

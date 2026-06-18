@@ -203,3 +203,40 @@ it('creates invoice transaction automatically for cash payments via observer', f
 
     expect($invoice->transactions()->count())->toBe(1);
 });
+
+// ─── create() — direct onboarding without enquiry ───────────────────────────
+
+it('create() builds a member without requiring an enquiry', function (): void {
+    $plan = onboardingPlan(amount: 120, days: 30);
+
+    $member = app(MemberOnboardingService::class)->create(
+        onboardingData($plan, ['email' => 'direct@example.com']),
+    );
+
+    expect($member)->toBeInstanceOf(Member::class)
+        ->and($member->email)->toBe('direct@example.com')
+        ->and($member->subscriptions()->count())->toBe(1)
+        ->and($member->subscriptions()->first()->invoices()->count())->toBe(1);
+});
+
+it('create() activates member status via SubscriptionObserver', function (): void {
+    $plan = onboardingPlan();
+
+    $member = app(MemberOnboardingService::class)->create(
+        onboardingData($plan, ['email' => 'direct2@example.com']),
+    );
+
+    expect($member->fresh()->status)->toBe(Status::Active);
+});
+
+it('createFromEnquiry() still marks enquiry as member after refactor', function (): void {
+    $plan = onboardingPlan();
+    $enquiry = onboardingEnquiry(['email' => 'enquiry-refactor@example.com']);
+
+    app(MemberOnboardingService::class)->createFromEnquiry(
+        $enquiry,
+        onboardingData($plan, ['email' => 'enquiry-refactor@example.com']),
+    );
+
+    expect($enquiry->fresh()->status->value)->toBe('member');
+});
