@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Resources\Invoices\Schemas;
 
 use App\Filament\Resources\Subscriptions\RelationManagers\InvoicesRelationManager;
+use App\Filament\Resources\Subscriptions\Schemas\SubscriptionForm;
 use App\Helpers\Helpers;
 use App\Models\Invoice;
 use App\Models\Subscription;
@@ -42,17 +43,7 @@ class InvoiceForm
                             ->columns(3)
                             ->columnSpan(3)
                             ->schema([
-                                TextInput::make('number')
-                                    ->label(__('app.fields.invoice_number'))
-                                    ->required()
-                                    ->readOnly()
-                                    ->disabled()
-                                    ->dehydrated()
-                                    ->default(fn (Get $get) => Helpers::generateLastNumber(
-                                        'invoice',
-                                        Invoice::class,
-                                        self::stringState($get, 'date')
-                                    )),
+                                SubscriptionForm::invoiceNumberField(),
                                 Select::make('subscription_id')
                                     ->label(__('app.fields.subscription'))
                                     ->reactive()
@@ -105,10 +96,21 @@ class InvoiceForm
                                     ->label(__('app.fields.date'))
                                     ->required()
                                     ->reactive()
-                                    ->default(now()),
+                                    ->default(now())
+                                    ->afterStateUpdated(function (Get $get, Set $set, ?string $state): void {
+                                        $set('number', Helpers::generateLastNumber(
+                                            'invoice',
+                                            Invoice::class,
+                                            $state,
+                                        ));
+                                        if (blank($get('due_date'))) {
+                                            $set('due_date', $state);
+                                        }
+                                    }),
                                 DatePicker::make('due_date')
                                     ->label(__('app.fields.due_date'))
                                     ->required()
+                                    ->default(fn () => now()->toDateString())
                                     ->reactive(),
                                 Select::make('discount')
                                     ->label(__('app.fields.discount'))

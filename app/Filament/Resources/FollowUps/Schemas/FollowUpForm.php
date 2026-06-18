@@ -37,7 +37,7 @@ class FollowUpForm
                     ->label(__('app.fields.schedule_date'))
                     ->closeOnDateSelection()
                     ->required()
-                    ->required()
+                    ->default(fn () => now()->addDays(7)->toDateString())
                     ->minDate(now()),
             ]);
     }

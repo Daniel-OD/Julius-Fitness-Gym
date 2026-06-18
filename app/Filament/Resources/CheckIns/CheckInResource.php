@@ -202,6 +202,12 @@ class CheckInResource extends Resource
                         Select::make('member_id')
                             ->label(__('app.fields.member'))
                             ->options(fn (): array => Member::query()
+                                ->whereHas('subscriptions', function ($query): void {
+                                    $today = CarbonImmutable::today(AppConfig::timezone())->toDateString();
+                                    $query->whereDate('start_date', '<=', $today)
+                                        ->whereDate('end_date', '>=', $today)
+                                        ->whereNotIn('status', ['cancelled', 'renewed']);
+                                })
                                 ->orderBy('name')
                                 ->pluck('name', 'id')
                                 ->all())

@@ -43,6 +43,7 @@ class PasswordResetMail extends Mailable
     {
         return new Content(
             view: 'emails.auth.password-reset',
+            text: 'emails.auth.password-reset-text',
             with: [
                 'gymName' => $this->gymName,
                 'gymEmail' => $this->gymEmail,

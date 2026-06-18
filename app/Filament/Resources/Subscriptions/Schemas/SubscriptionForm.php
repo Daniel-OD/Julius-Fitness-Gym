@@ -9,6 +9,7 @@ use App\Models\Invoice;
 use App\Models\Member;
 use App\Models\Plan;
 use App\Models\Subscription;
+use App\Services\Subscriptions\SubscriptionRenewalService;
 use App\Support\AppConfig;
 use App\Support\Billing\InvoiceCalculator;
 use App\Support\Billing\PaymentMethod;
@@ -174,26 +175,22 @@ class SubscriptionForm
                                         ->columns(2)
                                         ->columnSpan(3)
                                         ->schema([
-                                            TextInput::make('number')
-                                                ->label(__('app.fields.invoice_number'))
-                                                ->required()
-                                                ->readOnly()
-                                                ->disabled()
-                                                ->dehydrated()
-                                                ->rule(Rule::unique('invoices', 'number'))
-                                                ->default(fn (Get $get) => Helpers::generateLastNumber(
-                                                    'invoice',
-                                                    Invoice::class,
-                                                    self::stringState($get, 'date')
-                                                )),
+                                            self::invoiceNumberField(),
                                             DatePicker::make('date')
                                                 ->label(__('app.fields.date'))
                                                 ->required()
                                                 ->reactive()
-                                                ->default(now()),
+                                                ->default(now())
+                                                ->afterStateUpdated(function (Get $get, Set $set, ?string $state): void {
+                                                    $set('number', self::generatedInvoiceNumber($get, 'date', $state));
+                                                    if (blank($get('due_date'))) {
+                                                        $set('due_date', $state);
+                                                    }
+                                                }),
                                             DatePicker::make('due_date')
                                                 ->label(__('app.fields.due_date'))
                                                 ->required()
+                                                ->default(fn () => now()->toDateString())
                                                 ->reactive(),
                                             Select::make('discount')
                                                 ->label(__('app.fields.discount'))
@@ -255,6 +252,8 @@ class SubscriptionForm
                                                 ->afterStateUpdated(function (Get $get, Set $set, ?string $state): void {
                                                     if (PaymentMethod::isOnline($state)) {
                                                         $set('paid_amount', 0);
+                                                    } elseif ($state === 'cash') {
+                                                        $set('paid_amount', self::floatState($get, 'total_amount'));
                                                     }
 
                                                     self::recalculateInvoiceSummary($get, $set);
@@ -382,18 +381,7 @@ class SubscriptionForm
                     Group::make()
                         ->columns(2)
                         ->schema([
-                            TextInput::make('invoice_number')
-                                ->label(__('app.fields.invoice_number'))
-                                ->required()
-                                ->readOnly()
-                                ->disabled()
-                                ->dehydrated()
-                                ->rule(Rule::unique('invoices', 'number'))
-                                ->default(fn (Get $get) => Helpers::generateLastNumber(
-                                    'invoice',
-                                    Invoice::class,
-                                    self::stringState($get, 'invoice_date'),
-                                )),
+                            self::invoiceNumberField('invoice_date', 'invoice_number'),
                             DatePicker::make('invoice_date')
                                 ->label(__('app.fields.invoice_date'))
                                 ->native(false)
@@ -472,6 +460,8 @@ class SubscriptionForm
                                 ->afterStateUpdated(function (Get $get, Set $set, ?string $state): void {
                                     if (PaymentMethod::isOnline($state)) {
                                         $set('paid_amount', 0);
+                                    } elseif ($state === 'cash') {
+                                        $set('paid_amount', self::floatState($get, 'total_amount'));
                                     }
 
                                     self::recalculateRenewInvoiceSummary($get, $set);
@@ -531,71 +521,27 @@ class SubscriptionForm
      */
     public static function handleRenew(Subscription $record, array $data): void
     {
-        Subscription::query()->getConnection()->transaction(function () use ($record, $data): void {
-            $timezone = AppConfig::timezone();
-            $today = Carbon::today($timezone);
-
-            $plan = Plan::findOrFail(Data::int($data['plan_id'] ?? null));
-            $startDate = Carbon::parse(Data::string($data['start_date'] ?? null))->toDateString();
-            $endDate = Data::string($data['end_date'] ?? null)
-                ?: Helpers::calculateSubscriptionEndDate($startDate, Data::int($plan->id));
-
-            $status = Carbon::parse($startDate)->gt($today)
-                ? 'upcoming'
-                : 'ongoing';
-
-            $newSubscription = Subscription::create([
-                'renewed_from_subscription_id' => $record->id,
-                'member_id' => $record->member_id,
-                'plan_id' => $plan->id,
-                'start_date' => $startDate,
-                'end_date' => $endDate,
-                'status' => $status,
-            ]);
-
-            if ($record->end_date && $record->end_date->lt($today)) {
-                $record->update([
-                    'status' => 'renewed',
-                ]);
-            }
-
-            $fee = round(Data::float($plan->amount));
-            $discountPct = max(Data::int($data['discount'] ?? 0), 0);
-            $discountAmount = Data::float($data['discount_amount'] ?? 0);
-            $discountAmount = min(max($discountAmount, 0), $fee);
-            if ($discountPct > 0 && $discountAmount <= 0) {
-                $discountAmount = Helpers::getDiscountAmount($discountPct, $fee);
-            }
-
-            $paymentMethod = Data::nullableString($data['payment_method'] ?? null);
-            $paidAmount = max(Data::float($data['paid_amount'] ?? 0), 0);
-            if (PaymentMethod::isOnline($paymentMethod)) {
-                $paidAmount = 0;
-            }
-
-            $invoiceDate = Carbon::parse(Data::string($data['invoice_date'] ?? null))->toDateString();
-            $invoiceDueDate = Carbon::parse(Data::string($data['invoice_due_date'] ?? $invoiceDate))->toDateString();
-
-            $invoice = Invoice::create([
-                'number' => $data['invoice_number'] ?? null,
-                'subscription_id' => $newSubscription->id,
-                'date' => $invoiceDate,
-                'due_date' => $invoiceDueDate,
-                'payment_method' => $paymentMethod,
-                'discount' => $discountPct ?: null,
-                'discount_amount' => $discountAmount ?: null,
+        $result = app(SubscriptionRenewalService::class)->renew($record, [
+            'plan_id' => Data::int($data['plan_id'] ?? null),
+            'start_date' => Data::string($data['start_date'] ?? null),
+            'end_date' => Data::nullableString($data['end_date'] ?? null),
+            'invoice' => [
+                'number' => Data::nullableString($data['invoice_number'] ?? null),
+                'date' => Data::nullableString($data['invoice_date'] ?? null),
+                'due_date' => Data::nullableString($data['invoice_due_date'] ?? null),
+                'payment_method' => Data::nullableString($data['payment_method'] ?? null),
+                'discount' => $data['discount'] ?? null,
+                'discount_amount' => $data['discount_amount'] ?? null,
                 'discount_note' => $data['discount_note'] ?? null,
-                'paid_amount' => $paidAmount,
-                'subscription_fee' => $fee,
-                'status' => 'issued',
-            ]);
+                'paid_amount' => $data['paid_amount'] ?? null,
+            ],
+        ]);
 
-            Notification::make()
-                ->title(__('app.notifications.subscription_renewed_title'))
-                ->body(__('app.notifications.subscription_renewed_body', ['invoice_number' => (string) $invoice->number]))
-                ->success()
-                ->send();
-        });
+        Notification::make()
+            ->title(__('app.notifications.subscription_renewed_title'))
+            ->body(__('app.notifications.subscription_renewed_body', ['invoice_number' => (string) $result['invoice']->number]))
+            ->success()
+            ->send();
     }
 
     /**
@@ -678,6 +624,38 @@ class SubscriptionForm
         }
 
         return $normalized;
+    }
+
+    public static function invoiceNumberField(string $dateField = 'date', string $fieldName = 'number'): TextInput
+    {
+        return TextInput::make($fieldName)
+            ->label(__('app.fields.invoice_number'))
+            ->required()
+            ->rule(Rule::unique('invoices', 'number'))
+            ->default(fn (Get $get): string => self::generatedInvoiceNumber($get, $dateField))
+            ->afterStateHydrated(function (TextInput $component, ?string $state, Get $get, Set $set) use ($dateField): void {
+                if (filled($state)) {
+                    return;
+                }
+
+                $set($component->getStatePath(), self::generatedInvoiceNumber($get, $dateField));
+            });
+    }
+
+    private static function generatedInvoiceNumber(Get $get, string $dateField, ?string $dateOverride = null): string
+    {
+        return self::generatedInvoiceNumberFromDate(
+            $dateOverride ?? self::stringState($get, $dateField),
+        );
+    }
+
+    private static function generatedInvoiceNumberFromDate(?string $date): string
+    {
+        return Helpers::generateLastNumber(
+            'invoice',
+            Invoice::class,
+            $date,
+        );
     }
 
     private static function stringState(Get $get, string $path): ?string
