@@ -47,3 +47,81 @@ it('subscription renew falls back to generated invoice number when form omits it
     expect($invoice)->not->toBeNull()
         ->and($invoice->number)->toMatch('/^GY-\d+$/');
 });
+
+it('handleRenew creates new subscription and invoice via service and marks old as renewed', function (): void {
+    $member = Member::factory()->create();
+    $plan = Plan::factory()->create(['amount' => 200, 'days' => 30, 'status' => 'active']);
+    $subscription = Subscription::factory()->create([
+        'member_id' => $member->id,
+        'plan_id' => $plan->id,
+        'start_date' => now()->subDays(31)->toDateString(),
+        'end_date' => now()->subDay()->toDateString(),
+        'status' => 'expired',
+    ]);
+
+    SubscriptionForm::handleRenew($subscription, [
+        'plan_id' => $plan->id,
+        'start_date' => now()->toDateString(),
+        'end_date' => now()->addDays(30)->toDateString(),
+        'invoice_date' => now()->toDateString(),
+        'invoice_due_date' => now()->addDays(7)->toDateString(),
+        'invoice_number' => 'GY-99',
+        'payment_method' => 'cash',
+        'paid_amount' => 200,
+        'discount' => null,
+        'discount_amount' => null,
+        'discount_note' => null,
+    ]);
+
+    $newSub = Subscription::query()
+        ->where('member_id', $member->id)
+        ->where('id', '!=', $subscription->id)
+        ->latest('id')
+        ->first();
+
+    expect($newSub)->not->toBeNull()
+        ->and($newSub->plan_id)->toBe($plan->id)
+        ->and($newSub->renewed_from_subscription_id)->toBe($subscription->id);
+
+    $invoice = $newSub->invoices()->latest('id')->first();
+
+    expect($invoice)->not->toBeNull()
+        ->and($invoice->number)->toBe('GY-99')
+        ->and((float) $invoice->subscription_fee)->toBe(200.0)
+        ->and((float) $invoice->paid_amount)->toBe(200.0)
+        ->and($invoice->due_date->toDateString())->toBe(now()->addDays(7)->toDateString());
+
+    expect($subscription->fresh()->status->value)->toBe('renewed');
+});
+
+it('handleRenew caps paid_amount to plan total when overpaid', function (): void {
+    $member = Member::factory()->create();
+    $plan = Plan::factory()->create(['amount' => 150, 'days' => 30, 'status' => 'active']);
+    $subscription = Subscription::factory()->create([
+        'member_id' => $member->id,
+        'plan_id' => $plan->id,
+        'start_date' => now()->subDays(31)->toDateString(),
+        'end_date' => now()->subDay()->toDateString(),
+        'status' => 'expired',
+    ]);
+
+    SubscriptionForm::handleRenew($subscription, [
+        'plan_id' => $plan->id,
+        'start_date' => now()->toDateString(),
+        'end_date' => now()->addDays(30)->toDateString(),
+        'invoice_date' => now()->toDateString(),
+        'invoice_due_date' => now()->toDateString(),
+        'payment_method' => 'cash',
+        'paid_amount' => 9999,
+    ]);
+
+    $newSub = Subscription::query()
+        ->where('member_id', $member->id)
+        ->where('id', '!=', $subscription->id)
+        ->latest('id')
+        ->first();
+
+    $invoice = $newSub->invoices()->first();
+
+    expect((float) $invoice->paid_amount)->toBeLessThanOrEqual((float) $invoice->total_amount);
+});
