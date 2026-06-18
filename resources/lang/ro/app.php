@@ -439,6 +439,13 @@ return [
         'send_expiration_notification_now' => 'Trimite notificare acum',
     ],
 
+    'enquiry_wizard' => [
+        'modal_heading' => 'Convertește în membru',
+        'step_member' => 'Date personale',
+        'step_subscription' => 'Abonament și factură',
+        'success' => 'Membrul :name a fost creat cu succes.',
+    ],
+
     'member_notifications' => [
         'section_title' => 'Notificări',
         'auto_hint' => 'Notificările automate se trimit la 7 și 3 zile înainte de expirare.',

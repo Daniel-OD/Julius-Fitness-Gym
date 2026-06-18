@@ -306,6 +306,209 @@ class SubscriptionForm
     }
 
     /**
+     * Schema components for the Enquiry → Member onboarding wizard subscription step.
+     * Flat layout (no nested Repeater) suitable for Action modal context.
+     *
+     * @return array<int, Component>
+     */
+    public static function onboardingSubscriptionStep(): array
+    {
+        $today = Carbon::today(AppConfig::timezone())->toDateString();
+
+        return [
+            Group::make()
+                ->columns(5)
+                ->schema([
+                    Select::make('plan_id')
+                        ->label(__('app.fields.plan'))
+                        ->options(fn (): array => Plan::query()
+                            ->orderBy('name')
+                            ->get()
+                            ->mapWithKeys(fn (Plan $plan): array => [
+                                $plan->id => self::formatPlanOptionLabel($plan),
+                            ])
+                            ->all())
+                        ->searchable()
+                        ->live()
+                        ->afterStateUpdated(function (Get $get, Set $set): void {
+                            $set('end_date', Helpers::calculateSubscriptionEndDate(
+                                self::stringState($get, 'start_date'),
+                                self::intState($get, 'plan_id'),
+                            ));
+
+                            $plan = self::planFromState($get);
+                            $fee = round(Data::float($plan?->amount));
+                            $discountPct = self::intState($get, 'discount') ?? 0;
+                            $discountAmount = round(Helpers::getDiscountAmount($discountPct, $fee));
+                            $set('discount_amount', $discountAmount);
+
+                            self::recalculateRenewInvoiceSummary($get, $set);
+                        })
+                        ->required()
+                        ->columnSpan(3),
+                    DatePicker::make('start_date')
+                        ->label(__('app.fields.start_date'))
+                        ->native(false)
+                        ->suffixIcon('heroicon-m-calendar-days')
+                        ->default($today)
+                        ->live()
+                        ->afterStateUpdated(function (Get $get, Set $set): void {
+                            $set('end_date', Helpers::calculateSubscriptionEndDate(
+                                self::stringState($get, 'start_date'),
+                                self::intState($get, 'plan_id'),
+                            ));
+
+                            self::recalculateRenewInvoiceSummary($get, $set);
+                        })
+                        ->required(),
+                    DatePicker::make('end_date')
+                        ->label(__('app.fields.end_date'))
+                        ->native(false)
+                        ->suffixIcon('heroicon-m-calendar-days')
+                        ->disabled()
+                        ->dehydrated()
+                        ->default(fn (Get $get): string => Helpers::calculateSubscriptionEndDate(
+                            self::stringState($get, 'start_date'),
+                            self::intState($get, 'plan_id'),
+                        ))
+                        ->required(),
+                ]),
+            Section::make(__('app.resources.invoices.singular'))
+                ->columns(7)
+                ->schema([
+                    Group::make()
+                        ->columns(2)
+                        ->columnSpan(5)
+                        ->schema([
+                            self::invoiceNumberField('invoice_date', 'invoice_number'),
+                            DatePicker::make('invoice_date')
+                                ->label(__('app.fields.invoice_date'))
+                                ->native(false)
+                                ->suffixIcon('heroicon-m-calendar-days')
+                                ->default($today)
+                                ->live()
+                                ->afterStateUpdated(function (Get $get, Set $set, ?string $state): void {
+                                    $set('invoice_number', Helpers::generateLastNumber(
+                                        'invoice',
+                                        Invoice::class,
+                                        $state,
+                                    ));
+
+                                    if (blank($get('invoice_due_date'))) {
+                                        $set('invoice_due_date', $state);
+                                    }
+                                })
+                                ->required(),
+                            DatePicker::make('invoice_due_date')
+                                ->label(__('app.fields.due_date'))
+                                ->native(false)
+                                ->suffixIcon('heroicon-m-calendar-days')
+                                ->default($today)
+                                ->required(),
+                            Select::make('discount')
+                                ->label(__('app.fields.discount'))
+                                ->options(Helpers::getDiscounts())
+                                ->live()
+                                ->reactive()
+                                ->placeholder(__('app.placeholders.select_discount'))
+                                ->afterStateUpdated(function (Get $get, Set $set): void {
+                                    $plan = self::planFromState($get);
+                                    $fee = round(Data::float($plan?->amount));
+                                    $discountPct = self::intState($get, 'discount') ?? 0;
+                                    $discountAmount = round(Helpers::getDiscountAmount($discountPct, $fee));
+                                    $set('discount_amount', $discountAmount);
+
+                                    self::recalculateRenewInvoiceSummary($get, $set);
+                                }),
+                            TextInput::make('discount_amount')
+                                ->label(__('app.fields.discount_amount'))
+                                ->numeric()
+                                ->minValue(0)
+                                ->maxValue(function (Get $get): float {
+                                    $plan = self::planFromState($get);
+
+                                    return round(Data::float($plan?->amount));
+                                })
+                                ->debounce(300)
+                                ->default(0)
+                                ->prefix(Helpers::getCurrencySymbol())
+                                ->afterStateUpdated(function (Get $get, Set $set): void {
+                                    self::recalculateRenewInvoiceSummary($get, $set);
+                                }),
+                            Textarea::make('discount_note')
+                                ->label(__('app.fields.discount_note'))
+                                ->placeholder(__('app.placeholders.discount_note_renewal_example')),
+                            TextInput::make('paid_amount')
+                                ->label(__('app.fields.paid_amount'))
+                                ->numeric()
+                                ->minValue(0)
+                                ->debounce(300)
+                                ->default(0)
+                                ->prefix(Helpers::getCurrencySymbol())
+                                ->visible(fn (Get $get): bool => ! PaymentMethod::isOnline(self::stringState($get, 'payment_method')))
+                                ->afterStateUpdated(function (Get $get, Set $set): void {
+                                    self::recalculateRenewInvoiceSummary($get, $set);
+                                }),
+                            Radio::make('payment_method')
+                                ->label(__('app.fields.payment_method'))
+                                ->options(self::paymentMethodOptions())
+                                ->default('cash')
+                                ->inline()
+                                ->inlineLabel(false)
+                                ->reactive()
+                                ->afterStateUpdated(function (Get $get, Set $set, ?string $state): void {
+                                    if (PaymentMethod::isOnline($state)) {
+                                        $set('paid_amount', 0);
+                                    } elseif ($state === 'cash') {
+                                        $set('paid_amount', self::floatState($get, 'total_amount'));
+                                    }
+
+                                    self::recalculateRenewInvoiceSummary($get, $set);
+                                })
+                                ->required(),
+                        ]),
+                    Fieldset::make(__('app.titles.summary'))
+                        ->columns(1)
+                        ->columnSpan(2)
+                        ->schema([
+                            TextInput::make('subscription_fee')
+                                ->label(__('app.fields.subscription_fee'))
+                                ->numeric()
+                                ->readOnly()
+                                ->disabled()
+                                ->dehydrated()
+                                ->default(0)
+                                ->prefix(Helpers::getCurrencySymbol()),
+                            TextInput::make('tax')
+                                ->label(fn (): string => __('app.fields.tax_with_rate', ['rate' => Helpers::getTaxRate()]))
+                                ->numeric()
+                                ->readOnly()
+                                ->disabled()
+                                ->dehydrated()
+                                ->default(0)
+                                ->prefix(Helpers::getCurrencySymbol()),
+                            TextInput::make('total_amount')
+                                ->label(__('app.fields.total_amount'))
+                                ->numeric()
+                                ->readOnly()
+                                ->disabled()
+                                ->dehydrated()
+                                ->default(0)
+                                ->prefix(Helpers::getCurrencySymbol()),
+                            TextInput::make('due_amount')
+                                ->label(__('app.fields.due_amount'))
+                                ->numeric()
+                                ->readOnly()
+                                ->disabled()
+                                ->dehydrated()
+                                ->default(0)
+                                ->prefix(Helpers::getCurrencySymbol()),
+                        ]),
+                ]),
+        ];
+    }
+
+    /**
      * @return array<int, Component>
      */
     public static function renewSchema(Subscription $record): array

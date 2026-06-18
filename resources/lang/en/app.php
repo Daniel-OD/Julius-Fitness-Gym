@@ -439,6 +439,13 @@ return [
         'send_expiration_notification_now' => 'Send notification now',
     ],
 
+    'enquiry_wizard' => [
+        'modal_heading' => 'Convert to member',
+        'step_member' => 'Member details',
+        'step_subscription' => 'Subscription & invoice',
+        'success' => 'Member :name created successfully.',
+    ],
+
     'member_notifications' => [
         'section_title' => 'Notifications',
         'auto_hint' => 'Automatic notifications are sent 7 and 3 days before expiration.',
