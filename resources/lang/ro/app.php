@@ -399,6 +399,8 @@ return [
         'change_password' => 'Schimbă parola',
         'force_change_notice' => 'Din motive de securitate, trebuie să îți schimbi parola înainte de a continua.',
         'password_changed' => 'Parola a fost schimbată cu succes.',
+        'reset_password_confirm' => 'Se va genera o parolă nouă aleatorie și se va trimite pe email acestui utilizator. La următoarea autentificare va trebui să o schimbe.',
+        'reset_member_password_confirm' => 'Se va genera o parolă nouă aleatorie și se va trimite pe email acestui membru pentru portalul de membru.',
     ],
 
     'actions' => [
@@ -431,6 +433,7 @@ return [
         'mark_as_lost' => 'Marchează ca pierdut',
         'logout' => 'Deconectare',
         'send_portal_invitation' => 'Trimite invitație portal',
+        'reset_password' => 'Resetează parola',
         'notify_expiration' => 'Notifică expirare',
         'notify_expiration_bulk' => 'Notifică expirare (selecție)',
         'send_expiration_notification_now' => 'Trimite notificare acum',
@@ -465,6 +468,17 @@ return [
         'show_qr' => 'Prezintă QR la intrare',
         'qr_scan_hint' => 'Arată acest ecran recepției pentru a te înregistra.',
         'password_already_set' => 'Există deja o parolă pentru acest cont. Folosește autentificarea.',
+        'forgot_password_title' => 'Ai uitat parola',
+        'forgot_password_intro' => 'Introdu adresa de email și îți vom trimite o parolă nouă.',
+        'forgot_password_button' => 'Trimite parola nouă',
+        'forgot_password_link' => 'Ai uitat parola?',
+        'password_reset_sent' => 'Dacă există un cont pentru acest email, o parolă nouă a fost trimisă.',
+        'change_password_title' => 'Schimbă parola · :gym',
+        'change_password_intro' => 'Alege o parolă nouă pentru contul tău.',
+        'change_password_button' => 'Actualizează parola',
+        'change_password_link' => 'Schimbă parola',
+        'current_password' => 'Parola curentă',
+        'password_changed' => 'Parola a fost actualizată cu succes.',
     ],
 
     'options' => [
@@ -582,6 +596,8 @@ return [
         'receipt_email_queued_to' => 'Email chitanță trimis către :email',
         'email_queued' => 'Email în așteptare',
         'portal_invitation_queued' => 'Email invitație portal adăugat în coadă',
+        'password_reset_queued' => 'Email resetare parolă trimis',
+        'password_reset_queued_body' => 'O parolă nouă a fost trimisă către :email.',
         'expiring_email_confirm' => 'Trimiți email de expirare lui :member? Abonamentul expiră pe :expires_at.',
         'expiring_email_sent' => 'Email trimis către :email',
         'member_has_no_email' => 'Membrul nu are email setat',
@@ -928,6 +944,13 @@ return [
         'portal_invitation_subject' => 'Configurează portalul de membru — :gym',
         'portal_invitation_line' => 'Ai fost invitat să accesezi portalul de membru <strong>:gym</strong>. Setează parola folosind butonul de mai jos.',
         'portal_invitation_button' => 'Setează parola',
+        'password_reset_subject' => 'Parola ta nouă — :gym',
+        'password_reset_password_label' => 'Parola ta nouă',
+        'password_reset_member_line' => 'Parola portalului de membru pentru <strong>:gym</strong> a fost resetată. Folosește parola de mai jos pentru autentificare.',
+        'password_reset_member_button' => 'Autentificare portal membru',
+        'password_reset_user_line' => 'Parola contului de staff pentru <strong>:gym</strong> a fost resetată. Folosește parola de mai jos pentru autentificare.',
+        'password_reset_user_button' => 'Autentificare admin',
+        'password_reset_security_note' => 'Din motive de securitate, schimbă această parolă după autentificare, dacă poți.',
     ],
 
 ];

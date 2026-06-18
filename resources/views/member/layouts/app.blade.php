@@ -36,13 +36,19 @@
             </a>
 
             @auth('member')
-                <form method="POST" action="{{ route('member.logout') }}">
-                    @csrf
-                    <button type="submit"
+                <div class="flex items-center gap-2">
+                    <a href="{{ route('member.password.edit') }}"
                         class="rounded-full border border-zinc-200 px-3 py-1.5 text-xs font-medium text-zinc-600 transition-colors hover:bg-zinc-100 dark:border-white/15 dark:text-zinc-300 dark:hover:bg-white/5">
-                        {{ __('app.actions.logout') }}
-                    </button>
-                </form>
+                        {{ __('app.member_portal.change_password_link') }}
+                    </a>
+                    <form method="POST" action="{{ route('member.logout') }}">
+                        @csrf
+                        <button type="submit"
+                            class="rounded-full border border-zinc-200 px-3 py-1.5 text-xs font-medium text-zinc-600 transition-colors hover:bg-zinc-100 dark:border-white/15 dark:text-zinc-300 dark:hover:bg-white/5">
+                            {{ __('app.actions.logout') }}
+                        </button>
+                    </form>
+                </div>
             @endauth
         </div>
     </header>

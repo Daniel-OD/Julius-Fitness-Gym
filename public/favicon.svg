@@ -1,5 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
-  <rect width="32" height="32" rx="8" fill="#0a0a0a"/>
-  <circle cx="16" cy="16" r="9" stroke="#ff5a1f" stroke-width="2"/>
-  <path d="M11 16h10M16 11v10" stroke="#ff5a1f" stroke-width="2" stroke-linecap="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Julius Gym">
+  <rect width="200" height="200" rx="44" fill="#16222e"/>
+  <circle cx="100" cy="100" r="90" fill="none" stroke="#ff5a1f" stroke-width="6"/>
+  <g fill="none" stroke="#f2e6cb" stroke-width="16" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M 151.7 126.3 A 58 58 0 1 1 151.7 73.7"/>
+    <path d="M 152 100 L 110 100"/>
+  </g>
+  <path d="M 80 58 L 98 58 L 98 126 A 24 24 0 0 1 70 121" fill="none" stroke="#16222e" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M 80 58 L 98 58 L 98 126 A 24 24 0 0 1 70 121" fill="none" stroke="#ff5a1f" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>

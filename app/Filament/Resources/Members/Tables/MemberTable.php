@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Members\Tables;
 
+use App\Filament\Resources\Members\Actions\ResetMemberPasswordAction;
 use App\Models\Member;
 use App\Services\Email\MemberPortalEmailService;
 use Carbon\Carbon;
@@ -202,6 +203,7 @@ class MemberTable
                                     ->success()
                                     ->send();
                             }),
+                        ResetMemberPasswordAction::make(),
                         Action::make('qr')
                             ->label(__('app.members.qr.title'))
                             ->icon('heroicon-o-qr-code')

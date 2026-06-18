@@ -5,7 +5,9 @@ use App\Http\Controllers\ClientPortalController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Member\AuthController as MemberAuthController;
 use App\Http\Controllers\Member\DashboardController as MemberDashboardController;
+use App\Http\Controllers\Member\ForgotPasswordController;
 use App\Http\Controllers\Member\InvoiceController as MemberInvoiceController;
+use App\Http\Controllers\Member\PasswordController as MemberPasswordController;
 use App\Http\Controllers\Member\QrController as MemberQrController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\MemberImportDownloadController;
@@ -47,6 +49,11 @@ Route::prefix('member')->group(function (): void {
 
         Route::get('set-password', [MemberAuthController::class, 'showSetPassword'])->name('member.set-password');
         Route::post('set-password', [MemberAuthController::class, 'setPassword'])->name('member.set-password.store');
+
+        Route::get('forgot-password', [ForgotPasswordController::class, 'create'])->name('member.password.request');
+        Route::post('forgot-password', [ForgotPasswordController::class, 'store'])
+            ->middleware('throttle:6,1')
+            ->name('member.password.email');
     });
 
     Route::post('logout', [MemberAuthController::class, 'logout'])
@@ -58,6 +65,8 @@ Route::prefix('member')->group(function (): void {
         Route::get('qr', [MemberQrController::class, 'show'])->name('member.qr.show');
         Route::get('qr/download', [MemberQrController::class, 'download'])->name('member.qr.download');
         Route::get('invoices/{invoice}/pdf', [MemberInvoiceController::class, 'pdf'])->name('member.invoices.pdf');
+        Route::get('password', [MemberPasswordController::class, 'edit'])->name('member.password.edit');
+        Route::put('password', [MemberPasswordController::class, 'update'])->name('member.password.update');
     });
 });
 

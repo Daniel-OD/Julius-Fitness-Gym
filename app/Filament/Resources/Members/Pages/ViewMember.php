@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Members\Pages;
 
+use App\Filament\Resources\Members\Actions\ResetMemberPasswordAction;
 use App\Filament\Resources\Members\MemberResource;
 use App\Models\Member;
 use App\Services\Members\CreateMemberPortalAccountService;
@@ -48,6 +49,7 @@ class ViewMember extends ViewRecord
                     }
                 }),
             EditAction::make(),
+            ResetMemberPasswordAction::make(),
             DeleteAction::make(),
         ];
     }

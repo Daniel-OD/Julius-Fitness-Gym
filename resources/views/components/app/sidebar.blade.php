@@ -1,17 +1,5 @@
 <div class="flex h-16 shrink-0 items-center gap-3 border-b border-zinc-200 px-6 dark:border-white/8">
-    <span
-        class="flex h-9 w-9 items-center justify-center rounded-full border border-brand-500/30 bg-brand-500/15 text-brand-400">
-        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round">
-            <path d="M6.5 6.5 17.5 17.5" />
-            <path d="m21 21-1-1" />
-            <path d="m3 3 1 1" />
-            <path d="m18 22 4-4" />
-            <path d="m2 6 4-4" />
-            <path d="m3 10 7-7" />
-            <path d="m14 21 7-7" />
-        </svg>
-    </span>
+    <x-application-mark class="h-9 w-9 shrink-0" />
     <div class="min-w-0">
         <p class="truncate text-sm font-semibold leading-tight text-zinc-900 dark:text-white">Julius Fitness</p>
         <p class="truncate text-xs text-zinc-500 dark:text-white/40">Gym Management</p>

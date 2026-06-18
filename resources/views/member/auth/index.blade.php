@@ -90,6 +90,12 @@
                     <x-ui.button type="submit" variant="primary" size="md" class="w-full">
                         {{ __('app.member_portal.login_button') }}
                     </x-ui.button>
+
+                    <p class="text-center text-sm text-zinc-500 dark:text-zinc-400">
+                        <a href="{{ route('member.password.request') }}" class="font-medium text-zinc-900 hover:underline dark:text-white">
+                            {{ __('app.member_portal.forgot_password_link') }}
+                        </a>
+                    </p>
                 </form>
             </div>
 
