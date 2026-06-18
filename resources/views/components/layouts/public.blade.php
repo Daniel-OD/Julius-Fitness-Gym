@@ -19,14 +19,7 @@
         data-public-header>
         <div class="jf-safe-x mx-auto flex h-14 max-w-7xl items-center gap-2 px-4 sm:h-16 sm:gap-4 sm:px-6 lg:px-8">
             <a href="{{ url('/') }}" class="flex min-w-0 items-center gap-2.5">
-                <span
-                    class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-zinc-200 bg-zinc-100 text-zinc-900 dark:border-white/10 dark:bg-white/5 dark:text-white">
-                    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M6.5 6.5 17.5 17.5" /><path d="m21 21-1-1" /><path d="m3 3 1 1" />
-                        <path d="m18 22 4-4" /><path d="m2 6 4-4" /><path d="m3 10 7-7" /><path d="m14 21 7-7" />
-                    </svg>
-                </span>
+                <x-application-mark class="h-9 w-9 shrink-0" />
                 <span class="truncate text-sm font-semibold tracking-tight text-zinc-900 dark:text-white">Julius Fitness</span>
             </a>
 
@@ -122,14 +115,7 @@
             <div class="grid grid-cols-2 gap-8 sm:gap-10 md:grid-cols-4">
                 <div class="col-span-2 md:col-span-1">
                     <div class="flex items-center gap-2.5">
-                        <span
-                            class="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/5">
-                            <svg class="h-4 w-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M6.5 6.5 17.5 17.5" /><path d="m21 21-1-1" /><path d="m3 3 1 1" />
-                                <path d="m18 22 4-4" /><path d="m2 6 4-4" /><path d="m3 10 7-7" /><path d="m14 21 7-7" />
-                            </svg>
-                        </span>
+                        <x-application-mark class="h-8 w-8 shrink-0" />
                         <span class="font-semibold tracking-tight text-zinc-900 dark:text-white">Julius Fitness</span>
                     </div>
                     <p class="mt-4 max-w-xs text-sm leading-relaxed text-zinc-600 dark:text-white/45">
