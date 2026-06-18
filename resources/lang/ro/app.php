@@ -473,6 +473,12 @@ return [
         'forgot_password_button' => 'Trimite parola nouă',
         'forgot_password_link' => 'Ai uitat parola?',
         'password_reset_sent' => 'Dacă există un cont pentru acest email, o parolă nouă a fost trimisă.',
+        'change_password_title' => 'Schimbă parola · :gym',
+        'change_password_intro' => 'Alege o parolă nouă pentru contul tău.',
+        'change_password_button' => 'Actualizează parola',
+        'change_password_link' => 'Schimbă parola',
+        'current_password' => 'Parola curentă',
+        'password_changed' => 'Parola a fost actualizată cu succes.',
     ],
 
     'options' => [

@@ -473,6 +473,12 @@ return [
         'forgot_password_button' => 'Email new password',
         'forgot_password_link' => 'Forgot your password?',
         'password_reset_sent' => 'If an account exists for that email, a new password has been sent.',
+        'change_password_title' => 'Change password · :gym',
+        'change_password_intro' => 'Choose a new password for your account.',
+        'change_password_button' => 'Update password',
+        'change_password_link' => 'Change password',
+        'current_password' => 'Current password',
+        'password_changed' => 'Password updated successfully.',
     ],
 
     'options' => [

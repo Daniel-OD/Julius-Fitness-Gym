@@ -7,6 +7,7 @@ use App\Http\Controllers\Member\AuthController as MemberAuthController;
 use App\Http\Controllers\Member\DashboardController as MemberDashboardController;
 use App\Http\Controllers\Member\ForgotPasswordController;
 use App\Http\Controllers\Member\InvoiceController as MemberInvoiceController;
+use App\Http\Controllers\Member\PasswordController as MemberPasswordController;
 use App\Http\Controllers\Member\QrController as MemberQrController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\MemberImportDownloadController;
@@ -64,6 +65,8 @@ Route::prefix('member')->group(function (): void {
         Route::get('qr', [MemberQrController::class, 'show'])->name('member.qr.show');
         Route::get('qr/download', [MemberQrController::class, 'download'])->name('member.qr.download');
         Route::get('invoices/{invoice}/pdf', [MemberInvoiceController::class, 'pdf'])->name('member.invoices.pdf');
+        Route::get('password', [MemberPasswordController::class, 'edit'])->name('member.password.edit');
+        Route::put('password', [MemberPasswordController::class, 'update'])->name('member.password.update');
     });
 });
 
