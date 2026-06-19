@@ -170,14 +170,13 @@ class AdminPanelProvider extends PanelProvider
 
     /**
      * Build grouped navigation for the admin panel.
+     *
+     * Administrators (super_admin / owner) see all groups including
+     * Administration and Expenses. Other users only see operational sections.
      */
     protected function buildNavigation(NavigationBuilder $builder, string $panel = 'admin'): NavigationBuilder
     {
-        $administration = [
-            ...Settings::getNavigationItems(),
-            ...UserResource::getNavigationItems(),
-            ...RoleResource::getNavigationItems(),
-        ];
+        $isAdmin = auth()->user()?->isAdministrator() ?? false;
 
         $sales = [
             ...EnquiryResource::getNavigationItems(),
@@ -186,7 +185,7 @@ class AdminPanelProvider extends PanelProvider
 
         $billing = [
             ...InvoiceResource::getNavigationItems(),
-            ...ExpenseResource::getNavigationItems(),
+            ...($isAdmin ? ExpenseResource::getNavigationItems() : []),
         ];
 
         $memberships = [
@@ -197,28 +196,36 @@ class AdminPanelProvider extends PanelProvider
             ...CheckInResource::getNavigationItems(),
         ];
 
+        $groups = [
+            NavigationGroup::make(__('app.navigation.groups.sales'))
+                ->icon('heroicon-o-shopping-cart')
+                ->items($sales)
+                ->collapsed(false),
+
+            NavigationGroup::make(__('app.navigation.groups.memberships'))
+                ->icon('heroicon-o-user-group')
+                ->items($memberships)
+                ->collapsed(false),
+
+            NavigationGroup::make(__('app.navigation.groups.billing'))
+                ->icon('heroicon-o-document-text')
+                ->items($billing)
+                ->collapsed(false),
+        ];
+
+        if ($isAdmin) {
+            $groups[] = NavigationGroup::make(__('app.navigation.groups.administration'))
+                ->icon('heroicon-o-wrench-screwdriver')
+                ->items([
+                    ...Settings::getNavigationItems(),
+                    ...UserResource::getNavigationItems(),
+                    ...RoleResource::getNavigationItems(),
+                ])
+                ->collapsed(false);
+        }
+
         return $builder
-            ->groups([
-                NavigationGroup::make(__('app.navigation.groups.sales'))
-                    ->icon('heroicon-o-shopping-cart')
-                    ->items($sales)
-                    ->collapsed(false),
-
-                NavigationGroup::make(__('app.navigation.groups.memberships'))
-                    ->icon('heroicon-o-user-group')
-                    ->items($memberships)
-                    ->collapsed(false),
-
-                NavigationGroup::make(__('app.navigation.groups.billing'))
-                    ->icon('heroicon-o-document-text')
-                    ->items($billing)
-                    ->collapsed(false),
-
-                NavigationGroup::make(__('app.navigation.groups.administration'))
-                    ->icon('heroicon-o-wrench-screwdriver')
-                    ->items($administration)
-                    ->collapsed(false),
-            ])
+            ->groups($groups)
             ->item(
                 NavigationItem::make(__('app.navigation.dashboard'))
                     ->icon('heroicon-o-chart-bar')

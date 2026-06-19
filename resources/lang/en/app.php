@@ -724,6 +724,7 @@ return [
         'details' => 'Details',
         'follow_details' => 'Follow-up details',
         'location' => 'Location',
+        'optional_details' => 'Optional details',
         'preferences' => 'Preferences',
         'toggle_theme' => 'Toggle light / dark',
         'light_mode' => 'Light',

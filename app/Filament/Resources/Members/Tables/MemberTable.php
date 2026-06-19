@@ -51,9 +51,11 @@ class MemberTable
                     ->label(__('app.fields.email')),
                 TextColumn::make('gender')
                     ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->label(__('app.fields.gender')),
                 TextColumn::make('contact')
                     ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->label(__('app.fields.contact')),
                 TextColumn::make('emergency_contact')
                     ->searchable()

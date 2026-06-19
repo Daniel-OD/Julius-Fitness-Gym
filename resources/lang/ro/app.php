@@ -724,6 +724,7 @@ return [
         'details' => 'Detalii',
         'follow_details' => 'Detalii follow-up',
         'location' => 'Locație',
+        'optional_details' => 'Detalii opționale',
         'preferences' => 'Preferințe',
         'toggle_theme' => 'Comută luminos / întunecat',
         'light_mode' => 'Luminos',

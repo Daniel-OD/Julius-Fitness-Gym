@@ -116,21 +116,6 @@ class CheckInResource extends Resource
             ])
             ->defaultSort('checked_in_at', 'desc')
             ->filters([
-                SelectFilter::make('period')
-                    ->label(__('app.checkins.today'))
-                    ->options([
-                        'today' => __('app.checkins.today'),
-                        'this_week' => __('app.checkins.this_week'),
-                        'this_month' => __('app.checkins.this_month'),
-                    ])
-                    ->query(function (Builder $query, array $data): Builder {
-                        return match ($data['value'] ?? null) {
-                            'today' => $query->whereDate('checked_in_at', today()),
-                            'this_week' => $query->whereBetween('checked_in_at', [now()->startOfWeek(), now()->endOfWeek()]),
-                            'this_month' => $query->whereBetween('checked_in_at', [now()->startOfMonth(), now()->endOfMonth()]),
-                            default => $query,
-                        };
-                    }),
                 SelectFilter::make('method')
                     ->label(__('app.fields.method'))
                     ->options(['qr' => 'QR', 'manual' => 'Manual']),

@@ -53,6 +53,7 @@ it('filters check-ins by status', function (): void {
     Livewire::actingAs(checkInsAdmin())
         ->test(ListCheckIns::class)
         ->assertSuccessful()
+        ->set('activeTab', 'all')
         ->filterTable('status', CheckInStatus::Blocked->value)
         ->assertCanSeeTableRecords([$blocked])
         ->assertCountTableRecords(1);

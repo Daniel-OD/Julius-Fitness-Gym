@@ -15,12 +15,100 @@ use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 
 class MemberForm
 {
+    /**
+     * Schema for Step 1 of the member onboarding wizard.
+     *
+     * Required fields (name, email, contact) are always visible.
+     * Optional profile fields are grouped in a collapsed section so
+     * the wizard feels lightweight during quick sign-ups.
+     *
+     * @return array<int, mixed>
+     */
+    public static function onboardingMemberStep(): array
+    {
+        return [
+            TextInput::make('name')
+                ->label(__('app.fields.name'))
+                ->required()
+                ->maxLength(255)
+                ->columnSpanFull(),
+            TextInput::make('email')
+                ->label(__('app.fields.email'))
+                ->email()
+                ->required()
+                ->maxLength(255)
+                ->rule(Rule::unique('members', 'email')),
+            TextInput::make('contact')
+                ->label(__('app.fields.contact'))
+                ->tel()
+                ->required()
+                ->maxLength(20),
+            Section::make(__('app.ui.optional_details'))
+                ->collapsed()
+                ->columnSpanFull()
+                ->columns(2)
+                ->schema([
+                    Select::make('gender')
+                        ->label(__('app.fields.gender'))
+                        ->options([
+                            'male' => __('app.options.gender.male'),
+                            'female' => __('app.options.gender.female'),
+                            'other' => __('app.options.gender.other'),
+                        ])
+                        ->default('male')
+                        ->selectablePlaceholder(false),
+                    DatePicker::make('dob')
+                        ->label(__('app.fields.dob')),
+                    Textarea::make('address')
+                        ->label(__('app.fields.address'))
+                        ->rows(3)
+                        ->columnSpanFull(),
+                    Select::make('country')
+                        ->label(__('app.fields.country'))
+                        ->options(Helpers::getCountries())
+                        ->reactive()
+                        ->afterStateUpdated(fn (Set $set) => [$set('state', null), $set('city', null)]),
+                    Select::make('state')
+                        ->label(__('app.fields.state'))
+                        ->options(fn (Get $get): array => Helpers::getStates($get('country')))
+                        ->reactive(),
+                    Select::make('city')
+                        ->label(__('app.fields.city'))
+                        ->options(fn (Get $get): array => Helpers::getCities($get('state')))
+                        ->reactive(),
+                    TextInput::make('pincode')
+                        ->label(__('app.fields.pincode'))
+                        ->numeric(),
+                    Select::make('source')
+                        ->label(__('app.fields.source'))
+                        ->options([
+                            'promotions' => __('app.options.source.promotions'),
+                            'word_of_mouth' => __('app.options.source.word_of_mouth'),
+                            'others' => __('app.options.source.others'),
+                        ])
+                        ->selectablePlaceholder(false),
+                    Select::make('goal')
+                        ->label(__('app.fields.goal'))
+                        ->options([
+                            'fitness' => __('app.options.goal.fitness'),
+                            'body_building' => __('app.options.goal.body_building'),
+                            'fatloss' => __('app.options.goal.fatloss'),
+                            'weightgain' => __('app.options.goal.weightgain'),
+                            'others' => __('app.options.goal.others'),
+                        ])
+                        ->selectablePlaceholder(false),
+                ]),
+        ];
+    }
+
     /**
      * Configure the member form schema.
      */
