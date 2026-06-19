@@ -4,6 +4,8 @@ namespace App\Console\Commands;
 
 use App\Jobs\SendSubscriptionExpiryNotification;
 use App\Support\Subscriptions\ExpiringSubscriptionsQuery;
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Cache;
 
@@ -14,13 +16,11 @@ use Illuminate\Support\Facades\Cache;
  * Deduplication: a cache key per subscription+day prevents double-firing
  * if the command is accidentally run multiple times on the same day.
  */
+#[Description('Send expiry notifications for subscriptions at 7, 3, 1, and 0 days')]
+#[Signature('gym:subscription-expiry-notifications
+                            {--dry-run : List matching subscriptions without dispatching}')]
 class SubscriptionExpiryNotifications extends Command
 {
-    protected $signature = 'gym:subscription-expiry-notifications
-                            {--dry-run : List matching subscriptions without dispatching}';
-
-    protected $description = 'Send expiry notifications for subscriptions at 7, 3, 1, and 0 days';
-
     /** @var list<int> */
     private const array TRIGGER_DAYS = [7, 3, 1, 0];
 

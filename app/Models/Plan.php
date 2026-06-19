@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\Status;
 use App\Models\Concerns\CascadesSoftDeletes;
 use Database\Factories\PlanFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -21,23 +22,19 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property float|null $amount
  * @property Status|null $status
  */
+#[Fillable([
+    'name',
+    'code',
+    'description',
+    'service_id',
+    'amount',
+    'days',
+    'status',
+])]
 class Plan extends Model
 {
     /** @use HasFactory<PlanFactory> */
     use CascadesSoftDeletes, HasFactory, SoftDeletes;
-
-    /**
-     * @var list<string>
-     */
-    protected $fillable = [
-        'name',
-        'code',
-        'description',
-        'service_id',
-        'amount',
-        'days',
-        'status',
-    ];
 
     protected $casts = [
         'status' => Status::class,

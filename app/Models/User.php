@@ -9,6 +9,8 @@ use Filament\Facades\Filament;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Panel;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -41,37 +43,29 @@ use Spatie\Permission\Traits\HasRoles;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
+#[Fillable([
+    'photo',
+    'name',
+    'email',
+    'password',
+    'contact',
+    'dob',
+    'gender',
+    'address',
+    'country',
+    'city',
+    'state',
+    'pincode',
+    'status',
+])]
+#[Hidden([
+    'password',
+    'remember_token',
+])]
 class User extends Authenticatable implements FilamentUser, HasAvatar
 {
     /** @use HasFactory<UserFactory> */
     use HasApiTokens, HasFactory, HasRoles, Notifiable, SoftDeletes;
-
-    /**
-     * @var list<string>
-     */
-    protected $fillable = [
-        'photo',
-        'name',
-        'email',
-        'password',
-        'contact',
-        'dob',
-        'gender',
-        'address',
-        'country',
-        'city',
-        'state',
-        'pincode',
-        'status',
-    ];
-
-    /**
-     * @var list<string>
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
 
     /**
      * @return array<string, string>

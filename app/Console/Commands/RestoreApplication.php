@@ -2,20 +2,20 @@
 
 namespace App\Console\Commands;
 
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use ZipArchive;
 
-class RestoreApplication extends Command
-{
-    protected $signature = 'app:restore
+#[Description('Restore database (and optionally settings) from a backup ZIP file')]
+#[Signature('app:restore
                             {zip : Full path to the backup ZIP file}
                             {--include-settings : Also restore settingsData.json}
-                            {--skip-pre-backup : Skip the automatic safety backup before restoring}';
-
-    protected $description = 'Restore database (and optionally settings) from a backup ZIP file';
-
+                            {--skip-pre-backup : Skip the automatic safety backup before restoring}')]
+class RestoreApplication extends Command
+{
     public function handle(): int
     {
         $zipPath = (string) $this->argument('zip');

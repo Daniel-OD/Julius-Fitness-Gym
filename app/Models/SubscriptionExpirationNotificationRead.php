@@ -2,20 +2,17 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+#[Fillable([
+    'user_id',
+    'subscription_id',
+    'read_at',
+])]
 class SubscriptionExpirationNotificationRead extends Model
 {
-    /**
-     * @var list<string>
-     */
-    protected $fillable = [
-        'user_id',
-        'subscription_id',
-        'read_at',
-    ];
-
     /**
      * @return array<string, string>
      */

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\Status;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -18,21 +19,17 @@ use Illuminate\Support\Carbon;
  * @property string|null $outcome
  * @property Status|null $status
  */
+#[Fillable([
+    'enquiry_id',
+    'user_id',
+    'schedule_date',
+    'method',
+    'outcome',
+    'status',
+])]
 class FollowUp extends Model
 {
     use HasFactory, SoftDeletes;
-
-    /**
-     * @var list<string>
-     */
-    protected $fillable = [
-        'enquiry_id',
-        'user_id',
-        'schedule_date',
-        'method',
-        'outcome',
-        'status',
-    ];
 
     protected $casts = [
         'schedule_date' => 'date',

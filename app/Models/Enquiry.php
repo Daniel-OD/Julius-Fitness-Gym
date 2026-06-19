@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\Status;
 use App\Models\Concerns\CascadesSoftDeletes;
 use Database\Factories\EnquiryFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -27,33 +28,29 @@ use Illuminate\Support\Carbon;
  * @property string|null $goal
  * @property Carbon|null $start_by
  */
+#[Fillable([
+    'user_id',
+    'name',
+    'email',
+    'contact',
+    'date',
+    'gender',
+    'dob',
+    'status',
+    'address',
+    'country',
+    'city',
+    'state',
+    'pincode',
+    'interested_in',
+    'source',
+    'goal',
+    'start_by',
+])]
 class Enquiry extends Model
 {
     /** @use HasFactory<EnquiryFactory> */
     use CascadesSoftDeletes, HasFactory, SoftDeletes;
-
-    /**
-     * @var list<string>
-     */
-    protected $fillable = [
-        'user_id',
-        'name',
-        'email',
-        'contact',
-        'date',
-        'gender',
-        'dob',
-        'status',
-        'address',
-        'country',
-        'city',
-        'state',
-        'pincode',
-        'interested_in',
-        'source',
-        'goal',
-        'start_by',
-    ];
 
     protected $casts = [
         'interested_in' => 'array',

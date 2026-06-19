@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\Status;
 use App\Observers\SubscriptionObserver;
 use Database\Factories\SubscriptionFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -26,24 +27,20 @@ use Illuminate\Support\Carbon;
  * @property string|null $internal_note
  */
 #[ObservedBy(SubscriptionObserver::class)]
+#[Fillable([
+    'renewed_from_subscription_id',
+    'member_id',
+    'plan_id',
+    'start_date',
+    'end_date',
+    'status',
+    'type',
+    'internal_note',
+])]
 class Subscription extends Model
 {
     /** @use HasFactory<SubscriptionFactory> */
     use HasFactory, SoftDeletes;
-
-    /**
-     * @var list<string>
-     */
-    protected $fillable = [
-        'renewed_from_subscription_id',
-        'member_id',
-        'plan_id',
-        'start_date',
-        'end_date',
-        'status',
-        'type',
-        'internal_note',
-    ];
 
     protected $casts = [
         'start_date' => 'date',

@@ -6,17 +6,17 @@ use App\Helpers\Helpers;
 use App\Models\Subscription;
 use App\Services\Members\MemberStatusSyncService;
 use App\Support\AppConfig;
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
 
+#[Description('Mark subscriptions as expiring or expired and sync member statuses')]
+#[Signature('gym:subscriptions
+                            {--mark-expired : Mark expired subscriptions}
+                            {--mark-expiring : Mark subscriptions expiring within the configured window}')]
 class MarkSubscriptionsStatus extends Command
 {
-    protected $signature = 'gym:subscriptions
-                            {--mark-expired : Mark expired subscriptions}
-                            {--mark-expiring : Mark subscriptions expiring within the configured window}';
-
-    protected $description = 'Mark subscriptions as expiring or expired and sync member statuses';
-
     public function handle(MemberStatusSyncService $memberStatusSync): int
     {
         $timezone = AppConfig::timezone();

@@ -9,6 +9,7 @@ use App\Support\AppConfig;
 use App\Support\Billing\InvoiceCalculator;
 use Carbon\Carbon;
 use Database\Factories\InvoiceFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -17,6 +18,23 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 #[ObservedBy(InvoiceObserver::class)]
+#[Fillable([
+    'number',
+    'subscription_id',
+    'date',
+    'due_date',
+    'payment_method',
+    'status',
+    'visibility',
+    'tax',
+    'discount',
+    'discount_amount',
+    'discount_note',
+    'paid_amount',
+    'total_amount',
+    'due_amount',
+    'subscription_fee',
+])]
 /**
  * @property int $id
  * @property string|null $number
@@ -37,27 +55,6 @@ class Invoice extends Model
 {
     /** @use HasFactory<InvoiceFactory> */
     use HasFactory, SoftDeletes;
-
-    /**
-     * @var list<string>
-     */
-    protected $fillable = [
-        'number',
-        'subscription_id',
-        'date',
-        'due_date',
-        'payment_method',
-        'status',
-        'visibility',
-        'tax',
-        'discount',
-        'discount_amount',
-        'discount_note',
-        'paid_amount',
-        'total_amount',
-        'due_amount',
-        'subscription_fee',
-    ];
 
     protected $casts = [
         'date' => 'date',

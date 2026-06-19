@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Observers\InvoiceTransactionObserver;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -10,6 +11,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 
 #[ObservedBy(InvoiceTransactionObserver::class)]
+#[Fillable([
+    'invoice_id',
+    'type',
+    'amount',
+    'occurred_at',
+    'payment_method',
+    'note',
+    'reference_id',
+    'created_by',
+])]
 /**
  * @property int $id
  * @property int|null $invoice_id
@@ -24,20 +35,6 @@ use Illuminate\Support\Carbon;
 class InvoiceTransaction extends Model
 {
     use HasFactory;
-
-    /**
-     * @var list<string>
-     */
-    protected $fillable = [
-        'invoice_id',
-        'type',
-        'amount',
-        'occurred_at',
-        'payment_method',
-        'note',
-        'reference_id',
-        'created_by',
-    ];
 
     protected $casts = [
         'occurred_at' => 'datetime',

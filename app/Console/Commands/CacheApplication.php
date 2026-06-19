@@ -2,16 +2,16 @@
 
 namespace App\Console\Commands;
 
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 
+#[Description('Warm or clear Laravel, Filament, and route caches for faster page loads')]
+#[Signature('app:cache
+                            {--clear : Clear all warmed caches instead of building them}')]
 class CacheApplication extends Command
 {
-    protected $signature = 'app:cache
-                            {--clear : Clear all warmed caches instead of building them}';
-
-    protected $description = 'Warm or clear Laravel, Filament, and route caches for faster page loads';
-
     public function handle(): int
     {
         if ((bool) $this->option('clear')) {

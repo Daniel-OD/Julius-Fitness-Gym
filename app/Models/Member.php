@@ -8,6 +8,8 @@ use App\Models\Concerns\CascadesSoftDeletes;
 use App\Notifications\Member\MemberVerifyEmailNotification;
 use Database\Factories\MemberFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -44,28 +46,20 @@ use Illuminate\Support\Str;
  * @property int|null $user_id
  * @property string|null $last_checkin_at
  */
+#[Fillable([
+    'photo', 'name', 'email', 'password', 'contact',
+    'emergency_contact', 'health_issue', 'gender', 'dob',
+    'address', 'country', 'state', 'city', 'pincode',
+    'source', 'goal', 'status',
+])]
+#[Hidden([
+    'password',
+    'remember_token',
+])]
 class Member extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<MemberFactory> */
     use CascadesSoftDeletes, HasFactory, Notifiable, SoftDeletes;
-
-    /**
-     * @var list<string>
-     */
-    protected $fillable = [
-        'photo', 'name', 'email', 'password', 'contact',
-        'emergency_contact', 'health_issue', 'gender', 'dob',
-        'address', 'country', 'state', 'city', 'pincode',
-        'source', 'goal', 'status',
-    ];
-
-    /**
-     * @var list<string>
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
 
     /**
      * @return array<string, string>

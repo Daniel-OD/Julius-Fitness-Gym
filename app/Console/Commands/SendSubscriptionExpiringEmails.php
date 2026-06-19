@@ -4,18 +4,18 @@ namespace App\Console\Commands;
 
 use App\Jobs\SendSubscriptionExpiringEmail;
 use App\Support\Subscriptions\ExpiringSubscriptionsQuery;
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
 /**
  * Dispatch member-facing expiring subscription emails at 7 and 3 days before end_date.
  */
+#[Description('Trimite emailuri de notificare pentru abonamentele care expiră în 7 sau 3 zile')]
+#[Signature('gym:send-expiring-emails')]
 class SendSubscriptionExpiringEmails extends Command
 {
-    protected $signature = 'gym:send-expiring-emails';
-
-    protected $description = 'Trimite emailuri de notificare pentru abonamentele care expiră în 7 sau 3 zile';
-
     /** @var list<int> */
     private const array TRIGGER_DAYS = [7, 3];
 

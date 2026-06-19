@@ -6,6 +6,8 @@ use App\Enums\Status;
 use App\Models\User;
 use Database\Seeders\ClientRoleSeeder;
 use Database\Seeders\EmployeeRoleSeeder;
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
@@ -13,17 +15,15 @@ use Illuminate\Support\Str;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
-class InstallApplication extends Command
-{
-    protected $signature = 'app:install
+#[Description('Finalize installation: environment, admin user, and credentials file')]
+#[Signature('app:install
                             {--email=admin@julius.test : Admin email address}
                             {--password= : Admin password (generated randomly if omitted)}
                             {--name=Administrator : Admin display name}
                             {--url=http://julius-fitness-gym.test : Application URL}
-                            {--force : Reset admin password when the user already exists}';
-
-    protected $description = 'Finalize installation: environment, admin user, and credentials file';
-
+                            {--force : Reset admin password when the user already exists}')]
+class InstallApplication extends Command
+{
     public function handle(): int
     {
         $this->ensureStoragePaths();

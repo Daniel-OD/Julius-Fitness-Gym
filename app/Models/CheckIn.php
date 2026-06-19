@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\CheckInStatus;
 use Database\Factories\CheckInFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -21,24 +22,20 @@ use Illuminate\Support\Carbon;
  * @property string $method
  * @property string|null $note
  */
+#[Fillable([
+    'member_id',
+    'subscription_id',
+    'checked_in_at',
+    'checked_out_at',
+    'status',
+    'denied_reason',
+    'method',
+    'note',
+])]
 class CheckIn extends Model
 {
     /** @use HasFactory<CheckInFactory> */
     use HasFactory, SoftDeletes;
-
-    /**
-     * @var list<string>
-     */
-    protected $fillable = [
-        'member_id',
-        'subscription_id',
-        'checked_in_at',
-        'checked_out_at',
-        'status',
-        'denied_reason',
-        'method',
-        'note',
-    ];
 
     protected $casts = [
         'checked_in_at' => 'datetime',

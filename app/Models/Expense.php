@@ -3,31 +3,28 @@
 namespace App\Models;
 
 use App\Enums\Status;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+#[Fillable([
+    'name',
+    'amount',
+    'date',
+    'due_date',
+    'paid_at',
+    'category',
+    'status',
+    'vendor',
+    'notes',
+])]
 class Expense extends Model
 {
     use HasFactory, SoftDeletes;
 
     protected $attributes = [
         'status' => 'pending',
-    ];
-
-    /**
-     * @var list<string>
-     */
-    protected $fillable = [
-        'name',
-        'amount',
-        'date',
-        'due_date',
-        'paid_at',
-        'category',
-        'status',
-        'vendor',
-        'notes',
     ];
 
     protected $casts = [

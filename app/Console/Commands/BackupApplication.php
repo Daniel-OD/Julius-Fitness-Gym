@@ -3,15 +3,15 @@
 namespace App\Console\Commands;
 
 use App\Helpers\Helpers;
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use ZipArchive;
 
+#[Description('Create a zip backup of the database and settings to the configured folder')]
+#[Signature('app:backup {--trigger= : Trigger type: manual, after_member, end_of_day, pre-restore} {--force : Run even when backup is disabled}')]
 class BackupApplication extends Command
 {
-    protected $signature = 'app:backup {--trigger= : Trigger type: manual, after_member, end_of_day, pre-restore} {--force : Run even when backup is disabled}';
-
-    protected $description = 'Create a zip backup of the database and settings to the configured folder';
-
     public function handle(): int
     {
         $settings = Helpers::getSettings();
