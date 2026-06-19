@@ -43,11 +43,12 @@ class ViewEnquiry extends ViewRecord
                 ->color('success')
                 ->visible(fn (Enquiry $record) => $record->status === Status::Lead)
                 ->modalWidth('7xl')
+                ->extraModalWindowAttributes(['class' => 'jf-onboarding-wizard'])
                 ->modalHeading(__('app.enquiry_wizard.modal_heading'))
                 ->steps([
                     Step::make(__('app.enquiry_wizard.step_member'))
                         ->icon('heroicon-o-user')
-                        ->columns(2)
+                        ->columns(1)
                         ->schema(MemberForm::onboardingMemberStep()),
                     Step::make(__('app.enquiry_wizard.step_subscription'))
                         ->icon('heroicon-o-credit-card')

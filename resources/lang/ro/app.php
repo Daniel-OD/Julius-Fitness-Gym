@@ -19,6 +19,11 @@ return [
         'actions' => [
             'apply' => 'Aplică',
         ],
+        'quick_actions' => [
+            'new_member' => 'Membru nou',
+            'manual_checkin' => 'Check-in manual',
+            'new_lead' => 'Lead nou',
+        ],
     ],
 
     'billing' => [
@@ -724,7 +729,8 @@ return [
         'details' => 'Detalii',
         'follow_details' => 'Detalii follow-up',
         'location' => 'Locație',
-        'optional_details' => 'Detalii opționale',
+        'optional_details' => 'Detalii suplimentare (opțional)',
+        'optional_details_hint' => 'Gen, adresă, obiectiv — poți completa mai târziu din profilul membrului.',
         'preferences' => 'Preferințe',
         'toggle_theme' => 'Comută luminos / întunecat',
         'light_mode' => 'Luminos',
@@ -837,7 +843,11 @@ return [
         'singular' => 'Check-in',
         'plural' => 'Check-in-uri',
         'checked_in' => 'Intrat',
+        'checked_in_time' => 'Ora intrării',
         'checked_out' => 'Ieșit',
+        'presence' => 'Prezență',
+        'present' => 'În sală',
+        'departed' => 'Plecat',
         'duration' => 'Durată',
         'minutes' => ':min min',
         'today' => 'Azi',

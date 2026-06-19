@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Members\Tables;
 
+use App\Enums\Status;
 use App\Filament\Resources\Members\Actions\ResetMemberPasswordAction;
 use App\Models\Member;
 use App\Services\Email\MemberPortalEmailService;
@@ -18,7 +19,7 @@ use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Notifications\Notification;
-use Filament\Tables\Columns\ImageColumn;
+use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\TrashedFilter;
@@ -34,29 +35,40 @@ class MemberTable
     {
         return $table
             ->columns([
-                TextColumn::make('id')
-                    ->sortable()
-                    ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                ImageColumn::make('photo')
-                    ->circular()
-                    ->defaultImageUrl(fn (Member $record): string => 'https://ui-avatars.com/api/?background=000&color=fff&name='.$record->name),
-                TextColumn::make('code')
-                    ->searchable(),
                 TextColumn::make('name')
-                    ->searchable()
-                    ->label(__('app.fields.name')),
+                    ->label(__('app.fields.member'))
+                    ->searchable(['name', 'code', 'email'])
+                    ->sortable()
+                    ->image(fn (Member $record): ?string => filled($record->photo) ? $record->photo : null)
+                    ->disk('public')
+                    ->defaultImageUrl(fn (Member $record): string => 'https://ui-avatars.com/api/?background=ff5a1f&color=fff&name='.urlencode($record->name ?? ''))
+                    ->circularImage()
+                    ->imageSize(40)
+                    ->description(fn (Member $record): string => $record->code)
+                    ->weight(FontWeight::SemiBold)
+                    ->wrap()
+                    ->grow()
+                    ->extraCellAttributes(['class' => 'jf-member-identity-cell']),
                 TextColumn::make('email')
                     ->searchable()
-                    ->label(__('app.fields.email')),
-                TextColumn::make('gender')
-                    ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: true)
-                    ->label(__('app.fields.gender')),
+                    ->label(__('app.fields.email'))
+                    ->toggleable()
+                    ->wrap(),
                 TextColumn::make('contact')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true)
-                    ->label(__('app.fields.contact')),
+                    ->label(__('app.fields.contact'))
+                    ->wrap(),
+                TextColumn::make('gender')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->label(__('app.fields.gender'))
+                    ->formatStateUsing(fn (?string $state): string => match ($state) {
+                        'male' => __('app.options.gender.male'),
+                        'female' => __('app.options.gender.female'),
+                        'other' => __('app.options.gender.other'),
+                        default => filled($state) ? ucfirst((string) $state) : __('app.placeholders.dash'),
+                    }),
                 TextColumn::make('emergency_contact')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true)
@@ -68,8 +80,21 @@ class MemberTable
                     ->label(__('app.fields.date')),
                 TextColumn::make('status')
                     ->badge()
-                    ->label(__('app.fields.status')),
+                    ->label(__('app.fields.status'))
+                    ->formatStateUsing(fn (?Status $state): string => $state
+                        ? __('app.status.'.$state->value)
+                        : __('app.placeholders.dash'))
+                    ->color(fn (?Status $state): string => $state?->getColor() ?? 'gray')
+                    ->sortable()
+                    ->alignEnd()
+                    ->toggleable(),
+                TextColumn::make('id')
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->label(__('app.fields.id')),
             ])
+            ->extraAttributes(['class' => 'jf-members-table'])
             ->emptyStateIcon('heroicon-o-user-group')
             ->emptyStateHeading(function ($livewire): string {
                 $dates = $livewire->getTableFilterState('date') ?? [];

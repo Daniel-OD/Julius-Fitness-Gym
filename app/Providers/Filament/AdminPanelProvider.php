@@ -172,7 +172,8 @@ class AdminPanelProvider extends PanelProvider
      * Build grouped navigation for the admin panel.
      *
      * Administrators (super_admin / owner) see all groups including
-     * Administration and Expenses. Other users only see operational sections.
+     * Administration and Expenses. Other users only see operational sections
+     * with non-empty groups (empty groups are omitted).
      */
     protected function buildNavigation(NavigationBuilder $builder, string $panel = 'admin'): NavigationBuilder
     {
@@ -196,33 +197,34 @@ class AdminPanelProvider extends PanelProvider
             ...CheckInResource::getNavigationItems(),
         ];
 
-        $groups = [
-            NavigationGroup::make(__('app.navigation.groups.sales'))
-                ->icon('heroicon-o-shopping-cart')
-                ->items($sales)
-                ->collapsed(false),
-
-            NavigationGroup::make(__('app.navigation.groups.memberships'))
-                ->icon('heroicon-o-user-group')
-                ->items($memberships)
-                ->collapsed(false),
-
-            NavigationGroup::make(__('app.navigation.groups.billing'))
-                ->icon('heroicon-o-document-text')
-                ->items($billing)
-                ->collapsed(false),
-        ];
-
-        if ($isAdmin) {
-            $groups[] = NavigationGroup::make(__('app.navigation.groups.administration'))
-                ->icon('heroicon-o-wrench-screwdriver')
-                ->items([
-                    ...Settings::getNavigationItems(),
-                    ...UserResource::getNavigationItems(),
-                    ...RoleResource::getNavigationItems(),
-                ])
-                ->collapsed(false);
-        }
+        $groups = array_values(array_filter([
+            $this->makeNavigationGroup(
+                __('app.navigation.groups.sales'),
+                'heroicon-o-shopping-cart',
+                $sales,
+            ),
+            $this->makeNavigationGroup(
+                __('app.navigation.groups.memberships'),
+                'heroicon-o-user-group',
+                $memberships,
+            ),
+            $this->makeNavigationGroup(
+                __('app.navigation.groups.billing'),
+                'heroicon-o-document-text',
+                $billing,
+            ),
+            $isAdmin
+                ? $this->makeNavigationGroup(
+                    __('app.navigation.groups.administration'),
+                    'heroicon-o-wrench-screwdriver',
+                    [
+                        ...Settings::getNavigationItems(),
+                        ...UserResource::getNavigationItems(),
+                        ...RoleResource::getNavigationItems(),
+                    ],
+                )
+                : null,
+        ]));
 
         return $builder
             ->groups($groups)
@@ -236,6 +238,35 @@ class AdminPanelProvider extends PanelProvider
                         ? request()->routeIs('filament.office.pages.dashboard')
                         : request()->routeIs('filament.admin.pages.dashboard'))
             );
+    }
+
+    /**
+     * @param  array<int, NavigationItem>  $items
+     * @return array<int, NavigationItem>
+     */
+    protected function visibleNavigationItems(array $items): array
+    {
+        return array_values(array_filter(
+            $items,
+            fn (NavigationItem $item): bool => $item->isVisible(),
+        ));
+    }
+
+    /**
+     * @param  array<int, NavigationItem>  $items
+     */
+    protected function makeNavigationGroup(string $label, string $icon, array $items, bool $collapsed = false): ?NavigationGroup
+    {
+        $items = $this->visibleNavigationItems($items);
+
+        if ($items === []) {
+            return null;
+        }
+
+        return NavigationGroup::make($label)
+            ->icon($icon)
+            ->items($items)
+            ->collapsed($collapsed);
     }
 
     /**

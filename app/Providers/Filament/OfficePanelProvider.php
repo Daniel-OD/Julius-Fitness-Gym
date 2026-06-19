@@ -6,6 +6,7 @@ use App\Filament\Auth\ForcePasswordChange;
 use App\Filament\Auth\Login;
 use App\Filament\Office\Pages\Dashboard;
 use App\Filament\Resources\CheckIns\CheckInResource;
+use App\Models\CheckIn;
 use Filament\Navigation\NavigationBuilder;
 use Filament\Navigation\NavigationItem;
 use Filament\Panel;
@@ -48,14 +49,16 @@ class OfficePanelProvider extends AdminPanelProvider
      */
     protected function buildOfficeNavigation(NavigationBuilder $builder): NavigationBuilder
     {
-        return $builder
-            ->items([
-                ...Dashboard::getNavigationItems(),
-                ...CheckInResource::getNavigationItems(),
-                NavigationItem::make('reception-scan')
-                    ->label(fn (): string => __('app.reception.open_scanner'))
-                    ->icon('heroicon-o-qr-code')
-                    ->url(fn (): string => route('reception.scan'), shouldOpenInNewTab: true),
-            ]);
+        $items = $this->visibleNavigationItems([
+            ...Dashboard::getNavigationItems(),
+            ...CheckInResource::getNavigationItems(),
+            NavigationItem::make('reception-scan')
+                ->label(fn (): string => __('app.reception.open_scanner'))
+                ->icon('heroicon-o-qr-code')
+                ->url(fn (): string => route('reception.scan'), shouldOpenInNewTab: true)
+                ->visible(fn (): bool => auth()->user()?->can('viewAny', CheckIn::class) ?? false),
+        ]);
+
+        return $builder->items($items);
     }
 }

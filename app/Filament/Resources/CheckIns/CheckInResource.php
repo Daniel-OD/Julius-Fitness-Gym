@@ -18,6 +18,7 @@ use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\Size;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
@@ -84,16 +85,34 @@ class CheckInResource extends Resource
                 TextColumn::make('member.name')
                     ->label(__('app.fields.member'))
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->weight(fn (CheckIn $record): ?FontWeight => $record->checked_out_at
+                        ? null
+                        : FontWeight::SemiBold),
                 TextColumn::make('checked_in_at')
-                    ->label(__('app.checkins.checked_in'))
-                    ->dateTime('d M Y, H:i')
+                    ->label(__('app.checkins.checked_in_time'))
+                    ->formatStateUsing(fn (CheckIn $record): string => $record->checked_in_at
+                        ->timezone(AppConfig::timezone())
+                        ->format('H:i'))
+                    ->tooltip(fn (CheckIn $record): string => $record->checked_in_at
+                        ->timezone(AppConfig::timezone())
+                        ->translatedFormat('d M Y, H:i'))
                     ->sortable(),
+                TextColumn::make('presence')
+                    ->label(__('app.checkins.presence'))
+                    ->badge()
+                    ->state(fn (CheckIn $record): string => $record->checked_out_at
+                        ? __('app.checkins.departed')
+                        : __('app.checkins.present'))
+                    ->color(fn (CheckIn $record): string => $record->checked_out_at ? 'gray' : 'success'),
                 TextColumn::make('checked_out_at')
                     ->label(__('app.checkins.checked_out'))
-                    ->dateTime('d M Y, H:i')
+                    ->formatStateUsing(fn (CheckIn $record): ?string => $record->checked_out_at
+                        ? $record->checked_out_at->timezone(AppConfig::timezone())->format('H:i')
+                        : null)
                     ->placeholder('—')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('duration')
                     ->label(__('app.checkins.duration'))
                     ->state(fn (CheckIn $record): string => $record->status !== CheckInStatus::Blocked && $record->durationMinutes() !== null
@@ -103,17 +122,24 @@ class CheckInResource extends Resource
                 TextColumn::make('status')
                     ->label(__('app.checkins.status'))
                     ->badge()
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->description(fn (CheckIn $record): ?string => $record->denied_reason
                         ? __('app.checkins.denied_reasons.'.$record->denied_reason)
                         : null),
                 TextColumn::make('subscription.plan.name')
                     ->label(__('app.fields.plan'))
-                    ->placeholder('—'),
+                    ->placeholder('—')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('method')
                     ->label(__('app.fields.method'))
                     ->badge()
-                    ->color(fn (string $state): string => $state === 'qr' ? 'info' : 'gray'),
+                    ->color(fn (string $state): string => $state === 'qr' ? 'info' : 'gray')
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->recordClasses(fn (CheckIn $record): ?string => filled($record->checked_out_at)
+                ? 'jf-checkin-row-checked-out'
+                : null)
+            ->extraAttributes(['class' => 'jf-checkins-table'])
             ->defaultSort('checked_in_at', 'desc')
             ->filters([
                 SelectFilter::make('method')
@@ -260,11 +286,12 @@ class CheckInResource extends Resource
                 Action::make('checkOut')
                     ->label(__('app.checkins.check_out'))
                     ->icon('heroicon-o-arrow-right-start-on-rectangle')
-                    ->color('danger')
+                    ->color('warning')
                     ->button()
+                    ->extraAttributes(['class' => 'jf-checkin-checkout-btn'])
                     ->requiresConfirmation()
                     ->modalIcon('heroicon-o-clock')
-                    ->modalIconColor('danger')
+                    ->modalIconColor('warning')
                     ->modalHeading(__('app.checkins.confirm_checkout_heading'))
                     ->modalDescription(function (CheckIn $record): HtmlString {
                         $time = now()->timezone(AppConfig::timezone())->translatedFormat('d M Y, H:i');

@@ -19,6 +19,11 @@ return [
         'actions' => [
             'apply' => 'Apply',
         ],
+        'quick_actions' => [
+            'new_member' => 'New member',
+            'manual_checkin' => 'Manual check-in',
+            'new_lead' => 'New lead',
+        ],
     ],
 
     'billing' => [
@@ -724,7 +729,8 @@ return [
         'details' => 'Details',
         'follow_details' => 'Follow-up details',
         'location' => 'Location',
-        'optional_details' => 'Optional details',
+        'optional_details' => 'Additional details (optional)',
+        'optional_details_hint' => 'Gender, address, goals — you can fill these in later from the member profile.',
         'preferences' => 'Preferences',
         'toggle_theme' => 'Toggle light / dark',
         'light_mode' => 'Light',
@@ -837,7 +843,11 @@ return [
         'singular' => 'Check-in',
         'plural' => 'Check-ins',
         'checked_in' => 'Checked in',
+        'checked_in_time' => 'Check-in time',
         'checked_out' => 'Checked out',
+        'presence' => 'Presence',
+        'present' => 'In gym',
+        'departed' => 'Left',
         'duration' => 'Duration',
         'minutes' => ':min min',
         'today' => 'Today',

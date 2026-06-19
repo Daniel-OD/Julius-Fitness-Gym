@@ -86,14 +86,17 @@ class Dashboard extends \Filament\Pages\Dashboard
     {
         return [
             Action::make('new_member')
-                ->label(__('app.actions.new', ['resource' => __('app.resources.members.singular')]))
-                ->icon('heroicon-m-user-plus')
+                ->label(__('app.dashboard.quick_actions.new_member'))
+                ->icon('heroicon-o-user-plus')
+                ->color('primary')
+                ->button()
                 ->modalWidth('7xl')
+                ->extraModalWindowAttributes(['class' => 'jf-onboarding-wizard'])
                 ->modalHeading(__('app.actions.new', ['resource' => __('app.resources.members.singular')]))
                 ->steps([
                     Step::make(__('app.enquiry_wizard.step_member'))
                         ->icon('heroicon-o-user')
-                        ->columns(2)
+                        ->columns(1)
                         ->schema(MemberForm::onboardingMemberStep()),
                     Step::make(__('app.enquiry_wizard.step_subscription'))
                         ->icon('heroicon-o-credit-card')
@@ -112,8 +115,10 @@ class Dashboard extends \Filament\Pages\Dashboard
                 }),
 
             Action::make('manual_checkin')
-                ->label(__('app.checkins.manual_checkin'))
-                ->icon('heroicon-o-check-circle')
+                ->label(__('app.dashboard.quick_actions.manual_checkin'))
+                ->icon('heroicon-o-qr-code')
+                ->color('success')
+                ->button()
                 ->schema([
                     Select::make('member_id')
                         ->label(__('app.fields.member'))
@@ -131,7 +136,7 @@ class Dashboard extends \Filament\Pages\Dashboard
                         ->required(),
                 ])
                 ->requiresConfirmation()
-                ->modalIcon('heroicon-o-check-circle')
+                ->modalIcon('heroicon-o-qr-code')
                 ->modalIconColor('success')
                 ->modalHeading(__('app.checkins.confirm_checkin_heading'))
                 ->modalSubmitActionLabel(__('app.checkins.confirm_checkin_submit'))
@@ -171,8 +176,11 @@ class Dashboard extends \Filament\Pages\Dashboard
                 }),
 
             Action::make('new_lead')
-                ->label(__('app.actions.new', ['resource' => __('app.resources.enquiries.singular')]))
-                ->icon('heroicon-m-phone')
+                ->label(__('app.dashboard.quick_actions.new_lead'))
+                ->icon('heroicon-o-chat-bubble-left')
+                ->color('gray')
+                ->outlined()
+                ->button()
                 ->url(EnquiryResource::getUrl('create')),
         ];
     }

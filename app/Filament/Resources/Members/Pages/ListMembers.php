@@ -26,13 +26,13 @@ class ListMembers extends ListRecords
             Action::make('new_member')
                 ->label(__('app.actions.new', ['resource' => MemberResource::getModelLabel()]))
                 ->icon('heroicon-m-plus')
-                ->hidden(! Member::exists())
                 ->modalWidth('7xl')
+                ->extraModalWindowAttributes(['class' => 'jf-onboarding-wizard'])
                 ->modalHeading(__('app.actions.new', ['resource' => MemberResource::getModelLabel()]))
                 ->steps([
                     Step::make(__('app.enquiry_wizard.step_member'))
                         ->icon('heroicon-o-user')
-                        ->columns(2)
+                        ->columns(1)
                         ->schema(MemberForm::onboardingMemberStep()),
                     Step::make(__('app.enquiry_wizard.step_subscription'))
                         ->icon('heroicon-o-credit-card')

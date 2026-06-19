@@ -35,26 +35,36 @@ class MemberForm
     public static function onboardingMemberStep(): array
     {
         return [
-            TextInput::make('name')
-                ->label(__('app.fields.name'))
-                ->required()
-                ->maxLength(255)
-                ->columnSpanFull(),
-            TextInput::make('email')
-                ->label(__('app.fields.email'))
-                ->email()
-                ->required()
-                ->maxLength(255)
-                ->rule(Rule::unique('members', 'email')),
-            TextInput::make('contact')
-                ->label(__('app.fields.contact'))
-                ->tel()
-                ->required()
-                ->maxLength(20),
+            Group::make()
+                ->columnSpanFull()
+                ->columns(['default' => 1, 'sm' => 2])
+                ->extraAttributes(['class' => 'jf-onboarding-essentials'])
+                ->schema([
+                    TextInput::make('name')
+                        ->label(__('app.fields.name'))
+                        ->required()
+                        ->maxLength(255)
+                        ->columnSpan(['default' => 1, 'sm' => 2]),
+                    TextInput::make('email')
+                        ->label(__('app.fields.email'))
+                        ->email()
+                        ->required()
+                        ->maxLength(255)
+                        ->rule(Rule::unique('members', 'email')),
+                    TextInput::make('contact')
+                        ->label(__('app.fields.contact'))
+                        ->tel()
+                        ->required()
+                        ->maxLength(20),
+                ]),
             Section::make(__('app.ui.optional_details'))
+                ->description(__('app.ui.optional_details_hint'))
+                ->icon('heroicon-o-chevron-down')
+                ->collapsible()
                 ->collapsed()
                 ->columnSpanFull()
-                ->columns(2)
+                ->columns(['default' => 1, 'md' => 2])
+                ->extraAttributes(['class' => 'jf-onboarding-optional'])
                 ->schema([
                     Select::make('gender')
                         ->label(__('app.fields.gender'))

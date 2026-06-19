@@ -9,7 +9,11 @@ $beforeActions = \Filament\Support\Facades\FilamentView::renderHook(\Filament\Vi
 $afterActions = \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_HEADER_ACTIONS_AFTER, scopes: $this->getRenderHookScopes());
 @endphp
 
-<header @class(['fi-header', 'fi-header-has-breadcrumbs'=> $breadcrumbs])>
+<header @class([
+    'fi-header',
+    'fi-header-has-breadcrumbs' => $breadcrumbs,
+    'fi-header-has-quick-actions' => filled($headerActions),
+])>
     <div>
         @if ($breadcrumbs)
         <x-filament::breadcrumbs :breadcrumbs="$breadcrumbs" />
@@ -32,7 +36,9 @@ $afterActions = \Filament\Support\Facades\FilamentView::renderHook(\Filament\Vie
         {{ $beforeActions }}
 
         @if ($headerActions)
-            <x-filament::actions :actions="$headerActions" />
+            <div class="jf-quick-actions" role="toolbar" aria-label="{{ __('app.dashboard.title') }}">
+                <x-filament::actions :actions="$headerActions" />
+            </div>
         @endif
 
         <div class="fi-ios-filter-bar flex w-full flex-wrap items-stretch justify-end gap-2 px-2 py-2 sm:items-center sm:gap-3 sm:px-4">
