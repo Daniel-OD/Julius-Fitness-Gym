@@ -32,6 +32,7 @@ class TopPlansByCollectedBarChartWidget extends ChartWidget
         return 'bar';
     }
 
+    #[\Override]
     public function getHeading(): string|Htmlable|null
     {
         return __('app.widgets.top_plans_collected');
@@ -40,6 +41,7 @@ class TopPlansByCollectedBarChartWidget extends ChartWidget
     /**
      * @return array<string, mixed>
      */
+    #[\Override]
     protected function getData(): array
     {
         $range = AnalyticsDateRange::fromFilters($this->pageFilters);

@@ -57,19 +57,19 @@ class InvoiceTable
                     ->sortable(),
                 TextColumn::make('subscription_fee')
                     ->label(__('app.fields.fee'))
-                    ->formatStateUsing(fn ($state): string => Helpers::formatCurrency($state)),
+                    ->formatStateUsing(fn (?float $state): string => Helpers::formatCurrency($state)),
                 TextColumn::make('paid_amount')
                     ->label(__('app.fields.paid'))
-                    ->formatStateUsing(fn ($state): string => Helpers::formatCurrency($state)),
+                    ->formatStateUsing(fn (?float $state): string => Helpers::formatCurrency($state)),
                 TextColumn::make('tax')
                     ->label(__('app.fields.tax'))
-                    ->formatStateUsing(fn ($state): string => Helpers::formatCurrency($state)),
+                    ->formatStateUsing(fn (?float $state): string => Helpers::formatCurrency($state)),
                 TextColumn::make('total_amount')
                     ->label(__('app.fields.total'))
-                    ->formatStateUsing(fn ($state): string => Helpers::formatCurrency($state)),
+                    ->formatStateUsing(fn (?float $state): string => Helpers::formatCurrency($state)),
                 TextColumn::make('due_amount')
                     ->label(__('app.fields.due'))
-                    ->formatStateUsing(fn ($state): string => Helpers::formatCurrency($state)),
+                    ->formatStateUsing(fn (?float $state): string => Helpers::formatCurrency($state)),
                 TextColumn::make('status')
                     ->badge(),
             ])
@@ -79,17 +79,15 @@ class InvoiceTable
                         DatePicker::make('date_from')->label(__('app.fields.date_from')),
                         DatePicker::make('date_to')->label(__('app.fields.date_to')),
                     ])
-                    ->query(function (Builder $query, array $data): Builder {
-                        return $query
-                            ->when(
-                                $data['date_from'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('date', '>=', $date),
-                            )
-                            ->when(
-                                $data['date_to'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('date', '<=', $date),
-                            );
-                    }),
+                    ->query(fn (Builder $query, array $data): Builder => $query
+                        ->when(
+                            $data['date_from'],
+                            fn (Builder $query, $date): Builder => $query->whereDate('date', '>=', $date),
+                        )
+                        ->when(
+                            $data['date_to'],
+                            fn (Builder $query, $date): Builder => $query->whereDate('date', '<=', $date),
+                        )),
             ])
             ->emptyStateIcon(
                 ! Subscription::exists()
@@ -162,7 +160,7 @@ class InvoiceTable
             ->emptyStateActions([
                 Action::make('create_subscription')
                     ->label(__('app.actions.new', ['resource' => __('app.resources.subscriptions.singular')]))
-                    ->url(fn () => route('filament.admin.resources.subscriptions.create'))
+                    ->url(fn (): string => route('filament.admin.resources.subscriptions.create'))
                     ->icon('heroicon-o-plus')
                     ->hidden(fn () => Subscription::exists()),
             ])
@@ -173,7 +171,7 @@ class InvoiceTable
                             ->label(__('app.actions.manage_invoice'))
                             ->disabled()
                             ->color('gray')
-                            ->visible(fn (Invoice $record): bool => ! in_array($record->status?->value, ['refund', 'cancelled'], true)),
+                            ->visible(fn (Invoice $record): bool => ! in_array($record->status->value, ['refund', 'cancelled'], true)),
                         Action::make('add_payment')
                             ->label(__('app.actions.add_payment'))
                             ->color('info')
@@ -191,7 +189,7 @@ class InvoiceTable
                                     ->helperText(fn (Invoice $record): string => __('app.help.due_amount', ['amount' => Helpers::formatCurrency($record->due_amount)]))
                                     ->maxValue(fn (Invoice $record): float => max((float) $record->due_amount, 0))
                                     ->minValue(0.01)
-                                    ->afterStateUpdated(function ($livewire, TextInput $component) {
+                                    ->afterStateUpdated(function ($livewire, TextInput $component): void {
                                         $livewire->validateOnly($component->getStatePath());
                                     }),
                                 DateTimePicker::make('occurred_at')
@@ -210,7 +208,7 @@ class InvoiceTable
                                     ->rows(2)
                                     ->placeholder(__('app.placeholders.optional_note')),
                             ])
-                            ->action(function (Invoice $record, array $data) {
+                            ->action(function (Invoice $record, array $data): void {
                                 $amount = (float) ($data['amount'] ?? 0);
                                 $amount = min(max($amount, 0), (float) ($record->due_amount ?? 0));
 
@@ -237,12 +235,12 @@ class InvoiceTable
                                 $paidLabel = Helpers::formatCurrency($record->paid_amount);
 
                                 Notification::make()
-                                    ->title($record->status?->value === 'paid' ? __('app.notifications.invoice_paid') : __('app.notifications.payment_added'))
+                                    ->title($record->status->value === 'paid' ? __('app.notifications.invoice_paid') : __('app.notifications.payment_added'))
                                     ->success()
                                     ->body(__('app.notifications.invoice_paid_total', ['number' => $record->number, 'amount' => $paidLabel]))
                                     ->send();
                             })
-                            ->visible(fn (Invoice $record): bool => in_array($record->status?->value, ['issued', 'overdue', 'partial'], true) && (float) $record->due_amount > 0),
+                            ->visible(fn (Invoice $record): bool => in_array($record->status->value, ['issued', 'overdue', 'partial'], true) && (float) $record->due_amount > 0),
                         Action::make('refund')
                             ->label(__('app.actions.refund'))
                             ->color('warning')
@@ -258,7 +256,7 @@ class InvoiceTable
                                     ->helperText(fn (Invoice $record): string => __('app.help.refundable_amount', ['amount' => Helpers::formatCurrency($record->paid_amount)]))
                                     ->maxValue(fn (Invoice $record): float => max((float) $record->paid_amount, 0))
                                     ->minValue(0.01)
-                                    ->afterStateUpdated(function ($livewire, TextInput $component) {
+                                    ->afterStateUpdated(function ($livewire, TextInput $component): void {
                                         $livewire->validateOnly($component->getStatePath());
                                     }),
                                 DateTimePicker::make('occurred_at')
@@ -272,7 +270,7 @@ class InvoiceTable
                                     ->rows(2)
                                     ->placeholder(__('app.placeholders.optional_note')),
                             ])
-                            ->action(function (Invoice $record, array $data) {
+                            ->action(function (Invoice $record, array $data): void {
                                 $amount = (float) ($data['amount'] ?? 0);
                                 $amount = min(max($amount, 0), (float) ($record->paid_amount ?? 0));
 
@@ -301,12 +299,12 @@ class InvoiceTable
                                     ->body(__('app.notifications.invoice_refunded_body', ['number' => $record->number]))
                                     ->send();
                             })
-                            ->visible(fn (Invoice $record): bool => (float) $record->paid_amount > 0 && ! in_array($record->status?->value, ['refund', 'cancelled'], true)),
+                            ->visible(fn (Invoice $record): bool => (float) $record->paid_amount > 0 && ! in_array($record->status->value, ['refund', 'cancelled'], true)),
                         Action::make('cancel_invoice')
                             ->label(__('app.actions.cancel'))
                             ->color('danger')
                             ->icon('heroicon-s-x-circle')
-                            ->action(fn (Invoice $record) => tap($record, function ($record) {
+                            ->action(fn (Invoice $record) => tap($record, function ($record): void {
                                 if ($record->transactions()->where('type', 'payment')->exists()) {
                                     Notification::make()
                                         ->title(__('app.notifications.cannot_cancel'))
@@ -324,7 +322,7 @@ class InvoiceTable
                                     ->body(__('app.notifications.invoice_cancelled_body', ['number' => $record->number]))
                                     ->send();
                             }))
-                            ->visible(fn (Invoice $record): bool => ! in_array($record->status?->value, ['cancelled', 'refund'], true) && ! $record->transactions()->where('type', 'payment')->exists()),
+                            ->visible(fn (Invoice $record): bool => ! in_array($record->status->value, ['cancelled', 'refund'], true) && ! $record->transactions()->where('type', 'payment')->exists()),
                     ])
                         ->dropdown(false),
 
@@ -396,29 +394,25 @@ class InvoiceTable
                                 Select::make('payment_transaction_id')
                                     ->label(__('app.fields.payment'))
                                     ->required()
-                                    ->options(function (Invoice $record): array {
-                                        return InvoiceTransaction::query()
-                                            ->where('invoice_id', $record->getKey())
-                                            ->where('type', 'payment')
-                                            ->latest('occurred_at')
-                                            ->limit(5)
-                                            ->get()
-                                            ->mapWithKeys(function (InvoiceTransaction $transaction): array {
-                                                $occurredAt = $transaction->occurred_at?->timezone(AppConfig::timezone())->format('d/m/Y H:i') ?? '—';
+                                    ->options(fn (Invoice $record): array => InvoiceTransaction::query()
+                                        ->where('invoice_id', $record->getKey())
+                                        ->where('type', 'payment')
+                                        ->latest('occurred_at')
+                                        ->limit(5)
+                                        ->get()
+                                        ->mapWithKeys(function (InvoiceTransaction $transaction): array {
+                                            $occurredAt = $transaction->occurred_at->timezone(AppConfig::timezone())->format('d/m/Y H:i');
 
-                                                return [
-                                                    Data::int($transaction->getKey()) => "{$occurredAt} - ".Helpers::formatCurrency((float) ($transaction->amount ?? 0)),
-                                                ];
-                                            })
-                                            ->toArray();
-                                    })
-                                    ->default(function (Invoice $record): ?int {
-                                        return Data::int(InvoiceTransaction::query()
-                                            ->where('invoice_id', $record->getKey())
-                                            ->where('type', 'payment')
-                                            ->latest('occurred_at')
-                                            ->value('id'), 0) ?: null;
-                                    }),
+                                            return [
+                                                Data::int($transaction->getKey()) => "{$occurredAt} - ".Helpers::formatCurrency((float) ($transaction->amount ?? 0)),
+                                            ];
+                                        })
+                                        ->toArray())
+                                    ->default(fn (Invoice $record): ?int => Data::int(InvoiceTransaction::query()
+                                        ->where('invoice_id', $record->getKey())
+                                        ->where('type', 'payment')
+                                        ->latest('occurred_at')
+                                        ->value('id'), 0) ?: null),
                                 Textarea::make('note')
                                     ->label(__('app.fields.note'))
                                     ->rows(2)
@@ -485,10 +479,10 @@ class InvoiceTable
                             })
                             ->visible(fn (Invoice $record): bool => auth()->user()?->can('view', $record) ?? false),
                         ViewAction::make()
-                            ->url(fn ($record) => InvoiceResource::getUrl('view', ['record' => $record])),
+                            ->url(fn ($record): string => InvoiceResource::getUrl('view', ['record' => $record])),
                         EditAction::make()
-                            ->hidden(fn ($record): bool => $record->status?->value !== 'issued')
-                            ->url(fn ($record) => InvoiceResource::getUrl('edit', ['record' => $record])),
+                            ->hidden(fn ($record): bool => $record->status->value !== 'issued')
+                            ->url(fn ($record): string => InvoiceResource::getUrl('edit', ['record' => $record])),
                     ])->dropdown(false),
                 ]),
             ])

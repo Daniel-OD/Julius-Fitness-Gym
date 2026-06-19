@@ -12,15 +12,15 @@ use Resend\Contracts\Client;
  */
 final class MailConfigurator
 {
-    public const DRIVER_ENV = 'env';
+    public const string DRIVER_ENV = 'env';
 
-    public const DRIVER_LOG = 'log';
+    public const string DRIVER_LOG = 'log';
 
-    public const DRIVER_RESEND = 'resend';
+    public const string DRIVER_RESEND = 'resend';
 
-    public const DRIVER_SMTP = 'smtp';
+    public const string DRIVER_SMTP = 'smtp';
 
-    public const DRIVER_SENDMAIL = 'sendmail';
+    public const string DRIVER_SENDMAIL = 'sendmail';
 
     /**
      * @return array<string, mixed>

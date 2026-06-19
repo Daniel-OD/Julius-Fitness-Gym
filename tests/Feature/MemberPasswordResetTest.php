@@ -29,11 +29,9 @@ it('queues password reset email for existing member', function (): void {
 
     expect(Hash::check('OldPassword1!', (string) $member->password))->toBeFalse();
 
-    Queue::assertPushed(SendPasswordResetEmail::class, function (SendPasswordResetEmail $job) use ($member): bool {
-        return $job->recipientType === 'member'
-            && $job->recipientId === $member->id
-            && $job->plainPassword !== '';
-    });
+    Queue::assertPushed(SendPasswordResetEmail::class, fn (SendPasswordResetEmail $job): bool => $job->recipientType === 'member'
+        && $job->recipientId === $member->id
+        && $job->plainPassword !== '');
 });
 
 it('returns generic success message for unknown member email', function (): void {
@@ -51,15 +49,13 @@ it('sends member password reset email with new password', function (): void {
 
     $member = Member::factory()->create();
 
-    (new SendPasswordResetEmail(
+    new SendPasswordResetEmail(
         recipientType: 'member',
         recipientId: $member->id,
         plainPassword: 'GeneratedPass1',
-    ))->handle(app(SettingsRepository::class));
+    )->handle(app(SettingsRepository::class));
 
-    Mail::assertSent(PasswordResetMail::class, function (PasswordResetMail $mail) use ($member): bool {
-        return $mail->hasTo($member->email)
-            && $mail->plainPassword === 'GeneratedPass1'
-            && $mail->loginUrl === route('member.login');
-    });
+    Mail::assertSent(PasswordResetMail::class, fn (PasswordResetMail $mail): bool => $mail->hasTo($member->email)
+        && $mail->plainPassword === 'GeneratedPass1'
+        && $mail->loginUrl === route('member.login'));
 });

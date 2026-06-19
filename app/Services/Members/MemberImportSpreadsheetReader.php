@@ -74,7 +74,6 @@ class MemberImportSpreadsheetReader
 
         $columnCount = max(array_map(count(...), $rawRows));
         $headers = [];
-        $dataRows = $rawRows;
 
         for ($index = 0; $index < $columnCount; $index++) {
             $headers[] = __('app.settings.import.default_column', ['number' => $index + 1]);
@@ -133,12 +132,6 @@ class MemberImportSpreadsheetReader
      */
     private function rowHasContent(array $cells): bool
     {
-        foreach ($cells as $cell) {
-            if (filled($cell)) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($cells, fn ($cell): bool => filled($cell));
     }
 }

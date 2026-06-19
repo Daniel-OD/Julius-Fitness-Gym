@@ -27,7 +27,7 @@ use Illuminate\Http\Response;
  */
 class SubscriptionsController extends ApiController
 {
-    private const RESOURCE_KEY = 'subscriptions';
+    private const string RESOURCE_KEY = 'subscriptions';
 
     /**
      * Display a listing of the resource.
@@ -86,7 +86,7 @@ class SubscriptionsController extends ApiController
             $discountAmount = Data::float($invoiceData['discount_amount'] ?? 0);
             $discountAmount = min(max($discountAmount, 0), $fee);
             if ($discountPct > 0 && $discountAmount <= 0) {
-                $discountAmount = (float) Helpers::getDiscountAmount($discountPct, $fee);
+                $discountAmount = Helpers::getDiscountAmount($discountPct, $fee);
             }
 
             $paymentMethod = Data::nullableString($invoiceData['payment_method'] ?? null);

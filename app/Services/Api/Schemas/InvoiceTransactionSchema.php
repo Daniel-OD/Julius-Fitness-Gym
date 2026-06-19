@@ -38,7 +38,7 @@ final class InvoiceTransactionSchema
             'invoice_id' => (int) $transaction->invoice_id,
             'type' => (string) $transaction->type,
             'amount' => (float) ($transaction->amount ?? 0),
-            'occurred_at' => $transaction->occurred_at?->toISOString(),
+            'occurred_at' => $transaction->occurred_at->toISOString(),
             'payment_method' => $transaction->payment_method ? (string) $transaction->payment_method : null,
             'note' => $transaction->note ? (string) $transaction->note : null,
             'reference_id' => $transaction->reference_id ? (string) $transaction->reference_id : null,

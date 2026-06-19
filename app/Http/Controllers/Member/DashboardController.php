@@ -15,7 +15,7 @@ use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
-    public function __construct(private MemberPlanSelectionService $planSelection) {}
+    public function __construct(private readonly MemberPlanSelectionService $planSelection) {}
 
     public function index(MemberQrCodeService $qrCodeService): View|RedirectResponse
     {

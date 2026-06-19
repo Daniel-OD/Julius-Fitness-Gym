@@ -14,8 +14,8 @@ use Illuminate\View\View;
 class VerifyEmailController extends Controller
 {
     public function __construct(
-        private MemberPlanIntent $planIntent,
-        private MemberPlanSelectionService $planSelection,
+        private readonly MemberPlanIntent $planIntent,
+        private readonly MemberPlanSelectionService $planSelection,
     ) {}
 
     public function showVerifyEmail(): View
@@ -30,7 +30,7 @@ class VerifyEmailController extends Controller
         $member = Member::findOrFail($id);
 
         abort_unless((string) auth('member')->id() === $id, 403);
-        abort_if(! hash_equals($hash, sha1($member->getEmailForVerification())), 403);
+        abort_if(! hash_equals($hash, sha1((string) $member->getEmailForVerification())), 403);
         abort_unless($request->hasValidSignature(), 403);
 
         if (! $member->hasVerifiedEmail()) {

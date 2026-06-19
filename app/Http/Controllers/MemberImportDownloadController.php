@@ -59,7 +59,7 @@ class MemberImportDownloadController extends Controller
         );
 
         return response()->streamDownload(
-            fn () => print Storage::disk('local')->get($path),
+            fn (): int => print Storage::disk('local')->get($path),
             'raport-erori-import-membri.csv',
             ['Content-Type' => 'text/csv; charset=UTF-8'],
         );

@@ -20,11 +20,9 @@ it('admin can reset a member password from edit page', function (): void {
         ->callAction('reset_password')
         ->assertNotified();
 
-    Queue::assertPushed(SendPasswordResetEmail::class, function (SendPasswordResetEmail $job) use ($member): bool {
-        return $job->recipientType === 'member'
-            && $job->recipientId === $member->id
-            && $job->plainPassword !== '';
-    });
+    Queue::assertPushed(SendPasswordResetEmail::class, fn (SendPasswordResetEmail $job): bool => $job->recipientType === 'member'
+        && $job->recipientId === $member->id
+        && $job->plainPassword !== '');
 });
 
 it('hides member password reset when email is missing', function (): void {

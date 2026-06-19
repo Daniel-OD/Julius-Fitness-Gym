@@ -84,15 +84,10 @@ class MarkSubscriptionsStatus extends Command
             if ($ongoingCount > 0) {
                 $summary[] = "{$ongoingCount} ongoing";
             }
-        }
-
-        if ($runAll) {
             $memberSync = $memberStatusSync->syncAll();
-
             if ($memberSync['activated'] > 0) {
                 $summary[] = "{$memberSync['activated']} members activated";
             }
-
             if ($memberSync['deactivated'] > 0) {
                 $summary[] = "{$memberSync['deactivated']} members deactivated";
             }

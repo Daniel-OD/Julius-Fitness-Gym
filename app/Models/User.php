@@ -15,11 +15,32 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
-/** @studio Daniel-OD */
+/**
+ * @studio Daniel-OD
+ *
+ * @property int $id
+ * @property string|null $photo
+ * @property string $name
+ * @property string $email
+ * @property string|null $contact
+ * @property Carbon|null $dob
+ * @property string|null $gender
+ * @property string|null $address
+ * @property string|null $country
+ * @property string|null $city
+ * @property string|null $state
+ * @property string|null $pincode
+ * @property Status|null $status
+ * @property bool $must_change_password
+ * @property Carbon|null $email_verified_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ */
 class User extends Authenticatable implements FilamentUser, HasAvatar
 {
     /** @use HasFactory<UserFactory> */
@@ -55,6 +76,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
     /**
      * @return array<string, string>
      */
+    #[\Override]
     protected function casts(): array
     {
         return [
@@ -136,7 +158,11 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
 
     public function isAdministrator(): bool
     {
-        return $this->hasRole('super_admin') || $this->hasRole('owner');
+        if ($this->hasRole('super_admin')) {
+            return true;
+        }
+
+        return $this->hasRole('owner');
     }
 
     public function isClientOnly(): bool
@@ -209,7 +235,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
 
         $role = $this->roles->first();
 
-        return $role !== null ? (string) $role->name : '';
+        return $role !== null ? (string) $role->getAttributeValue('name') : '';
     }
 
     /**

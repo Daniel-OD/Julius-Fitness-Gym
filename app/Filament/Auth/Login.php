@@ -13,6 +13,7 @@ class Login extends BaseLogin
 {
     public const RELAXED_PANEL_ACCESS_ATTRIBUTE = 'filament.relaxed_panel_access';
 
+    #[\Override]
     public function mount(): void
     {
         $currentPanelId = Filament::getCurrentPanel()?->getId();
@@ -38,6 +39,7 @@ class Login extends BaseLogin
         session()->regenerateToken();
     }
 
+    #[\Override]
     public function authenticate(): ?LoginResponse
     {
         request()->attributes->set(self::RELAXED_PANEL_ACCESS_ATTRIBUTE, true);

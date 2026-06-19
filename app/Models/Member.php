@@ -42,6 +42,7 @@ use Illuminate\Support\Str;
  * @property string|null $goal
  * @property Status|null $status
  * @property int|null $user_id
+ * @property string|null $last_checkin_at
  */
 class Member extends Authenticatable implements MustVerifyEmail
 {
@@ -69,6 +70,7 @@ class Member extends Authenticatable implements MustVerifyEmail
     /**
      * @return array<string, string>
      */
+    #[\Override]
     protected function casts(): array
     {
         return [
@@ -101,6 +103,7 @@ class Member extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(CheckIn::class);
     }
 
+    #[\Override]
     public function sendEmailVerificationNotification(): void
     {
         $this->notify(new MemberVerifyEmailNotification);
@@ -118,6 +121,7 @@ class Member extends Authenticatable implements MustVerifyEmail
         $this->forceFill(['checkin_token' => Str::random(32)])->save();
     }
 
+    #[\Override]
     protected static function boot(): void
     {
         parent::boot();

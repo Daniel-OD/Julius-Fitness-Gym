@@ -93,7 +93,7 @@ final class InvoiceSchema
             'id' => (int) $invoice->id,
             'number' => $invoice->number ? (string) $invoice->number : null,
             'subscription_id' => (int) $invoice->subscription_id,
-            'date' => $invoice->date?->toDateString(),
+            'date' => $invoice->date->toDateString(),
             'due_date' => $invoice->due_date?->toDateString(),
             'payment_method' => $invoice->payment_method ? (string) $invoice->payment_method : null,
             'status' => Status::valueOf($invoice->status),

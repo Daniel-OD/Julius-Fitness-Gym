@@ -22,7 +22,7 @@ class MemberQrCodeService
             'addQuietzone' => true,
         ]);
 
-        $output = (new QRCode($options))->render($data);
+        $output = new QRCode($options)->render($data);
 
         return $this->normalizeSvgOutput($output);
     }

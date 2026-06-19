@@ -80,7 +80,7 @@ class InstallApplication extends Command
         File::put(storage_path('app/.install-complete'), now()->toIso8601String());
 
         $this->newLine();
-        $this->line(' Application URL: '.(string) $this->option('url'));
+        $this->line(' Application URL: '.$this->option('url'));
         $this->line(' Admin panel: '.rtrim((string) $this->option('url'), '/').'/admin');
         $this->line(" Email: {$email}");
         $this->line(" Password: {$password}");
@@ -179,7 +179,7 @@ class InstallApplication extends Command
         $body = implode(PHP_EOL, [
             'Julius Fitness Gym — Administrator',
             '====================================',
-            'URL: '.(string) $this->option('url').'/admin',
+            'URL: '.$this->option('url').'/admin',
             'Email: '.$email,
             '',
             $passwordNote,

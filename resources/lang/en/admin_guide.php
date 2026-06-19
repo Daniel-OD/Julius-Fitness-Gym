@@ -532,13 +532,13 @@ return [
         ],
 
         'admin.enquiries.index' => [
-            'title' => 'Enquiries — sales leads',
+            'title' => 'Enquiries — potential clients',
             'greeting' => 'Every potential new member starts here — don\'t let them go cold.',
             'summary' => 'People interested in joining who are not members yet. First step in your sales pipeline.',
             'steps' => [
                 [
                     'title' => 'Log a new enquiry',
-                    'body' => 'Capture the lead while the conversation is fresh.',
+                    'body' => 'Capture the potential client while the conversation is fresh.',
                     'fields' => [
                         ['name' => 'Name', 'hint' => 'First contact name — doesn\'t need to be formal.'],
                         ['name' => 'Source', 'hint' => 'Where they came from: walk-in, phone, social media, referral.'],
@@ -550,7 +550,7 @@ return [
                     'body' => 'Always set a follow-up date before closing the form.',
                     'fields' => [
                         ['name' => 'Follow-up date', 'hint' => '24–48 hours is usually right. Longer and they forget who you are.'],
-                        ['name' => 'Assign to', 'hint' => 'Which staff member is responsible — prevents leads falling through the cracks.'],
+                        ['name' => 'Assign to', 'hint' => 'Which staff member is responsible — prevents potential clients falling through the cracks.'],
                     ],
                 ],
                 [
@@ -563,7 +563,7 @@ return [
             ],
             'tips' => [
                 'Log phone calls and walk-ins here before they become members.',
-                'Assign follow-up dates so no lead is forgotten.',
+                'Assign follow-up dates so no potential client is forgotten.',
                 'Convert to member when they sign up.',
             ],
         ],

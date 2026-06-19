@@ -58,7 +58,7 @@ class InvoiceForm
                                     ->getOptionLabelFromRecordUsing(fn (Subscription $record): string => self::formatSubscriptionOptionLabel($record))
                                     ->searchable()
                                     ->afterStateUpdated(
-                                        function (Get $get, Set $set) {
+                                        function (Get $get, Set $set): void {
                                             $sub = $get('subscription_id')
                                                 ? Subscription::with('plan')->find($get('subscription_id'))
                                                 : null;
@@ -110,7 +110,7 @@ class InvoiceForm
                                 DatePicker::make('due_date')
                                     ->label(__('app.fields.due_date'))
                                     ->required()
-                                    ->default(fn () => now()->toDateString())
+                                    ->default(fn (): string => now()->toDateString())
                                     ->reactive(),
                                 Select::make('discount')
                                     ->label(__('app.fields.discount'))
@@ -120,7 +120,7 @@ class InvoiceForm
                                     ->reactive()
                                     ->placeholder(__('app.placeholders.select_discount'))
                                     ->afterStateUpdated(
-                                        function (Get $get, Set $set) {
+                                        function (Get $get, Set $set): void {
                                             $fee = self::floatState($get, 'subscription_fee');
                                             $discountPct = self::intState($get, 'discount');
                                             $discountAmount = Helpers::getDiscountAmount($discountPct, $fee);
@@ -128,7 +128,7 @@ class InvoiceForm
                                             $taxRate = Helpers::getTaxRate() ?: 0;
 
                                             $summary = InvoiceCalculator::summary(
-                                                (float) $fee,
+                                                $fee,
                                                 $taxRate,
                                                 $discountAmount,
                                                 $paid,
@@ -149,7 +149,7 @@ class InvoiceForm
                                     ->prefix(Helpers::getCurrencySymbol())
                                     ->maxValue(fn (Get $get): float => self::floatState($get, 'subscription_fee'))
                                     ->afterStateUpdated(
-                                        function (Get $get, Set $set, $livewire, TextInput $component) {
+                                        function (Get $get, Set $set, $livewire, TextInput $component): void {
                                             $livewire->validateOnly($component->getStatePath());
 
                                             $fee = self::floatState($get, 'subscription_fee');
@@ -159,7 +159,7 @@ class InvoiceForm
                                             $taxRate = Helpers::getTaxRate() ?: 0;
 
                                             $summary = InvoiceCalculator::summary(
-                                                (float) $fee,
+                                                $fee,
                                                 $taxRate,
                                                 (float) $clamped,
                                                 $paid,
@@ -230,16 +230,11 @@ class InvoiceForm
         $memberName = $subscription->member->name ?? '—';
         $planCode = $subscription->plan->code ?? '—';
         $planName = $subscription->plan->name ?? '—';
-        $start = $subscription->start_date?->format('d-m-Y') ?? '—';
-        $end = $subscription->end_date?->format('d-m-Y') ?? '—';
+        $start = $subscription->start_date->format('d-m-Y');
+        $end = $subscription->end_date->format('d-m-Y');
         $status = $subscription->status?->getLabel() ?? '—';
 
         return "#{$subscription->id} — {$memberCode} {$memberName} • {$planCode} {$planName} • {$start} → {$end} • {$status}";
-    }
-
-    private static function stringState(Get $get, string $path): ?string
-    {
-        return Data::nullableString($get($path));
     }
 
     private static function intState(Get $get, string $path): int

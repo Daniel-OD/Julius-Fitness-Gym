@@ -43,10 +43,8 @@ it('dispatches a job for a subscription expiring in exactly 7 days', function ()
 
     $this->artisan('gym:send-expiring-emails')->assertSuccessful();
 
-    Queue::assertPushed(SendSubscriptionExpiringEmail::class, function (SendSubscriptionExpiringEmail $job) use ($subscription): bool {
-        return $job->subscription->id === $subscription->id
-            && $job->daysLeft === 7;
-    });
+    Queue::assertPushed(SendSubscriptionExpiringEmail::class, fn (SendSubscriptionExpiringEmail $job): bool => $job->subscription->id === $subscription->id
+        && $job->daysLeft === 7);
 });
 
 it('dispatches a job for a subscription expiring in exactly 3 days', function (): void {
@@ -54,10 +52,8 @@ it('dispatches a job for a subscription expiring in exactly 3 days', function ()
 
     $this->artisan('gym:send-expiring-emails')->assertSuccessful();
 
-    Queue::assertPushed(SendSubscriptionExpiringEmail::class, function (SendSubscriptionExpiringEmail $job) use ($subscription): bool {
-        return $job->subscription->id === $subscription->id
-            && $job->daysLeft === 3;
-    });
+    Queue::assertPushed(SendSubscriptionExpiringEmail::class, fn (SendSubscriptionExpiringEmail $job): bool => $job->subscription->id === $subscription->id
+        && $job->daysLeft === 3);
 });
 
 it('does not dispatch a job for a subscription expiring in 5 days', function (): void {

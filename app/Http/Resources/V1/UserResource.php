@@ -29,6 +29,7 @@ class UserResource extends JsonResource
      *
      * @return array<string, mixed>
      */
+    #[\Override]
     public function toArray(Request $request): array
     {
         /** @var User $user */

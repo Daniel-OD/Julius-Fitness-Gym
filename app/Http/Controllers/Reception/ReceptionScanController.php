@@ -41,8 +41,8 @@ class ReceptionScanController extends Controller
                 : null,
             'subscription' => $result->subscription
                 ? [
-                    'plan' => $result->subscription->plan?->name,
-                    'valid_until' => $result->subscription->end_date?->translatedFormat('d M Y'),
+                    'plan' => $result->subscription->plan->name,
+                    'valid_until' => $result->subscription->end_date->translatedFormat('d M Y'),
                 ]
                 : null,
             'checked_in_at' => $result->entryRecorded()

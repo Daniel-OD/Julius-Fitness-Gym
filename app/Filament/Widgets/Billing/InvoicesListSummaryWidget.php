@@ -27,6 +27,7 @@ class InvoicesListSummaryWidget extends StatsOverviewWidget
     /**
      * @return array<int, Stat>
      */
+    #[\Override]
     protected function getStats(): array
     {
         $timezone = AppConfig::timezone();

@@ -19,7 +19,6 @@ class MemberImportService
 
     public function __construct(
         private readonly MemberImportSpreadsheetReader $reader,
-        private readonly MemberImportColumnMapper $mapper,
         private readonly MemberImportValueParser $valueParser,
         private readonly MemberImportSubscriptionProvisioner $subscriptionProvisioner,
         private readonly MemberStatusSyncService $statusSync,
@@ -34,7 +33,7 @@ class MemberImportService
         bool $hasHeader,
         array $columnMapping,
     ): array {
-        $headers = $this->reader->headersFromFirstRow($dataset, $hasHeader);
+        $this->reader->headersFromFirstRow($dataset, $hasHeader);
         $rows = $this->reader->dataRows($dataset, $hasHeader);
         $mapped = [];
 
@@ -165,7 +164,7 @@ class MemberImportService
                 }
             }
 
-            if ($member !== null && $this->subscriptionProvisioner->hasSubscriptionData($row)) {
+            if ($this->subscriptionProvisioner->hasSubscriptionData($row)) {
                 try {
                     if ($this->subscriptionProvisioner->provision($member, $row)) {
                         $subscriptionsCreated++;
@@ -256,7 +255,7 @@ class MemberImportService
         $parts = array_filter([
             $row['first_name'] ?? null,
             $row['last_name'] ?? null,
-        ], fn (mixed $part): bool => filled($part));
+        ], filled(...));
 
         if ($parts === []) {
             return null;

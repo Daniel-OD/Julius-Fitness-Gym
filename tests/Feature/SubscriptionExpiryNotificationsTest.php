@@ -40,9 +40,7 @@ it('dispatches a job for a subscription expiring in 7 days', function (): void {
 
     $this->artisan('gym:subscription-expiry-notifications')->assertSuccessful();
 
-    Bus::assertDispatched(SendSubscriptionExpiryNotification::class, function ($job) use ($subscription): bool {
-        return $job->subscriptionId === $subscription->id && $job->daysLeft === 7;
-    });
+    Bus::assertDispatched(SendSubscriptionExpiryNotification::class, fn ($job): bool => $job->subscriptionId === $subscription->id && $job->daysLeft === 7);
 });
 
 it('dispatches a job for a subscription expiring in 3 days', function (): void {
@@ -50,9 +48,7 @@ it('dispatches a job for a subscription expiring in 3 days', function (): void {
 
     $this->artisan('gym:subscription-expiry-notifications')->assertSuccessful();
 
-    Bus::assertDispatched(SendSubscriptionExpiryNotification::class, function ($job) use ($subscription): bool {
-        return $job->subscriptionId === $subscription->id && $job->daysLeft === 3;
-    });
+    Bus::assertDispatched(SendSubscriptionExpiryNotification::class, fn ($job): bool => $job->subscriptionId === $subscription->id && $job->daysLeft === 3);
 });
 
 it('dispatches a job for a subscription expiring in 1 day', function (): void {
@@ -60,9 +56,7 @@ it('dispatches a job for a subscription expiring in 1 day', function (): void {
 
     $this->artisan('gym:subscription-expiry-notifications')->assertSuccessful();
 
-    Bus::assertDispatched(SendSubscriptionExpiryNotification::class, function ($job) use ($subscription): bool {
-        return $job->subscriptionId === $subscription->id && $job->daysLeft === 1;
-    });
+    Bus::assertDispatched(SendSubscriptionExpiryNotification::class, fn ($job): bool => $job->subscriptionId === $subscription->id && $job->daysLeft === 1);
 });
 
 it('dispatches a job for a subscription expiring today (day 0)', function (): void {
@@ -70,9 +64,7 @@ it('dispatches a job for a subscription expiring today (day 0)', function (): vo
 
     $this->artisan('gym:subscription-expiry-notifications')->assertSuccessful();
 
-    Bus::assertDispatched(SendSubscriptionExpiryNotification::class, function ($job) use ($subscription): bool {
-        return $job->subscriptionId === $subscription->id && $job->daysLeft === 0;
-    });
+    Bus::assertDispatched(SendSubscriptionExpiryNotification::class, fn ($job): bool => $job->subscriptionId === $subscription->id && $job->daysLeft === 0);
 });
 
 it('does not dispatch for subscriptions expiring in 2 days (not a trigger)', function (): void {

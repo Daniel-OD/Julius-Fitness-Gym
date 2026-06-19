@@ -152,7 +152,7 @@ class FollowUpTable
             ->emptyStateActions([
                 Action::make('create_enquiry')
                     ->label(__('app.actions.new', ['resource' => __('app.resources.enquiries.singular')]))
-                    ->url(fn () => route('filament.admin.resources.enquiries.create'))
+                    ->url(fn (): string => route('filament.admin.resources.enquiries.create'))
                     ->icon('heroicon-o-plus')
                     ->hidden(fn () => Enquiry::exists()),
                 CreateAction::make()
@@ -161,7 +161,7 @@ class FollowUpTable
                     ->createAnother(false)
                     ->modalHeading(__('app.actions.new_follow_up'))
                     ->modalWidth('sm')
-                    ->visible(fn () => Enquiry::exists() && ! FollowUp::exists()),
+                    ->visible(fn (): bool => Enquiry::exists() && ! FollowUp::exists()),
             ])
             ->filters(static::getTableFilters())
             ->recordActions(static::getTableActions())
@@ -186,17 +186,15 @@ class FollowUpTable
                     DatePicker::make('date_from')->label(__('app.fields.date_from')),
                     DatePicker::make('date_to')->label(__('app.fields.date_to')),
                 ])
-                ->query(function (Builder $query, array $data): Builder {
-                    return $query
-                        ->when(
-                            $data['date_from'],
-                            fn (Builder $query, $date) => $query->whereDate('created_at', '>=', $date)
-                        )
-                        ->when(
-                            $data['date_to'],
-                            fn (Builder $query, $date) => $query->whereDate('created_at', '<=', $date)
-                        );
-                }),
+                ->query(fn (Builder $query, array $data): Builder => $query
+                    ->when(
+                        $data['date_from'],
+                        fn (Builder $query, $date) => $query->whereDate('created_at', '>=', $date)
+                    )
+                    ->when(
+                        $data['date_to'],
+                        fn (Builder $query, $date) => $query->whereDate('created_at', '<=', $date)
+                    )),
         ];
     }
 
@@ -212,7 +210,7 @@ class FollowUpTable
                 ActionGroup::make([
                     Action::make('heading_actions')
                         ->label(__('app.fields.status'))
-                        ->visible(fn ($record) => in_array($record->status->value, ['pending']))
+                        ->visible(fn ($record): bool => in_array($record->status->value, ['pending']))
                         ->disabled()
                         ->color('gray'),
                     Action::make('mark_as_done')
@@ -258,7 +256,7 @@ class FollowUpTable
                                 ->success()
                                 ->send();
                         })
-                        ->visible(fn ($record) => $record->status->value === 'pending'),
+                        ->visible(fn ($record): bool => $record->status->value === 'pending'),
                 ])->dropdown(false),
                 ActionGroup::make([
                     Action::make('heading_actions')

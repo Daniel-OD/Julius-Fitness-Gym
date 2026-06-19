@@ -19,27 +19,32 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
+/** @extends resource<Invoice> */
 class InvoiceResource extends Resource
 {
     protected static ?string $model = Invoice::class;
 
     protected static ?string $recordTitleAttribute = 'number';
 
+    #[\Override]
     public static function getModelLabel(): string
     {
         return __('app.resources.invoices.singular');
     }
 
+    #[\Override]
     public static function getPluralModelLabel(): string
     {
         return __('app.resources.invoices.plural');
     }
 
+    #[\Override]
     public static function getNavigationLabel(): string
     {
         return static::getPluralModelLabel();
     }
 
+    #[\Override]
     public static function getGloballySearchableAttributes(): array
     {
         return [
@@ -60,6 +65,7 @@ class InvoiceResource extends Resource
         $query->with(['subscription.member', 'subscription.plan']);
     }
 
+    #[\Override]
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         assert($record instanceof Invoice);
@@ -69,21 +75,14 @@ class InvoiceResource extends Resource
             $details[__('app.fields.member')] = $record->subscription->member->name;
         }
 
-        if ($record->date) {
-            $details[__('app.fields.invoice_date')] = $record->date->toDateString();
-        }
-
-        if ($record->status) {
-            $details[__('app.fields.status')] = GlobalSearchBadge::status($record->status);
-        }
-
-        if (! is_null($record->total_amount)) {
-            $details[__('app.fields.total_amount')] = Helpers::formatCurrency((float) $record->total_amount);
-        }
+        $details[__('app.fields.invoice_date')] = $record->date->toDateString();
+        $details[__('app.fields.status')] = GlobalSearchBadge::status($record->status);
+        $details[__('app.fields.total_amount')] = Helpers::formatCurrency((float) $record->total_amount);
 
         return $details;
     }
 
+    #[\Override]
     public static function canCreate(): bool
     {
         return false;
@@ -92,6 +91,7 @@ class InvoiceResource extends Resource
     /**
      * Define the form schema for the resource.
      */
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return InvoiceForm::configure($schema);
@@ -100,6 +100,7 @@ class InvoiceResource extends Resource
     /**
      * Get the Filament table columns for the invoice list view.
      */
+    #[\Override]
     public static function table(Table $table): Table
     {
         return InvoiceTable::configure($table);
@@ -108,6 +109,7 @@ class InvoiceResource extends Resource
     /**
      * Add infolist to the resource.
      */
+    #[\Override]
     public static function infolist(Schema $schema): Schema
     {
         return InvoiceInfolist::configure($schema);
@@ -116,6 +118,7 @@ class InvoiceResource extends Resource
     /**
      * Get the relation managers for the resource.
      */
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -123,6 +126,7 @@ class InvoiceResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [
@@ -135,6 +139,7 @@ class InvoiceResource extends Resource
     /**
      * @return Builder<Invoice>
      */
+    #[\Override]
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()

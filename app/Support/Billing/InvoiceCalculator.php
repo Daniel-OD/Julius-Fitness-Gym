@@ -37,11 +37,11 @@ final class InvoiceCalculator
 
         return [
             'fee' => (float) $fee,
-            'tax' => (float) $tax,
-            'discount_amount' => (float) $discountAmount,
-            'total' => (float) $total,
-            'paid' => (float) $paidAmount,
-            'due' => (float) $due,
+            'tax' => $tax,
+            'discount_amount' => $discountAmount,
+            'total' => $total,
+            'paid' => $paidAmount,
+            'due' => $due,
         ];
     }
 }

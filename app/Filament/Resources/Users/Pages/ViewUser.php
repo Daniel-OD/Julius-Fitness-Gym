@@ -16,6 +16,7 @@ class ViewUser extends ViewRecord
 {
     protected static string $resource = UserResource::class;
 
+    #[\Override]
     public function getTitle(): string
     {
         return __('app.titles.record', [
@@ -24,6 +25,7 @@ class ViewUser extends ViewRecord
         ]);
     }
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [
@@ -33,6 +35,7 @@ class ViewUser extends ViewRecord
         ];
     }
 
+    #[\Override]
     public function getBreadcrumbs(): array
     {
         return [

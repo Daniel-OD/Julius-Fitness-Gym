@@ -14,6 +14,7 @@ class ListEnquiries extends ListRecords
 {
     protected static string $resource = EnquiryResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [
@@ -24,6 +25,7 @@ class ListEnquiries extends ListRecords
         ];
     }
 
+    #[\Override]
     public function getBreadcrumbs(): array
     {
         return [
@@ -32,6 +34,7 @@ class ListEnquiries extends ListRecords
         ];
     }
 
+    #[\Override]
     public function getTabs(): array
     {
         return [

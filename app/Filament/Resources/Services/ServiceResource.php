@@ -18,21 +18,25 @@ class ServiceResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
+    #[\Override]
     public static function getModelLabel(): string
     {
         return __('app.resources.services.singular');
     }
 
+    #[\Override]
     public static function getPluralModelLabel(): string
     {
         return __('app.resources.services.plural');
     }
 
+    #[\Override]
     public static function getNavigationLabel(): string
     {
         return static::getPluralModelLabel();
     }
 
+    #[\Override]
     public static function getGloballySearchableAttributes(): array
     {
         return [
@@ -41,6 +45,7 @@ class ServiceResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         /** @var Service $record */
@@ -53,11 +58,13 @@ class ServiceResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return ServiceForm::configure($schema);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return ServiceTable::configure($table);
@@ -66,11 +73,13 @@ class ServiceResource extends Resource
     /**
      * Add infolist to the resource.
      */
+    #[\Override]
     public static function infolist(Schema $schema): Schema
     {
         return ServiceInfolist::configure($schema);
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

@@ -18,21 +18,25 @@ class FollowUpResource extends Resource
 {
     protected static ?string $model = FollowUp::class;
 
+    #[\Override]
     public static function getModelLabel(): string
     {
         return __('app.resources.follow_ups.singular');
     }
 
+    #[\Override]
     public static function getPluralModelLabel(): string
     {
         return __('app.resources.follow_ups.plural');
     }
 
+    #[\Override]
     public static function getNavigationLabel(): string
     {
         return static::getPluralModelLabel();
     }
 
+    #[\Override]
     public static function getGloballySearchableAttributes(): array
     {
         return [
@@ -51,6 +55,7 @@ class FollowUpResource extends Resource
         $query->with(['enquiry', 'user']);
     }
 
+    #[\Override]
     public static function getGlobalSearchResultTitle(Model $record): string
     {
         assert($record instanceof FollowUp);
@@ -63,6 +68,7 @@ class FollowUpResource extends Resource
         return (string) $title;
     }
 
+    #[\Override]
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         assert($record instanceof FollowUp);
@@ -90,6 +96,7 @@ class FollowUpResource extends Resource
     /**
      * Define the form schema for the resource.
      */
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return FollowUpForm::configure($schema);
@@ -98,6 +105,7 @@ class FollowUpResource extends Resource
     /**
      * Get the Filament table configuration for the list view.
      */
+    #[\Override]
     public static function table(Table $table): Table
     {
         return FollowUpTable::configure($table);
@@ -106,11 +114,13 @@ class FollowUpResource extends Resource
     /**
      * Add infolist to the resource.
      */
+    #[\Override]
     public static function infolist(Schema $schema): Schema
     {
         return FollowUpInfolist::configure($schema);
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

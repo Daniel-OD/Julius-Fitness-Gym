@@ -14,6 +14,7 @@ class ListSubscriptions extends ListRecords
 {
     protected static string $resource = SubscriptionResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [
@@ -24,6 +25,7 @@ class ListSubscriptions extends ListRecords
         ];
     }
 
+    #[\Override]
     public function getTabs(): array
     {
         return [
@@ -51,10 +53,11 @@ class ListSubscriptions extends ListRecords
             'without_invoice' => Tab::make(__('app.billing.without_invoice_tab'))
                 ->badge(Subscription::query()->withoutInvoices()->count())
                 ->badgeColor('warning')
-                ->modifyQueryUsing(fn (Builder $query): Builder => $query->withoutInvoices()),
+                ->modifyQueryUsing(fn (Builder $query): Builder => $query->whereDoesntHave('invoices')),
         ];
     }
 
+    #[\Override]
     public function getBreadcrumbs(): array
     {
         return [

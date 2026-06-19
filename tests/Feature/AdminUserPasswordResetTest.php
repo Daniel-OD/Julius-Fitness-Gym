@@ -28,11 +28,9 @@ it('admin can reset a user password from edit page', function (): void {
 
     expect($target->must_change_password)->toBeTrue();
 
-    Queue::assertPushed(SendPasswordResetEmail::class, function (SendPasswordResetEmail $job) use ($target): bool {
-        return $job->recipientType === 'user'
-            && $job->recipientId === $target->id
-            && $job->plainPassword !== '';
-    });
+    Queue::assertPushed(SendPasswordResetEmail::class, fn (SendPasswordResetEmail $job): bool => $job->recipientType === 'user'
+        && $job->recipientId === $target->id
+        && $job->plainPassword !== '');
 });
 
 it('password reset service sets must change password for staff users', function (): void {
@@ -53,15 +51,13 @@ it('sends staff password reset email with new password', function (): void {
 
     $user = User::factory()->create();
 
-    (new SendPasswordResetEmail(
+    new SendPasswordResetEmail(
         recipientType: 'user',
         recipientId: $user->id,
         plainPassword: 'StaffPass123!',
-    ))->handle(app(SettingsRepository::class));
+    )->handle(app(SettingsRepository::class));
 
-    Mail::assertSent(PasswordResetMail::class, function (PasswordResetMail $mail) use ($user): bool {
-        return $mail->hasTo($user->email)
-            && $mail->plainPassword === 'StaffPass123!'
-            && $mail->loginUrl === route('filament.admin.auth.login');
-    });
+    Mail::assertSent(PasswordResetMail::class, fn (PasswordResetMail $mail): bool => $mail->hasTo($user->email)
+        && $mail->plainPassword === 'StaffPass123!'
+        && $mail->loginUrl === route('filament.admin.auth.login'));
 });

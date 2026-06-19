@@ -52,7 +52,7 @@ class FollowUpInfolist
                             ->color('success')
                             ->placeholder(__('app.placeholders.na'))
                             ->url(
-                                fn ($record) => $record->user_id
+                                fn ($record): ?string => $record->user_id
                                     ? route('filament.admin.resources.users.view', $record->user_id)
                                     : null
                             ),

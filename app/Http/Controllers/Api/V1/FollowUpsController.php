@@ -17,7 +17,7 @@ use Illuminate\Http\Response;
  */
 class FollowUpsController extends ApiController
 {
-    private const RESOURCE_KEY = 'follow-ups';
+    private const string RESOURCE_KEY = 'follow-ups';
 
     /**
      * Display a listing of follow-ups.

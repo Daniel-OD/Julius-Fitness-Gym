@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\URL;
 
 class MemberVerifyEmailNotification extends VerifyEmail
 {
+    #[\Override]
     protected function verificationUrl(mixed $notifiable): string
     {
         return URL::temporarySignedRoute(
@@ -15,7 +16,7 @@ class MemberVerifyEmailNotification extends VerifyEmail
             Carbon::now()->addMinutes(60),
             [
                 'id' => $notifiable->getKey(),
-                'hash' => sha1($notifiable->getEmailForVerification()),
+                'hash' => sha1((string) $notifiable->getEmailForVerification()),
             ]
         );
     }

@@ -51,6 +51,7 @@ class InvoiceTransaction extends Model
         return $this->belongsTo(Invoice::class);
     }
 
+    #[\Override]
     protected static function booted(): void
     {
         static::saved(function (self $transaction): void {

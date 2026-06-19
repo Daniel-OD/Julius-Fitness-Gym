@@ -25,6 +25,7 @@ class OfficePresentNowWidget extends TableWidget
      */
     protected int|string|array $columnSpan = 'full';
 
+    #[\Override]
     public function table(Table $table): Table
     {
         return $table
@@ -33,7 +34,7 @@ class OfficePresentNowWidget extends TableWidget
             ->columns([
                 TextColumn::make('member.name')
                     ->label(__('app.fields.member'))
-                    ->description(fn (CheckIn $record): string => (string) ($record->member?->code ?? ''))
+                    ->description(fn (CheckIn $record): string => (string) ($record->member->code ?? ''))
                     ->searchable()
                     ->wrap(),
                 TextColumn::make('checked_in_at')

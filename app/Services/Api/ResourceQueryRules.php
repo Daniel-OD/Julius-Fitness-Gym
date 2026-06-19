@@ -26,7 +26,7 @@ final class ResourceQueryRules
     /**
      * @var array<string, class-string>
      */
-    private const SCHEMAS = [
+    private const array SCHEMAS = [
         'members' => MemberSchema::class,
         'users' => UserSchema::class,
         'services' => ServiceSchema::class,

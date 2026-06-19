@@ -22,7 +22,7 @@ use Illuminate\Http\Response;
  */
 class InvoicesController extends ApiController
 {
-    private const RESOURCE_KEY = 'invoices';
+    private const string RESOURCE_KEY = 'invoices';
 
     /**
      * Display a listing of invoices.
@@ -55,8 +55,8 @@ class InvoicesController extends ApiController
             ->with('plan')
             ->findOrFail(Data::int($data['subscription_id'] ?? null));
 
-        $data['due_date'] = $data['due_date'] ?? $data['date'];
-        $data['status'] = $data['status'] ?? 'issued';
+        $data['due_date'] ??= $data['date'];
+        $data['status'] ??= 'issued';
 
         if (! array_key_exists('subscription_fee', $data) || $data['subscription_fee'] === null) {
             $data['subscription_fee'] = $subscription->plan
@@ -138,7 +138,7 @@ class InvoicesController extends ApiController
         } catch (InvoiceDocumentNotRenderable $exception) {
             return response()->json([
                 'message' => 'Invoice can’t be generated.',
-                'missing' => $exception->viewData['missing'] ?? [],
+                'missing' => $exception->viewData['missing'],
             ], 422);
         }
 
@@ -162,7 +162,7 @@ class InvoicesController extends ApiController
         } catch (InvoiceDocumentNotRenderable $exception) {
             return response()->json([
                 'message' => 'Invoice can’t be generated.',
-                'missing' => $exception->viewData['missing'] ?? [],
+                'missing' => $exception->viewData['missing'],
             ], 422);
         }
 

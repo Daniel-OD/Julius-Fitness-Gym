@@ -20,27 +20,32 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
+/** @extends resource<Member> */
 class MemberResource extends Resource
 {
     protected static ?string $model = Member::class;
 
     protected static ?string $recordTitleAttribute = 'name';
 
+    #[\Override]
     public static function getModelLabel(): string
     {
         return __('app.resources.members.singular');
     }
 
+    #[\Override]
     public static function getPluralModelLabel(): string
     {
         return __('app.resources.members.plural');
     }
 
+    #[\Override]
     public static function getNavigationLabel(): string
     {
         return static::getPluralModelLabel();
     }
 
+    #[\Override]
     public static function getGloballySearchableAttributes(): array
     {
         return [
@@ -51,6 +56,7 @@ class MemberResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         /** @var Member $record */
@@ -78,6 +84,7 @@ class MemberResource extends Resource
     /**
      * Define the form schema for the resource.
      */
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return MemberForm::configure($schema);
@@ -86,6 +93,7 @@ class MemberResource extends Resource
     /**
      * Get the Filament table columns for the members list view.
      */
+    #[\Override]
     public static function table(Table $table): Table
     {
         return MemberTable::configure($table);
@@ -94,11 +102,13 @@ class MemberResource extends Resource
     /**
      * Add infolist to the resource.
      */
+    #[\Override]
     public static function infolist(Schema $schema): Schema
     {
         return MemberInfolist::configure($schema);
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -107,6 +117,7 @@ class MemberResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [
@@ -120,6 +131,7 @@ class MemberResource extends Resource
     /**
      * @return Builder<Member>
      */
+    #[\Override]
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()

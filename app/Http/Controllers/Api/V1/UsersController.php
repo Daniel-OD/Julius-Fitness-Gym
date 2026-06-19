@@ -17,7 +17,7 @@ use Spatie\Permission\Models\Role;
  */
 class UsersController extends ApiController
 {
-    private const RESOURCE_KEY = 'users';
+    private const string RESOURCE_KEY = 'users';
 
     /**
      * Display a listing of users.

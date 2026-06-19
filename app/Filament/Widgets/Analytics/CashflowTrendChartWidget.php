@@ -45,6 +45,7 @@ class CashflowTrendChartWidget extends ChartWidget
         return 'line';
     }
 
+    #[\Override]
     public function getHeading(): string|Htmlable|null
     {
         return __('app.widgets.cashflow');
@@ -99,6 +100,7 @@ class CashflowTrendChartWidget extends ChartWidget
      * - Adds spacing between tooltip items for readability.
      * - Adds a bit more vertical breathing room via padding and axis styling.
      */
+    #[\Override]
     protected function getOptions(): array|RawJs|null
     {
         $currencySymbol = Helpers::getCurrencySymbol();
@@ -167,6 +169,7 @@ JS);
     /**
      * @return array<string, mixed>
      */
+    #[\Override]
     protected function getData(): array
     {
         $range = $this->resolveRange();

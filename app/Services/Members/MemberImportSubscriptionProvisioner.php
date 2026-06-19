@@ -14,7 +14,7 @@ use Illuminate\Support\Str;
 
 class MemberImportSubscriptionProvisioner
 {
-    private const DEFAULT_PLAN_DAYS = 30;
+    private const int DEFAULT_PLAN_DAYS = 30;
 
     public function __construct(
         private readonly MemberImportValueParser $parser,
@@ -25,13 +25,7 @@ class MemberImportSubscriptionProvisioner
      */
     public function hasSubscriptionData(array $row): bool
     {
-        foreach (['plan_name', 'plan_amount', 'plan_days', 'subscription_start', 'subscription_end'] as $field) {
-            if (filled($row[$field] ?? null)) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any(['plan_name', 'plan_amount', 'plan_days', 'subscription_start', 'subscription_end'], fn ($field): bool => filled($row[$field] ?? null));
     }
 
     /**
@@ -57,20 +51,18 @@ class MemberImportSubscriptionProvisioner
         $endDate = $this->parser->parseDate($row['subscription_end'] ?? null);
         $planDays = $this->parser->parseDays($row['plan_days'] ?? null);
 
-        if ($endDate === null && $planDays !== null) {
-            $endDate = Carbon::parse($startDate)->addDays($planDays)->toDateString();
+        if ($endDate === null) {
+            if ($planDays !== null) {
+                $endDate = Carbon::parse($startDate)->addDays($planDays)->toDateString();
+            } else {
+                $planDays = self::DEFAULT_PLAN_DAYS;
+                $endDate = Carbon::parse($startDate)->addDays($planDays)->toDateString();
+            }
         }
 
-        if ($endDate === null && $planDays === null) {
-            $planDays = self::DEFAULT_PLAN_DAYS;
-            $endDate = Carbon::parse($startDate)->addDays($planDays)->toDateString();
-        }
-
-        if ($planDays === null && $endDate !== null) {
+        if ($planDays === null) {
             $planDays = max(Carbon::parse($startDate)->diffInDays(Carbon::parse($endDate)), 1);
         }
-
-        $planDays ??= self::DEFAULT_PLAN_DAYS;
         $amount ??= 0.0;
 
         $plan = $this->resolvePlan($planName, $amount, $planDays);

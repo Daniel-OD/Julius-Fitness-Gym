@@ -109,7 +109,6 @@ final class AdminGuide
      */
     private static function definition(string $key): ?array
     {
-        /** @var mixed $pages */
         $pages = Lang::get('admin_guide.pages');
 
         if (is_array($pages) && array_key_exists($key, $pages) && is_array($pages[$key])) {
@@ -119,7 +118,6 @@ final class AdminGuide
             return $definition;
         }
 
-        /** @var mixed $tabs */
         $tabs = Lang::get('admin_guide_tabs');
 
         if (is_array($tabs) && array_key_exists($key, $tabs) && is_array($tabs[$key])) {
@@ -249,10 +247,12 @@ final class AdminGuide
         $normalized = [];
 
         foreach ($widgets as $widgetKey => $description) {
-            if (! is_string($widgetKey) || ! is_scalar($description)) {
+            if (! is_string($widgetKey)) {
                 continue;
             }
-
+            if (! is_scalar($description)) {
+                continue;
+            }
             $text = trim((string) $description);
 
             if ($text === '') {

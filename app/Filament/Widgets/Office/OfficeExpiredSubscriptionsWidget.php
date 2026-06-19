@@ -63,6 +63,7 @@ class OfficeExpiredSubscriptionsWidget extends TableWidget
         return 'gray';
     }
 
+    #[\Override]
     public function table(Table $table): Table
     {
         return $table

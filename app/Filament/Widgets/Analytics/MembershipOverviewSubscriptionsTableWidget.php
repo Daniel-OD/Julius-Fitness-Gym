@@ -169,6 +169,7 @@ BLADE,
             ->orderByDesc('end_date');
     }
 
+    #[\Override]
     public function table(Table $table): Table
     {
         return $table

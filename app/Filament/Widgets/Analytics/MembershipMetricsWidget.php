@@ -115,6 +115,7 @@ HTML);
     /**
      * @return array<int, Stat>
      */
+    #[\Override]
     protected function getStats(): array
     {
         $range = AnalyticsDateRange::fromFilters($this->pageFilters);

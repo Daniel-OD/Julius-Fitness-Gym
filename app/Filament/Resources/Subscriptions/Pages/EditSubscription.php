@@ -18,11 +18,13 @@ class EditSubscription extends EditRecord
 {
     protected static string $resource = SubscriptionResource::class;
 
+    #[\Override]
     public function getTitle(): string
     {
         return __('app.actions.edit', ['resource' => SubscriptionResource::getModelLabel()]);
     }
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [
@@ -33,6 +35,7 @@ class EditSubscription extends EditRecord
         ];
     }
 
+    #[\Override]
     public function getBreadcrumbs(): array
     {
         $member = $this->record->member;

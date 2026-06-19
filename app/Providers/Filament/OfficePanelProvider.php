@@ -22,6 +22,7 @@ use Filament\Panel;
  */
 class OfficePanelProvider extends AdminPanelProvider
 {
+    #[\Override]
     public function panel(Panel $panel): Panel
     {
         return $this->sharedPanel($panel)

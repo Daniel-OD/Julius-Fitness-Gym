@@ -159,7 +159,7 @@ final class QueryFilters
                         return;
                     }
 
-                    $values = array_values(array_filter(array_map('trim', explode(',', (string) $value))));
+                    $values = array_values(array_filter(array_map(trim(...), explode(',', (string) $value))));
                     if ($values === []) {
                         return;
                     }
@@ -309,7 +309,7 @@ final class QueryFilters
             return null;
         }
 
-        [$from, $to] = array_map('trim', explode('..', $value, 2));
+        [$from, $to] = array_map(trim(...), explode('..', $value, 2));
 
         if ($from === '' || $to === '') {
             return null;

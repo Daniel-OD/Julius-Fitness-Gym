@@ -124,7 +124,7 @@ class PlanTable
             ->emptyStateActions([
                 Action::make('manage_service')
                     ->label(__('app.actions.manage_services'))
-                    ->url(fn () => route('filament.admin.resources.services.index'))
+                    ->url(fn (): string => route('filament.admin.resources.services.index'))
                     ->icon('heroicon-o-arrow-right')
                     ->iconPosition('after')
                     ->hidden(fn () => Service::exists()),
@@ -135,7 +135,7 @@ class PlanTable
                     ->modalWidth('xl')
                     ->modalHeading(__('app.actions.new', ['resource' => __('app.resources.plans.singular')]))
                     ->createAnother(false)
-                    ->visible(fn () => Service::exists() && ! Plan::exists()),
+                    ->visible(fn (): bool => Service::exists() && ! Plan::exists()),
             ])
             ->filters([
                 TrashedFilter::make(),
@@ -144,17 +144,15 @@ class PlanTable
                         DatePicker::make('date_from')->label(__('app.fields.date_from')),
                         DatePicker::make('date_to')->label(__('app.fields.date_to')),
                     ])
-                    ->query(function (Builder $query, array $data): Builder {
-                        return $query
-                            ->when(
-                                $data['date_from'],
-                                fn (Builder $query, $date) => $query->whereDate('created_at', '>=', $date)
-                            )
-                            ->when(
-                                $data['date_to'],
-                                fn (Builder $query, $date) => $query->whereDate('created_at', '<=', $date)
-                            );
-                    }),
+                    ->query(fn (Builder $query, array $data): Builder => $query
+                        ->when(
+                            $data['date_from'],
+                            fn (Builder $query, $date) => $query->whereDate('created_at', '>=', $date)
+                        )
+                        ->when(
+                            $data['date_to'],
+                            fn (Builder $query, $date) => $query->whereDate('created_at', '<=', $date)
+                        )),
             ])
             ->recordActions([
                 ActionGroup::make([
@@ -167,26 +165,26 @@ class PlanTable
                             ->color('success')
                             ->label(__('app.actions.mark_as_active'))
                             ->requiresConfirmation()
-                            ->action(fn (Plan $record) => tap($record, function ($record) {
+                            ->action(fn (Plan $record) => tap($record, function ($record): void {
                                 $record->update(['status' => 'active']);
                                 Notification::make()
                                     ->title(__('app.notifications.plan_activated'))
                                     ->success()
                                     ->send();
                             }))
-                            ->visible(fn ($record) => $record->status->value === 'inactive'),
+                            ->visible(fn ($record): bool => $record->status->value === 'inactive'),
                         Action::make('mark_as_inactive')
                             ->color('danger')
                             ->label(__('app.actions.mark_as_inactive'))
                             ->requiresConfirmation()
-                            ->action(fn (Plan $record) => tap($record, function ($record) {
+                            ->action(fn (Plan $record) => tap($record, function ($record): void {
                                 $record->update(['status' => 'inactive']);
                                 Notification::make()
                                     ->title(__('app.notifications.plan_deactivated'))
                                     ->danger()
                                     ->send();
                             }))
-                            ->visible(fn ($record) => $record->status->value === 'active'),
+                            ->visible(fn ($record): bool => $record->status->value === 'active'),
                     ])->dropdown(false),
                     ActionGroup::make([
                         Action::make('heading_actions')

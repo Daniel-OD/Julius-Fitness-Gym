@@ -20,6 +20,7 @@ use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Notifications\Notification;
 use Filament\Support\Enums\FontWeight;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\TrashedFilter;
@@ -35,15 +36,17 @@ class MemberTable
     {
         return $table
             ->columns([
+                ImageColumn::make('photo')
+                    ->label('')
+                    ->disk('public')
+                    ->defaultImageUrl(fn (Member $record): string => 'https://ui-avatars.com/api/?background=ff5a1f&color=fff&name='.urlencode($record->name ?? ''))
+                    ->circular()
+                    ->size(40)
+                    ->grow(false),
                 TextColumn::make('name')
                     ->label(__('app.fields.member'))
                     ->searchable(['name', 'code', 'email'])
                     ->sortable()
-                    ->image(fn (Member $record): ?string => filled($record->photo) ? $record->photo : null)
-                    ->disk('public')
-                    ->defaultImageUrl(fn (Member $record): string => 'https://ui-avatars.com/api/?background=ff5a1f&color=fff&name='.urlencode($record->name ?? ''))
-                    ->circularImage()
-                    ->imageSize(40)
                     ->description(fn (Member $record): string => $record->code)
                     ->weight(FontWeight::SemiBold)
                     ->wrap()
@@ -67,7 +70,7 @@ class MemberTable
                         'male' => __('app.options.gender.male'),
                         'female' => __('app.options.gender.female'),
                         'other' => __('app.options.gender.other'),
-                        default => filled($state) ? ucfirst((string) $state) : __('app.placeholders.dash'),
+                        default => filled($state) ? ucfirst($state) : __('app.placeholders.dash'),
                     }),
                 TextColumn::make('emergency_contact')
                     ->searchable()
@@ -165,17 +168,15 @@ class MemberTable
                             ->native(false)
                             ->suffixIcon('heroicon-m-calendar-days'),
                     ])
-                    ->query(function (Builder $query, array $data): Builder {
-                        return $query
-                            ->when(
-                                $data['date_from'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
-                            )
-                            ->when(
-                                $data['date_to'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
-                            );
-                    }),
+                    ->query(fn (Builder $query, array $data): Builder => $query
+                        ->when(
+                            $data['date_from'],
+                            fn (Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
+                        )
+                        ->when(
+                            $data['date_to'],
+                            fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
+                        )),
             ])
             ->recordActions([
                 ActionGroup::make([
@@ -188,26 +189,26 @@ class MemberTable
                             ->color('success')
                             ->label(__('app.actions.mark_as_active'))
                             ->requiresConfirmation()
-                            ->action(fn (Member $record) => tap($record, function ($record) {
+                            ->action(fn (Member $record) => tap($record, function ($record): void {
                                 $record->update(['status' => 'active']);
                                 Notification::make()
                                     ->title(__('app.notifications.member_activated'))
                                     ->success()
                                     ->send();
                             }))
-                            ->visible(fn ($record) => $record->status->value === 'inactive'),
+                            ->visible(fn (Member $record): bool => $record->status?->value === 'inactive'),
                         Action::make('mark_as_inactive')
                             ->color('danger')
                             ->label(__('app.actions.mark_as_inactive'))
                             ->requiresConfirmation()
-                            ->action(fn (Member $record) => tap($record, function ($record) {
+                            ->action(fn (Member $record) => tap($record, function ($record): void {
                                 $record->update(['status' => 'inactive']);
                                 Notification::make()
                                     ->title(__('app.notifications.member_deactivated'))
                                     ->danger()
                                     ->send();
                             }))
-                            ->visible(fn ($record) => $record->status->value === 'active'),
+                            ->visible(fn (Member $record): bool => $record->status?->value === 'active'),
                     ])->dropdown(false),
                     ActionGroup::make([
                         Action::make('heading_actions')

@@ -25,6 +25,7 @@ class TodayCheckinsStatsWidget extends StatsOverviewWidget
     /**
      * @return array<int, Stat>
      */
+    #[\Override]
     protected function getStats(): array
     {
         $count = app(CheckInService::class)->todayCheckInCount();

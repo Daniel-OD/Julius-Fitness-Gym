@@ -14,6 +14,7 @@ class ListPlans extends ListRecords
 {
     protected static string $resource = PlanResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [
@@ -28,6 +29,7 @@ class ListPlans extends ListRecords
         ];
     }
 
+    #[\Override]
     public function getBreadcrumbs(): array
     {
         return [
@@ -36,6 +38,7 @@ class ListPlans extends ListRecords
         ];
     }
 
+    #[\Override]
     public function getTabs(): array
     {
         return [

@@ -62,7 +62,7 @@ class AdminPanelProvider extends PanelProvider
     public function panel(Panel $panel): Panel
     {
         return $this->basePanel($panel)
-            ->navigation(fn (NavigationBuilder $builder) => $this->buildNavigation($builder, 'admin'));
+            ->navigation(fn (NavigationBuilder $builder): NavigationBuilder => $this->buildNavigation($builder, 'admin'));
     }
 
     /**
@@ -118,18 +118,12 @@ class AdminPanelProvider extends PanelProvider
                 ),
             )
             ->renderHook(
-                PanelsRenderHook::AUTH_LOGIN_FORM_AFTER,
-                fn (): HtmlString => new HtmlString(Blade::render('<x-studio.signature variant="login" />')),
-            )
-            ->renderHook(
-                PanelsRenderHook::FOOTER,
+                PanelsRenderHook::SIDEBAR_NAV_START,
                 fn (): HtmlString => new HtmlString(
-                    Blade::render('<div class="px-4 pb-2"><x-studio.signature /></div>')
+                    filament()->getCurrentPanel()?->getId() === 'admin'
+                        ? Blade::render('@livewire(\App\Filament\Livewire\SidebarQuickActions::class, [], key(\'sidebar-quick-actions\'))')
+                        : ''
                 ),
-            )
-            ->renderHook(
-                PanelsRenderHook::BODY_END,
-                fn (): HtmlString => new HtmlString(Blade::render('<x-studio.html-comment />')),
             );
     }
 

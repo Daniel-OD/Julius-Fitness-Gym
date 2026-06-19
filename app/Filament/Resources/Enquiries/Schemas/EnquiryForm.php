@@ -99,20 +99,20 @@ class EnquiryForm
                                     ->options(Helpers::getCountries())
                                     ->required()
                                     ->reactive()
-                                    ->afterStateUpdated(fn ($state, callable $set) => [
+                                    ->afterStateUpdated(fn ($state, callable $set): array => [
                                         $set('state', null),
                                         $set('city', null),
                                     ]),
                                 Select::make('state')
                                     ->label(__('app.fields.state'))
                                     ->placeholder(__('app.placeholders.select_state'))
-                                    ->options(fn ($get) => Helpers::getStates($get('country')))
+                                    ->options(fn ($get): array => Helpers::getStates($get('country')))
                                     ->searchable()
                                     ->reactive(),
                                 Select::make('city')
                                     ->label(__('app.fields.city'))
                                     ->placeholder(__('app.placeholders.select_city'))
-                                    ->options(fn ($get) => Helpers::getCities($get('state')))
+                                    ->options(fn ($get): array => Helpers::getCities($get('state')))
                                     ->searchable()
                                     ->reactive(),
                                 TextInput::make('pincode')

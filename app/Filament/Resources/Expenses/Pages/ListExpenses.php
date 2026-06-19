@@ -15,6 +15,7 @@ class ListExpenses extends ListRecords
 {
     protected static string $resource = ExpenseResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [
@@ -31,6 +32,7 @@ class ListExpenses extends ListRecords
         ];
     }
 
+    #[\Override]
     public function getBreadcrumbs(): array
     {
         return [
@@ -39,6 +41,7 @@ class ListExpenses extends ListRecords
         ];
     }
 
+    #[\Override]
     public function getTabs(): array
     {
         return [

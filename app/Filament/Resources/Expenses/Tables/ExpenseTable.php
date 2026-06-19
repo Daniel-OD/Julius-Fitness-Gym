@@ -103,7 +103,7 @@ class ExpenseTable
                     ->createAnotherAction(fn ($action) => $action->label(__('app.actions.save_add_another')))
                     ->modalWidth(Width::ScreenLarge)
                     ->closeModalByClickingAway(false)
-                    ->visible(fn () => ! Expense::exists()),
+                    ->visible(fn (): bool => ! Expense::exists()),
             ]);
     }
 }

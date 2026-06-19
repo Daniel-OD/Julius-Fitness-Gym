@@ -17,11 +17,7 @@ final class MemberImportValueParser
 
         foreach ($formats as $format) {
             try {
-                $parsed = Carbon::createFromFormat($format, trim($value));
-
-                if ($parsed !== false) {
-                    return $parsed->toDateString();
-                }
+                return Carbon::createFromFormat($format, trim($value))->toDateString();
             } catch (\Throwable) {
                 continue;
             }
@@ -40,7 +36,7 @@ final class MemberImportValueParser
             return null;
         }
 
-        $normalized = Str::of((string) $value)
+        $normalized = Str::of($value)
             ->replace([' ', "\u{00A0}"], '')
             ->replace(',', '.')
             ->replaceMatches('/[^\d.\-]/', '')
@@ -59,7 +55,7 @@ final class MemberImportValueParser
             return null;
         }
 
-        $normalized = Str::of((string) $value)
+        $normalized = Str::of($value)
             ->replace(',', '.')
             ->replaceMatches('/[^\d.]/', '')
             ->toString();

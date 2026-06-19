@@ -91,7 +91,5 @@ it('dispatches SendNewMemberNotification after plan selection', function (): voi
         ->post(route('member.plans.select', $plan))
         ->assertRedirect(route('member.dashboard'));
 
-    Queue::assertPushed(SendNewMemberNotification::class, function ($job) use ($member, $plan): bool {
-        return $job->memberId === $member->id && $job->planId === $plan->id;
-    });
+    Queue::assertPushed(SendNewMemberNotification::class, fn ($job): bool => $job->memberId === $member->id && $job->planId === $plan->id);
 });

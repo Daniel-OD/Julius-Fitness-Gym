@@ -22,9 +22,9 @@ use TypeError;
 
 class Helpers
 {
-    private const DEFAULT_CURRENCY = 'RON';
+    private const string DEFAULT_CURRENCY = 'RON';
 
-    private const DEFAULT_EXPENSE_CATEGORIES = [
+    private const array DEFAULT_EXPENSE_CATEGORIES = [
         'Rent',
         'Utilities',
         'Supplies',
@@ -301,7 +301,7 @@ class Helpers
 
     public static function formatCurrency(?float $value, ?string $currency = null): string
     {
-        $currency = $currency ?? self::getCurrencyCode();
+        $currency ??= self::getCurrencyCode();
 
         return Currency::format($value, $currency);
     }

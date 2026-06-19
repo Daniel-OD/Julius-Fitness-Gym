@@ -36,7 +36,7 @@ class SubscriptionExpiryNotification extends Notification
     {
         $memberName = Data::string($this->subscription->member?->name);
         $planName = Data::string($this->subscription->plan?->name);
-        $endDate = $this->subscription->end_date?->translatedFormat('d M Y') ?? '';
+        $endDate = $this->subscription->end_date->translatedFormat('d M Y');
 
         $title = $this->daysLeft === 0
             ? __('app.notifications.subscription_expired_title', ['member' => $memberName])

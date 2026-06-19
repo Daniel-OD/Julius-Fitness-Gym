@@ -83,7 +83,7 @@ class Invoice extends Model
 
     public function getDisplayStatusLabel(): string
     {
-        return $this->status?->getLabel() ?? '';
+        return $this->status->getLabel();
     }
 
     public function syncFromTransactions(): void
@@ -97,7 +97,7 @@ class Invoice extends Model
         $total = max((float) ($this->total_amount ?? 0), 0);
         $netPaid = min(max($paymentsTotal - $refundsTotal, 0), $total);
 
-        $status = $this->status?->value ?? 'issued';
+        $status = $this->status->value;
         $due = max($total - $netPaid, 0);
 
         if ($status === 'cancelled') {
@@ -133,6 +133,7 @@ class Invoice extends Model
         $this->refresh();
     }
 
+    #[\Override]
     protected static function boot(): void
     {
         parent::boot();

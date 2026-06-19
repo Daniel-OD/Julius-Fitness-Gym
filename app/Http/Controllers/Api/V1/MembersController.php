@@ -16,7 +16,7 @@ use Illuminate\Http\Response;
  */
 class MembersController extends ApiController
 {
-    private const RESOURCE_KEY = 'members';
+    private const string RESOURCE_KEY = 'members';
 
     /**
      * Display a listing of the resource.

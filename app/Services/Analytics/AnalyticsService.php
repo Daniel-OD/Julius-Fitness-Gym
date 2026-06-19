@@ -18,13 +18,12 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Throwable;
-use TypeError;
 
 class AnalyticsService
 {
-    private const CACHE_SECONDS = 90;
+    private const int CACHE_SECONDS = 90;
 
-    private const CACHE_PREFIX = 'analytics:v2:';
+    private const string CACHE_PREFIX = 'analytics:v2:';
 
     public function __construct(
         private readonly SubscriptionRevenueProration $proration,
@@ -185,7 +184,8 @@ class AnalyticsService
      */
     private function uninvoicedSubscriptionAmountRows(AnalyticsDateRange $range): Collection
     {
-        return $this->uninvoicedSubscriptionsQuery($range)
+        /** @var Collection<int, object{start_date: string, end_date: string, amount: float, plan_id: int}> $rows */
+        $rows = $this->uninvoicedSubscriptionsQuery($range)
             ->join('plans', 'plans.id', '=', 'subscriptions.plan_id')
             ->select([
                 'subscriptions.start_date',
@@ -193,7 +193,10 @@ class AnalyticsService
                 'plans.amount',
                 'plans.id as plan_id',
             ])
+            ->toBase()
             ->get();
+
+        return $rows;
     }
 
     private function proratedUninvoicedAmount(object $row, AnalyticsDateRange $range): float
@@ -522,7 +525,7 @@ class AnalyticsService
     }
 
     /**
-     * @return Collection<int, array{key: string, category: string, total: float}>
+     * @return Collection<int, array{category: string, total: float}>
      */
     public function expenseCategoryBreakdownForChart(AnalyticsDateRange $range, int $limit = 5): Collection
     {
@@ -533,7 +536,7 @@ class AnalyticsService
     }
 
     /**
-     * @return Collection<int, array{key: string, category: string, total: float}>
+     * @return Collection<int, array{category: string, total: float}>
      */
     private function computeExpenseCategoryBreakdownForChart(AnalyticsDateRange $range, int $limit): Collection
     {
@@ -590,7 +593,7 @@ class AnalyticsService
             if ($cached !== null) {
                 Cache::forget($cacheKey);
             }
-        } catch (TypeError|Throwable) {
+        } catch (Throwable) {
             Cache::forget($cacheKey);
         }
 
@@ -607,7 +610,7 @@ class AnalyticsService
 
     private function isValidCachedPayload(mixed $cached): bool
     {
-        if ($cached instanceof __PHP_Incomplete_Class) {
+        if (is_object($cached) && $cached::class === '__PHP_Incomplete_Class') {
             return false;
         }
 

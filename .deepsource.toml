@@ -1,0 +1,20 @@
+version = 1
+
+[[analyzers]]
+name = "php"
+enabled = true
+
+  [analyzers.meta]
+  php_version = "8.4"
+
+[[analyzers]]
+name = "javascript"
+enabled = true
+
+[[analyzers]]
+name = "secrets"
+enabled = true
+
+[[transformers]]
+name = "php-cs-fixer"
+enabled = true

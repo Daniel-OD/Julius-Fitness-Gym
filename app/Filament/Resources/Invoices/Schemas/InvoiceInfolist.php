@@ -30,10 +30,6 @@ class InvoiceInfolist
                             ->heading(function (Invoice $record): HtmlString {
                                 $status = $record->status;
 
-                                if ($status === null) {
-                                    return new HtmlString(e(__('app.ui.details')));
-                                }
-
                                 $html = Blade::render(
                                     '<x-filament::badge class="inline-flex ml-2" :color="$color">
                                         {{ $label }}
@@ -75,15 +71,15 @@ class InvoiceInfolist
                                         ->label(__('app.fields.fee').':'),
                                     TextEntry::make('subscription_fee')
                                         ->hiddenLabel()
-                                        ->formatStateUsing(fn (Invoice $record) => Helpers::formatCurrency($record->subscription_fee)),
+                                        ->formatStateUsing(fn (Invoice $record): string => Helpers::formatCurrency($record->subscription_fee)),
                                 ]),
                                 Flex::make([
                                     TextEntry::make('tax_label')
                                         ->label(__('app.fields.tax_with_rate', ['rate' => Helpers::getTaxRate()]).':'),
                                     TextEntry::make('tax')
                                         ->hiddenLabel()
-                                        ->formatStateUsing(fn (Invoice $record) => Helpers::formatCurrency($record->tax)),
-                                ])->hidden(fn ($record) => empty($record->tax)),
+                                        ->formatStateUsing(fn (Invoice $record): string => Helpers::formatCurrency($record->tax)),
+                                ])->hidden(fn ($record): bool => empty($record->tax)),
                                 Flex::make([
                                     TextEntry::make('discount_label')
                                         ->label(fn (Invoice $record) => $record->discount
@@ -91,29 +87,29 @@ class InvoiceInfolist
                                             : __('app.fields.discount').':'),
                                     TextEntry::make('discount_amount')
                                         ->hiddenLabel()
-                                        ->formatStateUsing(fn (Invoice $record) => Helpers::formatCurrency($record->discount_amount)),
-                                ])->hidden(fn ($record) => empty($record->discount_amount)),
+                                        ->formatStateUsing(fn (Invoice $record): string => Helpers::formatCurrency($record->discount_amount)),
+                                ])->hidden(fn ($record): bool => empty($record->discount_amount)),
                                 Flex::make([
                                     TextEntry::make('total_label')
                                         ->label(__('app.fields.total').':'),
                                     TextEntry::make('total_amount')
                                         ->hiddenLabel()
-                                        ->formatStateUsing(fn (Invoice $record) => Helpers::formatCurrency($record->total_amount)),
+                                        ->formatStateUsing(fn (Invoice $record): string => Helpers::formatCurrency($record->total_amount)),
                                 ]),
                                 Flex::make([
                                     TextEntry::make('paid_label')
                                         ->label(__('app.fields.paid').':'),
                                     TextEntry::make('paid_amount')
                                         ->hiddenLabel()
-                                        ->formatStateUsing(fn (Invoice $record) => Helpers::formatCurrency($record->paid_amount)),
-                                ])->hidden(fn ($record) => empty($record->paid_amount)),
+                                        ->formatStateUsing(fn (Invoice $record): string => Helpers::formatCurrency($record->paid_amount)),
+                                ])->hidden(fn ($record): bool => empty($record->paid_amount)),
                                 Flex::make([
                                     TextEntry::make('due_label')
                                         ->label(__('app.fields.due').':'),
                                     TextEntry::make('due_amount')
                                         ->hiddenLabel()
-                                        ->formatStateUsing(fn (Invoice $record) => Helpers::formatCurrency($record->due_amount)),
-                                ])->hidden(fn ($record) => empty($record->due_amount)),
+                                        ->formatStateUsing(fn (Invoice $record): string => Helpers::formatCurrency($record->due_amount)),
+                                ])->hidden(fn ($record): bool => empty($record->due_amount)),
 
                             ])
                             ->columns(1)

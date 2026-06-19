@@ -3,13 +3,21 @@
 test('office login page loads', function (): void {
     $response = $this->get('/office/login');
 
-    $response->assertStatus(200);
+    $response->assertSuccessful()
+        ->assertDontSee('Daniel-OD/Julius-Fitness-Gym', false);
 });
 
 test('staff login page loads', function (): void {
     $response = $this->get('/staff/login');
 
-    $response->assertStatus(200);
+    $response->assertSuccessful()
+        ->assertDontSee('Daniel-OD/Julius-Fitness-Gym', false);
+});
+
+test('public pages do not show studio signature', function (): void {
+    $this->get(route('home'))
+        ->assertSuccessful()
+        ->assertDontSee('Daniel-OD/Julius-Fitness-Gym', false);
 });
 
 test('legacy admin login slug is not available', function (): void {

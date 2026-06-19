@@ -51,7 +51,10 @@ enum Status: string implements HasColor, HasLabel
 
     public function getLabel(): string
     {
-        return $this->name;
+        $key = 'app.status.'.$this->value;
+        $translated = __($key);
+
+        return $translated !== $key ? $translated : $this->name;
     }
 
     public function getColor(): string

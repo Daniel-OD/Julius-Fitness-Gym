@@ -20,7 +20,7 @@ final class Discounts
         $options = [];
         foreach ($discounts as $value) {
             $value = (string) $value;
-            $options[$value] = Number::percentage($value);
+            $options[$value] = Number::percentage((float) $value);
         }
 
         return $options;

@@ -15,6 +15,7 @@ class SubscriptionsRelationManager extends RelationManager
 
     protected static ?string $title = null;
 
+    #[\Override]
     public static function getTitle(Model $ownerRecord, string $pageClass): string
     {
         return __('app.resources.subscriptions.plural');
@@ -25,6 +26,7 @@ class SubscriptionsRelationManager extends RelationManager
      *
      * @return bool Returns false, indicating the relation manager is not read-only.
      */
+    #[\Override]
     public function isReadOnly(): bool
     {
         return false;
@@ -33,6 +35,7 @@ class SubscriptionsRelationManager extends RelationManager
     /**
      * Define the form schema for the resource.
      */
+    #[\Override]
     public function form(Schema $schema): Schema
     {
         return SubscriptionResource::form($schema);

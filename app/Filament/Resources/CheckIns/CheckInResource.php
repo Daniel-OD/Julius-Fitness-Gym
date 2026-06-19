@@ -33,16 +33,19 @@ class CheckInResource extends Resource
 {
     protected static ?string $model = CheckIn::class;
 
+    #[\Override]
     public static function getModelLabel(): string
     {
         return __('app.checkins.singular');
     }
 
+    #[\Override]
     public static function getPluralModelLabel(): string
     {
         return __('app.checkins.plural');
     }
 
+    #[\Override]
     public static function getNavigationLabel(): string
     {
         return static::getPluralModelLabel();
@@ -52,6 +55,7 @@ class CheckInResource extends Resource
      * No inline form — check-ins are recorded via QR scan or the manual
      * check-in toolbar action.
      */
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema->components([]);
@@ -78,6 +82,7 @@ class CheckInResource extends Resource
             ->first();
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -155,11 +160,9 @@ class CheckInResource extends Resource
                         DatePicker::make('until')
                             ->label(__('app.checkins.until')),
                     ])
-                    ->query(function (Builder $query, array $data): Builder {
-                        return $query
-                            ->when($data['from'] ?? null, fn (Builder $query, string $date): Builder => $query->whereDate('checked_in_at', '>=', $date))
-                            ->when($data['until'] ?? null, fn (Builder $query, string $date): Builder => $query->whereDate('checked_in_at', '<=', $date));
-                    }),
+                    ->query(fn (Builder $query, array $data): Builder => $query
+                        ->when($data['from'] ?? null, fn (Builder $query, string $date): Builder => $query->whereDate('checked_in_at', '>=', $date))
+                        ->when($data['until'] ?? null, fn (Builder $query, string $date): Builder => $query->whereDate('checked_in_at', '<=', $date))),
             ])
             ->headerActions([
                 Action::make('exportCsv')
@@ -182,21 +185,23 @@ class CheckInResource extends Resource
                                 __('app.checkins.denied_reason'),
                                 __('app.fields.plan'),
                                 __('app.fields.method'),
-                            ]);
+                            ],
+                                escape: '\\');
 
                             foreach ($query->lazyById(200) as $checkIn) {
                                 /** @var CheckIn $checkIn */
                                 fputcsv($handle, [
-                                    $checkIn->member?->name ?? '—',
+                                    $checkIn->member->name ?? '—',
                                     $checkIn->checked_in_at->format('Y-m-d H:i'),
                                     $checkIn->checked_out_at?->format('Y-m-d H:i') ?? '',
                                     $checkIn->status->getLabel(),
                                     $checkIn->denied_reason
                                         ? __('app.checkins.denied_reasons.'.$checkIn->denied_reason)
                                         : '',
-                                    $checkIn->subscription?->plan?->name ?? '',
+                                    $checkIn->subscription?->plan->name ?? '',
                                     $checkIn->method,
-                                ]);
+                                ],
+                                    escape: '\\');
                             }
 
                             fclose($handle);
@@ -244,7 +249,7 @@ class CheckInResource extends Resource
                         }
 
                         $subscription = static::activeSubscriptionFor($memberId);
-                        $planName = $subscription?->plan?->name ?? __('app.members.qr.no_subscription');
+                        $planName = $subscription?->plan->name ?? __('app.members.qr.no_subscription');
 
                         return new HtmlString(
                             '<ul class="office-confirm-list">'
@@ -277,7 +282,7 @@ class CheckInResource extends Resource
 
                         Notification::make()
                             ->title(__('app.checkins.manual_checkin_done_for', ['name' => $member->name]))
-                            ->body(static::activeSubscriptionFor($memberId)?->plan?->name ?? __('app.members.qr.no_subscription'))
+                            ->body(static::activeSubscriptionFor($memberId)?->plan->name ?? __('app.members.qr.no_subscription'))
                             ->success()
                             ->send();
                     }),
@@ -298,7 +303,7 @@ class CheckInResource extends Resource
 
                         return new HtmlString(
                             '<ul class="office-confirm-list">'
-                            .'<li><strong>'.e(__('app.fields.member')).':</strong> '.e($record->member?->name ?? '—').'</li>'
+                            .'<li><strong>'.e(__('app.fields.member')).':</strong> '.e($record->member->name ?? '—').'</li>'
                             .'<li><strong>'.e(__('app.checkins.checkout_time')).':</strong> '.e($time).'</li>'
                             .'</ul>'
                         );
@@ -311,7 +316,7 @@ class CheckInResource extends Resource
 
                         Notification::make()
                             ->title(__('app.checkins.check_out_done_for', [
-                                'name' => $record->member?->name ?? '—',
+                                'name' => $record->member->name ?? '—',
                             ]))
                             ->body(now()->timezone(AppConfig::timezone())->translatedFormat('d M Y, H:i'))
                             ->success()
@@ -321,6 +326,7 @@ class CheckInResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

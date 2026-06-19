@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\DB;
 
 class MemberPlanSelectionService
 {
-    public function __construct(private MemberPlanIntent $planIntent) {}
+    public function __construct(private readonly MemberPlanIntent $planIntent) {}
 
     public function select(Member $member, Plan $plan): Subscription
     {

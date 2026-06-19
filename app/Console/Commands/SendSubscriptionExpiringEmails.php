@@ -17,7 +17,7 @@ class SendSubscriptionExpiringEmails extends Command
     protected $description = 'Trimite emailuri de notificare pentru abonamentele care expiră în 7 sau 3 zile';
 
     /** @var list<int> */
-    private const TRIGGER_DAYS = [7, 3];
+    private const array TRIGGER_DAYS = [7, 3];
 
     public function handle(): int
     {

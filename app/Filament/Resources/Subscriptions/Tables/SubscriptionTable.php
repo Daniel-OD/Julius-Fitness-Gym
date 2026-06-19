@@ -46,10 +46,10 @@ class SubscriptionTable
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('member.name')
                     ->label(__('app.fields.member'))
-                    ->description(fn ($record): string => $record->member?->code ?? '—'),
+                    ->description(fn ($record): string => $record->member->code ?? '—'),
                 TextColumn::make('plan.name')
                     ->label(__('app.fields.plan'))
-                    ->description(fn ($record): string => $record->plan?->code ?? '—'),
+                    ->description(fn ($record): string => $record->plan->code ?? '—'),
                 TextColumn::make('plan.amount')
                     ->label(__('app.fields.amount'))
                     ->alignRight()
@@ -145,16 +145,16 @@ class SubscriptionTable
                 CreateAction::make()
                     ->icon('heroicon-o-plus')
                     ->label(__('app.actions.new', ['resource' => __('app.resources.subscriptions.singular')]))
-                    ->visible(fn () => Member::exists() && Plan::exists()),
+                    ->visible(fn (): bool => Member::exists() && Plan::exists()),
                 Action::make('create_member')
                     ->icon('heroicon-o-plus')
                     ->label(__('app.actions.new', ['resource' => __('app.resources.members.singular')]))
-                    ->url(fn () => route('filament.admin.resources.members.create'))
+                    ->url(fn (): string => route('filament.admin.resources.members.create'))
                     ->hidden(fn () => Member::exists()),
                 Action::make('create_plan')
                     ->icon('heroicon-o-plus')
                     ->label(__('app.actions.new', ['resource' => __('app.resources.plans.singular')]))
-                    ->url(fn () => PlanResource::getUrl('index'))
+                    ->url(fn (): string => PlanResource::getUrl('index'))
                     ->hidden(fn () => Plan::exists()),
             ])
             ->filters([
@@ -170,17 +170,15 @@ class SubscriptionTable
                             ->native(false)
                             ->suffixIcon('heroicon-m-calendar-days'),
                     ])
-                    ->query(function (Builder $query, array $data): Builder {
-                        return $query
-                            ->when(
-                                $data['date_from'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
-                            )
-                            ->when(
-                                $data['date_to'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
-                            );
-                    }),
+                    ->query(fn (Builder $query, array $data): Builder => $query
+                        ->when(
+                            $data['date_from'],
+                            fn (Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
+                        )
+                        ->when(
+                            $data['date_to'],
+                            fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
+                        )),
             ])
             ->recordActions([
                 ActionGroup::make([
@@ -194,7 +192,7 @@ class SubscriptionTable
                             ->label(__('app.actions.mark_as_expiring'))
                             ->color('warning')
                             ->requiresConfirmation()
-                            ->action(fn (Subscription $record) => tap($record, function ($r) {
+                            ->action(fn (Subscription $record) => tap($record, function ($r): void {
                                 $r->update(['status' => 'expiring']);
                                 Notification::make()
                                     ->title(__('app.notifications.subscription_marked_as_expiring'))
@@ -206,7 +204,7 @@ class SubscriptionTable
                             ->label(__('app.actions.mark_as_expired'))
                             ->color('danger')
                             ->requiresConfirmation()
-                            ->action(fn (Subscription $record) => tap($record, function ($r) {
+                            ->action(fn (Subscription $record) => tap($record, function ($r): void {
                                 $r->update(['status' => 'expired']);
                                 Notification::make()
                                     ->title(__('app.notifications.subscription_marked_as_expired'))
@@ -227,8 +225,8 @@ class SubscriptionTable
                             ->requiresConfirmation()
                             ->modalHeading(__('app.actions.notify_expiration'))
                             ->modalDescription(fn (Subscription $record): string => __('app.notifications.expiring_email_confirm', [
-                                'member' => $record->member?->name ?? '—',
-                                'expires_at' => $record->end_date?->translatedFormat('d M Y') ?? '—',
+                                'member' => $record->member->name ?? '—',
+                                'expires_at' => $record->end_date->translatedFormat('d M Y'),
                             ]))
                             ->visible(fn (Subscription $record): bool => app(SubscriptionExpiringEmailService::class)
                                 ->isEligibleForManualNotification($record))
@@ -279,11 +277,11 @@ class SubscriptionTable
                                 SubscriptionForm::handleRenew($record, $data);
                             }),
                         ViewAction::make()
-                            ->url(fn ($record) => SubscriptionResource::getUrl('view', ['record' => $record])),
+                            ->url(fn ($record): string => SubscriptionResource::getUrl('view', ['record' => $record])),
                         EditAction::make()
                             ->hiddenLabel()
                             ->hidden(fn ($record): bool => in_array($record->status?->value, ['expired', 'renewed'], true))
-                            ->url(fn ($record) => SubscriptionResource::getUrl('edit', ['record' => $record])),
+                            ->url(fn ($record): string => SubscriptionResource::getUrl('edit', ['record' => $record])),
                         DeleteAction::make()->hiddenLabel(),
                     ])->dropdown(false),
                 ]),

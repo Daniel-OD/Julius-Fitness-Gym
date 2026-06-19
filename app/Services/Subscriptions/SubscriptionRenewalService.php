@@ -55,7 +55,7 @@ class SubscriptionRenewalService
                 'status' => $status,
             ]);
 
-            if ($record->end_date && $record->end_date->lt($today)) {
+            if ($record->end_date->lt($today)) {
                 $record->update(['status' => 'renewed']);
             }
 
@@ -67,7 +67,7 @@ class SubscriptionRenewalService
             $discountAmount = min(max($discountAmount, 0), $fee);
 
             if ($discountPct > 0 && $discountAmount <= 0) {
-                $discountAmount = (float) Helpers::getDiscountAmount($discountPct, $fee);
+                $discountAmount = Helpers::getDiscountAmount($discountPct, $fee);
             }
 
             $paymentMethod = Data::nullableString($invoiceData['payment_method'] ?? null);

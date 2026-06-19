@@ -17,6 +17,7 @@ class PlanResource extends JsonResource
      *
      * @return array<string, mixed>
      */
+    #[\Override]
     public function toArray(Request $request): array
     {
         /** @var Plan $plan */

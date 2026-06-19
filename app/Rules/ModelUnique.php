@@ -12,7 +12,7 @@ use Illuminate\Translation\PotentiallyTranslatedString;
  *
  * @template TModel of \Illuminate\Database\Eloquent\Model
  */
-final class ModelUnique implements ValidationRule
+final readonly class ModelUnique implements ValidationRule
 {
     /**
      * @param  class-string<TModel>  $modelClass

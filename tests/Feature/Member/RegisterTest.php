@@ -76,7 +76,7 @@ it('verifies account via signed link', function (): void {
     $url = URL::temporarySignedRoute(
         'member.verification.verify',
         now()->addMinutes(60),
-        ['id' => $member->id, 'hash' => sha1($member->email)]
+        ['id' => $member->id, 'hash' => sha1((string) $member->email)]
     );
 
     $this->actingAs($member, 'member')

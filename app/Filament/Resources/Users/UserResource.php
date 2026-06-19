@@ -16,27 +16,32 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 
+/** @extends resource<User> */
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
     protected static ?string $recordTitleAttribute = 'name';
 
+    #[\Override]
     public static function getModelLabel(): string
     {
         return __('app.resources.users.singular');
     }
 
+    #[\Override]
     public static function getPluralModelLabel(): string
     {
         return __('app.resources.users.plural');
     }
 
+    #[\Override]
     public static function getNavigationLabel(): string
     {
         return static::getPluralModelLabel();
     }
 
+    #[\Override]
     public static function getGloballySearchableAttributes(): array
     {
         return [
@@ -46,6 +51,7 @@ class UserResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         /** @var User $record */
@@ -59,9 +65,7 @@ class UserResource extends Resource
             $details[__('app.fields.contact')] = $record->contact;
         }
 
-        if ($record->status) {
-            $details[__('app.fields.status')] = GlobalSearchBadge::status($record->status);
-        }
+        $details[__('app.fields.status')] = GlobalSearchBadge::status($record->status);
 
         return $details;
     }
@@ -69,6 +73,7 @@ class UserResource extends Resource
     /**
      * Define the form schema for the resource.
      */
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return UserForm::configure($schema);
@@ -77,6 +82,7 @@ class UserResource extends Resource
     /**
      * Define the table for listing records in the resource.
      */
+    #[\Override]
     public static function table(Table $table): Table
     {
         return UserTable::configure($table);
@@ -85,11 +91,13 @@ class UserResource extends Resource
     /**
      * Add infolist to the resource.
      */
+    #[\Override]
     public static function infolist(Schema $schema): Schema
     {
         return UserInfolist::configure($schema);
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

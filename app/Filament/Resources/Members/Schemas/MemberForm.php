@@ -85,7 +85,7 @@ class MemberForm
                         ->label(__('app.fields.country'))
                         ->options(Helpers::getCountries())
                         ->reactive()
-                        ->afterStateUpdated(fn (Set $set) => [$set('state', null), $set('city', null)]),
+                        ->afterStateUpdated(fn (Set $set): array => [$set('state', null), $set('city', null)]),
                     Select::make('state')
                         ->label(__('app.fields.state'))
                         ->options(fn (Get $get): array => Helpers::getStates($get('country')))
@@ -153,7 +153,7 @@ class MemberForm
                                     ->readOnly()
                                     ->disabled()
                                     ->dehydrated()
-                                    ->default(fn (Get $get) => Helpers::generateLastNumber(
+                                    ->default(fn (Get $get): string => Helpers::generateLastNumber(
                                         'member',
                                         Member::class,
                                         null,
@@ -244,19 +244,19 @@ class MemberForm
                                     ->options(Helpers::getCountries())
                                     ->required()
                                     ->reactive()
-                                    ->afterStateUpdated(fn ($state, callable $set) => [
+                                    ->afterStateUpdated(fn ($state, callable $set): array => [
                                         $set('state', null),
                                         $set('city', null),
                                     ]),
                                 Select::make('state')
                                     ->label(__('app.fields.state'))
                                     ->placeholder(__('app.placeholders.select_state'))
-                                    ->options(fn ($get) => Helpers::getStates($get('country')))
+                                    ->options(fn ($get): array => Helpers::getStates($get('country')))
                                     ->reactive(),
                                 Select::make('city')
                                     ->label(__('app.fields.city'))
                                     ->placeholder(__('app.placeholders.select_city'))
-                                    ->options(fn ($get) => Helpers::getCities($get('state')))
+                                    ->options(fn ($get): array => Helpers::getCities($get('state')))
                                     ->reactive(),
                                 TextInput::make('pincode')
                                     ->label(__('app.fields.pincode'))

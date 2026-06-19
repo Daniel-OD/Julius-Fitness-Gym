@@ -14,7 +14,7 @@ use Illuminate\View\View;
 
 class RegisterController extends Controller
 {
-    public function __construct(private MemberPlanIntent $planIntent) {}
+    public function __construct(private readonly MemberPlanIntent $planIntent) {}
 
     public function showRegister(Request $request): View
     {
@@ -40,7 +40,7 @@ class RegisterController extends Controller
         ]);
 
         if ($validator->fails()) {
-            throw (new ValidationException($validator))
+            throw new ValidationException($validator)
                 ->redirectTo(route('member.register'));
         }
 

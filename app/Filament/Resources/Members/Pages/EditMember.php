@@ -18,6 +18,7 @@ class EditMember extends EditRecord
 {
     protected static string $resource = MemberResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [
@@ -29,11 +30,13 @@ class EditMember extends EditRecord
         ];
     }
 
+    #[\Override]
     public function getTitle(): string
     {
         return __('app.actions.edit', ['resource' => MemberResource::getModelLabel()]);
     }
 
+    #[\Override]
     public function getBreadcrumbs(): array
     {
         return [

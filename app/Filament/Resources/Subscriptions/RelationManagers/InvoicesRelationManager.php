@@ -14,16 +14,19 @@ class InvoicesRelationManager extends RelationManager
 
     protected static ?string $title = null;
 
+    #[\Override]
     public static function getTitle(Model $ownerRecord, string $pageClass): string
     {
         return __('app.resources.invoices.plural');
     }
 
+    #[\Override]
     public function isReadOnly(): bool
     {
         return false;
     }
 
+    #[\Override]
     public function form(Schema $schema): Schema
     {
         return InvoiceResource::form($schema);

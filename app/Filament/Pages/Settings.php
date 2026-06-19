@@ -92,11 +92,13 @@ class Settings extends Page implements HasForms
         return $settings;
     }
 
+    #[\Override]
     public function getTitle(): string
     {
         return __('app.settings.title');
     }
 
+    #[\Override]
     public static function getNavigationLabel(): string
     {
         return __('app.settings.title');
@@ -151,7 +153,7 @@ class Settings extends Page implements HasForms
                     ->searchable()
                     ->preload()
                     ->live()
-                    ->afterStateUpdated(fn ($state, callable $set) => [
+                    ->afterStateUpdated(fn ($state, callable $set): array => [
                         $set('general.state', null),
                         $set('general.city', null),
                     ]),
@@ -571,7 +573,7 @@ class Settings extends Page implements HasForms
                             ->label(__('app.settings.fields.backup_end_of_day_time'))
                             ->placeholder('22:00')
                             ->helperText(__('app.settings.hints.backup_time_format'))
-                            ->visible(fn ($get) => in_array($get('backup.trigger'), ['end_of_day', 'both'])),
+                            ->visible(fn ($get): bool => in_array($get('backup.trigger'), ['end_of_day', 'both'])),
                         TextInput::make('backup.keep_backups')
                             ->label(__('app.settings.fields.backup_keep'))
                             ->numeric()

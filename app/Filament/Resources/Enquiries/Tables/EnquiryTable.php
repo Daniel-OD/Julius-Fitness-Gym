@@ -103,17 +103,15 @@ class EnquiryTable
                         DatePicker::make('date_from')->label(__('app.fields.date_from')),
                         DatePicker::make('date_to')->label(__('app.fields.date_to')),
                     ])
-                    ->query(function (Builder $query, array $data): Builder {
-                        return $query
-                            ->when(
-                                $data['date_from'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('date', '>=', $date),
-                            )
-                            ->when(
-                                $data['date_to'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('date', '<=', $date),
-                            );
-                    }),
+                    ->query(fn (Builder $query, array $data): Builder => $query
+                        ->when(
+                            $data['date_from'],
+                            fn (Builder $query, $date): Builder => $query->whereDate('date', '>=', $date),
+                        )
+                        ->when(
+                            $data['date_to'],
+                            fn (Builder $query, $date): Builder => $query->whereDate('date', '<=', $date),
+                        )),
             ])
             ->recordActions([
                 ActionGroup::make([
@@ -134,7 +132,7 @@ class EnquiryTable
                             ->icon('heroicon-m-x-circle')
                             ->color('danger')
                             ->requiresConfirmation()
-                            ->action(fn (Enquiry $record) => tap($record, function ($record) {
+                            ->action(fn (Enquiry $record) => tap($record, function ($record): void {
                                 $record->update(['status' => 'lost']);
                                 Notification::make()
                                     ->title(__('app.notifications.enquiry_marked_as_lost'))

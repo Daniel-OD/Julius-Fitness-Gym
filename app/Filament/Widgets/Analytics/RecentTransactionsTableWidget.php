@@ -36,6 +36,7 @@ class RecentTransactionsTableWidget extends TableWidget
         'md' => 2,
     ];
 
+    #[\Override]
     public function table(Table $table): Table
     {
         return $table
@@ -57,8 +58,8 @@ class RecentTransactionsTableWidget extends TableWidget
                     ->wrap(),
                 TextColumn::make('occurred_at')
                     ->label(__('app.fields.date'))
-                    ->state(fn (InvoiceTransaction $record): string => $record->occurred_at?->timezone(AppConfig::timezone())->translatedFormat('d M Y') ?? '—')
-                    ->description(fn (InvoiceTransaction $record): string => $record->occurred_at?->timezone(AppConfig::timezone())->format('h:i A') ?? '—')
+                    ->state(fn (InvoiceTransaction $record): string => $record->occurred_at->timezone(AppConfig::timezone())->translatedFormat('d M Y'))
+                    ->description(fn (InvoiceTransaction $record): string => $record->occurred_at->timezone(AppConfig::timezone())->format('h:i A'))
                     ->sortable(),
                 TextColumn::make('type')
                     ->label(__('app.fields.status'))

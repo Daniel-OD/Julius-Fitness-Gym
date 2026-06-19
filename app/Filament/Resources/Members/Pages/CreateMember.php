@@ -16,6 +16,7 @@ class CreateMember extends CreateRecord
 
     public ?int $enquiryId = null;
 
+    #[\Override]
     public function mount(): void
     {
         parent::mount();
@@ -61,11 +62,13 @@ class CreateMember extends CreateRecord
             ->send();
     }
 
+    #[\Override]
     public function getTitle(): string
     {
         return __('app.actions.new', ['resource' => MemberResource::getModelLabel()]);
     }
 
+    #[\Override]
     public function getBreadcrumbs(): array
     {
         return [

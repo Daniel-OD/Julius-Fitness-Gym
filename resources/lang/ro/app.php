@@ -22,7 +22,7 @@ return [
         'quick_actions' => [
             'new_member' => 'Membru nou',
             'manual_checkin' => 'Check-in manual',
-            'new_lead' => 'Lead nou',
+            'new_lead' => 'Client potențial nou',
         ],
     ],
 
@@ -73,6 +73,7 @@ return [
         'dashboard_employee' => 'Dashboard Angajați',
         'dashboard_client' => 'Dashboard Client',
         'office' => 'Recepție',
+        'quick_actions' => 'Acțiuni rapide',
         'groups' => [
             'sales' => 'Vânzări',
             'memberships' => 'Abonamente',
@@ -389,7 +390,7 @@ return [
         'schedule_date' => 'Dată programată',
         'outcome' => 'Rezultat',
         'interested_in' => 'Interesat de',
-        'lead_owner' => 'Responsabil lead',
+        'lead_owner' => 'Responsabil client potențial',
         'handled_by' => 'Gestionat de',
         'refunded_at' => 'Rambursat la',
         'to' => 'Către',
@@ -557,7 +558,7 @@ return [
         'select_discount' => 'Selectează reducerea',
         'select_follow_up_method' => 'Selectează metoda',
         'select_handler' => 'Selectează responsabilul',
-        'select_lead_owner' => 'Selectează proprietarul lead-ului',
+        'select_lead_owner' => 'Selectează responsabilul clientului potențial',
     ],
 
     'status' => [
@@ -578,7 +579,7 @@ return [
         'overdue' => 'Restanță',
         'cancelled' => 'Anulat',
         'refund' => 'Rambursat',
-        'lead' => 'Lead',
+        'lead' => 'Client potențial',
         'member' => 'Membru',
         'lost' => 'Pierdut',
     ],

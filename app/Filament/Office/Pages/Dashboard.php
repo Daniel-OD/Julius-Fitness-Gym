@@ -22,11 +22,13 @@ class Dashboard extends BaseDashboard
 
     protected static ?string $title = null;
 
+    #[\Override]
     public function getTitle(): string
     {
         return __('app.office.title');
     }
 
+    #[\Override]
     public static function getNavigationLabel(): string
     {
         return __('app.navigation.office');
@@ -37,11 +39,13 @@ class Dashboard extends BaseDashboard
         return null;
     }
 
+    #[\Override]
     public function getColumns(): int|array
     {
         return 1;
     }
 
+    #[\Override]
     public function getWidgetsContentComponent(): Component
     {
         return Grid::make(1)

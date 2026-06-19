@@ -22,7 +22,7 @@ return [
         'quick_actions' => [
             'new_member' => 'New member',
             'manual_checkin' => 'Manual check-in',
-            'new_lead' => 'New lead',
+            'new_lead' => 'New potential client',
         ],
     ],
 
@@ -73,6 +73,7 @@ return [
         'dashboard_employee' => 'Employee Dashboard',
         'dashboard_client' => 'Client Dashboard',
         'office' => 'Front desk',
+        'quick_actions' => 'Quick actions',
         'groups' => [
             'sales' => 'Sales',
             'memberships' => 'Memberships',
@@ -389,7 +390,7 @@ return [
         'schedule_date' => 'Scheduled date',
         'outcome' => 'Outcome',
         'interested_in' => 'Interested in',
-        'lead_owner' => 'Lead owner',
+        'lead_owner' => 'Potential client owner',
         'handled_by' => 'Handled by',
         'refunded_at' => 'Refunded at',
         'to' => 'To',
@@ -557,7 +558,7 @@ return [
         'select_discount' => 'Select discount',
         'select_follow_up_method' => 'Select method',
         'select_handler' => 'Select handler',
-        'select_lead_owner' => 'Select lead owner',
+        'select_lead_owner' => 'Select potential client owner',
     ],
 
     'status' => [
@@ -578,7 +579,7 @@ return [
         'overdue' => 'Overdue',
         'cancelled' => 'Cancelled',
         'refund' => 'Refunded',
-        'lead' => 'Lead',
+        'lead' => 'Potential client',
         'member' => 'Member',
         'lost' => 'Lost',
     ],

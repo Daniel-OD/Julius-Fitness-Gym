@@ -18,11 +18,13 @@ class EditUser extends EditRecord
 {
     protected static string $resource = UserResource::class;
 
+    #[\Override]
     public function getTitle(): string
     {
         return __('app.actions.edit', ['resource' => UserResource::getModelLabel()]);
     }
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [
@@ -34,6 +36,7 @@ class EditUser extends EditRecord
         ];
     }
 
+    #[\Override]
     public function getBreadcrumbs(): array
     {
         return [

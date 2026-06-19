@@ -33,6 +33,7 @@ class OfficeTodayStatsWidget extends StatsOverviewWidget
     /**
      * @return array<int, Stat>
      */
+    #[\Override]
     protected function getStats(): array
     {
         $timezone = AppConfig::timezone();
@@ -47,7 +48,7 @@ class OfficeTodayStatsWidget extends StatsOverviewWidget
             ->whereDate('checked_out_at', $today->toDateString())
             ->count();
 
-        $collectedToday = app(AnalyticsService::class)->financialMetrics($range)['collected'] ?? 0;
+        $collectedToday = app(AnalyticsService::class)->financialMetrics($range)['collected'];
 
         return [
             Stat::make(__('app.office.checkins_today'), (string) $checkInsToday)

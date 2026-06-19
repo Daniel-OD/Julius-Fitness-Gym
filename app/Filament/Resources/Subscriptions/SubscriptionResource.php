@@ -18,25 +18,30 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
+/** @extends resource<Subscription> */
 class SubscriptionResource extends Resource
 {
     protected static ?string $model = Subscription::class;
 
+    #[\Override]
     public static function getModelLabel(): string
     {
         return __('app.resources.subscriptions.singular');
     }
 
+    #[\Override]
     public static function getPluralModelLabel(): string
     {
         return __('app.resources.subscriptions.plural');
     }
 
+    #[\Override]
     public static function getNavigationLabel(): string
     {
         return static::getPluralModelLabel();
     }
 
+    #[\Override]
     public static function getGloballySearchableAttributes(): array
     {
         return [
@@ -57,29 +62,26 @@ class SubscriptionResource extends Resource
         $query->with(['member', 'plan']);
     }
 
+    #[\Override]
     public static function getGlobalSearchResultTitle(Model $record): string
     {
         assert($record instanceof Subscription);
         $title = trim(implode(' — ', array_filter([
             $record->member?->name,
             $record->plan?->name,
-        ], fn (?string $value): bool => filled($value))));
+        ], filled(...))));
 
         return filled($title) ? $title : static::getModelLabel();
     }
 
+    #[\Override]
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         assert($record instanceof Subscription);
         $details = [];
 
-        if ($record->start_date) {
-            $details[__('app.fields.start_date')] = $record->start_date->toDateString();
-        }
-
-        if ($record->end_date) {
-            $details[__('app.fields.end_date')] = $record->end_date->toDateString();
-        }
+        $details[__('app.fields.start_date')] = $record->start_date->toDateString();
+        $details[__('app.fields.end_date')] = $record->end_date->toDateString();
 
         if ($record->status) {
             $details[__('app.fields.status')] = GlobalSearchBadge::status($record->status);
@@ -94,6 +96,7 @@ class SubscriptionResource extends Resource
      *
      * @return Builder<Subscription>
      */
+    #[\Override]
     public static function getEloquentQuery(): Builder
     {
         $query = parent::getEloquentQuery();
@@ -108,6 +111,7 @@ class SubscriptionResource extends Resource
     /**
      * Define the form schema for the resource.
      */
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return SubscriptionForm::configure($schema);
@@ -116,6 +120,7 @@ class SubscriptionResource extends Resource
     /**
      * Define the table for listing records in the resource.
      */
+    #[\Override]
     public static function table(Table $table): Table
     {
         return SubscriptionTable::configure($table);
@@ -124,6 +129,7 @@ class SubscriptionResource extends Resource
     /**
      * Define the infolist schema for the resource.
      */
+    #[\Override]
     public static function infolist(Schema $schema): Schema
     {
         return SubscriptionInfolist::configure($schema);
@@ -132,6 +138,7 @@ class SubscriptionResource extends Resource
     /**
      * Get the list of relations for this resource.
      */
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -142,6 +149,7 @@ class SubscriptionResource extends Resource
     /**
      * Get the list of pages for this resource.
      */
+    #[\Override]
     public static function getPages(): array
     {
         return [

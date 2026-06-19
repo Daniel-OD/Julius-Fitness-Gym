@@ -3,8 +3,6 @@ $heading = $this->getHeading();
 $breadcrumbs = filament()->hasBreadcrumbs() ? $this->getBreadcrumbs() : [];
 $subheading = $this->getSubheading();
 $period = (string) ($this->filters['period'] ?? '7days');
-$headerActions = $this->getCachedHeaderActions();
-
 $beforeActions = \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_HEADER_ACTIONS_BEFORE, scopes: $this->getRenderHookScopes());
 $afterActions = \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_HEADER_ACTIONS_AFTER, scopes: $this->getRenderHookScopes());
 @endphp
@@ -12,7 +10,6 @@ $afterActions = \Filament\Support\Facades\FilamentView::renderHook(\Filament\Vie
 <header @class([
     'fi-header',
     'fi-header-has-breadcrumbs' => $breadcrumbs,
-    'fi-header-has-quick-actions' => filled($headerActions),
 ])>
     <div>
         @if ($breadcrumbs)
@@ -34,12 +31,6 @@ $afterActions = \Filament\Support\Facades\FilamentView::renderHook(\Filament\Vie
 
     <div class="fi-header-actions-ctn" wire:init="ensureDefaultFilters">
         {{ $beforeActions }}
-
-        @if ($headerActions)
-            <div class="jf-quick-actions" role="toolbar" aria-label="{{ __('app.dashboard.title') }}">
-                <x-filament::actions :actions="$headerActions" />
-            </div>
-        @endif
 
         <div class="fi-ios-filter-bar flex w-full flex-wrap items-stretch justify-end gap-2 px-2 py-2 sm:items-center sm:gap-3 sm:px-4">
             {{ $this->form }}

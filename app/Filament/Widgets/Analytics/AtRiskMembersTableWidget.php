@@ -2,10 +2,10 @@
 
 namespace App\Filament\Widgets\Analytics;
 
+use App\Enums\Status;
 use App\Filament\Resources\Members\MemberResource;
 use App\Models\CheckIn;
 use App\Models\Member;
-use App\Models\Subscription;
 use App\Support\AppConfig;
 use Carbon\CarbonImmutable;
 use Filament\Actions\ViewAction;
@@ -13,7 +13,6 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Surfaces active members who haven't checked in for ABSENT_DAYS days.
@@ -29,7 +28,7 @@ class AtRiskMembersTableWidget extends TableWidget
     protected static ?string $heading = null;
 
     /** Members absent for this many days are considered at-risk. */
-    private const ABSENT_DAYS = 14;
+    private const int ABSENT_DAYS = 14;
 
     /**
      * @var int | string | array<string, int | null>
@@ -47,7 +46,7 @@ class AtRiskMembersTableWidget extends TableWidget
 
         return Member::query()
             ->whereHas('subscriptions', fn (Builder $q): Builder => $q
-                ->where('status', Subscription::STATUS_ONGOING ?? 'ongoing')
+                ->where('status', Status::Ongoing->value)
                 ->whereDate('end_date', '>=', $today)
             )
             ->whereDoesntHave('checkIns', fn (Builder $q): Builder => $q
@@ -61,15 +60,17 @@ class AtRiskMembersTableWidget extends TableWidget
                     ->limit(1),
             ])
             ->with([
-                'subscriptions' => fn (HasMany $q): HasMany => $q
-                    ->where('status', 'ongoing')
-                    ->whereDate('end_date', '>=', $today)
-                    ->with('plan')
-                    ->latest('end_date'),
+                'subscriptions' => function ($q) use ($today): void {
+                    $q->where('status', 'ongoing')
+                        ->whereDate('end_date', '>=', $today)
+                        ->with('plan')
+                        ->latest('end_date');
+                },
             ])
             ->orderBy('last_checkin_at', 'asc');
     }
 
+    #[\Override]
     public function table(Table $table): Table
     {
         return $table
@@ -99,7 +100,7 @@ class AtRiskMembersTableWidget extends TableWidget
                     ->sortable(false),
                 TextColumn::make('plan_name')
                     ->label(__('app.fields.plan'))
-                    ->state(fn (Member $record): string => (string) ($record->subscriptions->first()?->plan?->name ?? '—'))
+                    ->state(fn (Member $record): string => (string) ($record->subscriptions->first()?->plan->name ?? '—'))
                     ->wrap(),
             ])
             ->recordActions([
@@ -142,7 +143,7 @@ class AtRiskMembersTableWidget extends TableWidget
 
         if (empty($raw)) {
             $sub = $record->subscriptions->first();
-            if ($sub && $sub->start_date) {
+            if ($sub) {
                 $days = (int) CarbonImmutable::parse($sub->start_date, AppConfig::timezone())
                     ->diffInDays(CarbonImmutable::now(AppConfig::timezone()));
 

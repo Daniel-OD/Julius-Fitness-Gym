@@ -19,6 +19,7 @@ class FollowUpsRelationManager extends RelationManager
 
     protected static ?string $title = null;
 
+    #[\Override]
     public static function getTitle(Model $ownerRecord, string $pageClass): string
     {
         return __('app.titles.follow_up_timeline');
@@ -29,6 +30,7 @@ class FollowUpsRelationManager extends RelationManager
      *
      * @return bool Returns false, indicating the relation manager is not read-only.
      */
+    #[\Override]
     public function isReadOnly(): bool
     {
         return false;
@@ -37,6 +39,7 @@ class FollowUpsRelationManager extends RelationManager
     /**
      * Define the form schema for the resource.
      */
+    #[\Override]
     public function form(Schema $schema): Schema
     {
         return FollowUpResource::form($schema);

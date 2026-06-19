@@ -52,7 +52,7 @@ class JsonSequenceRepository implements SequenceRepository
                     ->whenStartsWith($match, fn ($s) => $s->after($match))
                     ->__toString()
             )
-            ->map(fn ($v) => is_numeric($v) ? (int) $v : 0)
+            ->map(fn ($v): int => is_numeric($v) ? (int) $v : 0)
             ->max() ?: 0;
 
         $lastFromSettings = Str::of(Data::string($rawSaved))

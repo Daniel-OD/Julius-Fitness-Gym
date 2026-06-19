@@ -54,7 +54,7 @@ it('creates subscription and invoice after email verification when plan was inte
     $url = URL::temporarySignedRoute(
         'member.verification.verify',
         now()->addMinutes(60),
-        ['id' => $member->id, 'hash' => sha1($member->email)]
+        ['id' => $member->id, 'hash' => sha1((string) $member->email)]
     );
 
     $this->actingAs($member, 'member')

@@ -11,6 +11,7 @@ class ListServices extends ListRecords
 {
     protected static string $resource = ServiceResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [
@@ -24,6 +25,7 @@ class ListServices extends ListRecords
         ];
     }
 
+    #[\Override]
     public function getBreadcrumbs(): array
     {
         return [

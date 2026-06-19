@@ -65,12 +65,12 @@ class SubscriptionExpirationNotificationService
 
             return new SubscriptionExpirationNotificationItem(
                 subscriptionId: $subscription->id,
-                memberName: (string) ($member?->name ?? __('app.fields.member')),
-                memberPhotoUrl: $member?->photo
+                memberName: (string) ($member->name ?? __('app.fields.member')),
+                memberPhotoUrl: $member->photo
                     ? Storage::disk('public')->url($member->photo)
                     : null,
-                memberInitials: $this->memberInitials($member?->name),
-                planName: (string) ($subscription->plan?->name ?? '—'),
+                memberInitials: $this->memberInitials($member->name),
+                planName: (string) ($subscription->plan->name ?? '—'),
                 daysLeft: $daysLeft,
                 expiresToday: $expiresToday,
                 urgency: $urgency,

@@ -15,6 +15,7 @@ class ListInvoices extends ListRecords
 {
     protected static string $resource = InvoiceResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [];
@@ -23,6 +24,7 @@ class ListInvoices extends ListRecords
     /**
      * @return array<class-string>
      */
+    #[\Override]
     protected function getHeaderWidgets(): array
     {
         return [
@@ -33,6 +35,7 @@ class ListInvoices extends ListRecords
     /**
      * @return array<class-string>
      */
+    #[\Override]
     protected function getFooterWidgets(): array
     {
         return [
@@ -40,6 +43,7 @@ class ListInvoices extends ListRecords
         ];
     }
 
+    #[\Override]
     public function getTabs(): array
     {
         return [
@@ -72,6 +76,7 @@ class ListInvoices extends ListRecords
         ];
     }
 
+    #[\Override]
     public function getBreadcrumbs(): array
     {
         return [

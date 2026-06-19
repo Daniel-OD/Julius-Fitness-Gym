@@ -16,11 +16,11 @@ use Illuminate\Support\Facades\RateLimiter;
 
 class CheckInService
 {
-    private const DEFAULT_PRESENT_NOW_GRACE_MINUTES = 15;
+    private const int DEFAULT_PRESENT_NOW_GRACE_MINUTES = 15;
 
-    private const MAX_PRESENT_NOW_GRACE_MINUTES = 120;
+    private const int MAX_PRESENT_NOW_GRACE_MINUTES = 120;
 
-    private const RATE_LIMIT_MINUTES = 30;
+    private const int RATE_LIMIT_MINUTES = 30;
 
     /**
      * Handle a QR scan end-to-end: resolve the member by token, decide the

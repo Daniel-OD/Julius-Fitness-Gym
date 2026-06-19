@@ -70,7 +70,7 @@ class SendSubscriptionExpiryNotification implements ShouldQueue
         $gymEmail = Data::string(data_get($settings, 'general.gym_email', ''));
         $gymContact = Data::string(data_get($settings, 'general.gym_contact', ''));
         $memberName = Data::string($subscription->member?->name);
-        $planName = Data::string($subscription->plan?->name);
+        Data::string($subscription->plan?->name);
 
         $subject = $this->daysLeft === 0
             ? __('app.emails.subscription_expired_subject', ['gym' => $gymName])

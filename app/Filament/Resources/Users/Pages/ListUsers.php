@@ -14,6 +14,7 @@ class ListUsers extends ListRecords
 {
     protected static string $resource = UserResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [
@@ -23,6 +24,7 @@ class ListUsers extends ListRecords
         ];
     }
 
+    #[\Override]
     public function getBreadcrumbs(): array
     {
         return [
@@ -31,6 +33,7 @@ class ListUsers extends ListRecords
         ];
     }
 
+    #[\Override]
     public function getTabs(): array
     {
         return [

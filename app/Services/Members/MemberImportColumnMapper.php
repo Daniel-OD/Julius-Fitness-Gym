@@ -10,7 +10,7 @@ class MemberImportColumnMapper
     /**
      * @var array<string, list<string>>
      */
-    private const HEADER_ALIASES = [
+    private const array HEADER_ALIASES = [
         MemberImportField::Email->value => ['email', 'e-mail', 'mail', 'adresa email', 'adresă email'],
         MemberImportField::FirstName->value => ['prenume', 'first name', 'firstname', 'first_name', 'given name'],
         MemberImportField::LastName->value => ['nume', 'last name', 'lastname', 'last_name', 'surname', 'family name'],
@@ -35,7 +35,8 @@ class MemberImportColumnMapper
         $mapping = [];
 
         foreach ($headers as $index => $header) {
-            $mapping[$index] = $this->matchHeader($header)?->value ?? MemberImportField::Ignore->value;
+            $matched = $this->matchHeader($header);
+            $mapping[$index] = $matched !== null ? $matched->value : MemberImportField::Ignore->value;
         }
 
         return $mapping;

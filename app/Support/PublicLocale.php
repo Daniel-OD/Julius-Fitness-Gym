@@ -12,7 +12,7 @@ final class PublicLocale
     /**
      * @var array<string, string>
      */
-    private const FLAGS = [
+    private const array FLAGS = [
         'ro' => '🇷🇴',
         'en' => '🇬🇧',
         'it' => '🇮🇹',

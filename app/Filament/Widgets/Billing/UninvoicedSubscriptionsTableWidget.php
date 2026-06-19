@@ -44,6 +44,7 @@ class UninvoicedSubscriptionsTableWidget extends TableWidget
         return new AnalyticsDateRange($today->startOfMonth(), $today->endOfDay());
     }
 
+    #[\Override]
     public function table(Table $table): Table
     {
         $range = $this->resolveRange();
@@ -63,7 +64,7 @@ class UninvoicedSubscriptionsTableWidget extends TableWidget
             ->columns([
                 TextColumn::make('member.name')
                     ->label(__('app.fields.member'))
-                    ->description(fn (Subscription $record): string => $record->member?->code ?? '—')
+                    ->description(fn (Subscription $record): string => $record->member->code ?? '—')
                     ->url(fn (Subscription $record): string => SubscriptionResource::getUrl('view', ['record' => $record])),
                 TextColumn::make('plan.name')
                     ->label(__('app.resources.plans.singular')),
@@ -74,7 +75,7 @@ class UninvoicedSubscriptionsTableWidget extends TableWidget
                 TextColumn::make('plan.amount')
                     ->label(__('app.fields.amount'))
                     ->alignRight()
-                    ->state(fn (Subscription $record): string => Helpers::formatCurrency((float) ($record->plan?->amount ?? 0))),
+                    ->state(fn (Subscription $record): string => Helpers::formatCurrency((float) $record->plan->amount)),
                 TextColumn::make('status')
                     ->label(__('app.fields.status'))
                     ->badge(),

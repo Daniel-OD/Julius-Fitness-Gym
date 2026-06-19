@@ -174,7 +174,7 @@ it('member auto-generates checkin_token on create', function (): void {
     $member = Member::factory()->create();
 
     expect($member->checkin_token)->not->toBeNull()
-        ->and(strlen($member->checkin_token))->toBe(32);
+        ->and(strlen((string) $member->checkin_token))->toBe(32);
 });
 
 it('check_ins table has soft deletes', function (): void {

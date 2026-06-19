@@ -9,13 +9,14 @@ use App\Models\Expense;
 use App\Services\Api\QueryFilters;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Response;
 
 /**
  * Expenses CRUD endpoints.
  */
 class ExpensesController extends ApiController
 {
-    private const RESOURCE_KEY = 'expenses';
+    private const string RESOURCE_KEY = 'expenses';
 
     /**
      * Display a listing of expenses.

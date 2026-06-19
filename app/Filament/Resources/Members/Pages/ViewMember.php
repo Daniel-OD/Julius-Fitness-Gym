@@ -20,6 +20,7 @@ class ViewMember extends ViewRecord
 {
     protected static string $resource = MemberResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [
@@ -54,6 +55,7 @@ class ViewMember extends ViewRecord
         ];
     }
 
+    #[\Override]
     public function getTitle(): string
     {
         return __('app.titles.record', [
@@ -62,6 +64,7 @@ class ViewMember extends ViewRecord
         ]);
     }
 
+    #[\Override]
     public function getBreadcrumbs(): array
     {
         return [

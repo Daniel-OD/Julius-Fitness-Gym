@@ -13,8 +13,8 @@ use Illuminate\View\View;
 class ForgotPasswordController extends Controller
 {
     public function __construct(
-        private PasswordResetService $passwordResetService,
-        private PasswordResetEmailService $passwordResetEmailService,
+        private readonly PasswordResetService $passwordResetService,
+        private readonly PasswordResetEmailService $passwordResetEmailService,
     ) {}
 
     public function create(): View

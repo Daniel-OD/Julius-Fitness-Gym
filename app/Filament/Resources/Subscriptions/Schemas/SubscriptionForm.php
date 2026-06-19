@@ -83,7 +83,7 @@ class SubscriptionForm
                             ->hiddenOn([SubscriptionsRelationManager::class, CreateMember::class])
                             ->required(),
                         Select::make('plan_id')
-                            ->columnSpan(fn ($livewire) => ($livewire instanceof SubscriptionsRelationManager ||
+                            ->columnSpan(fn ($livewire): int => ($livewire instanceof SubscriptionsRelationManager ||
                                 $livewire instanceof CreateMember)
                                 ? 4
                                 : 2)
@@ -92,7 +92,7 @@ class SubscriptionForm
                             ->searchable(['code', 'name'])
                             ->reactive()
                             ->getOptionLabelFromRecordUsing(fn (Plan $record): string => self::formatPlanOptionLabel($record))
-                            ->afterStateUpdated(function (Get $get, Set $set) {
+                            ->afterStateUpdated(function (Get $get, Set $set): void {
                                 $plan = self::planFromState($get);
                                 $fee = (float) ($plan->amount ?? 0);
                                 $taxRate = Helpers::getTaxRate() ?: 0;
@@ -132,7 +132,7 @@ class SubscriptionForm
                             ->default(now())
                             ->before('end_date')
                             ->reactive()                         // <— also reactive
-                            ->afterStateUpdated(function (Get $get, Set $set) {
+                            ->afterStateUpdated(function (Get $get, Set $set): void {
                                 $set('end_date', Helpers::calculateSubscriptionEndDate(
                                     self::stringState($get, 'start_date'),
                                     self::intState($get, 'plan_id'),
@@ -146,7 +146,7 @@ class SubscriptionForm
                             ->disabled()
                             ->dehydrated()
                             ->reactive()
-                            ->afterStateHydrated(function (Get $get, Set $set) {
+                            ->afterStateHydrated(function (Get $get, Set $set): void {
                                 $set('end_date', Helpers::calculateSubscriptionEndDate(
                                     self::stringState($get, 'start_date'),
                                     self::intState($get, 'plan_id'),
@@ -190,7 +190,7 @@ class SubscriptionForm
                                             DatePicker::make('due_date')
                                                 ->label(__('app.fields.due_date'))
                                                 ->required()
-                                                ->default(fn () => now()->toDateString())
+                                                ->default(fn (): string => now()->toDateString())
                                                 ->reactive(),
                                             Select::make('discount')
                                                 ->label(__('app.fields.discount'))
@@ -199,7 +199,7 @@ class SubscriptionForm
                                                 ->reactive()
                                                 ->placeholder(__('app.placeholders.select_discount'))
                                                 ->afterStateUpdated(
-                                                    function (Get $get, Set $set) {
+                                                    function (Get $get, Set $set): void {
                                                         $fee = self::floatState($get, 'subscription_fee');
                                                         $discountPct = self::intState($get, 'discount') ?? 0;
                                                         $discountAmount = Helpers::getDiscountAmount($discountPct, $fee);
@@ -216,7 +216,7 @@ class SubscriptionForm
                                                 ->prefix(Helpers::getCurrencySymbol())
                                                 ->maxValue(fn (Get $get): float => self::floatState($get, 'subscription_fee'))
                                                 ->afterStateUpdated(
-                                                    function (Get $get, Set $set, $livewire, TextInput $component) {
+                                                    function (Get $get, Set $set, $livewire, TextInput $component): void {
                                                         $livewire->validateOnly($component->getStatePath());
 
                                                         $fee = self::floatState($get, 'subscription_fee');
@@ -238,7 +238,7 @@ class SubscriptionForm
                                                 ->default(0)
                                                 ->prefix(Helpers::getCurrencySymbol())
                                                 ->visible(fn (Get $get): bool => ! PaymentMethod::isOnline(self::stringState($get, 'payment_method')))
-                                                ->afterStateUpdated(function (Get $get, Set $set, $livewire, TextInput $component) {
+                                                ->afterStateUpdated(function (Get $get, Set $set, $livewire, TextInput $component): void {
                                                     $livewire->validateOnly($component->getStatePath());
                                                     self::recalculateInvoiceSummary($get, $set);
                                                 }),
@@ -516,7 +516,7 @@ class SubscriptionForm
         $today = Carbon::today(AppConfig::timezone())->toDateString();
         $defaultStartDate = max(
             $today,
-            $record->end_date?->copy()->addDay()->toDateString() ?? $today,
+            $record->end_date->copy()->addDay()->toDateString(),
         );
 
         return [
@@ -764,8 +764,8 @@ class SubscriptionForm
      */
     private static function recalculateInvoiceSummary(Get $get, Set $set, ?float $fee = null, ?float $taxRate = null): void
     {
-        $fee = $fee ?? self::floatState($get, 'subscription_fee');
-        $taxRate = $taxRate ?? (float) (Helpers::getTaxRate() ?: 0);
+        $fee ??= self::floatState($get, 'subscription_fee');
+        $taxRate ??= (float) (Helpers::getTaxRate() ?: 0);
 
         $discountAmount = self::floatState($get, 'discount_amount');
         $paid = self::floatState($get, 'paid_amount');

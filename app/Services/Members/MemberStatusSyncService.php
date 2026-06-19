@@ -38,7 +38,7 @@ class MemberStatusSyncService
                 $query->whereNull('status')
                     ->orWhere('status', '!=', Status::Active->value);
             })
-            ->whereHas('subscriptions', fn (Builder $query) => $this->applyCurrentlyValid($query))
+            ->whereHas('subscriptions', fn (Builder $query): Builder => $this->applyCurrentlyValid($query))
             ->update(['status' => Status::Active->value]);
 
         $deactivated = Member::query()
@@ -46,7 +46,7 @@ class MemberStatusSyncService
                 $query->whereNull('status')
                     ->orWhere('status', '!=', Status::Inactive->value);
             })
-            ->whereDoesntHave('subscriptions', fn (Builder $query) => $this->applyCurrentlyValid($query))
+            ->whereDoesntHave('subscriptions', fn (Builder $query): Builder => $this->applyCurrentlyValid($query))
             ->update(['status' => Status::Inactive->value]);
 
         return ['activated' => $activated, 'deactivated' => $deactivated];
@@ -66,8 +66,10 @@ class MemberStatusSyncService
     }
 
     /**
-     * @param  Builder<Subscription>  $query
-     * @return Builder<Subscription>
+     * @template TModel of \Illuminate\Database\Eloquent\Model
+     *
+     * @param  Builder<TModel>  $query
+     * @return Builder<TModel>
      */
     private function applyCurrentlyValid(Builder $query): Builder
     {

@@ -18,7 +18,7 @@ use Illuminate\Http\Response;
  */
 class EnquiriesController extends ApiController
 {
-    private const RESOURCE_KEY = 'enquiries';
+    private const string RESOURCE_KEY = 'enquiries';
 
     /**
      * Display a listing of enquiries.
@@ -49,7 +49,7 @@ class EnquiriesController extends ApiController
         $followUp = $data['follow_up'] ?? null;
         unset($data['follow_up']);
 
-        $data['date'] = $data['date'] ?? now()->timezone(AppConfig::timezone())->toDateString();
+        $data['date'] ??= now()->timezone(AppConfig::timezone())->toDateString();
 
         $enquiry = Enquiry::create($data);
 

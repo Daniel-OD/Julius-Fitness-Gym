@@ -27,11 +27,11 @@ use Illuminate\Support\Str;
  * - configuring Reply-To from gym settings
  * - rendering safe, token-based subject templates
  */
-final class InvoiceEmailService
+final readonly class InvoiceEmailService
 {
     public function __construct(
-        private readonly InvoicePdfRenderer $renderer,
-        private readonly SettingsRepository $settingsRepository,
+        private InvoicePdfRenderer $renderer,
+        private SettingsRepository $settingsRepository,
     ) {}
 
     /**

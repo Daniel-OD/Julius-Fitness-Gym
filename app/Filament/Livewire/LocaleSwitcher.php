@@ -17,7 +17,7 @@ class LocaleSwitcher extends Component
     /**
      * @var array<string, string>
      */
-    private const LOCALE_FLAGS = [
+    private const array LOCALE_FLAGS = [
         'en' => '🇬🇧',
         'ro' => '🇷🇴',
     ];

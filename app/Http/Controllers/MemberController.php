@@ -11,8 +11,8 @@ use Illuminate\View\View;
 class MemberController extends Controller
 {
     public function __construct(
-        private MemberQrCodeService $qrCodeService,
-        private MemberSubscriptionAccessService $subscriptionAccess,
+        private readonly MemberQrCodeService $qrCodeService,
+        private readonly MemberSubscriptionAccessService $subscriptionAccess,
     ) {}
 
     public function qr(Member $member): View

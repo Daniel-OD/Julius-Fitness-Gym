@@ -11,7 +11,7 @@ use Illuminate\Translation\PotentiallyTranslatedString;
  *
  * @template TModel of \Illuminate\Database\Eloquent\Model
  */
-final class ModelExists implements ValidationRule
+final readonly class ModelExists implements ValidationRule
 {
     /**
      * @param  class-string<TModel>  $modelClass

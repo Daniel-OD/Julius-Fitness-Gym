@@ -16,6 +16,7 @@ class ViewSubscription extends ViewRecord
 {
     protected static string $resource = SubscriptionResource::class;
 
+    #[\Override]
     public function getTitle(): string
     {
         $member = $this->record->member;
@@ -27,6 +28,7 @@ class ViewSubscription extends ViewRecord
         ]);
     }
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [
@@ -36,6 +38,7 @@ class ViewSubscription extends ViewRecord
         ];
     }
 
+    #[\Override]
     public function getBreadcrumbs(): array
     {
         $member = $this->record->member;

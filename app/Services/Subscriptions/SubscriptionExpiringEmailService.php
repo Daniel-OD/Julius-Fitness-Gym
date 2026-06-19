@@ -15,7 +15,7 @@ use Illuminate\Support\Carbon;
  */
 final class SubscriptionExpiringEmailService
 {
-    public const MANUAL_NOTIFICATION_WINDOW_DAYS = 14;
+    public const int MANUAL_NOTIFICATION_WINDOW_DAYS = 14;
 
     public function isEligibleForManualNotification(Subscription $subscription): bool
     {
@@ -42,10 +42,6 @@ final class SubscriptionExpiringEmailService
         }
 
         $today = Carbon::today(AppConfig::timezone());
-
-        if (! $subscription->start_date || ! $subscription->end_date) {
-            return false;
-        }
 
         return $subscription->start_date->lte($today) && $subscription->end_date->gte($today);
     }

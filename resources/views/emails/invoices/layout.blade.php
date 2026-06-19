@@ -34,9 +34,6 @@
                 <tr>
                     <td style="padding: 14px 22px; background: #f9fafb; font-size: 11px; color: #6b7280;">
                         Sent by {{ $gymName }}.
-                        <span style="display: block; margin-top: 6px; color: #9ca3af;">
-                            {{ config('studio.signature') }}
-                        </span>
                     </td>
                 </tr>
             </table>

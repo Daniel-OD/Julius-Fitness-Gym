@@ -17,11 +17,13 @@ class EditInvoice extends EditRecord
 {
     protected static string $resource = InvoiceResource::class;
 
+    #[\Override]
     public function getTitle(): string
     {
         return __('app.titles.edit_invoice_number', ['number' => $this->record->number]);
     }
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [
@@ -32,6 +34,7 @@ class EditInvoice extends EditRecord
         ];
     }
 
+    #[\Override]
     public function getBreadcrumbs(): array
     {
         return [

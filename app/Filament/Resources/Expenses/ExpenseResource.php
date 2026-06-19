@@ -20,21 +20,25 @@ class ExpenseResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
+    #[\Override]
     public static function getModelLabel(): string
     {
         return __('app.resources.expenses.singular');
     }
 
+    #[\Override]
     public static function getPluralModelLabel(): string
     {
         return __('app.resources.expenses.plural');
     }
 
+    #[\Override]
     public static function getNavigationLabel(): string
     {
         return static::getPluralModelLabel();
     }
 
+    #[\Override]
     public static function getGloballySearchableAttributes(): array
     {
         return [
@@ -45,6 +49,7 @@ class ExpenseResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         /** @var Expense $record */
@@ -55,21 +60,25 @@ class ExpenseResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return ExpenseForm::configure($schema);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return ExpenseTable::configure($table);
     }
 
+    #[\Override]
     public static function infolist(Schema $schema): Schema
     {
         return ExpenseInfolist::configure($schema);
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

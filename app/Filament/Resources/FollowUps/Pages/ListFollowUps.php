@@ -15,6 +15,7 @@ class ListFollowUps extends ListRecords
 {
     protected static string $resource = FollowUpResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [
@@ -28,6 +29,7 @@ class ListFollowUps extends ListRecords
         ];
     }
 
+    #[\Override]
     public function getBreadcrumbs(): array
     {
         return [
@@ -36,6 +38,7 @@ class ListFollowUps extends ListRecords
         ];
     }
 
+    #[\Override]
     public function getTabs(): array
     {
         return [

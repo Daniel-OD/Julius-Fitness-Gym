@@ -22,7 +22,7 @@ class SubscriptionExpiryNotifications extends Command
     protected $description = 'Send expiry notifications for subscriptions at 7, 3, 1, and 0 days';
 
     /** @var list<int> */
-    private const TRIGGER_DAYS = [7, 3, 1, 0];
+    private const array TRIGGER_DAYS = [7, 3, 1, 0];
 
     public function handle(): int
     {
@@ -43,7 +43,7 @@ class SubscriptionExpiryNotifications extends Command
                     continue;
                 }
 
-                $memberName = $subscription->member?->name ?? "#{$subscription->id}";
+                $memberName = $subscription->member->name ?? "#{$subscription->id}";
 
                 if ($dryRun) {
                     $this->line("  [dry-run] subscription #{$subscription->id} ({$memberName}) — {$days} days left");

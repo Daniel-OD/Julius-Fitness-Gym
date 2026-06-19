@@ -70,7 +70,7 @@ class InvoiceIssuedMail extends Mailable
     public function attachments(): array
     {
         return [
-            Attachment::fromData(fn () => $this->pdfBytes, InvoiceDocument::pdfFilename($this->invoice))
+            Attachment::fromData(fn (): string => $this->pdfBytes, InvoiceDocument::pdfFilename($this->invoice))
                 ->withMime('application/pdf'),
         ];
     }

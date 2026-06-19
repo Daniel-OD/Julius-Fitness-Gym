@@ -40,7 +40,7 @@ class SubscriptionExpiringNotification extends Notification implements ShouldQue
         $gymName = Data::string(data_get($settings, 'general.gym_name', AppConfig::string('app.name'))) ?: 'Julius Fitness Gym';
         $memberName = Data::string($this->subscription->member?->name ?: $notifiable->name);
         $planName = Data::string($this->subscription->plan?->name);
-        $expiryDate = $this->subscription->end_date?->translatedFormat('d M Y') ?? '—';
+        $expiryDate = $this->subscription->end_date->translatedFormat('d M Y');
 
         return (new MailMessage)
             ->subject(__('notifications.subscription_expiring.subject', [

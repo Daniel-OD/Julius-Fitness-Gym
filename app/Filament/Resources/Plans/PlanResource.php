@@ -20,21 +20,25 @@ class PlanResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
+    #[\Override]
     public static function getModelLabel(): string
     {
         return __('app.resources.plans.singular');
     }
 
+    #[\Override]
     public static function getPluralModelLabel(): string
     {
         return __('app.resources.plans.plural');
     }
 
+    #[\Override]
     public static function getNavigationLabel(): string
     {
         return static::getPluralModelLabel();
     }
 
+    #[\Override]
     public static function getGloballySearchableAttributes(): array
     {
         return [
@@ -52,6 +56,7 @@ class PlanResource extends Resource
         $query->with(['service']);
     }
 
+    #[\Override]
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         /** @var Plan $record */
@@ -79,6 +84,7 @@ class PlanResource extends Resource
     /**
      * Define the form schema for the resource.
      */
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return PlanForm::configure($schema);
@@ -87,6 +93,7 @@ class PlanResource extends Resource
     /**
      * Get the Filament table configuration for the list view.
      */
+    #[\Override]
     public static function table(Table $table): Table
     {
         return PlanTable::configure($table);
@@ -95,11 +102,13 @@ class PlanResource extends Resource
     /**
      * Add infolist to the resource.
      */
+    #[\Override]
     public static function infolist(Schema $schema): Schema
     {
         return PlanInfolist::configure($schema);
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

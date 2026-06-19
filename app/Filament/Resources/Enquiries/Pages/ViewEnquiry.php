@@ -24,6 +24,7 @@ class ViewEnquiry extends ViewRecord
 {
     protected static string $resource = EnquiryResource::class;
 
+    #[\Override]
     public function getTitle(): string
     {
         return __('app.titles.record', [
@@ -32,6 +33,7 @@ class ViewEnquiry extends ViewRecord
         ]);
     }
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [
@@ -41,7 +43,7 @@ class ViewEnquiry extends ViewRecord
                 ->label(__('app.actions.convert_to_member'))
                 ->icon('heroicon-s-arrows-right-left')
                 ->color('success')
-                ->visible(fn (Enquiry $record) => $record->status === Status::Lead)
+                ->visible(fn (Enquiry $record): bool => $record->status === Status::Lead)
                 ->modalWidth('7xl')
                 ->extraModalWindowAttributes(['class' => 'jf-onboarding-wizard'])
                 ->modalHeading(__('app.enquiry_wizard.modal_heading'))
@@ -82,6 +84,7 @@ class ViewEnquiry extends ViewRecord
         ];
     }
 
+    #[\Override]
     public function getBreadcrumbs(): array
     {
         return [

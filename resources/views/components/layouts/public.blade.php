@@ -149,12 +149,9 @@
                 <p class="text-sm text-zinc-500 dark:text-white/30">
                     &copy; {{ date('Y') }} Julius Fitness Gym
                 </p>
-                <x-studio.signature variant="inline" />
             </div>
         </div>
     </footer>
-
-    <x-studio.html-comment />
 
     <script>
         const header = document.querySelector('[data-public-header]');

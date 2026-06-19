@@ -10,7 +10,7 @@ namespace App\Support;
  */
 final class FilamentSession
 {
-    public const AUTHENTICATED_PANEL_KEY = 'filament.authenticated_panel_id';
+    public const string AUTHENTICATED_PANEL_KEY = 'filament.authenticated_panel_id';
 
     public static function lockToPanel(string $panelId): void
     {

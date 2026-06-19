@@ -15,11 +15,13 @@ class InvoiceTransactionsRelationManager extends RelationManager
 
     protected static ?string $title = null;
 
+    #[\Override]
     public static function getTitle(Model $ownerRecord, string $pageClass): string
     {
         return __('app.titles.payment_history');
     }
 
+    #[\Override]
     public function isReadOnly(): bool
     {
         return true;
@@ -39,11 +41,11 @@ class InvoiceTransactionsRelationManager extends RelationManager
                     ->formatStateUsing(fn (?string $state): string => match ($state) {
                         'payment' => __('app.transactions.payment'),
                         'refund' => __('app.transactions.refund'),
-                        default => filled($state) ? ucfirst((string) $state) : __('app.placeholders.dash'),
+                        default => filled($state) ? ucfirst($state) : __('app.placeholders.dash'),
                     }),
                 TextColumn::make('amount')
                     ->label(__('app.fields.amount'))
-                    ->formatStateUsing(fn ($state): string => Helpers::formatCurrency($state))
+                    ->formatStateUsing(fn (?float $state): string => Helpers::formatCurrency($state))
                     ->sortable(),
                 TextColumn::make('payment_method')
                     ->label(__('app.fields.method'))

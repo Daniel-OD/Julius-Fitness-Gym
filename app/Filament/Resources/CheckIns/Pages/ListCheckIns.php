@@ -14,11 +14,13 @@ class ListCheckIns extends ListRecords
 
     public ?string $activeTab = 'today';
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [];
     }
 
+    #[\Override]
     public function getTabs(): array
     {
         return [

@@ -27,6 +27,7 @@ class GymOverviewStatsWidget extends StatsOverviewWidget
     /**
      * @return array<int, Stat>
      */
+    #[\Override]
     protected function getStats(): array
     {
         $service = app(AnalyticsService::class);

@@ -19,27 +19,32 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
+/** @extends resource<Enquiry> */
 class EnquiryResource extends Resource
 {
     protected static ?string $model = Enquiry::class;
 
     protected static ?string $recordTitleAttribute = 'name';
 
+    #[\Override]
     public static function getModelLabel(): string
     {
         return __('app.resources.enquiries.singular');
     }
 
+    #[\Override]
     public static function getPluralModelLabel(): string
     {
         return __('app.resources.enquiries.plural');
     }
 
+    #[\Override]
     public static function getNavigationLabel(): string
     {
         return static::getPluralModelLabel();
     }
 
+    #[\Override]
     public static function getGloballySearchableAttributes(): array
     {
         return [
@@ -57,6 +62,7 @@ class EnquiryResource extends Resource
         $query->with(['user']);
     }
 
+    #[\Override]
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         assert($record instanceof Enquiry);
@@ -84,6 +90,7 @@ class EnquiryResource extends Resource
     /**
      * Define the form schema for the resource.
      */
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return EnquiryForm::configure($schema);
@@ -92,6 +99,7 @@ class EnquiryResource extends Resource
     /**
      * Get the Filament table configuration for the list view.
      */
+    #[\Override]
     public static function table(Table $table): Table
     {
         return EnquiryTable::configure($table);
@@ -100,6 +108,7 @@ class EnquiryResource extends Resource
     /**
      * Add infolist to the resource.
      */
+    #[\Override]
     public static function infolist(Schema $schema): Schema
     {
         return EnquiryInfolist::configure($schema);
@@ -108,6 +117,7 @@ class EnquiryResource extends Resource
     /**
      * Define the relations for the resource.
      */
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -115,6 +125,7 @@ class EnquiryResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [
@@ -128,6 +139,7 @@ class EnquiryResource extends Resource
     /**
      * @return Builder<Enquiry>
      */
+    #[\Override]
     public static function getRecordRouteBindingEloquentQuery(): Builder
     {
         return parent::getRecordRouteBindingEloquentQuery()

@@ -198,7 +198,7 @@ it('sends the grace entry email to the configured admin', function (): void {
         'checked_out_at' => null,
     ]);
 
-    (new SendGraceEntryNotification($checkIn->id))->handle(app(SettingsRepository::class));
+    new SendGraceEntryNotification($checkIn->id)->handle(app(SettingsRepository::class));
 
     Mail::assertSent(
         GraceEntryNotificationMail::class,
@@ -216,7 +216,7 @@ it('skips the grace entry email when no admin email is configured', function ():
     $member = graceMember();
     $checkIn = CheckIn::factory()->graceEntry()->create(['member_id' => $member->id]);
 
-    (new SendGraceEntryNotification($checkIn->id))->handle(app(SettingsRepository::class));
+    new SendGraceEntryNotification($checkIn->id)->handle(app(SettingsRepository::class));
 
     Mail::assertNothingSent();
 });

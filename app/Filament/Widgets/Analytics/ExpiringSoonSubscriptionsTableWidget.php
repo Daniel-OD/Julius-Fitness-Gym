@@ -67,6 +67,7 @@ class ExpiringSoonSubscriptionsTableWidget extends TableWidget
         return "{$days} {$unit}";
     }
 
+    #[\Override]
     public function table(Table $table): Table
     {
         return $table

@@ -2,18 +2,18 @@
 
 namespace App\Support\Members;
 
-final class MemberImportResult
+final readonly class MemberImportResult
 {
     /**
      * @param  list<array{row_number: int, message: string, email: string|null, name: string|null}>  $errors
      */
     public function __construct(
-        public readonly int $imported,
-        public readonly int $skippedDuplicates,
-        public readonly int $updated,
-        public readonly int $failed,
-        public readonly int $subscriptionsCreated,
-        public readonly array $errors,
-        public readonly ?string $errorReportPath = null,
+        public int $imported,
+        public int $skippedDuplicates,
+        public int $updated,
+        public int $failed,
+        public int $subscriptionsCreated,
+        public array $errors,
+        public ?string $errorReportPath = null,
     ) {}
 }

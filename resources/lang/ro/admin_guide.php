@@ -532,13 +532,13 @@ return [
         ],
 
         'admin.enquiries.index' => [
-            'title' => 'Solicitări — lead-uri vânzări',
+            'title' => 'Solicitări — clienți potențiali',
             'greeting' => 'Fiecare viitor membru potențial începe de aici — nu-i lăsa să se răcească.',
             'summary' => 'Persoane interesate care nu sunt încă membri. Primul pas în pipeline-ul de vânzări.',
             'steps' => [
                 [
                     'title' => 'Înregistrează o solicitare nouă',
-                    'body' => 'Capturează lead-ul cât conversația e proaspătă.',
+                    'body' => 'Capturează clientul potențial cât conversația e proaspătă.',
                     'fields' => [
                         ['name' => 'Nume', 'hint' => 'Primul contact — nu trebuie să fie formal.'],
                         ['name' => 'Sursă', 'hint' => 'De unde a venit: walk-in, telefon, social media, recomandare.'],
@@ -550,7 +550,7 @@ return [
                     'body' => 'Setează întotdeauna o dată de follow-up înainte de a închide formularul.',
                     'fields' => [
                         ['name' => 'Dată follow-up', 'hint' => '24–48 de ore e de obicei potrivit. Mai mult și uită cine ești.'],
-                        ['name' => 'Atribuit la', 'hint' => 'Care angajat e responsabil — previne lead-uri uitate.'],
+                        ['name' => 'Atribuit la', 'hint' => 'Care angajat e responsabil — previne clienți potențiali uitați.'],
                     ],
                 ],
                 [
@@ -563,7 +563,7 @@ return [
             ],
             'tips' => [
                 'Notează apeluri și vizite aici înainte de a deveni membri.',
-                'Programează follow-up ca niciun lead să nu fie uitat.',
+                'Programează follow-up ca niciun client potențial să nu fie uitat.',
                 'Convertește în membru când se înscriu.',
             ],
         ],

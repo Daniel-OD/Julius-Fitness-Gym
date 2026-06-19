@@ -20,6 +20,7 @@ class ListMembers extends ListRecords
 {
     protected static string $resource = MemberResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [
@@ -52,6 +53,7 @@ class ListMembers extends ListRecords
         ];
     }
 
+    #[\Override]
     public function getTabs(): array
     {
         return [
@@ -67,6 +69,7 @@ class ListMembers extends ListRecords
         ];
     }
 
+    #[\Override]
     public function getBreadcrumbs(): array
     {
         return [

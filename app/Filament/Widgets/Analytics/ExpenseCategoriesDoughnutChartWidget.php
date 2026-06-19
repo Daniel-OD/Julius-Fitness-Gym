@@ -172,6 +172,7 @@ class ExpenseCategoriesDoughnutChartWidget extends Widget
     /**
      * @return array<string, mixed>
      */
+    #[\Override]
     protected function getViewData(): array
     {
         $range = $this->resolveRange();

@@ -14,19 +14,22 @@ class ViewInvoice extends ViewRecord
 {
     protected static string $resource = InvoiceResource::class;
 
+    #[\Override]
     public function getTitle(): string
     {
         return __('app.titles.invoice_number', ['number' => $this->record->number]);
     }
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [
             EditAction::make()
-                ->hidden(fn (): bool => $this->record->status?->value !== 'issued'),
+                ->hidden(fn (): bool => $this->record->status->value !== 'issued'),
         ];
     }
 
+    #[\Override]
     public function getBreadcrumbs(): array
     {
         return [

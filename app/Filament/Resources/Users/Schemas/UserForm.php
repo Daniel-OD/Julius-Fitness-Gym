@@ -90,7 +90,7 @@ class UserForm
                                     ->label(__('app.fields.password'))
                                     ->password()
                                     ->hiddenOn(['view'])
-                                    ->dehydrated(fn ($state) => filled($state))
+                                    ->dehydrated(fn ($state): bool => filled($state))
                                     ->required(fn (string $operation): bool => $operation === 'create')
                                     ->revealable(),
                                 TextInput::make('password_confirmation')
@@ -119,20 +119,20 @@ class UserForm
                                     ->preload()
                                     ->required()
                                     ->reactive()
-                                    ->afterStateUpdated(fn (callable $set) => [
+                                    ->afterStateUpdated(fn (callable $set): array => [
                                         $set('state', null),
                                         $set('city', null),
                                     ]),
                                 Select::make('state')
                                     ->label(__('app.fields.state'))
                                     ->placeholder(__('app.placeholders.select_state'))
-                                    ->options(fn ($get) => Helpers::getStates($get('country')))
+                                    ->options(fn ($get): array => Helpers::getStates($get('country')))
                                     ->searchable()
                                     ->reactive(),
                                 Select::make('city')
                                     ->label(__('app.fields.city'))
                                     ->placeholder(__('app.placeholders.select_city'))
-                                    ->options(fn ($get) => Helpers::getCities($get('state')))
+                                    ->options(fn ($get): array => Helpers::getCities($get('state')))
                                     ->searchable()
                                     ->reactive(),
                                 TextInput::make('pincode')

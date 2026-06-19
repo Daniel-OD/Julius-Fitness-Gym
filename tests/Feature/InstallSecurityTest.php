@@ -16,7 +16,7 @@ function superAdminRole(): Role
     return Role::firstOrCreate(['name' => 'super_admin', 'guard_name' => 'web']);
 }
 
-it('generates a random password and does not use julius2024', function () {
+it('generates a random password and does not use julius2024', function (): void {
     Artisan::call('app:install', [
         '--email' => 'test-install@julius.test',
         '--name' => 'Test Admin',
@@ -28,7 +28,7 @@ it('generates a random password and does not use julius2024', function () {
     expect(Hash::check('julius2024', $user->password))->toBeFalse();
 });
 
-it('sets must_change_password when password is generated', function () {
+it('sets must_change_password when password is generated', function (): void {
     Artisan::call('app:install', [
         '--email' => 'test-mcp@julius.test',
         '--name' => 'Test Admin',
@@ -40,7 +40,7 @@ it('sets must_change_password when password is generated', function () {
     expect($user->must_change_password)->toBeTrue();
 });
 
-it('does not set must_change_password when explicit password is provided', function () {
+it('does not set must_change_password when explicit password is provided', function (): void {
     Artisan::call('app:install', [
         '--email' => 'test-explicit@julius.test',
         '--password' => 'Explicit$Pass99',
@@ -53,7 +53,7 @@ it('does not set must_change_password when explicit password is provided', funct
     expect($user->must_change_password)->toBeFalse();
 });
 
-it('does not store plain-text password in credentials file', function () {
+it('does not store plain-text password in credentials file', function (): void {
     $password = 'My$ecurePass1';
 
     Artisan::call('app:install', [
@@ -70,7 +70,7 @@ it('does not store plain-text password in credentials file', function () {
     }
 });
 
-it('redirects user with must_change_password to force-change page', function () {
+it('redirects user with must_change_password to force-change page', function (): void {
     $user = User::factory()->create(['must_change_password' => true]);
     $user->assignRole(superAdminRole());
 
@@ -79,7 +79,7 @@ it('redirects user with must_change_password to force-change page', function () 
         ->assertRedirectToRoute('filament.admin.pages.force-password-change');
 });
 
-it('allows access to force-change page for user with must_change_password', function () {
+it('allows access to force-change page for user with must_change_password', function (): void {
     $user = User::factory()->create(['must_change_password' => true]);
     $user->assignRole(superAdminRole());
 
@@ -88,7 +88,7 @@ it('allows access to force-change page for user with must_change_password', func
         ->assertOk();
 });
 
-it('clears must_change_password flag after saving new password', function () {
+it('clears must_change_password flag after saving new password', function (): void {
     $user = User::factory()->create(['must_change_password' => true]);
     $user->assignRole(superAdminRole());
 

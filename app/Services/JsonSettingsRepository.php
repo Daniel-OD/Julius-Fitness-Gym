@@ -7,7 +7,7 @@ use App\Support\MailConfigurator;
 
 class JsonSettingsRepository implements SettingsRepository
 {
-    private const SETTINGS_PATH = 'data/settingsData.json';
+    private const string SETTINGS_PATH = 'data/settingsData.json';
 
     /**
      * @var array<string, mixed>|null

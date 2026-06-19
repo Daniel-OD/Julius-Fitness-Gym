@@ -9,11 +9,13 @@ class ViewExpense extends ViewRecord
 {
     protected static string $resource = ExpenseResource::class;
 
+    #[\Override]
     public function getTitle(): string
     {
         return ExpenseResource::getModelLabel();
     }
 
+    #[\Override]
     public function getBreadcrumbs(): array
     {
         return [

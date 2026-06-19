@@ -6,7 +6,7 @@ use App\Enums\Status;
 use App\Models\Plan;
 use Illuminate\Http\Request;
 
-final class MemberPlanIntent
+final readonly class MemberPlanIntent
 {
     public const string SESSION_KEY = 'member.intended_plan_id';
 

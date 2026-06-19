@@ -98,6 +98,7 @@ class ForcePasswordChange extends Page implements HasForms
         ];
     }
 
+    #[\Override]
     public function getTitle(): string
     {
         return __('app.auth.change_password');

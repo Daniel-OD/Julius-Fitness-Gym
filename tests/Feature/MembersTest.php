@@ -18,7 +18,7 @@ it('auto-generates code and checkin_token on create', function (): void {
 
     expect($member->code)->not->toBeNull()
         ->and($member->checkin_token)->not->toBeNull()
-        ->and(strlen($member->checkin_token))->toBe(32);
+        ->and(strlen((string) $member->checkin_token))->toBe(32);
 });
 
 it('checkin_token is unique across members', function (): void {

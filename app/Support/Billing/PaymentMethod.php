@@ -27,4 +27,9 @@ final class PaymentMethod
             'card' => 'Card',
         ];
     }
+
+    public static function channelLabel(?string $value): string
+    {
+        return self::options()[self::normalize($value)] ?? ucfirst((string) $value);
+    }
 }

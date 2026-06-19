@@ -23,6 +23,7 @@ use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
+    #[\Override]
     public function register(): void
     {
         $this->app->singleton(SettingsRepository::class, JsonSettingsRepository::class);
@@ -47,7 +48,9 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('api-login', fn (Request $request) => Limit::perMinute(10)->by($request->ip()));
         RateLimiter::for('api', fn (Request $request) => Limit::perMinute(60)->by($request->user()?->id ?: $request->ip()));
 
-        Event::listen(Logout::class, fn (): mixed => FilamentSession::forget());
+        Event::listen(Logout::class, function (): void {
+            FilamentSession::forget();
+        });
 
         View::share('studio', Studio::meta());
 

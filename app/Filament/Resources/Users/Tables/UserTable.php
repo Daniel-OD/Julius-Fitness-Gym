@@ -58,7 +58,7 @@ class UserTable
                         'male' => __('app.options.gender.male'),
                         'female' => __('app.options.gender.female'),
                         'other' => __('app.options.gender.other'),
-                        default => filled($state) ? ucfirst((string) $state) : __('app.placeholders.dash'),
+                        default => filled($state) ? ucfirst($state) : __('app.placeholders.dash'),
                     }),
                 TextColumn::make('roles.name')
                     ->label(__('app.fields.role'))
@@ -132,17 +132,15 @@ class UserTable
                         DatePicker::make('date_to')
                             ->label(__('app.fields.date_to')),
                     ])
-                    ->query(function (Builder $query, array $data): Builder {
-                        return $query
-                            ->when(
-                                $data['date_from'],
-                                fn (Builder $query, $date) => $query->whereDate('created_at', '>=', $date)
-                            )
-                            ->when(
-                                $data['date_to'],
-                                fn (Builder $query, $date) => $query->whereDate('created_at', '<=', $date)
-                            );
-                    }),
+                    ->query(fn (Builder $query, array $data): Builder => $query
+                        ->when(
+                            $data['date_from'],
+                            fn (Builder $query, $date) => $query->whereDate('created_at', '>=', $date)
+                        )
+                        ->when(
+                            $data['date_to'],
+                            fn (Builder $query, $date) => $query->whereDate('created_at', '<=', $date)
+                        )),
             ])
             ->recordActions([
                 ActionGroup::make([
@@ -156,7 +154,7 @@ class UserTable
                             ->color('danger')
                             ->requiresConfirmation()
                             ->icon('heroicon-s-x-circle')
-                            ->action(fn (User $record) => tap($record, function ($record) {
+                            ->action(fn (User $record) => tap($record, function ($record): void {
                                 $record->update(['status' => 'inactive']);
                                 Notification::make()
                                     ->title(__('app.notifications.user_inactivated'))
@@ -164,13 +162,13 @@ class UserTable
                                     ->body(__('app.notifications.user_inactivated_body', ['name' => $record->name]))
                                     ->send();
                             }))
-                            ->visible(fn ($record) => $record->status->value === 'active'),
+                            ->visible(fn ($record): bool => $record->status->value === 'active'),
                         Action::make('active')
                             ->label(__('app.actions.mark_as_active'))
                             ->color('success')
                             ->requiresConfirmation()
                             ->icon('heroicon-s-check-circle')
-                            ->action(fn (User $record) => tap($record, function ($record) {
+                            ->action(fn (User $record) => tap($record, function ($record): void {
                                 $record->update(['status' => 'active']);
                                 Notification::make()
                                     ->title(__('app.notifications.user_activated'))
@@ -178,7 +176,7 @@ class UserTable
                                     ->body(__('app.notifications.user_activated_body', ['name' => $record->name]))
                                     ->send();
                             }))
-                            ->visible(fn ($record) => $record->status->value === 'inactive'),
+                            ->visible(fn ($record): bool => $record->status->value === 'inactive'),
                     ])->dropdown(false),
                     ActionGroup::make([
                         Action::make('heading_actions')

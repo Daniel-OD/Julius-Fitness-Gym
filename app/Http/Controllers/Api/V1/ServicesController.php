@@ -16,7 +16,7 @@ use Illuminate\Http\Response;
  */
 class ServicesController extends ApiController
 {
-    private const RESOURCE_KEY = 'services';
+    private const string RESOURCE_KEY = 'services';
 
     /**
      * Display a listing of the resource.
