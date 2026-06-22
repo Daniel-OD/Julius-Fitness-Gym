@@ -1188,6 +1188,7 @@ return [
             'regenerate' => 'Regenerează',
             'approve_period' => 'Aprobă perioada',
             'export_csv' => 'Export CSV',
+            'export_pdf' => 'Export PDF',
             'approve' => 'Aprobă',
             'reject' => 'Respinge',
             'download_payslip' => 'Descarcă fluturaș',

@@ -1195,6 +1195,7 @@ return [
             'regenerate' => 'Regenerate',
             'approve_period' => 'Approve period',
             'export_csv' => 'Export CSV',
+            'export_pdf' => 'Export PDF',
             'approve' => 'Approve',
             'reject' => 'Reject',
             'download_payslip' => 'Download payslip',
