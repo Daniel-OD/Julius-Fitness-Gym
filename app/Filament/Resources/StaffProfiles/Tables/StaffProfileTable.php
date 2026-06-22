@@ -11,8 +11,11 @@ use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 
 class StaffProfileTable
@@ -43,6 +46,9 @@ class StaffProfileTable
                     ->sortable(),
             ])
             ->defaultSort('employee_code')
+            ->filters([
+                TrashedFilter::make(),
+            ])
             ->emptyStateActions([
                 CreateAction::make()
                     ->label(__('app.actions.new', ['resource' => StaffProfileResource::getModelLabel()]))
@@ -63,6 +69,8 @@ class StaffProfileTable
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
+                    ForceDeleteBulkAction::make(),
+                    RestoreBulkAction::make(),
                 ]),
             ]);
     }
