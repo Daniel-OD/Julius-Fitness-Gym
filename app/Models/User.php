@@ -12,6 +12,7 @@ use Filament\Panel;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -106,6 +107,51 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
         return $this->hasOne(Member::class);
     }
 
+    /**
+     * @return HasOne<StaffProfile, $this>
+     */
+    public function staffProfile(): HasOne
+    {
+        return $this->hasOne(StaffProfile::class);
+    }
+
+    /**
+     * @return HasMany<Attendance, $this>
+     */
+    public function attendances(): HasMany
+    {
+        return $this->hasMany(Attendance::class);
+    }
+
+    /**
+     * @return HasMany<Leave, $this>
+     */
+    public function leaves(): HasMany
+    {
+        return $this->hasMany(Leave::class);
+    }
+
+    /**
+     * @return HasMany<ShiftAssignment, $this>
+     */
+    public function shiftAssignments(): HasMany
+    {
+        return $this->hasMany(ShiftAssignment::class);
+    }
+
+    /**
+     * @return HasMany<PayrollItem, $this>
+     */
+    public function payrollItems(): HasMany
+    {
+        return $this->hasMany(PayrollItem::class);
+    }
+
+    public function hasStaffProfile(): bool
+    {
+        return $this->staffProfile()->exists();
+    }
+
     public function linkedMember(): ?Member
     {
         return $this->member;
@@ -148,6 +194,28 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
         return $this->hasRole('employee')
             && ! $this->hasRole('owner')
             && ! $this->hasRole('super_admin');
+    }
+
+    public function isInstructor(): bool
+    {
+        return $this->hasRole('instructor') && ! $this->isAdministrator();
+    }
+
+    /**
+     * @return BelongsToMany<Member, $this>
+     */
+    public function assignedMembers(): BelongsToMany
+    {
+        return $this->belongsToMany(Member::class, 'member_instructor_assignments', 'instructor_id', 'member_id')
+            ->withTimestamps();
+    }
+
+    /**
+     * @return HasMany<WorkoutTemplate, $this>
+     */
+    public function workoutTemplates(): HasMany
+    {
+        return $this->hasMany(WorkoutTemplate::class, 'created_by');
     }
 
     public function isAdministrator(): bool

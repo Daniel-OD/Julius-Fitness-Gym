@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Contracts\SettingsRepository;
 use App\Jobs\SendInvoicePaymentReceiptEmail;
+use App\Jobs\SendWhatsAppPaymentConfirmation;
 use App\Models\InvoiceTransaction;
 use App\Support\Data;
 use Illuminate\Support\Facades\Log;
@@ -66,6 +67,14 @@ class InvoiceTransactionObserver
             invoiceTransactionId: Data::int($invoiceTransaction->getKey()),
             toEmail: $email,
         )->afterCommit();
+
+        $whatsAppEnabled = (bool) data_get($settings, 'notifications.whatsapp.enabled', false);
+
+        if ($whatsAppEnabled) {
+            SendWhatsAppPaymentConfirmation::dispatch(
+                invoiceId: Data::int($invoiceId),
+            )->afterCommit();
+        }
     }
 
     // Other lifecycle events intentionally left unhandled for v1.

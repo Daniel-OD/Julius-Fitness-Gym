@@ -9,6 +9,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -30,7 +31,17 @@ class ServiceTable
                     ->sortable(),
                 TextColumn::make('description')
                     ->searchable()
-                    ->label(__('app.fields.description')),
+                    ->label(__('app.fields.description'))
+                    ->limit(50),
+                TextColumn::make('icon')
+                    ->label(__('app.fields.icon'))
+                    ->badge(),
+                TextColumn::make('sort_order')
+                    ->label(__('app.fields.sort_order'))
+                    ->sortable(),
+                IconColumn::make('is_active')
+                    ->label(__('app.fields.is_active'))
+                    ->boolean(),
                 TextColumn::make('created_at')
                     ->searchable()
                     ->date('d-m-Y')

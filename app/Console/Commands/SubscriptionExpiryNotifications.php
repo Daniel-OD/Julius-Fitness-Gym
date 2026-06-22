@@ -2,7 +2,9 @@
 
 namespace App\Console\Commands;
 
+use App\Contracts\SettingsRepository;
 use App\Jobs\SendSubscriptionExpiryNotification;
+use App\Jobs\SendWhatsAppExpiryNotification;
 use App\Support\Subscriptions\ExpiringSubscriptionsQuery;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
@@ -24,8 +26,10 @@ class SubscriptionExpiryNotifications extends Command
     /** @var list<int> */
     private const array TRIGGER_DAYS = [7, 3, 1, 0];
 
-    public function handle(): int
+    public function handle(SettingsRepository $settingsRepository): int
     {
+        $settings = $settingsRepository->get();
+        $whatsAppEnabled = (bool) data_get($settings, 'notifications.whatsapp.enabled', false);
         $today = ExpiringSubscriptionsQuery::today();
         $dryRun = (bool) $this->option('dry-run');
         $total = 0;
@@ -49,6 +53,11 @@ class SubscriptionExpiryNotifications extends Command
                     $this->line("  [dry-run] subscription #{$subscription->id} ({$memberName}) — {$days} days left");
                 } else {
                     SendSubscriptionExpiryNotification::dispatch($subscription->id, $days)->afterCommit();
+
+                    if ($whatsAppEnabled) {
+                        SendWhatsAppExpiryNotification::dispatch($subscription->id, $days)->afterCommit();
+                    }
+
                     Cache::put($cacheKey, true, now()->endOfDay());
                 }
 

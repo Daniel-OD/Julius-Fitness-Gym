@@ -13,11 +13,20 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 #[Fillable([
     'name',
     'description',
+    'icon',
+    'sort_order',
+    'is_active',
+    'images',
 ])]
 class Service extends Model
 {
     /** @use HasFactory<ServiceFactory> */
     use CascadesSoftDeletes, HasFactory, SoftDeletes;
+
+    protected $casts = [
+        'images' => 'array',
+        'is_active' => 'boolean',
+    ];
 
     /**
      * @return HasMany<Plan, $this>

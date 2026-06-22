@@ -10,6 +10,7 @@ use App\Models\Member;
 use App\Models\Plan;
 use App\Models\Subscription;
 use App\Services\Subscriptions\SubscriptionExpiringEmailService;
+use App\Services\WhatsAppService;
 use App\Support\AppConfig;
 use Carbon\Carbon;
 use Filament\Actions\Action;
@@ -247,6 +248,42 @@ class SubscriptionTable
                                     ->title(__('app.notifications.member_has_no_email'))
                                     ->warning()
                                     ->send();
+                            }),
+                        Action::make('send_expiry_whatsapp')
+                            ->label(__('app.actions.send_expiry_whatsapp'))
+                            ->icon('heroicon-o-chat-bubble-left-right')
+                            ->color('success')
+                            ->requiresConfirmation()
+                            ->visible(fn (Subscription $record): bool => app(WhatsAppService::class)->isEnabled()
+                                && filled($record->member?->contact)
+                                && in_array($record->status?->value, ['ongoing', 'expiring', 'expired'], true))
+                            ->action(function (Subscription $record): void {
+                                $whatsApp = app(WhatsAppService::class);
+                                $member = $record->member;
+
+                                if (! $member) {
+                                    Notification::make()
+                                        ->title(__('app.notifications.whatsapp_no_phone'))
+                                        ->warning()
+                                        ->send();
+
+                                    return;
+                                }
+
+                                $daysLeft = max(0, (int) now()->diffInDays($record->end_date, false));
+                                $sent = $whatsApp->sendSubscriptionExpiry($member, $record, $daysLeft);
+
+                                if ($sent) {
+                                    Notification::make()
+                                        ->title(__('app.notifications.whatsapp_sent'))
+                                        ->success()
+                                        ->send();
+                                } else {
+                                    Notification::make()
+                                        ->title(__('app.notifications.whatsapp_failed'))
+                                        ->danger()
+                                        ->send();
+                                }
                             }),
                         Action::make('renew')
                             ->label(__('app.actions.renew'))

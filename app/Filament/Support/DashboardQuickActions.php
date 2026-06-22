@@ -5,13 +5,18 @@ namespace App\Filament\Support;
 use App\Filament\Resources\Enquiries\EnquiryResource;
 use App\Filament\Resources\Members\MemberResource;
 use App\Filament\Resources\Members\Schemas\MemberForm;
+use App\Filament\Resources\Sales\SaleResource;
 use App\Filament\Resources\Subscriptions\Schemas\SubscriptionForm;
 use App\Models\CheckIn;
 use App\Models\Member;
+use App\Models\Product;
 use App\Models\Subscription;
 use App\Services\CheckIns\CheckInService;
 use App\Services\Members\MemberOnboardingService;
+use App\Services\Shop\SaleService;
+use App\Support\Billing\PaymentMethod;
 use Filament\Actions\Action;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Wizard\Step;
@@ -121,6 +126,76 @@ final class DashboardQuickActions
                 ->color('gray')
                 ->link()
                 ->url(EnquiryResource::getUrl('create')),
+
+            Action::make('new_sale')
+                ->label(__('app.dashboard.quick_actions.new_sale'))
+                ->icon('heroicon-o-shopping-bag')
+                ->color('warning')
+                ->link()
+                ->modalWidth('3xl')
+                ->modalHeading(__('app.shop.new_sale'))
+                ->schema([
+                    Select::make('member_id')
+                        ->label(__('app.fields.member'))
+                        ->options(fn (): array => Member::query()->orderBy('name')->pluck('name', 'id')->all())
+                        ->searchable()
+                        ->nullable(),
+                    Select::make('payment_method')
+                        ->label(__('app.fields.payment_method'))
+                        ->options(PaymentMethod::options())
+                        ->default('cash')
+                        ->required()
+                        ->native(false),
+                    Repeater::make('items')
+                        ->label(__('app.shop.sale_items'))
+                        ->schema([
+                            Select::make('product_id')
+                                ->label(__('app.resources.products.singular'))
+                                ->options(fn (): array => Product::query()
+                                    ->where('is_active', true)
+                                    ->orderBy('name')
+                                    ->pluck('name', 'id')
+                                    ->all())
+                                ->searchable()
+                                ->required(),
+                            Select::make('quantity')
+                                ->label(__('app.shop.quantity'))
+                                ->options(collect(range(1, 20))->mapWithKeys(fn (int $n): array => [$n => (string) $n])->all())
+                                ->default(1)
+                                ->required(),
+                        ])
+                        ->minItems(1)
+                        ->defaultItems(1)
+                        ->addActionLabel(__('app.shop.add_item'))
+                        ->columns(2),
+                ])
+                ->action(function (array $data) use ($livewire): void {
+                    try {
+                        app(SaleService::class)->create([
+                            'member_id' => $data['member_id'] ?? null,
+                            'payment_method' => $data['payment_method'] ?? 'cash',
+                            'items' => collect($data['items'] ?? [])
+                                ->map(fn (array $item): array => [
+                                    'product_id' => (int) $item['product_id'],
+                                    'quantity' => (int) $item['quantity'],
+                                ])
+                                ->all(),
+                        ], auth()->user());
+
+                        Notification::make()
+                            ->title(__('app.shop.sale_completed'))
+                            ->success()
+                            ->send();
+
+                        $livewire->redirect(SaleResource::getUrl('index'));
+                    } catch (\InvalidArgumentException $exception) {
+                        Notification::make()
+                            ->title(__('app.notifications.failed'))
+                            ->body($exception->getMessage())
+                            ->danger()
+                            ->send();
+                    }
+                }),
         ];
     }
 }

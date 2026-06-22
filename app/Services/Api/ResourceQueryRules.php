@@ -3,11 +3,14 @@
 namespace App\Services\Api;
 
 use App\Services\Api\Schemas\EnquirySchema;
+use App\Services\Api\Schemas\ExerciseSchema;
 use App\Services\Api\Schemas\ExpenseSchema;
 use App\Services\Api\Schemas\FollowUpSchema;
 use App\Services\Api\Schemas\InvoiceSchema;
 use App\Services\Api\Schemas\MemberSchema;
 use App\Services\Api\Schemas\PlanSchema;
+use App\Services\Api\Schemas\ProductSchema;
+use App\Services\Api\Schemas\SaleSchema;
 use App\Services\Api\Schemas\ServiceSchema;
 use App\Services\Api\Schemas\SubscriptionSchema;
 use App\Services\Api\Schemas\UserSchema;
@@ -34,6 +37,9 @@ final class ResourceQueryRules
         'subscriptions' => SubscriptionSchema::class,
         'invoices' => InvoiceSchema::class,
         'expenses' => ExpenseSchema::class,
+        'exercises' => ExerciseSchema::class,
+        'products' => ProductSchema::class,
+        'sales' => SaleSchema::class,
         'enquiries' => EnquirySchema::class,
         'follow-ups' => FollowUpSchema::class,
     ];

@@ -2,8 +2,11 @@
 
 namespace App\Observers;
 
+use App\Contracts\SettingsRepository;
+use App\Jobs\SendWhatsAppWelcome;
 use App\Models\Subscription;
 use App\Services\Members\MemberStatusSyncService;
+use App\Support\Data;
 
 /**
  * Subscription observer.
@@ -13,7 +16,33 @@ use App\Services\Members\MemberStatusSyncService;
  */
 class SubscriptionObserver
 {
-    public function __construct(private readonly MemberStatusSyncService $statusSync) {}
+    public function __construct(
+        private readonly MemberStatusSyncService $statusSync,
+        private readonly SettingsRepository $settingsRepository,
+    ) {}
+
+    public function created(Subscription $subscription): void
+    {
+        // Do not send a welcome message for renewals (they have a parent subscription).
+        if ($subscription->renewed_from_subscription_id !== null) {
+            return;
+        }
+
+        $settings = $this->settingsRepository->get();
+        $whatsAppEnabled = (bool) data_get($settings, 'notifications.whatsapp.enabled', false);
+
+        if (! $whatsAppEnabled) {
+            return;
+        }
+
+        $memberId = Data::int($subscription->member_id);
+
+        if ($memberId === 0) {
+            return;
+        }
+
+        SendWhatsAppWelcome::dispatch($memberId)->afterCommit();
+    }
 
     public function saved(Subscription $subscription): void
     {

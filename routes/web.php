@@ -7,6 +7,9 @@ use App\Http\Controllers\Member\AuthController as MemberAuthController;
 use App\Http\Controllers\Member\DashboardController as MemberDashboardController;
 use App\Http\Controllers\Member\ForgotPasswordController;
 use App\Http\Controllers\Member\InvoiceController as MemberInvoiceController;
+use App\Http\Controllers\Member\MemberClassController;
+use App\Http\Controllers\Member\MemberFitnessController;
+use App\Http\Controllers\Member\MemberShopController;
 use App\Http\Controllers\Member\PasswordController as MemberPasswordController;
 use App\Http\Controllers\Member\QrController as MemberQrController;
 use App\Http\Controllers\MemberController;
@@ -14,6 +17,7 @@ use App\Http\Controllers\MemberImportDownloadController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PublicLocaleController;
 use App\Http\Controllers\Reception\ReceptionScanController;
+use App\Http\Controllers\StaffCheckinController;
 use Illuminate\Support\Facades\Route;
 
 // Legacy Breeze login URL — staff use /staff/login (Filament).
@@ -29,6 +33,13 @@ Route::get('/checkin/{qrToken}', [CheckinController::class, 'scan'])
     ->middleware('throttle:60,1');
 Route::post('/checkin/{qrToken}/checkout', [CheckinController::class, 'checkout'])
     ->name('checkin.checkout')
+    ->middleware('throttle:60,1');
+
+Route::get('/staff/checkin/{token}', [StaffCheckinController::class, 'scan'])
+    ->name('staff.checkin.scan')
+    ->middleware('throttle:60,1');
+Route::post('/staff/checkin/{token}/checkout', [StaffCheckinController::class, 'checkout'])
+    ->name('staff.checkin.checkout')
     ->middleware('throttle:60,1');
 
 // Front-desk scanning panel (staff only — webcam + jsQR)
@@ -65,6 +76,20 @@ Route::prefix('member')->group(function (): void {
         Route::get('qr', [MemberQrController::class, 'show'])->name('member.qr.show');
         Route::get('qr/download', [MemberQrController::class, 'download'])->name('member.qr.download');
         Route::get('invoices/{invoice}/pdf', [MemberInvoiceController::class, 'pdf'])->name('member.invoices.pdf');
+        Route::get('shop', [MemberShopController::class, 'index'])->name('member.shop.index');
+        Route::post('shop/cart', [MemberShopController::class, 'addToCart'])->name('member.shop.cart.add');
+        Route::delete('shop/cart/{productId}', [MemberShopController::class, 'removeFromCart'])->name('member.shop.cart.remove');
+        Route::post('shop/checkout', [MemberShopController::class, 'checkout'])->name('member.shop.checkout');
+        Route::get('shop/orders', [MemberShopController::class, 'orders'])->name('member.shop.orders');
+        Route::get('classes', [MemberClassController::class, 'index'])->name('member.classes.index');
+        Route::post('classes/book', [MemberClassController::class, 'book'])->name('member.classes.book');
+        Route::delete('classes/bookings/{booking}', [MemberClassController::class, 'cancel'])->name('member.classes.cancel');
+        Route::get('classes/my-bookings', [MemberClassController::class, 'myBookings'])->name('member.classes.my-bookings');
+        Route::get('fitness/workout', [MemberFitnessController::class, 'workoutPlan'])->name('member.fitness.workout-plan');
+        Route::post('fitness/workout/log', [MemberFitnessController::class, 'logWorkout'])->name('member.fitness.workout.log');
+        Route::get('fitness/nutrition', [MemberFitnessController::class, 'nutritionPlan'])->name('member.fitness.nutrition-plan');
+        Route::get('fitness/food-log', [MemberFitnessController::class, 'foodLog'])->name('member.fitness.food-log');
+        Route::post('fitness/food-log', [MemberFitnessController::class, 'storeFoodLog'])->name('member.fitness.food-log.store');
         Route::get('password', [MemberPasswordController::class, 'edit'])->name('member.password.edit');
         Route::put('password', [MemberPasswordController::class, 'update'])->name('member.password.update');
     });

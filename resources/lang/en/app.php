@@ -82,6 +82,7 @@ return [
             'administration' => 'Administration',
             'fitness' => 'Fitness',
             'hr' => 'HR',
+            'classes' => 'Classes',
         ],
     ],
 
@@ -253,6 +254,7 @@ return [
             'import' => 'Import',
             'backup' => 'Backup',
             'mail' => 'Email delivery',
+            'whatsapp' => 'WhatsApp',
         ],
         'import' => [
             'steps_label' => 'Import steps',
@@ -460,6 +462,49 @@ return [
             'test_failed_body' => 'Could not send the test email. Check transport settings, API key, and from address (verified domain).',
             'test_no_recipient' => 'Your user account has no email address.',
         ],
+        'whatsapp' => [
+            'tab_label' => 'WhatsApp',
+            'section_connection' => 'Connection',
+            'section_templates' => 'Message templates',
+            'section_test' => 'Test connection',
+            'fields' => [
+                'enabled' => 'Enable WhatsApp notifications',
+                'provider' => 'Provider',
+                'api_key' => 'API key / token',
+                'api_secret' => 'API secret',
+                'account_sid' => 'Account SID',
+                'phone_number_id' => 'From number / phone number ID',
+                'template_subscription_expiry' => 'Subscription expiry template',
+                'template_payment_confirmation' => 'Payment confirmation template',
+                'template_welcome' => 'Welcome template',
+                'template_birthday' => 'Birthday template',
+                'test_phone' => 'Test phone number',
+            ],
+            'options' => [
+                'provider' => [
+                    'meta' => 'Meta (WhatsApp Business API)',
+                    'twilio' => 'Twilio',
+                    'vonage' => 'Vonage',
+                ],
+            ],
+            'hints' => [
+                'api_key' => 'Leave blank when saving to keep the existing key.',
+                'api_secret' => 'Leave blank when saving to keep the existing secret.',
+                'account_sid' => 'Twilio Account SID from your Twilio Console.',
+                'phone_number_id' => 'For Meta: numeric phone number ID. For Twilio/Vonage: the WhatsApp-enabled from number (with country code).',
+                'template' => 'Enter the template name exactly as registered with your provider.',
+                'test_phone' => 'Phone number including country code, e.g. +40712345678.',
+            ],
+            'actions' => [
+                'test_connection' => 'Send test message',
+            ],
+            'notifications' => [
+                'test_success' => 'Test message dispatched to :phone.',
+                'test_disabled' => 'WhatsApp is disabled. Enable it first.',
+                'test_failed' => 'Could not send the test message. Check credentials and phone number.',
+                'test_no_phone' => 'Enter a phone number to send the test message to.',
+            ],
+        ],
     ],
 
     'fields' => [
@@ -602,6 +647,8 @@ return [
         'notify_expiration' => 'Notify expiration',
         'notify_expiration_bulk' => 'Notify expiration (selection)',
         'send_expiration_notification_now' => 'Send notification now',
+        'send_whatsapp' => 'Send WhatsApp',
+        'send_expiry_whatsapp' => 'Send expiry WhatsApp',
     ],
 
     'enquiry_wizard' => [
@@ -807,6 +854,10 @@ return [
         'expiry_urgency_warning' => 'Within a week',
         'expiry_urgency_danger' => 'Within 3 days',
         'expiry_urgency_critical' => 'Expires today',
+        'whatsapp_sent' => 'WhatsApp message sent',
+        'whatsapp_failed' => 'WhatsApp message could not be sent',
+        'whatsapp_disabled' => 'WhatsApp notifications are disabled',
+        'whatsapp_no_phone' => 'Member has no phone number',
     ],
 
     'titles' => [
@@ -1291,6 +1342,85 @@ return [
         'password_reset_user_line' => 'Your staff account password for <strong>:gym</strong> has been reset. Use the password below to sign in.',
         'password_reset_user_button' => 'Sign in to admin',
         'password_reset_security_note' => 'For security, change this password after signing in if you can.',
+    ],
+
+    'classes' => [
+        'resources' => [
+            'gym_class' => ['singular' => 'Class', 'plural' => 'Classes'],
+            'class_schedule' => ['singular' => 'Schedule', 'plural' => 'Schedules'],
+            'class_booking' => ['singular' => 'Booking', 'plural' => 'Bookings'],
+        ],
+        'fields' => [
+            'instructor' => 'Instructor',
+            'capacity' => 'Capacity',
+            'duration_minutes' => 'Duration',
+            'color' => 'Color',
+            'day_of_week' => 'Day',
+            'start_time' => 'Start time',
+            'location' => 'Location',
+            'booked_date' => 'Date',
+            'schedules_count' => 'Schedules',
+            'booked_this_week' => 'Booked this week',
+        ],
+        'placeholders' => [
+            'select_instructor' => 'Select instructor',
+        ],
+        'units' => [
+            'minutes' => 'min',
+        ],
+        'days' => [
+            'sunday' => 'Sunday',
+            'monday' => 'Monday',
+            'tuesday' => 'Tuesday',
+            'wednesday' => 'Wednesday',
+            'thursday' => 'Thursday',
+            'friday' => 'Friday',
+            'saturday' => 'Saturday',
+        ],
+        'booking_statuses' => [
+            'booked' => 'Booked',
+            'attended' => 'Attended',
+            'cancelled' => 'Cancelled',
+        ],
+        'errors' => [
+            'class_inactive' => 'This class is no longer active.',
+            'schedule_inactive' => 'This schedule is no longer active.',
+            'date_mismatch' => 'The selected date does not match the class day.',
+            'already_booked' => 'You have already booked this class for that date.',
+            'class_full' => 'This class is full.',
+            'cannot_cancel_past' => 'You cannot cancel a past booking.',
+            'already_cancelled' => 'This booking is already cancelled.',
+        ],
+        'notifications' => [
+            'booking_confirmed' => 'Your booking has been confirmed.',
+            'booking_cancelled' => 'Booking cancelled.',
+            'marked_attended' => 'Marked as attended.',
+        ],
+        'actions' => [
+            'book' => 'Book',
+            'this_week' => 'This week',
+            'mark_attended' => 'Mark attended',
+            'browse_classes' => 'Browse classes',
+        ],
+        'titles' => [
+            'weekly_schedule' => 'Class schedule',
+            'my_bookings' => 'My bookings',
+        ],
+        'labels' => [
+            'spots_left' => ':count spot(s) left',
+            'full' => 'Full',
+            'booked' => 'Booked',
+            'no_classes' => 'No classes',
+            'upcoming_only' => 'Upcoming bookings only',
+            'no_upcoming_bookings' => 'You have no upcoming bookings.',
+            'cancel_confirm' => 'Cancel this booking?',
+        ],
+        'tabs' => [
+            'upcoming' => 'Upcoming',
+            'today' => 'Today',
+            'past' => 'Past',
+            'cancelled' => 'Cancelled',
+        ],
     ],
 
 ];

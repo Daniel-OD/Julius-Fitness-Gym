@@ -7,13 +7,17 @@ use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\EnquiriesController;
 use App\Http\Controllers\Api\V1\EnquiryFollowUpsController;
 use App\Http\Controllers\Api\V1\ExpensesController;
+use App\Http\Controllers\Api\V1\FitnessController;
 use App\Http\Controllers\Api\V1\FollowUpsController;
+use App\Http\Controllers\Api\V1\GymClassesController;
 use App\Http\Controllers\Api\V1\InvoicesController;
 use App\Http\Controllers\Api\V1\InvoiceTransactionsController;
 use App\Http\Controllers\Api\V1\MembersController;
 use App\Http\Controllers\Api\V1\PermissionsController;
 use App\Http\Controllers\Api\V1\PlansController;
+use App\Http\Controllers\Api\V1\ProductsController;
 use App\Http\Controllers\Api\V1\RolesController;
+use App\Http\Controllers\Api\V1\SalesController;
 use App\Http\Controllers\Api\V1\ServicesController;
 use App\Http\Controllers\Api\V1\SettingsController;
 use App\Http\Controllers\Api\V1\SubscriptionsController;
@@ -82,6 +86,24 @@ Route::prefix('v1')
                 Route::delete('/invoices/{invoice}/transactions/{transaction}', [InvoiceTransactionsController::class, 'destroy']);
 
                 Route::apiResource('expenses', ExpensesController::class);
+
+                Route::get('/exercises', [FitnessController::class, 'exercises']);
+                Route::get('/members/{member}/workout-plan', [FitnessController::class, 'memberWorkoutPlan']);
+                Route::get('/members/{member}/nutrition-plan', [FitnessController::class, 'memberNutritionPlan']);
+                Route::post('/workout-logs', [FitnessController::class, 'storeWorkoutLog']);
+                Route::post('/food-logs', [FitnessController::class, 'storeFoodLog']);
+
+                Route::get('/products', [ProductsController::class, 'index']);
+                Route::get('/products/{product}', [ProductsController::class, 'show']);
+                Route::get('/sales', [SalesController::class, 'index']);
+                Route::post('/sales', [SalesController::class, 'store']);
+                Route::get('/sales/{sale}', [SalesController::class, 'show']);
+
+                Route::get('/classes', [GymClassesController::class, 'index']);
+                Route::get('/classes/schedule', [GymClassesController::class, 'schedule']);
+                Route::post('/bookings', [GymClassesController::class, 'book']);
+                Route::get('/bookings', [GymClassesController::class, 'myBookings']);
+                Route::delete('/bookings/{booking}', [GymClassesController::class, 'cancelBooking']);
 
                 Route::apiResource('enquiries', EnquiriesController::class);
                 Route::post('/enquiries/{enquiry}/restore', [EnquiriesController::class, 'restore']);

@@ -5,6 +5,9 @@ namespace App\Providers\Filament;
 use App\Filament\Auth\ForcePasswordChange;
 use App\Filament\Auth\Login;
 use App\Filament\Office\Pages\Dashboard;
+use App\Filament\Office\Pages\MyAttendance;
+use App\Filament\Office\Pages\MyPayslips;
+use App\Filament\Office\Pages\RequestLeave;
 use App\Filament\Resources\CheckIns\CheckInResource;
 use App\Models\CheckIn;
 use Filament\Navigation\NavigationBuilder;
@@ -36,6 +39,9 @@ class OfficePanelProvider extends AdminPanelProvider
             ->pages([
                 ForcePasswordChange::class,
                 Dashboard::class,
+                MyAttendance::class,
+                RequestLeave::class,
+                MyPayslips::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([])
@@ -53,6 +59,9 @@ class OfficePanelProvider extends AdminPanelProvider
         $items = $this->visibleNavigationItems([
             ...Dashboard::getNavigationItems(),
             ...CheckInResource::getNavigationItems(),
+            ...MyAttendance::getNavigationItems(),
+            ...RequestLeave::getNavigationItems(),
+            ...MyPayslips::getNavigationItems(),
             NavigationItem::make('reception-scan')
                 ->label(fn (): string => __('app.reception.open_scanner'))
                 ->icon('heroicon-o-qr-code')

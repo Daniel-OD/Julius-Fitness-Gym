@@ -7,6 +7,9 @@ Schedule::command('gym:invoices --mark-overdue')->dailyAt('00:05');
 Schedule::command('gym:subscriptions')->dailyAt('00:10');
 Schedule::command('gym:subscription-expiry-notifications')->dailyAt('09:00');
 Schedule::command('gym:send-expiring-emails')->dailyAt('09:00');
+Schedule::command('gym:staff-attendance')->dailyAt('00:15');
+Schedule::command('gym:payroll --generate-previous')->monthlyOn(1, '01:00');
+Schedule::command('gym:birthday-whatsapp')->dailyAt('09:30');
 
 // Daily backup — runs only when backup is enabled and trigger includes end-of-day
 (function (): void {

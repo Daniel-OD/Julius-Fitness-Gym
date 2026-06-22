@@ -20,6 +20,15 @@ class ServiceFactory extends Factory
         return [
             'name' => $this->faker->unique()->word(),
             'description' => $this->faker->sentence(),
+            'icon' => $this->faker->randomElement(['strength', 'groups', 'personal', 'recovery', 'cardio', 'nutrition']),
+            'sort_order' => $this->faker->numberBetween(0, 10),
+            'is_active' => true,
+            'images' => null,
         ];
+    }
+
+    public function inactive(): static
+    {
+        return $this->state(['is_active' => false]);
     }
 }

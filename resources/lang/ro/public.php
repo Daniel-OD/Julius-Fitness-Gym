@@ -30,6 +30,9 @@ return [
         'toggle_theme' => 'Comută tema',
         'scroll' => 'Scroll',
         'currency' => 'lei',
+        'close' => 'Închide',
+        'prev' => 'Anterior',
+        'next' => 'Următor',
     ],
 
     'hero' => [
@@ -51,6 +54,7 @@ return [
     'services' => [
         'title' => 'Servicii',
         'subtitle' => 'Tot ce ai nevoie — un singur loc.',
+        'photos' => 'poze',
         'items' => [
             'strength' => [
                 'title' => 'Sală de forță',
@@ -104,6 +108,12 @@ return [
         'per_days' => '/ :days zile',
         'choose_named' => 'Alege :name',
         'cta_now' => 'Abonament acum',
+    ],
+
+    'classes' => [
+        'title' => 'Clasele acestei săptămâni',
+        'subtitle' => 'Sesiuni live cu instructor — rezervă-ți locul.',
+        'view_full_schedule' => 'Vezi programul complet & rezervă',
     ],
 
     'cta' => [

@@ -30,6 +30,9 @@ return [
         'toggle_theme' => 'Toggle theme',
         'scroll' => 'Scroll',
         'currency' => 'RON',
+        'close' => 'Close',
+        'prev' => 'Previous',
+        'next' => 'Next',
     ],
 
     'hero' => [
@@ -51,6 +54,7 @@ return [
     'services' => [
         'title' => 'Services',
         'subtitle' => 'Everything you need — in one place.',
+        'photos' => 'photos',
         'items' => [
             'strength' => [
                 'title' => 'Strength gym',
@@ -104,6 +108,12 @@ return [
         'per_days' => '/ :days days',
         'choose_named' => 'Choose :name',
         'cta_now' => 'Join now',
+    ],
+
+    'classes' => [
+        'title' => 'This week\'s classes',
+        'subtitle' => 'Live instructor-led sessions — book your spot.',
+        'view_full_schedule' => 'View full schedule & book',
     ],
 
     'cta' => [

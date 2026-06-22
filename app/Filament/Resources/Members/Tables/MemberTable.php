@@ -6,6 +6,7 @@ use App\Enums\Status;
 use App\Filament\Resources\Members\Actions\ResetMemberPasswordAction;
 use App\Models\Member;
 use App\Services\Email\MemberPortalEmailService;
+use App\Services\WhatsAppService;
 use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
@@ -232,6 +233,29 @@ class MemberTable
                                     ->send();
                             }),
                         ResetMemberPasswordAction::make(),
+                        Action::make('send_whatsapp')
+                            ->label(__('app.actions.send_whatsapp'))
+                            ->icon('heroicon-o-chat-bubble-left-right')
+                            ->color('success')
+                            ->requiresConfirmation()
+                            ->visible(fn (Member $record): bool => filled($record->contact)
+                                && app(WhatsAppService::class)->isEnabled())
+                            ->action(function (Member $record): void {
+                                $whatsApp = app(WhatsAppService::class);
+                                $sent = $whatsApp->sendWelcome($record);
+
+                                if ($sent) {
+                                    Notification::make()
+                                        ->title(__('app.notifications.whatsapp_sent'))
+                                        ->success()
+                                        ->send();
+                                } else {
+                                    Notification::make()
+                                        ->title(__('app.notifications.whatsapp_failed'))
+                                        ->danger()
+                                        ->send();
+                                }
+                            }),
                         Action::make('qr')
                             ->label(__('app.members.qr.title'))
                             ->icon('heroicon-o-qr-code')

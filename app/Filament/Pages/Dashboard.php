@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Support\DashboardQuickActions;
 use App\Filament\Widgets\Analytics\AtRiskMembersTableWidget;
 use App\Filament\Widgets\Analytics\CashflowTrendChartWidget;
 use App\Filament\Widgets\Analytics\ExpenseCategoriesDoughnutChartWidget;
@@ -11,9 +12,11 @@ use App\Filament\Widgets\Analytics\MembershipOverviewSubscriptionsTableWidget;
 use App\Filament\Widgets\Analytics\RecentTransactionsTableWidget;
 use App\Filament\Widgets\Billing\UninvoicedSubscriptionsTableWidget;
 use App\Filament\Widgets\GymOverviewStatsWidget;
+use App\Filament\Widgets\Shop\LowStockProductsWidget;
 use App\Filament\Widgets\TodayCheckinsStatsWidget;
 use App\Support\AppConfig;
 use Carbon\CarbonImmutable;
+use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Pages\Dashboard\Concerns\HasFilters;
@@ -64,6 +67,16 @@ class Dashboard extends \Filament\Pages\Dashboard
     public function getHeader(): ?View
     {
         return view('filament.pages.dashboard-header');
+    }
+
+    /**
+     * Register quick-action modals (opened via sidebar links with ?action=).
+     *
+     * @return array<int, Action>
+     */
+    protected function getHeaderActions(): array
+    {
+        return DashboardQuickActions::make($this);
     }
 
     /**
@@ -179,6 +192,11 @@ class Dashboard extends \Filament\Pages\Dashboard
             Grid::make(1)->schema([
                 ...$this->getWidgetsSchemaComponents([
                     UninvoicedSubscriptionsTableWidget::class,
+                ]),
+            ]),
+            Grid::make(1)->schema([
+                ...$this->getWidgetsSchemaComponents([
+                    LowStockProductsWidget::class,
                 ]),
             ]),
             Grid::make(1)->schema([

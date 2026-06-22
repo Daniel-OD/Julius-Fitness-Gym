@@ -97,6 +97,42 @@ class Member extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(CheckIn::class);
     }
 
+    /** @return HasMany<Sale, $this> */
+    public function sales(): HasMany
+    {
+        return $this->hasMany(Sale::class);
+    }
+
+    /** @return HasMany<MemberWorkoutPlan, $this> */
+    public function workoutPlans(): HasMany
+    {
+        return $this->hasMany(MemberWorkoutPlan::class);
+    }
+
+    /** @return HasMany<NutritionPlan, $this> */
+    public function nutritionPlans(): HasMany
+    {
+        return $this->hasMany(NutritionPlan::class);
+    }
+
+    /** @return HasMany<WorkoutLog, $this> */
+    public function workoutLogs(): HasMany
+    {
+        return $this->hasMany(WorkoutLog::class);
+    }
+
+    /** @return HasMany<FoodLog, $this> */
+    public function foodLogs(): HasMany
+    {
+        return $this->hasMany(FoodLog::class);
+    }
+
+    /** @return HasMany<MemberInstructorAssignment, $this> */
+    public function instructorAssignments(): HasMany
+    {
+        return $this->hasMany(MemberInstructorAssignment::class);
+    }
+
     #[\Override]
     public function sendEmailVerificationNotification(): void
     {

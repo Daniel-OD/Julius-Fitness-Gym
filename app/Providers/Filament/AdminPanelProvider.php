@@ -5,17 +5,33 @@ namespace App\Providers\Filament;
 use App\Filament\Auth\ForcePasswordChange;
 use App\Filament\Office\Pages\Dashboard as OfficeDashboard;
 use App\Filament\Pages\Dashboard;
+use App\Filament\Pages\LeaveCalendar;
 use App\Filament\Pages\Settings;
+use App\Filament\Resources\Attendances\AttendanceResource;
 use App\Filament\Resources\CheckIns\CheckInResource;
+use App\Filament\Resources\ClassBookings\ClassBookingResource;
+use App\Filament\Resources\ClassSchedules\ClassScheduleResource;
 use App\Filament\Resources\Enquiries\EnquiryResource;
+use App\Filament\Resources\Exercises\ExerciseResource;
 use App\Filament\Resources\Expenses\ExpenseResource;
 use App\Filament\Resources\FollowUps\FollowUpResource;
+use App\Filament\Resources\GymClasses\GymClassResource;
 use App\Filament\Resources\Invoices\InvoiceResource;
+use App\Filament\Resources\Leaves\LeaveResource;
 use App\Filament\Resources\Members\MemberResource;
+use App\Filament\Resources\MemberWorkoutPlans\MemberWorkoutPlanResource;
+use App\Filament\Resources\NutritionPlans\NutritionPlanResource;
+use App\Filament\Resources\PayrollPeriods\PayrollPeriodResource;
 use App\Filament\Resources\Plans\PlanResource;
-use App\Filament\Resources\Services\ServiceResource;
+use App\Filament\Resources\ProductCategories\ProductCategoryResource;
+use App\Filament\Resources\Products\ProductResource;
+use App\Filament\Resources\Sales\SaleResource;
+use App\Filament\Resources\Shifts\ShiftResource;
+use App\Filament\Resources\StaffProfiles\StaffProfileResource;
+use App\Filament\Resources\StockMovements\StockMovementResource;
 use App\Filament\Resources\Subscriptions\SubscriptionResource;
 use App\Filament\Resources\Users\UserResource;
+use App\Filament\Resources\WorkoutTemplates\WorkoutTemplateResource;
 use App\Http\Middleware\EnforceFilamentPanelSession;
 use App\Http\Middleware\RequirePasswordChange;
 use App\Http\Middleware\SetAppLocale;
@@ -116,14 +132,6 @@ class AdminPanelProvider extends PanelProvider
                         : Blade::render('@livewire(\App\Filament\Livewire\SubscriptionExpirationNotifications::class, [], key(\'subscription-expiration-notifications\'))')).
                     Blade::render('@livewire(\App\Filament\Livewire\LocaleSwitcher::class, [], key(\'locale-switcher\'))')
                 ),
-            )
-            ->renderHook(
-                PanelsRenderHook::SIDEBAR_NAV_START,
-                fn (): HtmlString => new HtmlString(
-                    filament()->getCurrentPanel()?->getId() === 'admin'
-                        ? Blade::render('@livewire(\App\Filament\Livewire\SidebarQuickActions::class, [], key(\'sidebar-quick-actions\'))')
-                        : ''
-                ),
             );
     }
 
@@ -180,6 +188,10 @@ class AdminPanelProvider extends PanelProvider
 
         $billing = [
             ...InvoiceResource::getNavigationItems(),
+            ...SaleResource::getNavigationItems(),
+            ...ProductResource::getNavigationItems(),
+            ...ProductCategoryResource::getNavigationItems(),
+            ...StockMovementResource::getNavigationItems(),
             ...($isAdmin ? ExpenseResource::getNavigationItems() : []),
         ];
 
@@ -191,7 +203,36 @@ class AdminPanelProvider extends PanelProvider
             ...CheckInResource::getNavigationItems(),
         ];
 
+        $fitness = [
+            ...ExerciseResource::getNavigationItems(),
+            ...WorkoutTemplateResource::getNavigationItems(),
+            ...MemberWorkoutPlanResource::getNavigationItems(),
+            ...NutritionPlanResource::getNavigationItems(),
+        ];
+
+        $classes = [
+            ...GymClassResource::getNavigationItems(),
+            ...ClassScheduleResource::getNavigationItems(),
+            ...ClassBookingResource::getNavigationItems(),
+        ];
+
+        $hr = [
+            ...StaffProfileResource::getNavigationItems(),
+            ...ShiftResource::getNavigationItems(),
+            ...AttendanceResource::getNavigationItems(),
+            ...LeaveResource::getNavigationItems(),
+            ...LeaveCalendar::getNavigationItems(),
+            ...PayrollPeriodResource::getNavigationItems(),
+        ];
+
         $groups = array_values(array_filter([
+            $panel === 'admin'
+                ? $this->makeNavigationGroup(
+                    __('app.navigation.quick_actions'),
+                    'heroicon-o-bolt',
+                    $this->quickActionsNavigationItems(),
+                )
+                : null,
             $this->makeNavigationGroup(
                 __('app.navigation.groups.sales'),
                 'heroicon-o-shopping-cart',
@@ -206,6 +247,21 @@ class AdminPanelProvider extends PanelProvider
                 __('app.navigation.groups.billing'),
                 'heroicon-o-document-text',
                 $billing,
+            ),
+            $this->makeNavigationGroup(
+                __('app.navigation.groups.fitness'),
+                'heroicon-o-fire',
+                $fitness,
+            ),
+            $this->makeNavigationGroup(
+                __('app.navigation.groups.classes'),
+                'heroicon-o-calendar',
+                $classes,
+            ),
+            $this->makeNavigationGroup(
+                __('app.navigation.groups.hr'),
+                'heroicon-o-briefcase',
+                $hr,
             ),
             $isAdmin
                 ? $this->makeNavigationGroup(
@@ -232,6 +288,27 @@ class AdminPanelProvider extends PanelProvider
                         ? request()->routeIs('filament.office.pages.dashboard')
                         : request()->routeIs('filament.admin.pages.dashboard'))
             );
+    }
+
+    /**
+     * @return array<int, NavigationItem>
+     */
+    protected function quickActionsNavigationItems(): array
+    {
+        return [
+            NavigationItem::make(__('app.dashboard.quick_actions.new_member'))
+                ->url(fn (): string => Dashboard::getUrl(['action' => 'new_member']))
+                ->isActiveWhen(fn (): bool => false),
+            NavigationItem::make(__('app.dashboard.quick_actions.manual_checkin'))
+                ->url(fn (): string => Dashboard::getUrl(['action' => 'manual_checkin']))
+                ->isActiveWhen(fn (): bool => false),
+            NavigationItem::make(__('app.dashboard.quick_actions.new_lead'))
+                ->url(fn (): string => EnquiryResource::getUrl('create'))
+                ->isActiveWhen(fn (): bool => request()->routeIs('filament.admin.resources.enquiries.create')),
+            NavigationItem::make(__('app.dashboard.quick_actions.new_sale'))
+                ->url(fn (): string => Dashboard::getUrl(['action' => 'new_sale']))
+                ->isActiveWhen(fn (): bool => false),
+        ];
     }
 
     /**

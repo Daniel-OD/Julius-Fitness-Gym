@@ -82,6 +82,7 @@ return [
             'administration' => 'Administrare',
             'fitness' => 'Fitness',
             'hr' => 'Resurse umane',
+            'classes' => 'Clase',
         ],
     ],
 
@@ -253,6 +254,7 @@ return [
             'import' => 'Import',
             'backup' => 'Backup',
             'mail' => 'Trimitere email',
+            'whatsapp' => 'WhatsApp',
         ],
         'import' => [
             'steps_label' => 'Pași import',
@@ -460,6 +462,49 @@ return [
             'test_failed_body' => 'Nu s-a putut trimite emailul de test. Verifică transportul, cheia API și adresa expeditor (domeniu verificat).',
             'test_no_recipient' => 'Contul tău de utilizator nu are adresă de email.',
         ],
+        'whatsapp' => [
+            'tab_label' => 'WhatsApp',
+            'section_connection' => 'Conexiune',
+            'section_templates' => 'Șabloane mesaje',
+            'section_test' => 'Test conexiune',
+            'fields' => [
+                'enabled' => 'Activează notificări WhatsApp',
+                'provider' => 'Furnizor',
+                'api_key' => 'Cheie API / token',
+                'api_secret' => 'Secret API',
+                'account_sid' => 'Account SID',
+                'phone_number_id' => 'Număr expeditor / ID număr de telefon',
+                'template_subscription_expiry' => 'Șablon expirare abonament',
+                'template_payment_confirmation' => 'Șablon confirmare plată',
+                'template_welcome' => 'Șablon bun venit',
+                'template_birthday' => 'Șablon zi de naștere',
+                'test_phone' => 'Număr de telefon test',
+            ],
+            'options' => [
+                'provider' => [
+                    'meta' => 'Meta (WhatsApp Business API)',
+                    'twilio' => 'Twilio',
+                    'vonage' => 'Vonage',
+                ],
+            ],
+            'hints' => [
+                'api_key' => 'Lasă gol la salvare pentru a păstra cheia existentă.',
+                'api_secret' => 'Lasă gol la salvare pentru a păstra secretul existent.',
+                'account_sid' => 'Account SID din Twilio Console.',
+                'phone_number_id' => 'Pentru Meta: ID-ul numeric al numărului de telefon. Pentru Twilio/Vonage: numărul expeditor WhatsApp (cu prefix internațional).',
+                'template' => 'Introdu exact numele șablonului înregistrat la furnizor.',
+                'test_phone' => 'Număr de telefon cu prefix internațional, ex. +40712345678.',
+            ],
+            'actions' => [
+                'test_connection' => 'Trimite mesaj de test',
+            ],
+            'notifications' => [
+                'test_success' => 'Mesaj de test trimis la :phone.',
+                'test_disabled' => 'WhatsApp este dezactivat. Activează-l mai întâi.',
+                'test_failed' => 'Nu s-a putut trimite mesajul de test. Verifică credențialele și numărul de telefon.',
+                'test_no_phone' => 'Introdu un număr de telefon pentru a trimite mesajul de test.',
+            ],
+        ],
     ],
 
     'fields' => [
@@ -601,6 +646,8 @@ return [
         'notify_expiration' => 'Notifică expirare',
         'notify_expiration_bulk' => 'Notifică expirare (selecție)',
         'send_expiration_notification_now' => 'Trimite notificare acum',
+        'send_whatsapp' => 'Trimite WhatsApp',
+        'send_expiry_whatsapp' => 'Trimite WhatsApp expirare',
     ],
 
     'enquiry_wizard' => [
@@ -806,6 +853,10 @@ return [
         'expiry_urgency_warning' => 'În 7 zile',
         'expiry_urgency_danger' => 'În 3 zile',
         'expiry_urgency_critical' => 'Expiră azi',
+        'whatsapp_sent' => 'Mesaj WhatsApp trimis',
+        'whatsapp_failed' => 'Mesajul WhatsApp nu a putut fi trimis',
+        'whatsapp_disabled' => 'Notificările WhatsApp sunt dezactivate',
+        'whatsapp_no_phone' => 'Membrul nu are număr de telefon',
     ],
 
     'titles' => [
@@ -1284,6 +1335,85 @@ return [
         'password_reset_user_line' => 'Parola contului de staff pentru <strong>:gym</strong> a fost resetată. Folosește parola de mai jos pentru autentificare.',
         'password_reset_user_button' => 'Autentificare admin',
         'password_reset_security_note' => 'Din motive de securitate, schimbă această parolă după autentificare, dacă poți.',
+    ],
+
+    'classes' => [
+        'resources' => [
+            'gym_class' => ['singular' => 'Clasă', 'plural' => 'Clase'],
+            'class_schedule' => ['singular' => 'Program', 'plural' => 'Programe'],
+            'class_booking' => ['singular' => 'Rezervare', 'plural' => 'Rezervări'],
+        ],
+        'fields' => [
+            'instructor' => 'Instructor',
+            'capacity' => 'Capacitate',
+            'duration_minutes' => 'Durată',
+            'color' => 'Culoare',
+            'day_of_week' => 'Zi',
+            'start_time' => 'Oră start',
+            'location' => 'Locație',
+            'booked_date' => 'Dată',
+            'schedules_count' => 'Programe',
+            'booked_this_week' => 'Rezervat săptămâna aceasta',
+        ],
+        'placeholders' => [
+            'select_instructor' => 'Selectează instructor',
+        ],
+        'units' => [
+            'minutes' => 'min',
+        ],
+        'days' => [
+            'sunday' => 'Duminică',
+            'monday' => 'Luni',
+            'tuesday' => 'Marți',
+            'wednesday' => 'Miercuri',
+            'thursday' => 'Joi',
+            'friday' => 'Vineri',
+            'saturday' => 'Sâmbătă',
+        ],
+        'booking_statuses' => [
+            'booked' => 'Rezervat',
+            'attended' => 'Prezent',
+            'cancelled' => 'Anulat',
+        ],
+        'errors' => [
+            'class_inactive' => 'Această clasă nu mai este activă.',
+            'schedule_inactive' => 'Acest program nu mai este activ.',
+            'date_mismatch' => 'Data selectată nu corespunde zilei clasei.',
+            'already_booked' => 'Ai deja o rezervare pentru această clasă la acea dată.',
+            'class_full' => 'Clasa este plină.',
+            'cannot_cancel_past' => 'Nu poți anula o rezervare trecută.',
+            'already_cancelled' => 'Această rezervare este deja anulată.',
+        ],
+        'notifications' => [
+            'booking_confirmed' => 'Rezervarea ta a fost confirmată.',
+            'booking_cancelled' => 'Rezervare anulată.',
+            'marked_attended' => 'Marcat ca prezent.',
+        ],
+        'actions' => [
+            'book' => 'Rezervă',
+            'this_week' => 'Săptămâna curentă',
+            'mark_attended' => 'Marchează prezent',
+            'browse_classes' => 'Explorează clasele',
+        ],
+        'titles' => [
+            'weekly_schedule' => 'Programul claselor',
+            'my_bookings' => 'Rezervările mele',
+        ],
+        'labels' => [
+            'spots_left' => ':count loc(uri) disponibile',
+            'full' => 'Complet',
+            'booked' => 'Rezervat',
+            'no_classes' => 'Nicio clasă',
+            'upcoming_only' => 'Doar rezervări viitoare',
+            'no_upcoming_bookings' => 'Nu ai rezervări viitoare.',
+            'cancel_confirm' => 'Anulezi această rezervare?',
+        ],
+        'tabs' => [
+            'upcoming' => 'Viitoare',
+            'today' => 'Azi',
+            'past' => 'Trecute',
+            'cancelled' => 'Anulate',
+        ],
     ],
 
 ];

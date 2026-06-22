@@ -5,6 +5,7 @@ namespace App\Filament\Pages;
 use App\Contracts\SettingsRepository;
 use App\Helpers\Helpers;
 use App\Mail\TestMailConfigurationMail;
+use App\Services\WhatsAppService;
 use App\Support\MailConfigurator;
 use Carbon\Carbon;
 use Filament\Actions\Action;
@@ -118,6 +119,7 @@ class Settings extends Page implements HasForms
                     $this->generalTab(),
                     $this->invoiceTab(),
                     $this->mailTab(),
+                    $this->whatsAppTab(),
                     $this->memberTab(),
                     $this->chargesTab(),
                     $this->expensesTab(),
@@ -424,6 +426,143 @@ class Settings extends Page implements HasForms
                     ])
                     ->columnSpan(3),
             ]);
+    }
+
+    /**
+     * WhatsApp Tab Schema.
+     */
+    private function whatsAppTab(): Tab
+    {
+        return Tab::make(__('app.settings.tabs.whatsapp'))
+            ->id('whatsapp')
+            ->icon('heroicon-m-chat-bubble-left-right')
+            ->schema([
+                $this->guidePanel('whatsapp'),
+                Section::make(__('app.settings.whatsapp.section_connection'))
+                    ->aside()
+                    ->schema([
+                        Toggle::make('notifications.whatsapp.enabled')
+                            ->label(__('app.settings.whatsapp.fields.enabled'))
+                            ->default(false)
+                            ->inlineLabel()
+                            ->columnSpanFull(),
+                        Select::make('notifications.whatsapp.provider')
+                            ->label(__('app.settings.whatsapp.fields.provider'))
+                            ->native(false)
+                            ->options([
+                                WhatsAppService::PROVIDER_META => __('app.settings.whatsapp.options.provider.meta'),
+                                WhatsAppService::PROVIDER_TWILIO => __('app.settings.whatsapp.options.provider.twilio'),
+                                WhatsAppService::PROVIDER_VONAGE => __('app.settings.whatsapp.options.provider.vonage'),
+                            ])
+                            ->default(WhatsAppService::PROVIDER_META)
+                            ->live(),
+                        TextInput::make('notifications.whatsapp.api_key')
+                            ->label(__('app.settings.whatsapp.fields.api_key'))
+                            ->password()
+                            ->revealable()
+                            ->dehydrated(fn (?string $state): bool => filled($state))
+                            ->helperText(__('app.settings.whatsapp.hints.api_key')),
+                        TextInput::make('notifications.whatsapp.api_secret')
+                            ->label(__('app.settings.whatsapp.fields.api_secret'))
+                            ->password()
+                            ->revealable()
+                            ->dehydrated(fn (?string $state): bool => filled($state))
+                            ->helperText(__('app.settings.whatsapp.hints.api_secret'))
+                            ->visible(fn ($get): bool => $get('notifications.whatsapp.provider') === WhatsAppService::PROVIDER_VONAGE),
+                        TextInput::make('notifications.whatsapp.account_sid')
+                            ->label(__('app.settings.whatsapp.fields.account_sid'))
+                            ->helperText(__('app.settings.whatsapp.hints.account_sid'))
+                            ->visible(fn ($get): bool => $get('notifications.whatsapp.provider') === WhatsAppService::PROVIDER_TWILIO),
+                        TextInput::make('notifications.whatsapp.phone_number_id')
+                            ->label(__('app.settings.whatsapp.fields.phone_number_id'))
+                            ->helperText(__('app.settings.whatsapp.hints.phone_number_id')),
+                    ])
+                    ->columnSpan(3),
+                Section::make(__('app.settings.whatsapp.section_templates'))
+                    ->aside()
+                    ->schema([
+                        Grid::make(2)
+                            ->schema([
+                                TextInput::make('notifications.whatsapp.templates.subscription_expiry')
+                                    ->label(__('app.settings.whatsapp.fields.template_subscription_expiry'))
+                                    ->helperText(__('app.settings.whatsapp.hints.template')),
+                                TextInput::make('notifications.whatsapp.templates.payment_confirmation')
+                                    ->label(__('app.settings.whatsapp.fields.template_payment_confirmation'))
+                                    ->helperText(__('app.settings.whatsapp.hints.template')),
+                                TextInput::make('notifications.whatsapp.templates.welcome')
+                                    ->label(__('app.settings.whatsapp.fields.template_welcome'))
+                                    ->helperText(__('app.settings.whatsapp.hints.template')),
+                                TextInput::make('notifications.whatsapp.templates.birthday')
+                                    ->label(__('app.settings.whatsapp.fields.template_birthday'))
+                                    ->helperText(__('app.settings.whatsapp.hints.template')),
+                            ]),
+                    ])
+                    ->columnSpan(3),
+                Section::make(__('app.settings.whatsapp.section_test'))
+                    ->schema([
+                        Actions::make([
+                            Action::make('sendTestWhatsApp')
+                                ->label(__('app.settings.whatsapp.actions.test_connection'))
+                                ->icon('heroicon-o-paper-airplane')
+                                ->color('gray')
+                                ->form([
+                                    TextInput::make('test_phone')
+                                        ->label(__('app.settings.whatsapp.fields.test_phone'))
+                                        ->helperText(__('app.settings.whatsapp.hints.test_phone'))
+                                        ->required(),
+                                ])
+                                ->action(fn (array $data) => $this->sendTestWhatsApp($data['test_phone'])),
+                        ]),
+                    ])
+                    ->columnSpan(3),
+            ]);
+    }
+
+    /**
+     * Send a test WhatsApp message to the given phone number.
+     */
+    public function sendTestWhatsApp(string $phone): void
+    {
+        if (! filled($phone)) {
+            Notification::make()
+                ->title(__('app.settings.whatsapp.notifications.test_no_phone'))
+                ->warning()
+                ->send();
+
+            return;
+        }
+
+        $whatsApp = app(WhatsAppService::class);
+
+        if (! $whatsApp->isEnabled()) {
+            Notification::make()
+                ->title(__('app.settings.whatsapp.notifications.test_disabled'))
+                ->warning()
+                ->send();
+
+            return;
+        }
+
+        $settings = $this->form->getState();
+        $gymName = (string) (data_get($settings, 'general.gym_name') ?: config('app.name'));
+
+        $sent = $whatsApp->sendMessage(
+            phone: $phone,
+            template: (string) (data_get($settings, 'notifications.whatsapp.templates.welcome') ?: 'hello_world'),
+            variables: [$gymName],
+        );
+
+        if ($sent) {
+            Notification::make()
+                ->title(__('app.settings.whatsapp.notifications.test_success', ['phone' => $phone]))
+                ->success()
+                ->send();
+        } else {
+            Notification::make()
+                ->title(__('app.settings.whatsapp.notifications.test_failed'))
+                ->danger()
+                ->send();
+        }
     }
 
     /**
@@ -835,6 +974,27 @@ class Settings extends Page implements HasForms
         }
 
         $settings['mail'] = $mail;
+
+        $existingWhatsApp = is_array($existing['notifications']['whatsapp'] ?? null)
+            ? $existing['notifications']['whatsapp']
+            : [];
+        $whatsApp = is_array($settings['notifications']['whatsapp'] ?? null)
+            ? $settings['notifications']['whatsapp']
+            : [];
+
+        if (! filled($whatsApp['api_key'] ?? null)) {
+            $whatsApp['api_key'] = (string) ($existingWhatsApp['api_key'] ?? '');
+        }
+
+        if (! filled($whatsApp['api_secret'] ?? null)) {
+            $whatsApp['api_secret'] = (string) ($existingWhatsApp['api_secret'] ?? '');
+        }
+
+        if (! isset($settings['notifications'])) {
+            $settings['notifications'] = [];
+        }
+
+        $settings['notifications']['whatsapp'] = $whatsApp;
 
         try {
             app(SettingsRepository::class)->put($settings);
