@@ -9,7 +9,6 @@ use App\Models\Member;
 use App\Models\Subscription;
 use App\Services\CheckIns\CheckInService;
 use App\Support\AppConfig;
-use Carbon\CarbonImmutable;
 use Filament\Actions\Action;
 use Filament\Actions\ViewAction;
 use Filament\Facades\Filament;
@@ -71,15 +70,7 @@ class CheckInResource extends Resource
 
     protected static function activeSubscriptionFor(int $memberId): ?Subscription
     {
-        $today = CarbonImmutable::today(AppConfig::timezone())->toDateString();
-
-        return Subscription::query()
-            ->where('member_id', $memberId)
-            ->whereDate('start_date', '<=', $today)
-            ->whereDate('end_date', '>=', $today)
-            ->whereNotIn('status', ['cancelled', 'renewed'])
-            ->latest('end_date')
-            ->first();
+        return app(CheckInService::class)->activeSubscriptionFor($memberId);
     }
 
     #[\Override]
@@ -262,8 +253,9 @@ class CheckInResource extends Resource
                     ->action(function (array $data): void {
                         $memberId = (int) $data['member_id'];
                         $member = Member::query()->findOrFail($memberId);
+                        $checkInService = app(CheckInService::class);
 
-                        if (app(CheckInService::class)->hasOpenSession($memberId)) {
+                        if ($checkInService->createManualCheckIn($memberId) === null) {
                             Notification::make()
                                 ->title(__('app.checkins.already_present_title'))
                                 ->body(__('app.checkins.already_present_body', ['name' => $member->name]))
@@ -273,16 +265,9 @@ class CheckInResource extends Resource
                             return;
                         }
 
-                        CheckIn::create([
-                            'member_id' => $memberId,
-                            'subscription_id' => static::activeSubscriptionFor($memberId)?->id,
-                            'checked_in_at' => now(),
-                            'method' => 'manual',
-                        ]);
-
                         Notification::make()
                             ->title(__('app.checkins.manual_checkin_done_for', ['name' => $member->name]))
-                            ->body(static::activeSubscriptionFor($memberId)?->plan->name ?? __('app.members.qr.no_subscription'))
+                            ->body($checkInService->activeSubscriptionFor($memberId)?->plan?->name ?? __('app.members.qr.no_subscription'))
                             ->success()
                             ->send();
                     }),

@@ -271,4 +271,36 @@ class CheckInService
             ->whereBetween('checked_in_at', [$now->startOfDay(), $now->endOfDay()])
             ->count();
     }
+
+    public function activeSubscriptionFor(int $memberId): ?Subscription
+    {
+        $today = CarbonImmutable::today(AppConfig::timezone())->toDateString();
+
+        return Subscription::query()
+            ->where('member_id', $memberId)
+            ->whereDate('start_date', '<=', $today)
+            ->whereDate('end_date', '>=', $today)
+            ->whereNotIn('status', ['cancelled', 'renewed'])
+            ->latest('end_date')
+            ->first();
+    }
+
+    /**
+     * Record a manual front-desk check-in.
+     *
+     * @return CheckIn|null null when the member already has an open session
+     */
+    public function createManualCheckIn(int $memberId): ?CheckIn
+    {
+        if ($this->hasOpenSession($memberId)) {
+            return null;
+        }
+
+        return CheckIn::create([
+            'member_id' => $memberId,
+            'subscription_id' => $this->activeSubscriptionFor($memberId)?->id,
+            'checked_in_at' => CarbonImmutable::now(AppConfig::timezone()),
+            'method' => 'manual',
+        ]);
+    }
 }
