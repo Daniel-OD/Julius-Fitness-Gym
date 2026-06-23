@@ -35,29 +35,37 @@ class MemberTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->columns([
-                ImageColumn::make('photo')
-                    ->label('')
-                    ->disk('public')
-                    ->defaultImageUrl(fn (Member $record): string => 'https://ui-avatars.com/api/?background=ff5a1f&color=fff&name='.urlencode($record->name ?? ''))
-                    ->circular()
-                    ->size(40)
-                    ->grow(false),
-                TextColumn::make('name')
-                    ->label(__('app.fields.member'))
-                    ->searchable(['name', 'code', 'email'])
-                    ->sortable()
-                    ->description(fn (Member $record): string => $record->code)
-                    ->weight(FontWeight::SemiBold)
-                    ->wrap()
-                    ->grow()
-                    ->extraCellAttributes(['class' => 'jf-member-identity-cell']),
-                TextColumn::make('email')
-                    ->searchable()
-                    ->label(__('app.fields.email'))
-                    ->toggleable()
-                    ->wrap(),
-                TextColumn::make('contact')
+            ->columns(self::getColumns());
+    }
+
+    private static function getColumns(): array
+    {
+        return [
+            ImageColumn::make('photo')
+                ->label('')
+                ->disk('public')
+                ->defaultImageUrl(fn (Member $record): string => 'https://ui-avatars.com/api/?background=ff5a1f&color=fff&name='.urlencode($record->name ?? ''))
+                ->circular()
+                ->size(40)
+                ->grow(false),
+            TextColumn::make('name')
+                ->label(__('app.fields.member'))
+                ->searchable(['name', 'code', 'email'])
+                ->sortable()
+                ->description(fn (Member $record): string => $record->code)
+                ->weight(FontWeight::SemiBold)
+                ->wrap()
+                ->grow()
+                ->extraCellAttributes(['class' => 'jf-member-identity-cell']),
+            TextColumn::make('email')
+                ->searchable()
+                ->label(__('app.fields.email'))
+                ->toggleable()
+                ->wrap(),
+            TextColumn::make('contact'),
+        ];
+    }
+}
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->label(__('app.fields.contact'))

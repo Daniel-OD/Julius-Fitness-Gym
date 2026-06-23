@@ -30,29 +30,37 @@ class PlanTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->columns([
-                TextColumn::make('id')
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('code')
-                    ->searchable()
-                    ->label(__('app.fields.code')),
-                TextColumn::make('name')
-                    ->searchable()
-                    ->label(__('app.fields.name')),
-                TextColumn::make('description')
-                    ->searchable()
-                    ->label(__('app.fields.description')),
-                TextColumn::make('service.name')
-                    ->searchable()
-                    ->label(__('app.fields.service')),
-                TextColumn::make('days')
-                    ->searchable()
-                    ->label(__('app.fields.days')),
-                TextColumn::make('amount')
-                    ->searchable()
-                    ->label(__('app.fields.amount'))
-                    ->money(Helpers::getCurrencyCode()),
+            ->columns(self::getColumns());
+    }
+
+    private static function getColumns(): array
+    {
+        return [
+            TextColumn::make('id')
+                ->sortable()
+                ->toggleable(isToggledHiddenByDefault: true),
+            TextColumn::make('code')
+                ->searchable()
+                ->label(__('app.fields.code')),
+            TextColumn::make('name')
+                ->searchable()
+                ->label(__('app.fields.name')),
+            TextColumn::make('description')
+                ->searchable()
+                ->label(__('app.fields.description')),
+            TextColumn::make('service.name')
+                ->searchable()
+                ->label(__('app.fields.service')),
+            TextColumn::make('days')
+                ->searchable()
+                ->label(__('app.fields.days')),
+            TextColumn::make('amount')
+                ->searchable()
+                ->label(__('app.fields.amount'))
+                ->money(Helpers::getCurrencyCode()),
+        ];
+    }
+}
                 TextColumn::make('status')
                     ->badge()
                     ->label(__('app.fields.status')),

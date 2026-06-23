@@ -62,27 +62,44 @@ final class QueryFilters
     {
         $errors = [];
 
+        self::validateTrashedParameter($request, $errors);
+        self::validateCommaSeparatedStringParameter($request, 'include', 'Include must be a comma-separated string.', $errors);
+        self::validateCommaSeparatedStringParameter($request, 'sort', 'Sort must be a comma-separated string.', $errors);
+
+        if (! empty($errors)) {
+            throw new HttpResponseException(response()->json([
+                'message' => 'Invalid query parameters.',
+                'errors' => $errors,
+            ], 400));
+        }
+    }
+
+    private static function validateTrashedParameter(Request $request, array &$errors): void
+    {
         $trashed = $request->query('trashed');
-        if ($trashed !== null) {
-            $trashed = trim((string) $trashed);
-            if ($trashed !== '' && ! in_array($trashed, ['with', 'only'], true)) {
-                $errors['trashed'][] = 'Allowed values are `with` or `only`.';
-            }
+        if ($trashed === null) {
+            return;
         }
 
-        $include = $request->query('include');
-        if ($include !== null) {
-            if (! is_string($include)) {
-                $errors['include'][] = 'Include must be a comma-separated string.';
-            }
+        $trashed = trim((string) $trashed);
+        if ($trashed === '' || in_array($trashed, ['with', 'only'], true)) {
+            return;
         }
 
-        $sort = $request->query('sort');
-        if ($sort !== null) {
-            if (! is_string($sort)) {
-                $errors['sort'][] = 'Sort must be a comma-separated string.';
-            }
+        $errors['trashed'][] = 'Allowed values are `with` or `only`.';
+    }
+
+    private static function validateCommaSeparatedStringParameter(Request $request, string $param, string $message, array &$errors): void
+    {
+        $value = $request->query($param);
+        if ($value === null) {
+            return;
         }
+
+        if (! is_string($value)) {
+            $errors[$param][] = $message;
+        }
+    }
 
         $rules = ResourceQueryRules::filters($resourceKey);
         $filter = $request->query('filter');

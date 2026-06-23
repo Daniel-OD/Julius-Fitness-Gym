@@ -85,29 +85,48 @@ class CheckInResource extends Resource
     #[\Override]
     public static function table(Table $table): Table
     {
+        $timezone = AppConfig::timezone();
+
+        $memberWeight = function (CheckIn $record): ?FontWeight {
+            return $record->checked_out_at ? null : FontWeight::SemiBold;
+        };
+
+        $checkedInFormat = function (CheckIn $record) use ($timezone): string {
+            return $record->checked_in_at
+                ->timezone($timezone)
+                ->format('H:i');
+        };
+
+        $checkedInTooltip = function (CheckIn $record) use ($timezone): string {
+            return $record->checked_in_at
+                ->timezone($timezone)
+                ->translatedFormat('d M Y, H:i');
+        };
+
+        $presenceState = function (CheckIn $record): string {
+            return $record->checked_out_at
+                ? __('app.checkins.departed')
+                : __('app.checkins.present');
+        };
+
         return $table
             ->columns([
                 TextColumn::make('member.name')
                     ->label(__('app.fields.member'))
                     ->searchable()
                     ->sortable()
-                    ->weight(fn (CheckIn $record): ?FontWeight => $record->checked_out_at
-                        ? null
-                        : FontWeight::SemiBold),
+                    ->weight($memberWeight),
                 TextColumn::make('checked_in_at')
                     ->label(__('app.checkins.checked_in_time'))
-                    ->formatStateUsing(fn (CheckIn $record): string => $record->checked_in_at
-                        ->timezone(AppConfig::timezone())
-                        ->format('H:i'))
-                    ->tooltip(fn (CheckIn $record): string => $record->checked_in_at
-                        ->timezone(AppConfig::timezone())
-                        ->translatedFormat('d M Y, H:i'))
+                    ->formatStateUsing($checkedInFormat)
+                    ->tooltip($checkedInTooltip)
                     ->sortable(),
                 TextColumn::make('presence')
                     ->label(__('app.checkins.presence'))
                     ->badge()
-                    ->state(fn (CheckIn $record): string => $record->checked_out_at
-                        ? __('app.checkins.departed')
+                    ->state($presenceState),
+            ]);
+    }
                         : __('app.checkins.present'))
                     ->color(fn (CheckIn $record): string => $record->checked_out_at ? 'gray' : 'success'),
                 TextColumn::make('checked_out_at')
