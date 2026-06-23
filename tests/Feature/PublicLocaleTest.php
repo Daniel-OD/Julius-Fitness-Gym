@@ -8,10 +8,15 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 uses(RefreshDatabase::class);
 
 it('renders homepage in romanian by default', function (): void {
-    $this->get(route('home'))
+    $response = $this->get(route('home'));
+
+    $response
         ->assertOk()
         ->assertSee('Antrenează.')
-        ->assertSee('Servicii');
+        ->assertSee('Servicii')
+        ->assertSee('id="jf-critical"', false)
+        ->assertSee('width="36" height="36"', false)
+        ->assertSee('rel="stylesheet"', false);
 });
 
 it('switches homepage language via locale route', function (): void {

@@ -33,7 +33,8 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        if (! $this->app->environment('local', 'testing')) {
+        if (! $this->app->environment('local', 'testing')
+            && str_starts_with((string) config('app.url'), 'https://')) {
             URL::forceHttps();
         }
 
@@ -88,12 +89,24 @@ class AppServiceProvider extends ServiceProvider
      */
     private function configureLocalExecutionTimeLimit(): void
     {
-        if ($this->app->runningInConsole() || ! $this->app->environment('local')) {
+        if ($this->app->runningInConsole() || ! $this->runsOnLocalHttpServer()) {
             return;
         }
 
         @ini_set('max_execution_time', '120');
         @set_time_limit(120);
+    }
+
+    private function runsOnLocalHttpServer(): bool
+    {
+        if ($this->app->environment('local', 'testing')) {
+            return true;
+        }
+
+        $url = (string) config('app.url');
+
+        return str_starts_with($url, 'http://127.0.0.1')
+            || str_starts_with($url, 'http://localhost');
     }
 
     private function configureMailFromSettings(): void

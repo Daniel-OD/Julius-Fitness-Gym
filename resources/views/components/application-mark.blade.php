@@ -1,7 +1,7 @@
 {{-- Julius Gym — compact mark (font-free, scales to any size).
      Use wherever you need just the badge glyph: sidebar, public header,
      footer. Size it with utility classes, e.g. <x-application-mark class="h-9 w-9" /> --}}
-<svg viewBox="0 0 200 200" role="img" aria-label="Julius Gym" {{ $attributes }}>
+<svg viewBox="0 0 200 200" width="36" height="36" role="img" aria-label="Julius Gym" {{ $attributes }}>
     <circle cx="100" cy="100" r="97" fill="#16222e"/>
     <circle cx="100" cy="100" r="91" fill="none" stroke="#ff5a1f" stroke-width="6"/>
     <g fill="none" stroke="#f2e6cb" stroke-width="16" stroke-linecap="round" stroke-linejoin="round">

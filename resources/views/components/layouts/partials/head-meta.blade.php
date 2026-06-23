@@ -27,6 +27,17 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
+{{-- Fallback sizing when external Vite CSS is blocked (corporate proxies, cache mismatch) --}}
+<style id="jf-critical">
+    svg[aria-label="Julius Gym"] {
+        display: block;
+        width: 2.25rem;
+        height: 2.25rem;
+        max-width: 100%;
+        flex-shrink: 0;
+    }
+</style>
+
 <x-layouts.partials.theme-script />
 
 @stack('head')
