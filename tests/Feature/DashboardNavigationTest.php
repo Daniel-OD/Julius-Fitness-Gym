@@ -31,7 +31,7 @@ function dashboardNavUser(string $role): User
 it('super admin sees all dashboard links in navigation', function (): void {
     $user = dashboardNavUser('super_admin');
 
-    $this->actingAs($user)
+    actingAs($user)
         ->get(route('profile.edit'))
         ->assertSuccessful()
         ->assertSee(__('app.navigation.dashboard_admin'))
@@ -42,7 +42,7 @@ it('super admin sees all dashboard links in navigation', function (): void {
 it('employee sees only employee dashboard link in navigation', function (): void {
     $user = dashboardNavUser('employee');
 
-    $this->actingAs($user)
+    actingAs($user)
         ->get(route('profile.edit'))
         ->assertSuccessful()
         ->assertSee(__('app.navigation.dashboard_employee'))
@@ -53,7 +53,7 @@ it('employee sees only employee dashboard link in navigation', function (): void
 it('client sees only client dashboard link in navigation', function (): void {
     $user = dashboardNavUser('client');
 
-    $this->actingAs($user)
+    actingAs($user)
         ->get(route('profile.edit'))
         ->assertSuccessful()
         ->assertSee(__('app.navigation.dashboard_client'))
@@ -64,7 +64,7 @@ it('client sees only client dashboard link in navigation', function (): void {
 it('redirects super admin to admin dashboard after login', function (): void {
     $user = dashboardNavUser('super_admin');
 
-    $this->get('/staff/login');
+    get('/staff/login');
 
     Livewire::test(Login::class)
         ->fillForm([
@@ -78,7 +78,7 @@ it('redirects super admin to admin dashboard after login', function (): void {
 it('redirects employee to office dashboard after login', function (): void {
     $user = dashboardNavUser('employee');
 
-    $this->get('/office/login');
+    get('/office/login');
 
     Livewire::test(Login::class)
         ->fillForm([
@@ -92,7 +92,7 @@ it('redirects employee to office dashboard after login', function (): void {
 it('employee is redirected away from client dashboard', function (): void {
     $user = dashboardNavUser('employee');
 
-    $this->actingAs($user)
+    actingAs($user)
         ->get(route('client.dashboard'))
         ->assertRedirect(Filament::getPanel('office')->getUrl());
 });
@@ -100,7 +100,7 @@ it('employee is redirected away from client dashboard', function (): void {
 it('redirects dashboard route to role default', function (): void {
     $user = dashboardNavUser('client');
 
-    $this->actingAs($user)
+    actingAs($user)
         ->get(route('dashboard'))
         ->assertRedirect(route('client.dashboard'));
 });

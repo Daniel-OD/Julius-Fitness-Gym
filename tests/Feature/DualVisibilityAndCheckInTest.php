@@ -87,7 +87,7 @@ it('scan records a check-in for a valid QR token with active subscription', func
     RateLimiter::clear('checkin:'.($member = memberWithToken())->id);
     $sub = activeSubscription($member);
 
-    $response = $this->get("/checkin/{$member->checkin_token}");
+    $response = get("/checkin/{$member->checkin_token}");
 
     $response->assertStatus(200);
     expect(CheckIn::where('member_id', $member->id)->exists())->toBeTrue();
@@ -98,7 +98,7 @@ it('scan returns json for API clients', function (): void {
     activeSubscription($member);
     RateLimiter::clear("checkin:{$member->id}");
 
-    $response = $this->getJson("/checkin/{$member->checkin_token}");
+    $response = getJson("/checkin/{$member->checkin_token}");
 
     $response->assertStatus(200)
         ->assertJsonPath('status', 'success')
@@ -106,7 +106,7 @@ it('scan returns json for API clients', function (): void {
 });
 
 it('scan returns 404 for unknown token', function (): void {
-    $response = $this->getJson('/checkin/invalid-token-xyz');
+    $response = getJson('/checkin/invalid-token-xyz');
 
     $response->assertStatus(404)
         ->assertJsonPath('status', 'error');
@@ -116,7 +116,7 @@ it('scan blocks a member who never had a subscription', function (): void {
     $member = memberWithToken();
     RateLimiter::clear("checkin:{$member->id}");
 
-    $response = $this->getJson("/checkin/{$member->checkin_token}");
+    $response = getJson("/checkin/{$member->checkin_token}");
 
     $response->assertUnprocessable()
         ->assertJsonPath('status', 'blocked');
@@ -135,9 +135,9 @@ it('rejects qr check-in when an open session already exists', function (): void 
 
     RateLimiter::clear("checkin:{$member->id}");
 
-    $this->getJson("/checkin/{$member->checkin_token}")->assertStatus(200);
+    getJson("/checkin/{$member->checkin_token}")->assertStatus(200);
 
-    $this->getJson("/checkin/{$member->checkin_token}")
+    getJson("/checkin/{$member->checkin_token}")
         ->assertStatus(422)
         ->assertJsonPath('status', 'already_present');
 });
@@ -147,9 +147,9 @@ it('scan html shows checkout button when member is already present', function ()
     activeSubscription($member);
     RateLimiter::clear("checkin:{$member->id}");
 
-    $this->getJson("/checkin/{$member->checkin_token}")->assertStatus(200);
+    getJson("/checkin/{$member->checkin_token}")->assertStatus(200);
 
-    $this->get("/checkin/{$member->checkin_token}")
+    get("/checkin/{$member->checkin_token}")
         ->assertStatus(422)
         ->assertSee(__('app.checkin.checkout'), false);
 });
@@ -162,7 +162,7 @@ it('checkout records checked_out_at on open check-in', function (): void {
         'checked_out_at' => null,
     ]);
 
-    $response = $this->postJson("/checkin/{$member->checkin_token}/checkout");
+    $response = postJson("/checkin/{$member->checkin_token}/checkout");
 
     $response->assertStatus(200)
         ->assertJsonPath('status', 'success');

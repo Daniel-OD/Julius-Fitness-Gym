@@ -9,21 +9,21 @@ uses(RefreshDatabase::class);
 it('renders change password page for authenticated member', function (): void {
     $member = Member::factory()->create(['password' => 'OldPassword1!', 'email_verified_at' => now()]);
 
-    $this->actingAs($member, 'member')
+    actingAs($member, 'member')
         ->get(route('member.password.edit'))
         ->assertSuccessful()
         ->assertSee(__('app.member_portal.change_password_button'));
 });
 
 it('redirects guests away from change password page', function (): void {
-    $this->get(route('member.password.edit'))
+    get(route('member.password.edit'))
         ->assertRedirect(route('member.login'));
 });
 
 it('updates password with correct current password', function (): void {
     $member = Member::factory()->create(['password' => 'OldPassword1!', 'email_verified_at' => now()]);
 
-    $this->actingAs($member, 'member')
+    actingAs($member, 'member')
         ->put(route('member.password.update'), [
             'current_password' => 'OldPassword1!',
             'password' => 'NewPassword2@',
@@ -38,7 +38,7 @@ it('updates password with correct current password', function (): void {
 it('rejects wrong current password', function (): void {
     $member = Member::factory()->create(['password' => 'OldPassword1!', 'email_verified_at' => now()]);
 
-    $this->actingAs($member, 'member')
+    actingAs($member, 'member')
         ->put(route('member.password.update'), [
             'current_password' => 'WrongPassword!',
             'password' => 'NewPassword2@',
@@ -52,7 +52,7 @@ it('rejects wrong current password', function (): void {
 it('rejects mismatched password confirmation', function (): void {
     $member = Member::factory()->create(['password' => 'OldPassword1!', 'email_verified_at' => now()]);
 
-    $this->actingAs($member, 'member')
+    actingAs($member, 'member')
         ->put(route('member.password.update'), [
             'current_password' => 'OldPassword1!',
             'password' => 'NewPassword2@',
@@ -64,7 +64,7 @@ it('rejects mismatched password confirmation', function (): void {
 it('rejects password shorter than 8 characters', function (): void {
     $member = Member::factory()->create(['password' => 'OldPassword1!', 'email_verified_at' => now()]);
 
-    $this->actingAs($member, 'member')
+    actingAs($member, 'member')
         ->put(route('member.password.update'), [
             'current_password' => 'OldPassword1!',
             'password' => 'short',

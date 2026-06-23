@@ -1,4 +1,5 @@
 <?php
+<?php
 
 use App\Contracts\SettingsRepository;
 use App\Filament\Pages\Settings;
@@ -24,7 +25,7 @@ function settingsAdmin(): User
 }
 
 it('loads the settings page for authorized users', function (): void {
-    $this->actingAs(settingsAdmin())
+    actingAs(settingsAdmin())
         ->get(route('filament.admin.pages.settings'))
         ->assertSuccessful();
 });
@@ -49,6 +50,7 @@ it('binds and saves with sparse settings file like fresh install', function (): 
         'notifications' => ['email' => []],
         'backup' => [],
     ]);
+});
 
     $gymName = 'Render Gym '.now()->timestamp;
 

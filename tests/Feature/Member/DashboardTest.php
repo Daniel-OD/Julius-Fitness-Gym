@@ -31,14 +31,14 @@ function dashboardMemberWithSubscription(): Member
 it('returns 200 for an authenticated member with subscription', function (): void {
     $member = dashboardMemberWithSubscription();
 
-    $this->actingAs($member, 'member')
+    actingAs($member, 'member')
         ->get('/member/dashboard')
         ->assertOk()
         ->assertViewIs('member.dashboard.index');
 });
 
 it('redirects unauthenticated visitors to login', function (): void {
-    $this->get('/member/dashboard')
+    get('/member/dashboard')
         ->assertRedirect('/member/login');
 });
 
@@ -48,7 +48,7 @@ it('redirects verified member without subscription to plans', function (): void 
         'email_verified_at' => now(),
     ]);
 
-    $this->actingAs($member, 'member')
+    actingAs($member, 'member')
         ->get('/member/dashboard')
         ->assertRedirect(route('member.plans'));
 });
@@ -56,7 +56,7 @@ it('redirects verified member without subscription to plans', function (): void 
 it('shows the plan name when the member has an active subscription', function (): void {
     $member = dashboardMemberWithSubscription();
 
-    $this->actingAs($member, 'member')
+    actingAs($member, 'member')
         ->get('/member/dashboard')
         ->assertOk()
         ->assertSee('Premium Gold', false);

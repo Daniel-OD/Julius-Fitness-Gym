@@ -46,7 +46,7 @@ it('client with linked member sees dashboard qr and subscription status', functi
     activeMemberSubscription($member);
     $user = portalClientUser($member);
 
-    $this->actingAs($user)
+    actingAs($user)
         ->get(route('client.dashboard'))
         ->assertSuccessful()
         ->assertSee('Alex Member')
@@ -57,7 +57,7 @@ it('client with linked member sees dashboard qr and subscription status', functi
 it('client without linked member sees contact message', function (): void {
     $user = portalClientUser();
 
-    $this->actingAs($user)
+    actingAs($user)
         ->get(route('client.dashboard'))
         ->assertSuccessful()
         ->assertSee(__('app.client_portal.no_member_linked'));
@@ -68,7 +68,7 @@ it('client can open fullscreen qr page', function (): void {
     activeMemberSubscription($member);
     $user = portalClientUser($member);
 
-    $this->actingAs($user)
+    actingAs($user)
         ->get(route('client.qr'))
         ->assertSuccessful()
         ->assertSee($member->code);
@@ -77,7 +77,7 @@ it('client can open fullscreen qr page', function (): void {
 it('client without linked member cannot open fullscreen qr page', function (): void {
     $user = portalClientUser();
 
-    $this->actingAs($user)
+    actingAs($user)
         ->get(route('client.qr'))
         ->assertForbidden();
 });
@@ -93,7 +93,7 @@ it('client sees recent check-ins on dashboard', function (): void {
         'checked_out_at' => null,
     ]);
 
-    $this->actingAs($user)
+    actingAs($user)
         ->get(route('client.dashboard'))
         ->assertSuccessful()
         ->assertSee(__('app.client_portal.still_present'));

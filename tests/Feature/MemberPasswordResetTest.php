@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Queue;
 
 it('renders member forgot password page', function (): void {
-    $this->get(route('member.password.request'))
+    get(route('member.password.request'))
         ->assertSuccessful()
         ->assertSee(__('app.member_portal.forgot_password_title'));
 });
@@ -21,7 +21,7 @@ it('queues password reset email for existing member', function (): void {
         'password' => 'OldPassword1!',
     ]);
 
-    $this->post(route('member.password.email'), ['email' => $member->email])
+    post(route('member.password.email'), ['email' => $member->email])
         ->assertRedirect()
         ->assertSessionHas('status', __('app.member_portal.password_reset_sent'));
 
@@ -37,7 +37,7 @@ it('queues password reset email for existing member', function (): void {
 it('returns generic success message for unknown member email', function (): void {
     Queue::fake();
 
-    $this->post(route('member.password.email'), ['email' => 'missing@example.com'])
+    post(route('member.password.email'), ['email' => 'missing@example.com'])
         ->assertRedirect()
         ->assertSessionHas('status', __('app.member_portal.password_reset_sent'));
 

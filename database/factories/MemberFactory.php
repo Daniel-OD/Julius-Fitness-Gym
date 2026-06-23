@@ -29,7 +29,7 @@ class MemberFactory extends Factory
             'address' => $this->faker->address(),
             'country' => $this->faker->country(),
             'city' => $this->faker->city(),
-            'state' => $this->faker->state(),
+            'state' => $this->faker->stateAbbr(),
             'pincode' => $this->faker->postcode(),
             'source' => $this->faker->randomElement(['promotions', 'referral', 'online']),
             'goal' => $this->faker->randomElement(['fitness', 'weight loss', 'muscle gain']),

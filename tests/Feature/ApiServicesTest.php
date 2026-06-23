@@ -1,12 +1,3 @@
-<?php
-
-use App\Models\Service;
-use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Laravel\Sanctum\Sanctum;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
-
 uses(RefreshDatabase::class);
 
 function serviceApiUser(): User
@@ -31,13 +22,13 @@ it('GET /api/v1/services returns list', function (): void {
     Sanctum::actingAs(serviceApiUser());
     Service::factory()->count(2)->create();
 
-    $this->getJson('/api/v1/services')->assertOk()->assertJsonStructure(['data']);
+    getJson('/api/v1/services')->assertOk()->assertJsonStructure(['data']);
 });
 
 it('POST /api/v1/services creates service', function (): void {
     Sanctum::actingAs(serviceApiUser());
 
-    $this->postJson('/api/v1/services', [
+    postJson('/api/v1/services', [
         'name' => 'Cardio Class',
     ])->assertCreated()->assertJsonPath('data.name', 'Cardio Class');
 });
@@ -45,14 +36,14 @@ it('POST /api/v1/services creates service', function (): void {
 it('POST /api/v1/services validates required name', function (): void {
     Sanctum::actingAs(serviceApiUser());
 
-    $this->postJson('/api/v1/services', [])->assertUnprocessable()->assertJsonValidationErrors(['name']);
+    postJson('/api/v1/services', [])->assertUnprocessable()->assertJsonValidationErrors(['name']);
 });
 
 it('GET /api/v1/services/{id} returns service', function (): void {
     Sanctum::actingAs(serviceApiUser());
     $service = Service::factory()->create();
 
-    $this->getJson("/api/v1/services/{$service->id}")
+    getJson("/api/v1/services/{$service->id}")
         ->assertOk()
         ->assertJsonPath('data.id', $service->id);
 });
@@ -61,7 +52,7 @@ it('PATCH /api/v1/services/{id} updates service', function (): void {
     Sanctum::actingAs(serviceApiUser());
     $service = Service::factory()->create(['name' => 'Old']);
 
-    $this->patchJson("/api/v1/services/{$service->id}", ['name' => 'New'])
+    patchJson("/api/v1/services/{$service->id}", ['name' => 'New'])
         ->assertOk()
         ->assertJsonPath('data.name', 'New');
 });
@@ -70,7 +61,7 @@ it('DELETE /api/v1/services/{id} soft-deletes service', function (): void {
     Sanctum::actingAs(serviceApiUser());
     $service = Service::factory()->create();
 
-    $this->deleteJson("/api/v1/services/{$service->id}")->assertNoContent();
+    deleteJson("/api/v1/services/{$service->id}")->assertNoContent();
 
     expect(Service::find($service->id))->toBeNull();
     expect(Service::withTrashed()->find($service->id))->not->toBeNull();
@@ -81,7 +72,7 @@ it('POST /api/v1/services/{id}/restore restores service', function (): void {
     $service = Service::factory()->create();
     $service->delete();
 
-    $this->postJson("/api/v1/services/{$service->id}/restore")->assertOk();
+    postJson("/api/v1/services/{$service->id}/restore")->assertOk();
 
     expect(Service::find($service->id))->not->toBeNull();
 });
@@ -91,7 +82,7 @@ it('DELETE /api/v1/services/{id}/force permanently deletes service', function ()
     $service = Service::factory()->create();
     $service->delete();
 
-    $this->deleteJson("/api/v1/services/{$service->id}/force")->assertNoContent();
+    deleteJson("/api/v1/services/{$service->id}/force")->assertNoContent();
 
     expect(Service::withTrashed()->find($service->id))->toBeNull();
 });
@@ -102,5 +93,5 @@ it('services returns 403 without permission', function (): void {
     $user->assignRole($role);
     Sanctum::actingAs($user);
 
-    $this->getJson('/api/v1/services')->assertForbidden();
+    getJson('/api/v1/services')->assertForbidden();
 });

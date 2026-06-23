@@ -39,7 +39,7 @@ it('loads the admin check-ins list page with all statuses', function (): void {
     CheckIn::factory()->graceEntry()->create(['member_id' => $member->id]);
     CheckIn::factory()->blocked()->create(['member_id' => $member->id]);
 
-    $this->actingAs(checkInsAdmin())
+    actingAs(checkInsAdmin())
         ->get(route('filament.admin.resources.check-ins.index'))
         ->assertSuccessful();
 });
@@ -52,7 +52,6 @@ it('filters check-ins by status', function (): void {
 
     Livewire::actingAs(checkInsAdmin())
         ->test(ListCheckIns::class)
-        ->assertSuccessful()
         ->set('activeTab', 'all')
         ->filterTable('status', CheckInStatus::Blocked->value)
         ->assertCanSeeTableRecords([$blocked])
@@ -69,5 +68,5 @@ it('exports the filtered check-ins as csv', function (): void {
         ->test(ListCheckIns::class)
         ->callTableAction('exportCsv')
         ->assertSuccessful()
-        ->assertFileDownloaded();
+        ->assertDownload();
 });

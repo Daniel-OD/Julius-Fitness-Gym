@@ -31,7 +31,7 @@ it('does not expose guide content when disabled', function (): void {
         ],
     ]);
 
-    $this->actingAs(adminPanelUser())
+    actingAs(adminPanelUser())
         ->get(route('filament.admin.pages.dashboard'))
         ->assertSuccessful()
         ->assertDontSee(__('admin_guide.badge'), false);
@@ -46,7 +46,7 @@ it('shows contextual guide banner when enabled', function (): void {
         ],
     ]);
 
-    $this->actingAs(adminPanelUser())
+    actingAs(adminPanelUser())
         ->get(route('filament.admin.pages.dashboard'))
         ->assertSuccessful()
         ->assertSee(__('admin_guide.badge'), false)
@@ -76,7 +76,7 @@ it('persists admin guide toggle from profile menu control', function (): void {
 });
 
 it('renders admin guide toggle in the user menu theme switcher row', function (): void {
-    $this->actingAs(adminPanelUser())
+    actingAs(adminPanelUser())
         ->get(route('filament.admin.pages.dashboard'))
         ->assertSuccessful()
         ->assertSee('fi-theme-switcher', false)
@@ -94,7 +94,7 @@ it('loads settings tab guide content when guide is enabled', function (): void {
     expect($guide)->not->toBeNull()
         ->and($guide['steps'])->not->toBeEmpty();
 
-    $this->actingAs(adminPanelUser())
+    actingAs(adminPanelUser())
         ->get(route('filament.admin.pages.settings'))
         ->assertSuccessful()
         ->assertSee($guide['title'], false)
@@ -107,7 +107,7 @@ it('shows settings overview guide at page top', function (): void {
         'general' => ['admin_guide_enabled' => true, 'locale' => 'en'],
     ]);
 
-    $this->actingAs(adminPanelUser())
+    actingAs(adminPanelUser())
         ->get(route('filament.admin.pages.settings'))
         ->assertSuccessful()
         ->assertSee(AdminGuide::entryForKey('admin.settings.overview')['title'], false);

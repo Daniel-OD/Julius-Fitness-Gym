@@ -73,7 +73,7 @@ it('records a success check-in for an active subscription', function (): void {
         'type' => 'official',
     ]);
 
-    $this->getJson("/checkin/{$member->checkin_token}")
+    getJson("/checkin/{$member->checkin_token}")
         ->assertSuccessful()
         ->assertJsonPath('status', 'success')
         ->assertJsonPath('color', 'green');
@@ -90,7 +90,7 @@ it('grants a single grace entry on the first scan after expiry', function (): vo
     $member = graceMember();
     graceExpiredSubscription($member);
 
-    $this->getJson("/checkin/{$member->checkin_token}")
+    getJson("/checkin/{$member->checkin_token}")
         ->assertSuccessful()
         ->assertJsonPath('status', 'grace_entry')
         ->assertJsonPath('color', 'yellow');
@@ -117,7 +117,7 @@ it('blocks the second scan after the grace entry was used', function (): void {
         'checked_out_at' => Carbon::now()->subDay()->addHour(),
     ]);
 
-    $this->getJson("/checkin/{$member->checkin_token}")
+    getJson("/checkin/{$member->checkin_token}")
         ->assertUnprocessable()
         ->assertJsonPath('status', 'blocked')
         ->assertJsonPath('color', 'red');
@@ -145,7 +145,7 @@ it('blocks immediately when require_active_subscription is enabled', function ()
     $member = graceMember();
     graceExpiredSubscription($member);
 
-    $this->getJson("/checkin/{$member->checkin_token}")
+    getJson("/checkin/{$member->checkin_token}")
         ->assertUnprocessable()
         ->assertJsonPath('status', 'blocked');
 
@@ -166,7 +166,7 @@ it('grants a new grace entry after a renewal expires again', function (): void {
 
     graceExpiredSubscription($member, 5);
 
-    $this->getJson("/checkin/{$member->checkin_token}")
+    getJson("/checkin/{$member->checkin_token}")
         ->assertSuccessful()
         ->assertJsonPath('status', 'grace_entry');
 });

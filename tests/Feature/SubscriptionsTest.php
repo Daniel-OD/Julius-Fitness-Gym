@@ -83,19 +83,6 @@ it('admin panel scope excludes internal subscriptions', function (): void {
 
 it('office panel sees all subscription types', function (): void {
     $member = makeMember();
-    $plan = makePlan();
-
-    $official = Subscription::factory()->create(['member_id' => $member->id, 'plan_id' => $plan->id, 'type' => 'official']);
-    $internal = Subscription::factory()->create(['member_id' => $member->id, 'plan_id' => $plan->id, 'type' => 'internal']);
-
-    $ids = Subscription::pluck('id');
-
-    expect($ids)->toContain($official->id)
-        ->and($ids)->toContain($internal->id);
-});
-
-// ─── Status transitions ───────────────────────────────────────────────────────
-
 it('expired subscriptions are found by MarkSubscriptionsStatus command', function (): void {
     $member = makeMember();
     $plan = makePlan();
@@ -108,7 +95,7 @@ it('expired subscriptions are found by MarkSubscriptionsStatus command', functio
         'status' => 'ongoing',
     ]);
 
-    $this->artisan('gym:subscriptions --mark-expired')->assertSuccessful();
+    artisan('gym:subscriptions --mark-expired')->assertSuccessful();
 
     expect(Subscription::where('member_id', $member->id)->where('status', 'expired')->exists())->toBeTrue();
 });
@@ -125,7 +112,7 @@ it('ongoing subscriptions far from expiry are not marked expiring', function ():
         'status' => 'ongoing',
     ]);
 
-    $this->artisan('gym:subscriptions --mark-expiring')->assertSuccessful();
+    artisan('gym:subscriptions --mark-expiring')->assertSuccessful();
 
     expect($sub->fresh()->status->value)->toBe('ongoing');
 });

@@ -18,7 +18,6 @@ function subscriptionsAdmin(): User
         'ViewAny:Subscription', 'View:Subscription', 'Create:Subscription', 'Update:Subscription',
         'Delete:Subscription', 'DeleteAny:Subscription',
     ];
-
     $role = Role::firstOrCreate(['name' => 'super_admin', 'guard_name' => 'web']);
 
     foreach ($permissions as $permission) {
@@ -43,7 +42,7 @@ it('loads the admin subscriptions list page', function (): void {
         'type' => 'official',
     ]);
 
-    $this->actingAs(subscriptionsAdmin())
+    actingAs(subscriptionsAdmin())
         ->get(route('filament.admin.resources.subscriptions.index'))
         ->assertSuccessful();
 });

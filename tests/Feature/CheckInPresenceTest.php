@@ -85,7 +85,6 @@ it('respects configurable grace minutes from settings', function (): void {
     Helpers::setTestSettingsOverride([
         'checkin' => ['present_now_grace_minutes' => 5],
     ]);
-
     $member = presenceMember();
     $now = presenceNow();
 
@@ -110,7 +109,7 @@ it('rejects qr check-in when member already has an open session', function (): v
         'checked_out_at' => null,
     ]);
 
-    $this->getJson("/checkin/{$member->checkin_token}")
+    getJson("/checkin/{$member->checkin_token}")
         ->assertUnprocessable()
         ->assertJsonPath('status', 'already_present');
 });
@@ -128,9 +127,9 @@ it('rate limits qr check-in after checkout within 30 minutes', function (): void
         'type' => 'official',
     ]);
 
-    $this->getJson("/checkin/{$member->checkin_token}")->assertOk();
+    getJson("/checkin/{$member->checkin_token}")->assertOk();
 
-    $this->postJson("/checkin/{$member->checkin_token}/checkout")->assertOk();
+    postJson("/checkin/{$member->checkin_token}/checkout")->assertOk();
 
-    $this->getJson("/checkin/{$member->checkin_token}")->assertStatus(429);
+    getJson("/checkin/{$member->checkin_token}")->assertStatus(429);
 });

@@ -64,21 +64,21 @@ function receptionActiveSubscription(Member $member): Subscription
 }
 
 it('redirects guests to login', function (): void {
-    $this->get('/reception/scan')->assertRedirect();
+    get('/reception/scan')->assertRedirect();
 });
 
 it('rejects guests posting a scan', function (): void {
-    $this->postJson('/reception/scan', ['code' => 'whatever'])->assertUnauthorized();
+    postJson('/reception/scan', ['code' => 'whatever'])->assertUnauthorized();
 });
 
 it('forbids staff without check-in permission', function (): void {
     $user = User::factory()->create();
 
-    $this->actingAs($user)->get('/reception/scan')->assertForbidden();
+    actingAs($user)->get('/reception/scan')->assertForbidden();
 });
 
 it('shows the scan page to an employee', function (): void {
-    $this->actingAs(receptionEmployee())
+    actingAs(receptionEmployee())
         ->get('/reception/scan')
         ->assertSuccessful()
         ->assertSee(__('app.reception.title'));
@@ -88,7 +88,7 @@ it('records a check-in from a scanned full url', function (): void {
     $member = receptionMember();
     receptionActiveSubscription($member);
 
-    $this->actingAs(receptionEmployee())
+    actingAs(receptionEmployee())
         ->postJson('/reception/scan', [
             'code' => route('checkin.scan', ['qrToken' => $member->checkin_token]),
         ])
@@ -105,7 +105,7 @@ it('records a check-in from a bare token', function (): void {
     $member = receptionMember();
     receptionActiveSubscription($member);
 
-    $this->actingAs(receptionEmployee())
+    actingAs(receptionEmployee())
         ->postJson('/reception/scan', ['code' => $member->checkin_token])
         ->assertSuccessful()
         ->assertJsonPath('result', 'success');
@@ -122,7 +122,7 @@ it('returns yellow for a grace entry', function (): void {
         'type' => 'official',
     ]);
 
-    $this->actingAs(receptionEmployee())
+    actingAs(receptionEmployee())
         ->postJson('/reception/scan', ['code' => $member->checkin_token])
         ->assertSuccessful()
         ->assertJsonPath('result', 'grace_entry')
@@ -130,7 +130,7 @@ it('returns yellow for a grace entry', function (): void {
 });
 
 it('returns red for an unknown code', function (): void {
-    $this->actingAs(receptionEmployee())
+    actingAs(receptionEmployee())
         ->postJson('/reception/scan', ['code' => 'not-a-real-token'])
         ->assertNotFound()
         ->assertJsonPath('result', 'error')
@@ -138,7 +138,7 @@ it('returns red for an unknown code', function (): void {
 });
 
 it('validates that a code is present', function (): void {
-    $this->actingAs(receptionEmployee())
+    actingAs(receptionEmployee())
         ->postJson('/reception/scan', ['code' => ''])
         ->assertUnprocessable()
         ->assertJsonValidationErrors(['code']);

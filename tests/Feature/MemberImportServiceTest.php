@@ -118,7 +118,7 @@ it('serves a static member import template from public', function (): void {
 it('downloads member import template for authenticated users', function (): void {
     $user = User::factory()->create();
 
-    $this->actingAs($user)
+    actingAs($user)
         ->get(route('members.import.template'))
         ->assertSuccessful()
         ->assertDownload('membri-template.xlsx');
