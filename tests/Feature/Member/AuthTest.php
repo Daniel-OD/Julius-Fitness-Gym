@@ -14,13 +14,13 @@ it('allows a member with a password to log in', function (): void {
         'password' => 'secret-password',
     ]);
 
-    $response = $this->post('/member/login', [
+    $response = post('/member/login', [
         'email' => 'member@example.com',
         'password' => 'secret-password',
     ]);
 
     $response->assertRedirect('/member/dashboard');
-    $this->assertAuthenticatedAs($member, 'member');
+    assertAuthenticatedAs($member, 'member');
 });
 
 it('redirects a passwordless member to set-password instead of showing invalid credentials', function (): void {
@@ -29,14 +29,14 @@ it('redirects a passwordless member to set-password instead of showing invalid c
         'password' => null,
     ]);
 
-    $response = $this->post('/member/login', [
+    $response = post('/member/login', [
         'email' => 'new@example.com',
         'password' => 'anything',
     ]);
 
     $response->assertRedirect(route('member.set-password', ['email' => 'new@example.com']));
     $response->assertSessionHas('status');
-    $this->assertGuest('member');
+    assertGuest('member');
 });
 
 it('returns an error for invalid credentials', function (): void {
@@ -45,14 +45,14 @@ it('returns an error for invalid credentials', function (): void {
         'password' => 'secret-password',
     ]);
 
-    $response = $this->from('/member/login')->post('/member/login', [
+    $response = from('/member/login')->post('/member/login', [
         'email' => 'member@example.com',
         'password' => 'wrong-password',
     ]);
 
     $response->assertRedirect('/member/login');
     $response->assertSessionHasErrors('email');
-    $this->assertGuest('member');
+    assertGuest('member');
 });
 
 it('denies dashboard access after logout', function (): void {
@@ -71,11 +71,11 @@ it('denies dashboard access after logout', function (): void {
         'status' => 'ongoing',
     ]);
 
-    $this->actingAs($member, 'member');
+    actingAs($member, 'member');
 
-    $this->get('/member/dashboard')->assertOk();
+    get('/member/dashboard')->assertOk();
 
-    $this->post('/member/logout')->assertRedirect('/member/login');
+    post('/member/logout')->assertRedirect('/member/login');
 
-    $this->get('/member/dashboard')->assertRedirect('/member/login');
+    get('/member/dashboard')->assertRedirect('/member/login');
 });

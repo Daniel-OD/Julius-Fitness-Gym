@@ -41,7 +41,7 @@ function makeActiveSubscriptionExpiringIn(int $days, array $memberOverrides = []
 it('dispatches a job for a subscription expiring in exactly 7 days', function (): void {
     $subscription = makeActiveSubscriptionExpiringIn(7);
 
-    $this->artisan('gym:send-expiring-emails')->assertSuccessful();
+    artisan('gym:send-expiring-emails')->assertSuccessful();
 
     Queue::assertPushed(SendSubscriptionExpiringEmail::class, fn (SendSubscriptionExpiringEmail $job): bool => $job->subscription->id === $subscription->id
         && $job->daysLeft === 7);
@@ -50,7 +50,7 @@ it('dispatches a job for a subscription expiring in exactly 7 days', function ()
 it('dispatches a job for a subscription expiring in exactly 3 days', function (): void {
     $subscription = makeActiveSubscriptionExpiringIn(3, [], 'expiring');
 
-    $this->artisan('gym:send-expiring-emails')->assertSuccessful();
+    artisan('gym:send-expiring-emails')->assertSuccessful();
 
     Queue::assertPushed(SendSubscriptionExpiringEmail::class, fn (SendSubscriptionExpiringEmail $job): bool => $job->subscription->id === $subscription->id
         && $job->daysLeft === 3);
@@ -59,7 +59,7 @@ it('dispatches a job for a subscription expiring in exactly 3 days', function ()
 it('does not dispatch a job for a subscription expiring in 5 days', function (): void {
     makeActiveSubscriptionExpiringIn(5);
 
-    $this->artisan('gym:send-expiring-emails')->assertSuccessful();
+    artisan('gym:send-expiring-emails')->assertSuccessful();
 
     Queue::assertNothingPushed();
 });
@@ -76,7 +76,7 @@ it('does not dispatch a job for an expired subscription', function (): void {
         'status' => 'expired',
     ]);
 
-    $this->artisan('gym:send-expiring-emails')->assertSuccessful();
+    artisan('gym:send-expiring-emails')->assertSuccessful();
 
     Queue::assertNothingPushed();
 });
@@ -84,7 +84,7 @@ it('does not dispatch a job for an expired subscription', function (): void {
 it('skips subscriptions whose member has no email without throwing', function (): void {
     makeActiveSubscriptionExpiringIn(7, ['email' => null]);
 
-    $this->artisan('gym:send-expiring-emails')->assertSuccessful();
+    artisan('gym:send-expiring-emails')->assertSuccessful();
 
     Queue::assertNothingPushed();
 });

@@ -46,7 +46,7 @@ it('GET /api/v1/subscriptions returns paginated list', function (): void {
     Sanctum::actingAs(subApiUser());
     makeActiveSubscription();
 
-    $this->getJson('/api/v1/subscriptions')->assertOk()->assertJsonStructure(['data', 'meta']);
+    getJson('/api/v1/subscriptions')->assertOk()->assertJsonStructure(['data', 'meta']);
 });
 
 it('POST /api/v1/subscriptions creates subscription', function (): void {
@@ -55,7 +55,7 @@ it('POST /api/v1/subscriptions creates subscription', function (): void {
     $plan = Plan::factory()->create(['days' => 30]);
     $today = now()->toDateString();
 
-    $this->postJson('/api/v1/subscriptions', [
+    postJson('/api/v1/subscriptions', [
         'member_id' => $member->id,
         'plan_id' => $plan->id,
         'start_date' => $today,
@@ -66,7 +66,7 @@ it('GET /api/v1/subscriptions/{id} returns subscription', function (): void {
     Sanctum::actingAs(subApiUser());
     $sub = makeActiveSubscription();
 
-    $this->getJson("/api/v1/subscriptions/{$sub->id}")
+    getJson("/api/v1/subscriptions/{$sub->id}")
         ->assertOk()
         ->assertJsonPath('data.id', $sub->id);
 });
@@ -76,7 +76,7 @@ it('PATCH /api/v1/subscriptions/{id} updates subscription', function (): void {
     $sub = makeActiveSubscription();
 
     // Assert update succeeds — internal_note is accepted but not in the resource payload
-    $this->patchJson("/api/v1/subscriptions/{$sub->id}", [
+    patchJson("/api/v1/subscriptions/{$sub->id}", [
         'internal_note' => 'Test note',
     ])->assertOk()->assertJsonPath('data.id', $sub->id);
 });
@@ -85,7 +85,7 @@ it('DELETE /api/v1/subscriptions/{id} soft-deletes subscription', function (): v
     Sanctum::actingAs(subApiUser());
     $sub = makeActiveSubscription();
 
-    $this->deleteJson("/api/v1/subscriptions/{$sub->id}")->assertNoContent();
+    deleteJson("/api/v1/subscriptions/{$sub->id}")->assertNoContent();
 
     expect(Subscription::find($sub->id))->toBeNull();
     expect(Subscription::withTrashed()->find($sub->id))->not->toBeNull();
@@ -96,7 +96,7 @@ it('POST /api/v1/subscriptions/{id}/restore restores subscription', function ():
     $sub = makeActiveSubscription();
     $sub->delete();
 
-    $this->postJson("/api/v1/subscriptions/{$sub->id}/restore")->assertOk();
+    postJson("/api/v1/subscriptions/{$sub->id}/restore")->assertOk();
 
     expect(Subscription::find($sub->id))->not->toBeNull();
 });
@@ -106,7 +106,7 @@ it('DELETE /api/v1/subscriptions/{id}/force permanently deletes subscription', f
     $sub = makeActiveSubscription();
     $sub->delete();
 
-    $this->deleteJson("/api/v1/subscriptions/{$sub->id}/force")->assertNoContent();
+    deleteJson("/api/v1/subscriptions/{$sub->id}/force")->assertNoContent();
 
     expect(Subscription::withTrashed()->find($sub->id))->toBeNull();
 });
@@ -117,5 +117,5 @@ it('subscriptions returns 403 without permission', function (): void {
     $user->assignRole($role);
     Sanctum::actingAs($user);
 
-    $this->getJson('/api/v1/subscriptions')->assertForbidden();
+    getJson('/api/v1/subscriptions')->assertForbidden();
 });

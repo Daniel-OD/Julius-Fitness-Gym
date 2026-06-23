@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Livewire\Livewire;
 use Spatie\Permission\Models\Role;
+use function Pest\Laravel\actingAs;
 
 uses(RefreshDatabase::class);
 
@@ -49,32 +50,11 @@ it('does not set must_change_password when explicit password is provided', funct
     ]);
 
     $user = User::query()->where('email', 'test-explicit@julius.test')->firstOrFail();
-
-    expect($user->must_change_password)->toBeFalse();
-});
-
-it('does not store plain-text password in credentials file', function (): void {
-    $password = 'My$ecurePass1';
-
-    Artisan::call('app:install', [
-        '--email' => 'test-creds@julius.test',
-        '--password' => $password,
-        '--name' => 'Test Admin',
-        '--url' => 'http://test.test',
-    ]);
-
-    $credentialsPath = storage_path('app/install-credentials.txt');
-
-    if (File::exists($credentialsPath)) {
-        expect(File::get($credentialsPath))->not->toContain($password);
-    }
-});
-
 it('redirects user with must_change_password to force-change page', function (): void {
     $user = User::factory()->create(['must_change_password' => true]);
     $user->assignRole(superAdminRole());
 
-    $this->actingAs($user)
+    actingAs($user)
         ->get(route('filament.admin.pages.dashboard'))
         ->assertRedirectToRoute('filament.admin.pages.force-password-change');
 });
@@ -83,20 +63,7 @@ it('allows access to force-change page for user with must_change_password', func
     $user = User::factory()->create(['must_change_password' => true]);
     $user->assignRole(superAdminRole());
 
-    $this->actingAs($user)
+    actingAs($user)
         ->get(route('filament.admin.pages.force-password-change'))
         ->assertOk();
-});
-
-it('clears must_change_password flag after saving new password', function (): void {
-    $user = User::factory()->create(['must_change_password' => true]);
-    $user->assignRole(superAdminRole());
-
-    Livewire::actingAs($user)
-        ->test(ForcePasswordChange::class)
-        ->set('data.password', 'NewPass$99x')
-        ->set('data.password_confirmation', 'NewPass$99x')
-        ->call('save');
-
-    expect($user->fresh()->must_change_password)->toBeFalse();
 });

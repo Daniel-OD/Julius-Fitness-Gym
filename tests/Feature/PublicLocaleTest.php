@@ -8,19 +8,19 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 uses(RefreshDatabase::class);
 
 it('renders homepage in romanian by default', function (): void {
-    $this->get(route('home'))
+    get(route('home'))
         ->assertOk()
         ->assertSee('Antrenează.')
         ->assertSee('Servicii');
 });
 
 it('switches homepage language via locale route', function (): void {
-    $this->from(route('home'))
+    from(route('home'))
         ->get(route('public.locale', ['locale' => 'en']))
         ->assertRedirect(route('home'))
         ->assertSessionHas(PublicLocale::SESSION_KEY, 'en');
 
-    $this->get(route('home'))
+    get(route('home'))
         ->assertOk()
         ->assertSee('Train.')
         ->assertSee('Services');
@@ -44,7 +44,7 @@ it('does not apply public locale on member portal routes', function (): void {
         'email_verified_at' => now(),
     ]);
 
-    $this->withSession([PublicLocale::SESSION_KEY => 'it'])
+    withSession([PublicLocale::SESSION_KEY => 'it'])
         ->actingAs($member, 'member')
         ->get(route('member.plans'))
         ->assertOk()
@@ -53,7 +53,7 @@ it('does not apply public locale on member portal routes', function (): void {
 });
 
 it('rejects unsupported public locale', function (): void {
-    $this->from(route('home'))
+    from(route('home'))
         ->get('/locale/fr')
         ->assertNotFound();
 });

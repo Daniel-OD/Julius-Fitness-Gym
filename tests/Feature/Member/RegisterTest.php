@@ -9,14 +9,14 @@ use Illuminate\Support\Facades\URL;
 uses(RefreshDatabase::class);
 
 it('shows the register page', function (): void {
-    $this->get(route('member.register'))
+    get(route('member.register'))
         ->assertOk()
         ->assertViewIs('member.auth.index')
         ->assertViewHas('mode', 'register');
 });
 
 it('registers a new member with valid data', function (): void {
-    $this->post(route('member.register'), [
+    post(route('member.register'), [
         'name' => 'Test Member',
         'email' => 'test@example.com',
         'contact' => '0712345678',
@@ -24,14 +24,14 @@ it('registers a new member with valid data', function (): void {
         'password_confirmation' => 'password123',
     ])->assertRedirect(route('member.verify-email'));
 
-    $this->assertDatabaseHas('members', ['email' => 'test@example.com']);
-    $this->assertAuthenticatedAs(Member::where('email', 'test@example.com')->first(), 'member');
+    assertDatabaseHas('members', ['email' => 'test@example.com']);
+    assertAuthenticatedAs(Member::where('email', 'test@example.com')->first(), 'member');
 });
 
 it('rejects duplicate email on registration', function (): void {
     Member::factory()->create(['email' => 'existing@example.com']);
 
-    $this->post(route('member.register'), [
+    post(route('member.register'), [
         'name' => 'Another',
         'email' => 'existing@example.com',
         'contact' => '0712345678',
@@ -43,7 +43,7 @@ it('rejects duplicate email on registration', function (): void {
 it('sends verification email after registration', function (): void {
     Notification::fake();
 
-    $this->post(route('member.register'), [
+    post(route('member.register'), [
         'name' => 'Test Member',
         'email' => 'test@example.com',
         'contact' => '0712345678',
@@ -62,7 +62,7 @@ it('blocks dashboard without verified email', function (): void {
         'email_verified_at' => null,
     ]);
 
-    $this->actingAs($member, 'member')
+    actingAs($member, 'member')
         ->get(route('member.dashboard'))
         ->assertRedirect(route('member.verify-email'));
 });
@@ -79,7 +79,7 @@ it('verifies account via signed link', function (): void {
         ['id' => $member->id, 'hash' => sha1((string) $member->email)]
     );
 
-    $this->actingAs($member, 'member')
+    actingAs($member, 'member')
         ->get($url)
         ->assertRedirect(route('member.dashboard'));
 
@@ -87,7 +87,7 @@ it('verifies account via signed link', function (): void {
 });
 
 it('shows the login page', function (): void {
-    $this->get(route('member.login'))
+    get(route('member.login'))
         ->assertOk()
         ->assertViewIs('member.auth.index')
         ->assertViewHas('mode', 'login');
@@ -99,7 +99,7 @@ it('shows plans page for verified member', function (): void {
         'email_verified_at' => now(),
     ]);
 
-    $this->actingAs($member, 'member')
+    actingAs($member, 'member')
         ->get(route('member.plans'))
         ->assertOk()
         ->assertViewIs('member.plans.index');
@@ -111,7 +111,7 @@ it('redirects unverified member away from plans page', function (): void {
         'email_verified_at' => null,
     ]);
 
-    $this->actingAs($member, 'member')
+    actingAs($member, 'member')
         ->get(route('member.plans'))
         ->assertRedirect(route('member.verify-email'));
 });

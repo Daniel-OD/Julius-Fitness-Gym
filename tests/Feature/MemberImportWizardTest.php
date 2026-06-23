@@ -29,7 +29,7 @@ function wizardMapping(): array
 
 it('imports even when the uploaded file is deleted after the import starts', function (): void {
     $user = User::factory()->create();
-    $this->actingAs($user);
+    actingAs($user);
 
     $stored = 'member-imports/'.$user->id.'/'.Str::uuid().'.xlsx';
     Storage::disk('local')->put($stored, file_get_contents(public_path('templates/membri-template.xlsx')));
@@ -53,7 +53,7 @@ it('imports even when the uploaded file is deleted after the import starts', fun
 
 it('notifies the user instead of failing silently when the file is gone at start', function (): void {
     $user = User::factory()->create();
-    $this->actingAs($user);
+    actingAs($user);
 
     $component = Livewire::test('filament.member-import-wizard')
         ->set('step', 3)

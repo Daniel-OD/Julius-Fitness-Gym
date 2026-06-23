@@ -20,7 +20,7 @@ it('renders the admin dashboard in romanian when settings locale is ro', functio
         ],
     ]);
 
-    $this->actingAs(adminPanelUser())
+    actingAs(adminPanelUser())
         ->get('/admin/dashboard')
         ->assertSuccessful()
         ->assertSee('Membri', false)

@@ -3,6 +3,7 @@
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\File;
+use function Pest\Laravel\artisan;
 
 uses(RefreshDatabase::class);
 
@@ -29,7 +30,7 @@ afterEach(function (): void {
 });
 
 it('creates admin user and credentials file', function (): void {
-    $this->artisan('app:install', [
+    artisan('app:install', [
         '--email' => 'installer@test.local',
         '--password' => 'secret-pass-99',
         '--no-interaction' => true,
@@ -52,7 +53,7 @@ it('does not recreate admin without force flag', function (): void {
         'password' => 'old-password',
     ]);
 
-    $this->artisan('app:install', [
+    artisan('app:install', [
         '--email' => 'existing@test.local',
         '--password' => 'new-password',
         '--no-interaction' => true,
@@ -74,7 +75,7 @@ it('does not overwrite the database connection on an existing env', function ():
         File::get($env),
     ));
 
-    $this->artisan('app:install', [
+    artisan('app:install', [
         '--email' => 'guard@test.local',
         '--password' => 'secret-pass-99',
         '--no-interaction' => true,

@@ -14,7 +14,7 @@ it('admin can reset a member password from edit page', function (): void {
         'password' => 'OldPassword1!',
     ]);
 
-    $this->actingAs($admin);
+    actingAs($admin);
 
     Livewire::test(EditMember::class, ['record' => $member->getRouteKey()])
         ->callAction('reset_password')
@@ -31,7 +31,7 @@ it('hides member password reset when email is missing', function (): void {
         'email' => null,
     ]);
 
-    $this->actingAs($admin);
+    actingAs($admin);
 
     Livewire::test(EditMember::class, ['record' => $member->getRouteKey()])
         ->assertActionHidden('reset_password');

@@ -19,7 +19,7 @@ function sidebarQuickActionsAdmin(): User
 it('shows quick actions in the admin sidebar below dashboard', function (): void {
     $user = sidebarQuickActionsAdmin();
 
-    $this->actingAs($user)
+    actingAs($user)
         ->get(route('filament.admin.pages.dashboard'))
         ->assertSuccessful()
         ->assertSee(__('app.navigation.quick_actions'), false)
@@ -34,7 +34,7 @@ it('does not show quick actions on the office panel', function (): void {
     $user = User::factory()->create();
     $user->assignRole('employee');
 
-    $this->actingAs($user)
+    actingAs($user)
         ->get(route('filament.office.pages.dashboard'))
         ->assertSuccessful()
         ->assertDontSee(__('app.navigation.quick_actions'), false);
