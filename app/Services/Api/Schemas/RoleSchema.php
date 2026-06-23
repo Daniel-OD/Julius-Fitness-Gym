@@ -9,7 +9,10 @@ use Spatie\Permission\Models\Role;
  */
 final class RoleSchema
 {
-    private function __construct() {}
+    private function __construct()
+    {
+        // Prevent instantiation of this static class.
+    }
 
     /**
      * @return array<string, mixed>

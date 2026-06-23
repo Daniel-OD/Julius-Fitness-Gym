@@ -16,7 +16,10 @@ use Illuminate\Validation\Rule;
  */
 final class MemberSchema
 {
-    private function __construct() {}
+    private function __construct()
+    {
+        // Private constructor to prevent instantiation.
+    }
 
     /**
      * @return array{

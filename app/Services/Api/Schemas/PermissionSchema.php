@@ -9,7 +9,10 @@ use Spatie\Permission\Models\Permission;
  */
 final class PermissionSchema
 {
-    private function __construct() {}
+    private function __construct()
+    {
+        // Prevent instantiation.
+    }
 
     /**
      * @return array<string, mixed>

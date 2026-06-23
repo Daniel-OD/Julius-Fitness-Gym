@@ -10,7 +10,10 @@ use Illuminate\Contracts\Validation\ValidationRule;
  */
 final class ExpenseSchema
 {
-    private function __construct() {}
+    private function __construct()
+    {
+        // Prevent instantiation of this class.
+    }
 
     /**
      * @return array{
