@@ -11,7 +11,10 @@ use Illuminate\Validation\Rule;
  */
 final class InvoiceTransactionSchema
 {
-    private function __construct() {}
+    private function __construct()
+    {
+        // Prevent instantiation of this static class.
+    }
 
     /**
      * @return array<string, ValidationRule|array<mixed>|string>

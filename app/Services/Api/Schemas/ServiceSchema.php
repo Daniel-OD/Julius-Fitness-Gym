@@ -10,7 +10,10 @@ use Illuminate\Contracts\Validation\ValidationRule;
  */
 final class ServiceSchema
 {
-    private function __construct() {}
+    private function __construct()
+    {
+        // Prevent instantiation.
+    }
 
     /**
      * @return array{

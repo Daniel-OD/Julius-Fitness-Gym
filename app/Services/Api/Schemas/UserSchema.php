@@ -17,7 +17,9 @@ use Spatie\Permission\Models\Role;
  */
 final class UserSchema
 {
-    private function __construct() {}
+    private function __construct() {
+        // Prevent instantiation.
+    }
 
     /**
      * @return array{

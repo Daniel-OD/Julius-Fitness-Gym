@@ -14,7 +14,10 @@ use Illuminate\Contracts\Validation\ValidationRule;
  */
 final class PlanSchema
 {
-    private function __construct() {}
+    private function __construct()
+    {
+        // Private constructor to prevent instantiation.
+    }
 
     /**
      * @return array{
@@ -40,6 +43,7 @@ final class PlanSchema
                 'created_at' => ['type' => 'datetime_range', 'column' => 'created_at'],
             ],
         ];
+    }
     }
 
     /**

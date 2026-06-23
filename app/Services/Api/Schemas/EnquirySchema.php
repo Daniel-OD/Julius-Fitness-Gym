@@ -15,7 +15,10 @@ use Illuminate\Validation\Rule;
  */
 final class EnquirySchema
 {
-    private function __construct() {}
+    private function __construct()
+    {
+        // Prevent instantiation.
+    }
 
     /**
      * @return array{

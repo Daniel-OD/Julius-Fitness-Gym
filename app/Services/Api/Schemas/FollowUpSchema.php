@@ -15,7 +15,10 @@ use Illuminate\Validation\Rule;
  */
 final class FollowUpSchema
 {
-    private function __construct() {}
+    private function __construct()
+    {
+        // Prevent instantiation of this static class.
+    }
 
     /**
      * @return array{

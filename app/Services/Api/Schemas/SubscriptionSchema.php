@@ -15,7 +15,10 @@ use Illuminate\Contracts\Validation\ValidationRule;
  */
 final class SubscriptionSchema
 {
-    private function __construct() {}
+    private function __construct()
+    {
+        // Prevent instantiation.
+    }
 
     /**
      * @return array{
