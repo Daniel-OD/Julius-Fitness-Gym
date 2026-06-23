@@ -2,7 +2,7 @@
      The arched type uses Archivo, which is loaded in head-meta.blade.php.
      Use for centred / larger placements (auth screens, splash, marketing hero):
      <x-application-logo class="h-24 w-24" /> --}}
-<svg viewBox="0 0 200 200" role="img" aria-label="Julius Gym" {{ $attributes }}>
+<svg viewBox="0 0 200 200" width="80" height="80" role="img" aria-label="Julius Gym" {{ $attributes }}>
     <circle cx="100" cy="100" r="97" fill="#16222e"/>
     <circle cx="100" cy="100" r="92" fill="none" stroke="#ff5a1f" stroke-width="5"/>
     <circle cx="100" cy="100" r="83" fill="none" stroke="#ff5a1f" stroke-width="1.4" opacity="0.55"/>
