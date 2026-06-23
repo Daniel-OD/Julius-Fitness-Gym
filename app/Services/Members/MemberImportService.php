@@ -338,10 +338,6 @@ class MemberImportService
             return __('app.settings.import.errors.missing_plan_identifier');
         }
 
-        return null;
-    }
-        }
-
         if (filled($row['plan_amount'] ?? null) && $amount === null) {
             return __('app.settings.import.errors.invalid_plan_amount');
         }
