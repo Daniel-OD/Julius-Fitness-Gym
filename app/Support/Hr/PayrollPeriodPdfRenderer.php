@@ -17,9 +17,9 @@ final class PayrollPeriodPdfRenderer
         $period->loadMissing(['items.user.staffProfile']);
 
         $items = $period->items->map(fn (PayrollItem $item): array => [
-            'employee_code' => $item->user?->staffProfile?->employee_code ?? '—',
-            'name' => $item->user?->name ?? '—',
-            'position' => $item->user?->staffProfile?->position ?? '—',
+            'employee_code' => $item->user->staffProfile?->employee_code ?? '—',
+            'name' => $item->user->name,
+            'position' => $item->user->staffProfile?->position ?? '—',
             'base_salary' => (float) $item->base_salary,
             'present_days' => (float) $item->present_days,
             'working_days' => (int) $item->working_days,

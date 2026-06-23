@@ -62,17 +62,14 @@ class AttendanceService
         $evaluation = $this->shifts->evaluateCheckIn($user->id, $now);
         $status = $evaluation['late'] ? AttendanceStatus::Late : AttendanceStatus::Present;
 
-        Attendance::query()->updateOrCreate(
-            ['user_id' => $user->id, 'date' => $today],
-            [
-                'check_in' => $now,
-                'method' => AttendanceMethod::Qr,
-                'status' => $status,
-                'note' => $evaluation['late']
-                    ? __('app.hr.checkin.late_note', ['minutes' => $evaluation['minutes_late']])
-                    : null,
-            ],
-        );
+        $this->upsertAttendance($user->id, $today, [
+            'check_in' => $now,
+            'method' => AttendanceMethod::Qr,
+            'status' => $status,
+            'note' => $evaluation['late']
+                ? __('app.hr.checkin.late_note', ['minutes' => $evaluation['minutes_late']])
+                : null,
+        ]);
 
         RateLimiter::hit($rateLimitKey, (int) config('hr.attendance.rate_limit_minutes', 5) * 60);
 
@@ -146,9 +143,7 @@ class AttendanceService
                 continue;
             }
 
-            Attendance::create([
-                'user_id' => $user->id,
-                'date' => $date->toDateString(),
+            $this->upsertAttendance($user->id, $date->toDateString(), [
                 'method' => AttendanceMethod::Manual,
                 'status' => AttendanceStatus::Absent,
                 'note' => __('app.hr.attendance.auto_absent'),
@@ -158,5 +153,25 @@ class AttendanceService
         }
 
         return $marked;
+    }
+
+    /**
+     * @param  array<string, mixed>  $attributes
+     */
+    private function upsertAttendance(int $userId, string $date, array $attributes): Attendance
+    {
+        $existing = Attendance::withTrashed()
+            ->where('user_id', $userId)
+            ->whereDate('date', $date)
+            ->first();
+
+        if ($existing?->trashed()) {
+            $existing->restore();
+        }
+
+        return Attendance::query()->updateOrCreate(
+            ['user_id' => $userId, 'date' => $date],
+            $attributes,
+        );
     }
 }

@@ -24,6 +24,7 @@ function makeSubscriptionWithInvoice(float $fee = 150.0): array
     $invoice = Invoice::factory()->create([
         'subscription_id' => $sub->id,
         'date' => now()->toDateString(),
+        'due_date' => now()->addDays(30)->toDateString(),
         'subscription_fee' => $fee,
         'paid_amount' => 0,
         'status' => 'issued',
@@ -140,4 +141,50 @@ it('InvoiceDocument::pdfFilename returns safe filename', function (): void {
     expect($filename)->toContain('invoice')
         ->and($filename)->toEndWith('.pdf')
         ->and($filename)->not->toContain('/');
+});
+
+it('partial payment sets status to partial', function (): void {
+    ['invoice' => $invoice] = makeSubscriptionWithInvoice(200.0);
+    $invoice->update(['total_amount' => 200, 'due_amount' => 200]);
+
+    InvoiceTransaction::create([
+        'invoice_id' => $invoice->id,
+        'type' => 'payment',
+        'amount' => 100.0,
+        'occurred_at' => now(),
+        'payment_method' => 'cash',
+        'note' => 'Partial payment',
+    ]);
+
+    $invoice->refresh();
+
+    expect($invoice->status->value)->toBe('partial')
+        ->and((float) $invoice->paid_amount)->toBe(100.0)
+        ->and((float) $invoice->due_amount)->toBe(100.0);
+});
+
+it('overdue status is set when due balance remains past the due date', function (): void {
+    ['invoice' => $invoice] = makeSubscriptionWithInvoice(150.0);
+    $invoice->update([
+        'total_amount' => 150,
+        'due_amount' => 150,
+        'due_date' => now()->subDay()->toDateString(),
+    ]);
+
+    // No payment — due remains
+    $invoice->syncFromTransactions();
+    $invoice->refresh();
+
+    expect($invoice->status->value)->toBe('overdue');
+});
+
+it('cancelled status is preserved by syncFromTransactions', function (): void {
+    ['invoice' => $invoice] = makeSubscriptionWithInvoice(150.0);
+    $invoice->update(['total_amount' => 150, 'due_amount' => 150, 'status' => 'cancelled']);
+
+    $invoice->syncFromTransactions();
+    $invoice->refresh();
+
+    expect($invoice->status->value)->toBe('cancelled')
+        ->and((float) $invoice->due_amount)->toBe(0.0);
 });

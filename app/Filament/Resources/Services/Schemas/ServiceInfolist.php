@@ -36,7 +36,7 @@ class ServiceInfolist
                             ->label(__('app.fields.gallery_images'))
                             ->disk('public')
                             ->stacked()
-                            ->ring(2)
+                            ->ring(fn (): int => 2)
                             ->overlap(4),
                     ])->columns(1),
             ]);

@@ -7,6 +7,7 @@ use App\Filament\Resources\Sales\SaleResource;
 use App\Services\Shop\SaleService;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
 
 class CreateSale extends CreateRecord
@@ -46,7 +47,7 @@ class CreateSale extends CreateRecord
                 ->danger()
                 ->send();
 
-            $this->halt();
+            throw new Halt;
         }
     }
 

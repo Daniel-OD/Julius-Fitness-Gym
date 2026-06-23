@@ -64,6 +64,6 @@ class PayrollItem extends Model
             return 0.0;
         }
 
-        return round(collect($items)->sum(fn (array $item): float => (float) ($item['amount'] ?? 0)), 2);
+        return round(collect($items)->sum(fn (array $item): float => (float) $item['amount']), 2);
     }
 }

@@ -82,7 +82,7 @@ class ShiftAssignmentsRelationManager extends RelationManager
                 TextColumn::make('assignment_status')
                     ->label(__('app.hr.shift_assignments.fields.status'))
                     ->badge()
-                    ->state(fn (ShiftAssignment $record): string => static::resolveStatus($record))
+                    ->state(fn (ShiftAssignment $record): string => self::resolveStatus($record))
                     ->color(fn (string $state): string => match ($state) {
                         'active' => 'success',
                         'upcoming' => 'warning',

@@ -32,7 +32,7 @@ final class SaleService
     public function create(array $data, ?User $cashier = null): Sale
     {
         return DB::transaction(function () use ($data, $cashier): Sale {
-            $items = collect($data['items'] ?? []);
+            $items = collect($data['items']);
 
             if ($items->isEmpty()) {
                 throw new InvalidArgumentException(__('app.shop.errors.no_items'));

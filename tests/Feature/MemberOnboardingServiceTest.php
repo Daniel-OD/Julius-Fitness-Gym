@@ -37,29 +37,29 @@ function onboardingData(Plan $plan, array $overrides = []): array
     $today = now()->toDateString();
 
     return array_merge([
-        'name'              => 'Test Lead',
-        'email'             => 'lead@example.com',
-        'contact'           => '0712000001',
-        'dob'               => '1990-01-01',
-        'gender'            => 'male',
-        'address'           => '123 Main St',
-        'country'           => 'Romania',
-        'state'             => null,
-        'city'              => 'Cluj-Napoca',
-        'pincode'           => '400001',
-        'source'            => 'promotions',
-        'goal'              => 'fitness',
-        'plan_id'           => $plan->id,
-        'start_date'        => $today,
-        'end_date'          => now()->addDays($plan->days)->toDateString(),
-        'invoice_date'      => $today,
-        'invoice_due_date'  => $today,
-        'invoice_number'    => 'GY-TEST-1',
-        'payment_method'    => 'cash',
-        'paid_amount'       => $plan->amount,
-        'discount'          => 0,
-        'discount_amount'   => 0,
-        'discount_note'     => null,
+        'name' => 'Test Lead',
+        'email' => 'lead@example.com',
+        'contact' => '0712000001',
+        'dob' => '1990-01-01',
+        'gender' => 'male',
+        'address' => '123 Main St',
+        'country' => 'Romania',
+        'state' => null,
+        'city' => 'Cluj-Napoca',
+        'pincode' => '400001',
+        'source' => 'promotions',
+        'goal' => 'fitness',
+        'plan_id' => $plan->id,
+        'start_date' => $today,
+        'end_date' => now()->addDays($plan->days)->toDateString(),
+        'invoice_date' => $today,
+        'invoice_due_date' => $today,
+        'invoice_number' => 'GY-TEST-1',
+        'payment_method' => 'cash',
+        'paid_amount' => $plan->amount,
+        'discount' => 0,
+        'discount_amount' => 0,
+        'discount_note' => null,
     ], $overrides);
 }
 
@@ -147,7 +147,7 @@ it('sets subscription status to upcoming for a future start date', function (): 
         $enquiry,
         onboardingData($plan, [
             'start_date' => $futureStart,
-            'end_date'   => now()->addDays(35)->toDateString(),
+            'end_date' => now()->addDays(35)->toDateString(),
         ]),
     );
 
@@ -164,7 +164,7 @@ it('sets paid_amount to zero for online payment method', function (): void {
         $enquiry,
         onboardingData($plan, [
             'payment_method' => 'online',
-            'paid_amount'    => 150.0,
+            'paid_amount' => 150.0,
         ]),
     );
 

@@ -42,6 +42,9 @@ it('imports even when the uploaded file is deleted after the import starts', fun
 
     $component->call('startImport')->assertReturned(true);
 
+    expect($component->get('importRunStarted'))->toBeTrue()
+        ->and($component->get('importing'))->toBeTrue();
+
     // Simulate ephemeral storage: file vanishes between requests (the Railway scenario).
     Storage::disk('local')->delete($stored);
 
@@ -63,7 +66,8 @@ it('notifies the user instead of failing silently when the file is gone at start
 
     $component->call('startImport')->assertReturned(false);
 
-    expect(Member::count())->toBe(0);
+    expect(Member::count())->toBe(0)
+        ->and($component->get('importRunStarted'))->toBeFalse();
 
     $component->assertNotified(__('app.settings.import.errors.file_unavailable'));
 });

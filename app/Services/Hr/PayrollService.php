@@ -112,7 +112,7 @@ class PayrollService
             $gross = round(($regularHours * $baseSalary) + ($overtimeHours * $baseSalary * $overtimeMultiplier), 2);
         } else {
             $effectiveWorkingDays = max(1, $workingDays);
-            $paidDays = max(0, $presentDays - $unpaidLeaveDays);
+            $paidDays = $presentDays;
             $dailyRate = $baseSalary / $effectiveWorkingDays;
             $gross = round(($dailyRate * $paidDays) + $this->overtimePay($baseSalary, $overtimeHours, $standardHours, $overtimeMultiplier), 2);
         }

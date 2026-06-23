@@ -134,7 +134,8 @@ class ShiftService
                     && $shift->is_active
                     && $shift->appliesOnDay($dayOfWeek);
             })
-            ->map(fn (ShiftAssignment $assignment): User => $assignment->user)
+            ->map(fn (ShiftAssignment $assignment): ?User => $assignment->user)
+            ->filter()
             ->unique('id')
             ->values();
     }

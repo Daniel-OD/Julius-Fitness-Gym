@@ -16,8 +16,6 @@ class ClassBookingResource extends Resource
 {
     protected static ?string $model = ClassBooking::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-ticket';
-
     #[\Override]
     public static function getModelLabel(): string
     {

@@ -60,7 +60,7 @@ class LeaveCalendar extends Page
     }
 
     /**
-     * @return array<int, array{day: int|null, leaves: array<int, Leave>}>
+     * @return list<list<array{day: int|null, date: string, leaves: array<int, Leave>, in_month: bool}>>
      */
     public function calendarWeeks(): array
     {

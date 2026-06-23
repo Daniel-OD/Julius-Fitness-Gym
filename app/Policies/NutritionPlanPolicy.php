@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Policies;
 
-use Illuminate\Foundation\Auth\User as AuthUser;
 use App\Models\NutritionPlan;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Foundation\Auth\User as AuthUser;
 
 class NutritionPlanPolicy
 {
     use HandlesAuthorization;
-    
+
     public function viewAny(AuthUser $authUser): bool
     {
         return $authUser->can('ViewAny:NutritionPlan');
@@ -71,5 +71,4 @@ class NutritionPlanPolicy
     {
         return $authUser->can('Reorder:NutritionPlan');
     }
-
 }

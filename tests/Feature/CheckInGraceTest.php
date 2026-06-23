@@ -10,6 +10,7 @@ use App\Models\Member;
 use App\Models\Plan;
 use App\Models\Subscription;
 use App\Services\CheckIns\CheckInService;
+use App\Support\AppConfig;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
@@ -219,4 +220,66 @@ it('skips the grace entry email when no admin email is configured', function ():
     new SendGraceEntryNotification($checkIn->id)->handle(app(SettingsRepository::class));
 
     Mail::assertNothingSent();
+});
+
+it('returns 503 error when check-in system is disabled', function (): void {
+    Helpers::setTestSettingsOverride([
+        'checkin' => ['enabled' => false],
+    ]);
+
+    $member = graceMember();
+
+    $this->getJson("/checkin/{$member->checkin_token}")
+        ->assertStatus(503)
+        ->assertJsonPath('status', 'error');
+});
+
+it('blocks member with no subscription at all when require_active_subscription is true', function (): void {
+    Queue::fake();
+
+    Helpers::setTestSettingsOverride([
+        'checkin' => [
+            'enabled' => true,
+            'require_active_subscription' => true,
+        ],
+    ]);
+
+    $member = graceMember();
+    // No subscription created
+
+    $this->getJson("/checkin/{$member->checkin_token}")
+        ->assertUnprocessable()
+        ->assertJsonPath('status', 'blocked');
+});
+
+it('presentNowGraceMinutes caps at 120 even when settings exceed maximum', function (): void {
+    Helpers::setTestSettingsOverride([
+        'checkin' => ['present_now_grace_minutes' => 999],
+    ]);
+
+    $service = app(CheckInService::class);
+
+    expect($service->presentNowGraceMinutes())->toBe(120);
+});
+
+it('todayCheckInCount counts only non-blocked check-ins from today', function (): void {
+    $member = graceMember();
+    $now = Carbon::now(AppConfig::timezone());
+
+    // Two valid check-ins today
+    CheckIn::factory()->count(2)->create([
+        'member_id' => $member->id,
+        'checked_in_at' => $now->copy()->subHour(),
+        'status' => CheckInStatus::Success,
+    ]);
+
+    // One blocked — should NOT count
+    CheckIn::factory()->blocked()->create([
+        'member_id' => $member->id,
+        'checked_in_at' => $now->copy()->subMinutes(30),
+    ]);
+
+    $service = app(CheckInService::class);
+
+    expect($service->todayCheckInCount())->toBe(2);
 });

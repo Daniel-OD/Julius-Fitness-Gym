@@ -51,7 +51,7 @@ class SaleResource extends Resource
 
         return [
             __('app.fields.total') => Helpers::formatCurrency((float) $record->total),
-            __('app.fields.status') => $record->status?->getLabel() ?? '—',
+            __('app.fields.status') => $record->status->getLabel(),
         ];
     }
 

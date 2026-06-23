@@ -37,6 +37,8 @@ new class extends Component
 
     public bool $importing = false;
 
+    public bool $importRunStarted = false;
+
     public int $importProgress = 0;
 
     public int $importTotal = 0;
@@ -163,11 +165,12 @@ new class extends Component
 
     public function startImport(): bool
     {
-        $this->resetImportProgress();
+        $this->beginImportRun();
 
         try {
             $rows = $this->mappedRows();
         } catch (\Throwable $exception) {
+            $this->abortImportRun();
             $this->notifyFileUnavailable($exception);
 
             return false;
@@ -178,7 +181,6 @@ new class extends Component
         $this->importToken = (string) Str::uuid();
         Cache::put($this->importCacheKey(), $rows, now()->addHour());
 
-        $this->importing = true;
         $this->importTotal = count($rows);
         $this->importProgress = 0;
 
@@ -187,7 +189,7 @@ new class extends Component
 
     public function cancelImport(): void
     {
-        $this->importing = false;
+        $this->abortImportRun();
     }
 
     public function importChunk(int $offset): array
@@ -318,6 +320,31 @@ new class extends Component
         return (int) round(($this->importProgress / $this->importTotal) * 100);
     }
 
+    #[Computed]
+    public function showImportConfirm(): bool
+    {
+        return ! $this->importRunStarted;
+    }
+
+    #[Computed]
+    public function showImportProgress(): bool
+    {
+        if (! $this->importRunStarted) {
+            return false;
+        }
+
+        return $this->importing || ($this->importTotal > 0 && $this->importProgress < $this->importTotal);
+    }
+
+    #[Computed]
+    public function showImportResults(): bool
+    {
+        return $this->importRunStarted
+            && ! $this->importing
+            && $this->importTotal > 0
+            && $this->importProgress >= $this->importTotal;
+    }
+
     private function dataset(): MemberImportDataset
     {
         return $this->spreadsheetReader()->read(
@@ -392,8 +419,31 @@ new class extends Component
         }
     }
 
+    private function beginImportRun(): void
+    {
+        $this->importRunStarted = true;
+        $this->importing = true;
+        $this->importProgress = 0;
+        $this->importTotal = 0;
+        $this->importedCount = 0;
+        $this->skippedCount = 0;
+        $this->updatedCount = 0;
+        $this->subscriptionsCreatedCount = 0;
+        $this->failedCount = 0;
+        $this->errorReportToken = null;
+        $this->clearImportCache();
+    }
+
+    private function abortImportRun(): void
+    {
+        $this->importRunStarted = false;
+        $this->importing = false;
+        $this->clearImportCache();
+    }
+
     private function resetImportProgress(): void
     {
+        $this->importRunStarted = false;
         $this->importing = false;
         $this->importProgress = 0;
         $this->importTotal = 0;
@@ -670,8 +720,59 @@ new class extends Component
 
     {{-- Step 3: Confirm & results --}}
     @if ($step === 3)
-        <div class="jf-import-panel">
-            @if (! $importing && $importProgress === 0 && $importedCount === 0 && $skippedCount === 0 && $failedCount === 0 && $updatedCount === 0)
+        <div
+            class="jf-import-panel"
+            x-data="{
+                busy: false,
+                chunkSize: {{ \App\Services\Members\MemberImportService::CHUNK_SIZE }},
+                async runImport() {
+                    if (this.busy) {
+                        return;
+                    }
+
+                    this.busy = true;
+
+                    try {
+                        const started = await $wire.startImport();
+
+                        if (! started) {
+                            return;
+                        }
+
+                        let offset = 0;
+                        let result;
+
+                        do {
+                            result = await $wire.importChunk(offset);
+                            offset += this.chunkSize;
+
+                            await new Promise((resolve) => {
+                                requestAnimationFrame(() => requestAnimationFrame(resolve));
+                            });
+                        } while (result && ! result.done);
+                    } catch (error) {
+                        await $wire.cancelImport();
+                    } finally {
+                        this.busy = false;
+                    }
+                },
+            }"
+        >
+            <div
+                class="jf-import-progress-panel"
+                x-show="busy && ! $wire.importRunStarted"
+                x-cloak
+            >
+                <div class="jf-import-progress-status">
+                    <span class="jf-import-spinner" aria-hidden="true"></span>
+                    <p class="jf-import-progress__title">{{ __('app.settings.import.preparing') }}</p>
+                </div>
+                <div class="jf-import-progress jf-import-progress--indeterminate" aria-hidden="true">
+                    <div class="jf-import-progress__bar jf-import-progress__bar--indeterminate"></div>
+                </div>
+            </div>
+
+            @if ($this->showImportConfirm)
                 <div class="jf-import-summary">
                     <p class="jf-import-summary__line">
                         {{ __('app.settings.import.summary_importable', ['count' => $summaryImportable ?? 0]) }}
@@ -700,41 +801,72 @@ new class extends Component
                     <x-filament::button
                         color="primary"
                         class="jf-import-btn-primary"
-                        x-data
-                        x-on:click="
-                            $wire.startImport().then((started) => {
-                                if (! started) {
-                                    return;
-                                }
-                                let offset = 0;
-                                const run = () => {
-                                    $wire.importChunk(offset)
-                                        .then((result) => {
-                                            offset += {{ \App\Services\Members\MemberImportService::CHUNK_SIZE }};
-                                            if (result && ! result.done) {
-                                                run();
-                                            }
-                                        })
-                                        .catch(() => $wire.cancelImport());
-                                };
-                                run();
-                            }).catch(() => $wire.cancelImport());
-                        "
+                        x-on:click="runImport()"
+                        x-bind:disabled="busy"
                     >
-                        {{ __('app.settings.import.import_now') }}
+                        <span class="jf-import-btn-content" x-show="! busy">
+                            {{ __('app.settings.import.import_now') }}
+                        </span>
+                        <span class="jf-import-btn-content jf-import-btn-loading" x-show="busy" x-cloak>
+                            <span class="jf-import-spinner jf-import-spinner--sm" aria-hidden="true"></span>
+                            {{ __('app.settings.import.importing_now') }}
+                        </span>
                     </x-filament::button>
                 </div>
-            @else
-                @if ($importing || ($importProgress > 0 && $importProgress < $importTotal))
-                    <div class="jf-import-progress">
-                        <div class="jf-import-progress__bar" style="width: {{ $this->importProgressPercent }}%"></div>
+            @endif
+
+            @if ($importRunStarted)
+                @if ($this->showImportProgress)
+                    <div
+                        class="jf-import-progress-panel"
+                        role="status"
+                        aria-live="polite"
+                        wire:loading.class="jf-import-progress-panel--loading"
+                        wire:target="startImport, importChunk"
+                    >
+                        <div class="jf-import-progress-status">
+                            <span class="jf-import-spinner" aria-hidden="true"></span>
+                            <div>
+                                <p class="jf-import-progress__title">
+                                    @if ($importTotal > 0)
+                                        {{ __('app.settings.import.progress', ['percent' => $this->importProgressPercent]) }}
+                                    @else
+                                        {{ __('app.settings.import.preparing') }}
+                                    @endif
+                                </p>
+                                @if ($importTotal > 0)
+                                    <p class="jf-import-progress__label">
+                                        {{ __('app.settings.import.progress_rows', [
+                                            'current' => min($importProgress, $importTotal),
+                                            'total' => $importTotal,
+                                        ]) }}
+                                    </p>
+                                @endif
+                            </div>
+                        </div>
+                        <div
+                            class="jf-import-progress @if ($importTotal === 0) jf-import-progress--indeterminate @endif"
+                            role="progressbar"
+                            aria-valuemin="0"
+                            aria-valuemax="{{ max($importTotal, 1) }}"
+                            aria-valuenow="{{ $importProgress }}"
+                        >
+                            @if ($importTotal === 0)
+                                <div class="jf-import-progress__bar jf-import-progress__bar--indeterminate"></div>
+                            @else
+                                <div
+                                    class="jf-import-progress__bar"
+                                    style="width: {{ max($this->importProgressPercent, $importProgress > 0 ? 2 : 0) }}%"
+                                ></div>
+                            @endif
+                        </div>
+                        @if ($importTotal > 0)
+                            <p class="jf-import-progress__percent">{{ $this->importProgressPercent }}%</p>
+                        @endif
                     </div>
-                    <p class="jf-import-progress__label">
-                        {{ __('app.settings.import.progress', ['percent' => $this->importProgressPercent]) }}
-                    </p>
                 @endif
 
-                @if (! $importing && $importProgress >= $importTotal && $importTotal > 0)
+                @if ($this->showImportResults)
                     <div class="jf-import-results">
                         <div class="jf-import-result-card jf-import-result-card--success">
                             <span class="jf-import-result-card__value">{{ $importedCount + $updatedCount }}</span>

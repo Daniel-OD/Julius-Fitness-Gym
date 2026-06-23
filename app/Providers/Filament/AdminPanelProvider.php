@@ -26,6 +26,7 @@ use App\Filament\Resources\Plans\PlanResource;
 use App\Filament\Resources\ProductCategories\ProductCategoryResource;
 use App\Filament\Resources\Products\ProductResource;
 use App\Filament\Resources\Sales\SaleResource;
+use App\Filament\Resources\Services\ServiceResource;
 use App\Filament\Resources\Shifts\ShiftResource;
 use App\Filament\Resources\StaffProfiles\StaffProfileResource;
 use App\Filament\Resources\StockMovements\StockMovementResource;

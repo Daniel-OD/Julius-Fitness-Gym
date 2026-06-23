@@ -20,8 +20,6 @@ class GymClassResource extends Resource
 {
     protected static ?string $model = GymClass::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-calendar';
-
     protected static ?string $recordTitleAttribute = 'name';
 
     #[\Override]

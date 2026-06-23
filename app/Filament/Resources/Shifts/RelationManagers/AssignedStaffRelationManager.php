@@ -67,7 +67,7 @@ class AssignedStaffRelationManager extends RelationManager
             ->columns([
                 TextColumn::make('employee_code')
                     ->label(__('app.hr.shift_assignments.fields.employee_code'))
-                    ->state(fn (ShiftAssignment $record): string => $record->user?->staffProfile?->employee_code ?? '—'),
+                    ->state(fn (ShiftAssignment $record): string => $record->user->staffProfile?->employee_code ?? '—'),
                 TextColumn::make('user.name')
                     ->label(__('app.hr.fields.user')),
                 TextColumn::make('valid_from')
@@ -80,7 +80,7 @@ class AssignedStaffRelationManager extends RelationManager
                 TextColumn::make('assignment_status')
                     ->label(__('app.hr.shift_assignments.fields.status'))
                     ->badge()
-                    ->state(fn (ShiftAssignment $record): string => static::resolveStatus($record))
+                    ->state(fn (ShiftAssignment $record): string => self::resolveStatus($record))
                     ->color(fn (string $state): string => match ($state) {
                         'active' => 'success',
                         'upcoming' => 'warning',

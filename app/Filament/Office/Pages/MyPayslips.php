@@ -84,7 +84,7 @@ class MyPayslips extends Page implements HasTable
 
         $pdf = app(PayslipPdfRenderer::class)->render($record);
         $period = $record->period;
-        $filename = sprintf('payslip-%02d-%d.pdf', $period?->month ?? 0, $period?->year ?? 0);
+        $filename = sprintf('payslip-%02d-%d.pdf', $period->month, $period->year);
 
         return response()->streamDownload(fn () => print ($pdf), $filename, [
             'Content-Type' => 'application/pdf',

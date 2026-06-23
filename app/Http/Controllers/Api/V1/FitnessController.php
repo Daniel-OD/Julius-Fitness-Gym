@@ -51,7 +51,7 @@ class FitnessController extends ApiController
                 'name' => $plan->name,
                 'start_date' => $plan->start_date->toDateString(),
                 'end_date' => $plan->end_date?->toDateString(),
-                'status' => $plan->status?->value,
+                'status' => $plan->status->value,
                 'days' => $plan->days->map(fn ($day): array => [
                     'id' => $day->id,
                     'day_number' => $day->day_number,
@@ -126,7 +126,7 @@ class FitnessController extends ApiController
                     ])->all();
 
                     return [
-                        'meal_type' => $meal->meal_type?->value,
+                        'meal_type' => $meal->meal_type->value,
                         'name' => $meal->name,
                         'items' => collect($entries)->map(fn (array $entry): array => [
                             'food_item_id' => $entry['food_item']->id,

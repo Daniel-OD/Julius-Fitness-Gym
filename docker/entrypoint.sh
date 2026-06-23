@@ -46,7 +46,31 @@ ensure_app_key() {
     fi
 }
 
-# ── Render web: open HTTP port immediately (before DB wait / migrate) ────────
+run_render_migrations() {
+    if [ ! -f .env ]; then
+        echo "[entrypoint] ERROR: .env missing — cannot run migrations"
+        exit 1
+    fi
+
+    set -a
+    # shellcheck disable=SC1091
+    . ./.env
+    set +a
+
+    # shellcheck disable=SC1091
+    . /usr/local/bin/db-wait.sh
+    wait_for_database
+
+    echo "[entrypoint] Running database migrations (Render web)"
+    php artisan migrate --force --no-interaction
+    touch /tmp/julius-migrations-applied
+
+    if [ ! -e public/storage ]; then
+        php artisan storage:link --force --no-interaction 2>/dev/null || true
+    fi
+}
+
+# ── Render web: migrate before HTTP, then nginx on $PORT ─────────────────────
 if [ "${CONTAINER_ROLE}" = "web" ]; then
     if [ -n "${JULIUS_ON_RENDER:-}" ]; then
         echo "[entrypoint] Render — building .env from env/render.env.example + platform variables"
@@ -87,6 +111,10 @@ if [ "${CONTAINER_ROLE}" = "web" ]; then
     chmod -R ug+rwx storage bootstrap/cache 2>/dev/null || true
 
     rm -f public/hot
+
+    if [ -n "${JULIUS_ON_RENDER:-}" ]; then
+        run_render_migrations
+    fi
 
     echo "[entrypoint] Handing off to HTTP server (nginx on PORT=${PORT:-10000})"
     exec /usr/local/bin/start-web.sh

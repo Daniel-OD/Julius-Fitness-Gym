@@ -17,8 +17,6 @@ class ClassScheduleResource extends Resource
 {
     protected static ?string $model = ClassSchedule::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-clock';
-
     #[\Override]
     public static function getModelLabel(): string
     {

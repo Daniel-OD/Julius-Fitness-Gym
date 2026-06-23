@@ -77,8 +77,8 @@ it('deducts unpaid leave from monthly payroll', function (): void {
     $result = $service->calculateForStaff($profile, 6, 2026, 22);
 
     expect($result['deductions'])->not->toBeEmpty()
-        ->and($result['gross'])->toBe(round(2200 * (18 / 22), 2))
-        ->and($result['net'])->toBeLessThan($result['gross']);
+        ->and($result['gross'])->toBe(round(2200 * (20 / 22), 2))
+        ->and($result['net'])->toBe(round(2200 * (18 / 22), 2));
 });
 
 it('calculates hourly payroll from worked hours', function (): void {
@@ -124,4 +124,92 @@ it('approves payroll period and items', function (): void {
     expect($period->status)->toBe(PayrollPeriodStatus::Approved)
         ->and($period->approved_by)->toBe($admin->id)
         ->and($period->items->every(fn ($item) => $item->status->value === 'approved'))->toBeTrue();
+});
+
+it('calculates hourly payroll with overtime hours', function (): void {
+    $user = User::factory()->create();
+    $profile = StaffProfile::factory()->for($user)->create([
+        'base_salary' => 20,
+        'salary_type' => SalaryType::Hourly,
+    ]);
+
+    // 10 hours worked on a single day (2 hours overtime beyond 8-hour standard)
+    Attendance::factory()->for($user)->create([
+        'date' => '2026-06-02',
+        'check_in' => '2026-06-02 08:00:00',
+        'check_out' => '2026-06-02 18:00:00',
+        'status' => AttendanceStatus::Present,
+    ]);
+
+    $service = app(PayrollService::class);
+    $result = $service->calculateForStaff($profile, 6, 2026, 22);
+
+    // Regular 8h at $20 = $160, overtime 2h at $20 * 1.5 = $60, total $220
+    expect($result['overtime_hours'])->toBe(2.0)
+        ->and($result['gross'])->toBe(220.0)
+        ->and($result['net'])->toBe(220.0);
+});
+
+it('clamps monthly payroll working days to minimum of 1 when zero passed', function (): void {
+    $user = User::factory()->create();
+    $profile = StaffProfile::factory()->for($user)->create([
+        'base_salary' => 3000,
+        'salary_type' => SalaryType::Monthly,
+    ]);
+
+    Attendance::factory()->for($user)->create([
+        'date' => '2026-06-02',
+        'status' => AttendanceStatus::Present,
+    ]);
+
+    $service = app(PayrollService::class);
+    // Passing 0 working days should not cause division by zero
+    $result = $service->calculateForStaff($profile, 6, 2026, workingDays: 0);
+
+    expect($result['working_days'])->toBe(0)
+        ->and($result['gross'])->toBeGreaterThan(0.0);
+});
+
+it('does not regenerate period when force is false and status is approved', function (): void {
+    $admin = User::factory()->create();
+    $service = app(PayrollService::class);
+
+    $period = $service->generatePeriod(6, 2026, force: true);
+    $service->approvePeriod($period, $admin);
+
+    $approvedAt = $period->fresh()->generated_at;
+
+    // Second call without force should return the same approved period unchanged
+    $returned = $service->generatePeriod(6, 2026, force: false);
+
+    expect($returned->status)->toBe(PayrollPeriodStatus::Approved)
+        ->and($returned->generated_at->toDateTimeString())->toBe($approvedAt->toDateTimeString());
+});
+
+it('skips unpaid leave deduction for hourly employees', function (): void {
+    $user = User::factory()->create();
+    $profile = StaffProfile::factory()->for($user)->create([
+        'base_salary' => 25,
+        'salary_type' => SalaryType::Hourly,
+    ]);
+
+    Attendance::factory()->for($user)->create([
+        'date' => '2026-06-02',
+        'check_in' => '2026-06-02 09:00:00',
+        'check_out' => '2026-06-02 17:00:00',
+        'status' => AttendanceStatus::Present,
+    ]);
+
+    Leave::factory()->for($user)->create([
+        'type' => LeaveType::Unpaid,
+        'start_date' => '2026-06-21',
+        'end_date' => '2026-06-22',
+        'days' => 2,
+        'status' => LeaveStatus::Approved,
+    ]);
+
+    $result = app(PayrollService::class)->calculateForStaff($profile, 6, 2026, 22);
+
+    // Hourly employees are NOT subject to unpaid leave deductions
+    expect($result['deductions'])->toBeEmpty();
 });

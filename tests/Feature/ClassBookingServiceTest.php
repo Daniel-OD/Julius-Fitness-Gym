@@ -185,3 +185,38 @@ it('getAvailableSlots counts correctly', function (): void {
 
     expect($this->service->getAvailableSlots($schedule->load('gymClass'), $monday))->toBe(2);
 });
+
+it('getAvailableSlots returns 0 when gymClass relation is not loaded', function (): void {
+    $schedule = ClassSchedule::factory()->create(['is_active' => true]);
+    $monday = Carbon::now()->next(Carbon::MONDAY);
+
+    // Schedule without a loaded gymClass returns 0
+    $scheduleWithoutClass = ClassSchedule::make(['id' => 9999, 'gym_class_id' => null]);
+
+    expect($this->service->getAvailableSlots($scheduleWithoutClass, $monday))->toBe(0);
+});
+
+it('cannot book when schedule is inactive', function (): void {
+    $member = Member::factory()->create();
+    $gymClass = GymClass::factory()->create(['capacity' => 10, 'is_active' => true]);
+    $monday = Carbon::now()->next(Carbon::MONDAY);
+    $schedule = ClassSchedule::factory()->create([
+        'gym_class_id' => $gymClass->id,
+        'day_of_week' => $monday->dayOfWeek,
+        'is_active' => false,
+    ]);
+
+    expect(fn () => $this->service->book($member, $schedule, $monday))
+        ->toThrow(ValidationException::class);
+});
+
+it('cancel with allowPast=true allows cancelling a past booking', function (): void {
+    $booking = ClassBooking::factory()->create([
+        'booked_date' => now()->subDays(3)->toDateString(),
+        'status' => BookingStatus::Booked,
+    ]);
+
+    $this->service->cancel($booking, allowPast: true);
+
+    expect($booking->fresh()->status)->toBe(BookingStatus::Cancelled);
+});

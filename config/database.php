@@ -18,6 +18,10 @@ $sqliteDatabasePath = (static function (): string {
 
     $database = trim($database);
 
+    if ($database === ':memory:') {
+        return ':memory:';
+    }
+
     if (str_ends_with(strtolower($database), '.sqlite')) {
         return $database[0] === '/' ? $database : base_path($database);
     }

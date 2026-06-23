@@ -19,6 +19,7 @@ use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 
 class ClassBookingTable
 {
@@ -92,7 +93,7 @@ class ClassBookingTable
                         ->color('success')
                         ->requiresConfirmation()
                         ->action(function (Collection $records): void {
-                            $records->each(fn (ClassBooking $b) => $b->update(['status' => BookingStatus::Attended]));
+                            $records->each(fn (Model $b) => $b->update(['status' => BookingStatus::Attended]));
                             Notification::make()->title(__('app.classes.notifications.marked_attended'))->success()->send();
                         }),
                     DeleteBulkAction::make(),

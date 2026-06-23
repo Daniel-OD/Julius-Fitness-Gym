@@ -138,7 +138,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY docker/nginx/render.conf.template /etc/nginx/templates/default.conf.template
 COPY docker/start-web.sh /usr/local/bin/start-web.sh
 COPY docker/laravel-bootstrap.sh /usr/local/bin/laravel-bootstrap.sh
-RUN chmod +x /usr/local/bin/start-web.sh /usr/local/bin/laravel-bootstrap.sh
+COPY docker/db-wait.sh /usr/local/bin/db-wait.sh
+RUN chmod +x /usr/local/bin/start-web.sh /usr/local/bin/laravel-bootstrap.sh /usr/local/bin/db-wait.sh
 
 ENV CONTAINER_ROLE=web
 

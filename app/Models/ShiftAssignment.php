@@ -22,11 +22,11 @@ class ShiftAssignment extends Model
         'valid_until' => 'date',
     ];
 
+    use SoftDeletes;
+
     /**
      * @return BelongsTo<User, $this>
      */
-    use SoftDeletes;
-
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

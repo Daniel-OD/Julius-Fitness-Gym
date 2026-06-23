@@ -25,9 +25,12 @@ composer.phar
 /storage/*.key
 /storage/pail
 /vendor
+/database/*.sqlite
+/database/*.sqlite-journal
 /dist
 _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
 .env.bak*
+.aider*

@@ -21,6 +21,8 @@ services:
     dockerTarget: production
     healthCheckPath: /up
     autoDeploy: true
+    # Runs before traffic switches (no Shell access needed for migrations)
+    preDeployCommand: php artisan migrate --force --no-interaction
     # Do not set PORT — Render assigns it automatically; nginx listens on $PORT
     envVars:
       - key: CONTAINER_ROLE

@@ -1245,11 +1245,86 @@ html.fi.dark .jf-select option {
     --c-600: #e84e15;
 }
 
+.jf-import-btn-content {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.jf-import-btn-loading {
+    font-weight: 600;
+}
+
+[x-cloak] {
+    display: none !important;
+}
+
+.jf-import-progress-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+    padding: 1.25rem;
+    border-radius: 1rem;
+    border: 1px solid rgb(255 90 31 / 0.15);
+    background: linear-gradient(180deg, rgb(255 90 31 / 0.06), rgb(255 90 31 / 0.02));
+}
+
+html.fi.dark .jf-import-progress-panel {
+    border-color: rgb(255 90 31 / 0.25);
+    background: linear-gradient(180deg, rgb(255 90 31 / 0.12), rgb(255 90 31 / 0.04));
+}
+
+.jf-import-progress-panel--loading {
+    opacity: 0.95;
+}
+
+.jf-import-progress-status {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.875rem;
+}
+
+.jf-import-progress__title {
+    margin: 0;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--jf-light-text, #1d1d1f);
+}
+
+html.fi.dark .jf-import-progress__title {
+    color: rgb(255 255 255 / 0.92);
+}
+
+.jf-import-spinner {
+    flex-shrink: 0;
+    width: 1.25rem;
+    height: 1.25rem;
+    border: 2px solid rgb(255 90 31 / 0.2);
+    border-top-color: #ff5a1f;
+    border-radius: 9999px;
+    animation: jf-import-spin 0.75s linear infinite;
+}
+
+.jf-import-spinner--sm {
+    width: 1rem;
+    height: 1rem;
+}
+
+@keyframes jf-import-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 .jf-import-progress {
-    height: 0.5rem;
+    height: 0.625rem;
     border-radius: 9999px;
     background: var(--jf-light-row, #f2f2f7);
     overflow: hidden;
+}
+
+.jf-import-progress--indeterminate {
+    position: relative;
 }
 
 html.fi.dark .jf-import-progress {
@@ -1258,14 +1333,39 @@ html.fi.dark .jf-import-progress {
 
 .jf-import-progress__bar {
     height: 100%;
+    min-width: 0.25rem;
     background: linear-gradient(90deg, #ff5a1f, #ffb199);
     border-radius: 9999px;
     transition: width 320ms cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
+.jf-import-progress__bar--indeterminate {
+    width: 40% !important;
+    animation: jf-import-indeterminate 1.25s ease-in-out infinite;
+}
+
+@keyframes jf-import-indeterminate {
+    0% {
+        transform: translateX(-120%);
+    }
+
+    100% {
+        transform: translateX(320%);
+    }
+}
+
 .jf-import-progress__label {
+    margin: 0.25rem 0 0;
     font-size: 0.875rem;
     color: var(--jf-light-text-secondary, #6e6e73);
+}
+
+.jf-import-progress__percent {
+    margin: 0;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #ff5a1f;
+    text-align: right;
 }
 
 .jf-import-results {

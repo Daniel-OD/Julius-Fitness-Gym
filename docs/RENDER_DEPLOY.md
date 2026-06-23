@@ -216,7 +216,9 @@ php artisan migrate:status
 |-------|----------|
 | **Build fails at npm run build** | Ensure `package-lock.json` is committed |
 | **No open ports / port scan timeout** | Ensure **Docker target = `production`**. HTTP must start before DB wait — see `docker/start-web.sh`. Check logs for `[start-web] Binding HTTP on 0.0.0.0:...` |
+| **500 on `/admin` after deploy** | Usually pending migrations — push latest `main` (entrypoint runs `migrate` on Render) or check Logs for `[entrypoint] Running database migrations` |
 | **500 on first request** | Verify `APP_KEY` and PostgreSQL env vars |
+| **No Render Shell access** | Migrations run automatically on deploy (`preDeployCommand` + entrypoint). Trigger **Manual Deploy** from Render Dashboard after pushing to `main` |
 | **CSS missing** | Assets are built in Docker image — rebuild service |
 | **Session lost after deploy** | Expected on ephemeral disk; use `SESSION_DRIVER=database` (default in blueprint) |
 | **Queue emails not sent** | Ensure `julius-gym-queue` worker is running |

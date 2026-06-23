@@ -75,15 +75,16 @@ class ListPayrollPeriods extends ListRecords
     }
 
     /**
-     * @return array<string, string>
+     * @return array<int, string>
      */
     protected static function monthOptions(): array
     {
-        return collect(range(1, 12))
-            ->mapWithKeys(fn (int $month): array => [
-                (string) $month => __('app.hr.months.'.$month),
-            ])
-            ->all();
+        $options = [];
+        foreach (range(1, 12) as $month) {
+            $options[(string) $month] = (string) __('app.hr.months.'.$month);
+        }
+
+        return $options;
     }
 
     #[\Override]

@@ -64,7 +64,7 @@ final class SaleSchema
             'cashier' => $sale->cashier?->name,
             'total' => (float) $sale->total,
             'payment_method' => (string) $sale->payment_method,
-            'status' => $sale->status?->value,
+            'status' => $sale->status->value,
             'note' => $sale->note,
             'items' => $sale->items->map(fn ($item): array => [
                 'id' => (int) $item->id,

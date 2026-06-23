@@ -40,7 +40,7 @@ final class ExerciseSchema
         return [
             'id' => (int) $exercise->id,
             'name' => (string) $exercise->name,
-            'category' => $exercise->category?->value,
+            'category' => $exercise->category->value,
             'muscle_groups' => is_array($exercise->muscle_groups) ? $exercise->muscle_groups : [],
             'equipment' => $exercise->equipment,
             'instructions' => $exercise->instructions,
