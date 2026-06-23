@@ -99,7 +99,6 @@ final class QueryFilters
         if (! is_string($value)) {
             $errors[$param][] = $message;
         }
-    }
 
         $rules = ResourceQueryRules::filters($resourceKey);
         $filter = $request->query('filter');

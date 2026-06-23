@@ -80,63 +80,61 @@ class MarkSubscriptionsStatus extends Command
             ->where('status', '!=', 'renewed')
             ->whereHas('renewals')
             ->update(['status' => 'renewed']);
+    if ($renewedCount > 0) {
+        $summary[] = "{$renewedCount} renewed";
+    }
+
+    return $summary;
+}
+
+private function processExpiring(Carbon $today, Carbon $threshold): array
+{
+    $summary = [];
+
+    $expiringCount = Subscription::query()
+        ->whereDate('end_date', '>=', $today)
+        ->whereDate('end_date', '<=', $threshold)
+        ->where('status', '!=', 'expiring')
+        ->update(['status' => 'expiring']);
+
+    if ($expiringCount > 0) {
+        $summary[] = "{$expiringCount} expiring";
+    }
+
+    return $summary;
+}
+            ->whereHas('renewals')
+            ->update(['status' => 'renewed']);
 
         if ($renewedCount > 0) {
             $summary[] = "{$renewedCount} renewed";
         }
-
-        return $summary;
     }
 
-    private function processExpiring(Carbon $today, Carbon $threshold): array
-    {
-        $summary = [];
+    if ($runAll) {
+        $upcomingCount = Subscription::query()
+            ->whereDate('start_date', '>', $today)
+            ->whereNotIn('status', ['renewed', 'upcoming'])
+            ->update(['status' => 'upcoming']);
 
+        if ($upcomingCount > 0) {
+            $summary[] = "{$upcomingCount} upcoming";
+        }
+    }
+
+    if ($runAll || $runExpiringOnly) {
         $expiringCount = Subscription::query()
-            ->whereDate('end_date', '>=', $today)
-            ->whereDate('end_date', '<=', $threshold)
-            ->where('status', '!=', 'expiring')
+            ->whereDate('start_date', '<=', $today)
+            ->whereBetween('end_date', [$today->toDateString(), $expiringThreshold->toDateString()])
+            ->whereNotIn('status', ['renewed', 'expiring', 'expired'])
             ->update(['status' => 'expiring']);
 
         if ($expiringCount > 0) {
-            $summary[] = "{$expiringCount} expiring";
+            $summary[] = "{$expiringCount} expiring (≤ {$expiringDays} days)";
         }
-
-        return $summary;
     }
-}
-                ->whereHas('renewals')
-                ->update(['status' => 'renewed']);
 
-            if ($renewedCount > 0) {
-                $summary[] = "{$renewedCount} renewed";
-            }
-        }
-
-        if ($runAll) {
-            $upcomingCount = Subscription::query()
-                ->whereDate('start_date', '>', $today)
-                ->whereNotIn('status', ['renewed', 'upcoming'])
-                ->update(['status' => 'upcoming']);
-
-            if ($upcomingCount > 0) {
-                $summary[] = "{$upcomingCount} upcoming";
-            }
-        }
-
-        if ($runAll || $runExpiringOnly) {
-            $expiringCount = Subscription::query()
-                ->whereDate('start_date', '<=', $today)
-                ->whereBetween('end_date', [$today->toDateString(), $expiringThreshold->toDateString()])
-                ->whereNotIn('status', ['renewed', 'expiring', 'expired'])
-                ->update(['status' => 'expiring']);
-
-            if ($expiringCount > 0) {
-                $summary[] = "{$expiringCount} expiring (≤ {$expiringDays} days)";
-            }
-        }
-
-        if ($runAll) {
+    if ($runAll) {
             $ongoingCount = Subscription::query()
                 ->whereDate('start_date', '<=', $today)
                 ->whereDate('end_date', '>', $expiringThreshold)

@@ -102,7 +102,6 @@ class CheckInResource extends Resource
                 ->timezone($timezone)
                 ->translatedFormat('d M Y, H:i');
         };
-
         $presenceState = function (CheckIn $record): string {
             return $record->checked_out_at
                 ? __('app.checkins.departed')
@@ -124,11 +123,8 @@ class CheckInResource extends Resource
                 TextColumn::make('presence')
                     ->label(__('app.checkins.presence'))
                     ->badge()
+                    ->color(fn (CheckIn $record): string => $record->checked_out_at ? 'gray' : 'success')
                     ->state($presenceState),
-            ]);
-    }
-                        : __('app.checkins.present'))
-                    ->color(fn (CheckIn $record): string => $record->checked_out_at ? 'gray' : 'success'),
                 TextColumn::make('checked_out_at')
                     ->label(__('app.checkins.checked_out'))
                     ->formatStateUsing(fn (CheckIn $record): ?string => $record->checked_out_at
@@ -152,7 +148,9 @@ class CheckInResource extends Resource
                         : null),
                 TextColumn::make('subscription.plan.name')
                     ->label(__('app.fields.plan'))
-                    ->placeholder('—')
+                    ->placeholder('—'),
+            ]);
+    }
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('method')
                     ->label(__('app.fields.method'))
@@ -225,7 +223,7 @@ class CheckInResource extends Resource
 
                             fclose($handle);
                         }, 'check-ins-'.now()->format('Y-m-d-His').'.csv', ['Content-Type' => 'text/csv']);
-                    }),
+                    ),
                 Action::make('manualCheckIn')
                     ->label(__('app.checkins.manual_checkin'))
                     ->icon('heroicon-o-check-circle')

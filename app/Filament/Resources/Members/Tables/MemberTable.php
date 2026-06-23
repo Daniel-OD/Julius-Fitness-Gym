@@ -41,94 +41,92 @@ class MemberTable
     private static function getColumns(): array
     {
         return [
-            ImageColumn::make('photo')
-                ->label('')
-                ->disk('public')
-                ->defaultImageUrl(fn (Member $record): string => 'https://ui-avatars.com/api/?background=ff5a1f&color=fff&name='.urlencode($record->name ?? ''))
-                ->circular()
-                ->size(40)
-                ->grow(false),
-            TextColumn::make('name')
-                ->label(__('app.fields.member'))
-                ->searchable(['name', 'code', 'email'])
-                ->sortable()
-                ->description(fn (Member $record): string => $record->code)
-                ->weight(FontWeight::SemiBold)
-                ->wrap()
-                ->grow()
-                ->extraCellAttributes(['class' => 'jf-member-identity-cell']),
-            TextColumn::make('email')
-                ->searchable()
-                ->label(__('app.fields.email'))
-                ->toggleable()
-                ->wrap(),
-            TextColumn::make('contact'),
-        ];
+    ImageColumn::make('photo')
+        ->label('')
+        ->disk('public')
+        ->defaultImageUrl(fn (Member $record): string => 'https://ui-avatars.com/api/?background=ff5a1f&color=fff&name='.urlencode($record->name ?? ''))
+        ->circular()
+        ->size(40)
+        ->grow(false),
+    TextColumn::make('name')
+        ->label(__('app.fields.member'))
+        ->searchable(['name', 'code', 'email'])
+        ->sortable()
+        ->description(fn (Member $record): string => $record->code)
+        ->weight(FontWeight::SemiBold)
+        ->wrap()
+        ->grow()
+        ->extraCellAttributes(['class' => 'jf-member-identity-cell']),
+    TextColumn::make('email')
+        ->searchable()
+        ->label(__('app.fields.email'))
+        ->toggleable()
+        ->wrap(),
+    TextColumn::make('contact')
+        ->searchable()
+        ->toggleable(isToggledHiddenByDefault: true)
+        ->label(__('app.fields.contact'))
+        ->wrap(),
+    TextColumn::make('gender')
+        ->searchable()
+        ->toggleable(isToggledHiddenByDefault: true)
+        ->label(__('app.fields.gender'))
+        ->formatStateUsing(fn (?string $state): string => match ($state) {
+            'male' => __('app.options.gender.male'),
+            'female' => __('app.options.gender.female'),
+            'other' => __('app.options.gender.other'),
+            default => filled($state) ? ucfirst($state) : __('app.placeholders.dash'),
+        }),
+    TextColumn::make('emergency_contact')
+        ->searchable()
+        ->toggleable(isToggledHiddenByDefault: true)
+        ->label(__('app.fields.emergency_contact')),
+    TextColumn::make('created_at')
+        ->sortable()
+        ->date('d-m-Y')
+        ->toggleable(isToggledHiddenByDefault: true)
+        ->label(__('app.fields.date')),
+    TextColumn::make('status')
+        ->badge()
+        ->label(__('app.fields.status'))
+        ->formatStateUsing(fn (?Status $state): string => $state
+            ? __('app.status.'.$state->value)
+            : __('app.placeholders.dash'))
+        ->color(fn (?Status $state): string => $state?->getColor() ?? 'gray')
+        ->sortable()
+        ->alignEnd()
+        ->toggleable(),
+    TextColumn::make('id')
+        ->sortable()
+        ->searchable()
+        ->toggleable(isToggledHiddenByDefault: true)
+        ->label(__('app.fields.id')),
+])
+->extraAttributes(['class' => 'jf-members-table'])
+->emptyStateIcon('heroicon-o-user-group')
+->emptyStateHeading(function ($livewire): string {
+    $dates = $livewire->getTableFilterState('date') ?? [];
+    [$from, $to] = [$dates['date_from'] ?? null, $dates['date_to'] ?? null];
+    $records = (string) __('app.resources.members.plural');
+    $tab = (string) ($livewire->activeTab ?? 'all');
+    $status = $tab !== 'all' ? (string) __('app.status.'.$tab) : null;
+
+    if (! $from && ! $to) {
+        return $status
+            ? __('app.empty.no_status_records', ['status' => $status, 'records' => $records])
+            : __('app.empty.no_records', ['records' => $records]);
     }
-}
-                    ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: true)
-                    ->label(__('app.fields.contact'))
-                    ->wrap(),
-                TextColumn::make('gender')
-                    ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: true)
-                    ->label(__('app.fields.gender'))
-                    ->formatStateUsing(fn (?string $state): string => match ($state) {
-                        'male' => __('app.options.gender.male'),
-                        'female' => __('app.options.gender.female'),
-                        'other' => __('app.options.gender.other'),
-                        default => filled($state) ? ucfirst($state) : __('app.placeholders.dash'),
-                    }),
-                TextColumn::make('emergency_contact')
-                    ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: true)
-                    ->label(__('app.fields.emergency_contact')),
-                TextColumn::make('created_at')
-                    ->sortable()
-                    ->date('d-m-Y')
-                    ->toggleable(isToggledHiddenByDefault: true)
-                    ->label(__('app.fields.date')),
-                TextColumn::make('status')
-                    ->badge()
-                    ->label(__('app.fields.status'))
-                    ->formatStateUsing(fn (?Status $state): string => $state
-                        ? __('app.status.'.$state->value)
-                        : __('app.placeholders.dash'))
-                    ->color(fn (?Status $state): string => $state?->getColor() ?? 'gray')
-                    ->sortable()
-                    ->alignEnd()
-                    ->toggleable(),
-                TextColumn::make('id')
-                    ->sortable()
-                    ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: true)
-                    ->label(__('app.fields.id')),
-            ])
-            ->extraAttributes(['class' => 'jf-members-table'])
-            ->emptyStateIcon('heroicon-o-user-group')
-            ->emptyStateHeading(function ($livewire): string {
-                $dates = $livewire->getTableFilterState('date') ?? [];
-                [$from, $to] = [$dates['date_from'] ?? null, $dates['date_to'] ?? null];
-                $records = (string) __('app.resources.members.plural');
-                $tab = (string) ($livewire->activeTab ?? 'all');
-                $status = $tab !== 'all' ? (string) __('app.status.'.$tab) : null;
 
-                if (! $from && ! $to) {
-                    return $status
-                        ? __('app.empty.no_status_records', ['status' => $status, 'records' => $records])
-                        : __('app.empty.no_records', ['records' => $records]);
-                }
+    if ($tab === 'all') {
+        return __('app.empty.no_records_in_range', ['records' => $records]);
+    }
 
-                if ($tab === 'all') {
-                    return __('app.empty.no_records_in_range', ['records' => $records]);
-                }
+    $base = __('app.empty.no_status_records', ['status' => $status, 'records' => $records]);
 
-                $base = __('app.empty.no_status_records', ['status' => $status, 'records' => $records]);
-
-                return Member::where('status', $tab)->exists()
-                    ? __('app.empty.no_status_records_in_range', ['status' => $status, 'records' => $records])
-                    : $base;
+    return Member::where('status', $tab)->exists()
+        ? __('app.empty.no_status_records_in_range', ['status' => $status, 'records' => $records])
+        : $base;
+})
             })
             ->emptyStateDescription(function ($livewire): string {
                 $dates = $livewire->getTableFilterState('date') ?? [];
@@ -249,7 +247,7 @@ class MemberTable
                         EditAction::make()->hiddenLabel(),
                         DeleteAction::make()->hiddenLabel(),
                     ])->dropdown(false),
-                ]),
+                ])
             ])->recordUrl(fn ($record): string => route('filament.admin.resources.members.view', $record->id))
             ->toolbarActions([
                 BulkActionGroup::make([
