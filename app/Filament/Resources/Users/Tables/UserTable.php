@@ -39,7 +39,7 @@ class UserTable
                 ImageColumn::make('photo')
                     ->label(__('app.fields.photo'))
                     ->circular()
-                    ->defaultImageUrl(fn (User $record): string => 'https://ui-avatars.com/api/?background=000&color=fff&name='.$record->name),
+                    ->defaultImageUrl([self::class, 'getDefaultAvatarUrl']),
                 TextColumn::make('name')
                     ->label(__('app.fields.name'))
                     ->sortable()
@@ -54,6 +54,14 @@ class UserTable
                 TextColumn::make('gender')
                     ->label(__('app.fields.gender'))
                     ->searchable()
+            ]);
+    }
+
+    protected static function getDefaultAvatarUrl(User $record): string
+    {
+        return 'https://ui-avatars.com/api/?background=000&color=fff&name=' . $record->name;
+    }
+}
                     ->formatStateUsing(fn (?string $state): string => match ($state) {
                         'male' => __('app.options.gender.male'),
                         'female' => __('app.options.gender.female'),

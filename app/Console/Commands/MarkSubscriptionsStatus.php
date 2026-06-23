@@ -21,28 +21,90 @@ class MarkSubscriptionsStatus extends Command
     {
         $timezone = AppConfig::timezone();
         $today = Carbon::today($timezone);
-        $expiringDays = Helpers::getSubscriptionExpiringDays();
-        $expiringThreshold = $today->copy()->addDays($expiringDays);
+        $expiringThreshold = $this->calculateExpiringThreshold($today);
 
-        $summary = [];
         $runExpiredOnly = (bool) $this->option('mark-expired');
         $runExpiringOnly = (bool) $this->option('mark-expiring');
-        $runAll = ! $runExpiredOnly && ! $runExpiringOnly;
+        $summary = [];
 
-        if ($runAll || $runExpiredOnly) {
-            $expiredCount = Subscription::query()
-                ->whereDate('end_date', '<', $today)
-                ->whereNotIn('status', ['expired', 'renewed'])
-                ->whereDoesntHave('renewals')
-                ->update(['status' => 'expired']);
+        if ($this->shouldRunExpired($runExpiredOnly, $runExpiringOnly)) {
+            $summary = array_merge($summary, $this->processExpired($today));
+        }
 
-            if ($expiredCount > 0) {
-                $summary[] = "{$expiredCount} expired";
-            }
+        if ($this->shouldRunExpiring($runExpiredOnly, $runExpiringOnly)) {
+            $summary = array_merge($summary, $this->processExpiring($today, $expiringThreshold));
+        }
 
-            $renewedCount = Subscription::query()
-                ->whereDate('end_date', '<', $today)
-                ->where('status', '!=', 'renewed')
+        foreach ($summary as $line) {
+            $this->info($line);
+        }
+
+        $memberStatusSync->sync();
+
+        return Command::SUCCESS;
+    }
+
+    private function calculateExpiringThreshold(Carbon $today): Carbon
+    {
+        $expiringDays = Helpers::getSubscriptionExpiringDays();
+
+        return $today->copy()->addDays($expiringDays);
+    }
+
+    private function shouldRunExpired(bool $expiredOnly, bool $expiringOnly): bool
+    {
+        return $expiredOnly || (! $expiredOnly && ! $expiringOnly);
+    }
+
+    private function shouldRunExpiring(bool $expiredOnly, bool $expiringOnly): bool
+    {
+        return $expiringOnly || (! $expiredOnly && ! $expiringOnly);
+    }
+
+    private function processExpired(Carbon $today): array
+    {
+        $summary = [];
+
+        $expiredCount = Subscription::query()
+            ->whereDate('end_date', '<', $today)
+            ->whereNotIn('status', ['expired', 'renewed'])
+            ->whereDoesntHave('renewals')
+            ->update(['status' => 'expired']);
+
+        if ($expiredCount > 0) {
+            $summary[] = "{$expiredCount} expired";
+        }
+
+        $renewedCount = Subscription::query()
+            ->whereDate('end_date', '<', $today)
+            ->where('status', '!=', 'renewed')
+            ->whereHas('renewals')
+            ->update(['status' => 'renewed']);
+
+        if ($renewedCount > 0) {
+            $summary[] = "{$renewedCount} renewed";
+        }
+
+        return $summary;
+    }
+
+    private function processExpiring(Carbon $today, Carbon $threshold): array
+    {
+        $summary = [];
+
+        $expiringCount = Subscription::query()
+            ->whereDate('end_date', '>=', $today)
+            ->whereDate('end_date', '<=', $threshold)
+            ->where('status', '!=', 'expiring')
+            ->update(['status' => 'expiring']);
+
+        if ($expiringCount > 0) {
+            $summary[] = "{$expiringCount} expiring";
+        }
+
+        return $summary;
+    }
+}
                 ->whereHas('renewals')
                 ->update(['status' => 'renewed']);
 

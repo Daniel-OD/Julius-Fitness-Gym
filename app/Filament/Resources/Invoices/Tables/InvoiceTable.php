@@ -37,29 +37,37 @@ class InvoiceTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->columns([
-                TextColumn::make('id')
-                    ->sortable()
-                    ->searchable(),
-                TextColumn::make('number')
-                    ->label(__('app.fields.invoice_number'))
-                    ->sortable(),
-                TextColumn::make('subscription.member.name')
-                    ->label(__('app.fields.subscription'))
-                    ->description(fn ($record): string => $record->subscription->member->code),
-                TextColumn::make('date')
-                    ->label(__('app.fields.date'))
-                    ->date()
-                    ->sortable(),
-                TextColumn::make('due_date')
-                    ->label(__('app.fields.due_date'))
-                    ->date()
-                    ->sortable(),
-                TextColumn::make('subscription_fee')
-                    ->label(__('app.fields.fee'))
-                    ->formatStateUsing(fn (?float $state): string => Helpers::formatCurrency($state)),
-                TextColumn::make('paid_amount')
-                    ->label(__('app.fields.paid'))
+            ->columns(self::getColumns());
+    }
+
+    private static function getColumns(): array
+    {
+        return [
+            TextColumn::make('id')
+                ->sortable()
+                ->searchable(),
+            TextColumn::make('number')
+                ->label(__('app.fields.invoice_number'))
+                ->sortable(),
+            TextColumn::make('subscription.member.name')
+                ->label(__('app.fields.subscription'))
+                ->description(fn ($record): string => $record->subscription->member->code),
+            TextColumn::make('date')
+                ->label(__('app.fields.date'))
+                ->date()
+                ->sortable(),
+            TextColumn::make('due_date')
+                ->label(__('app.fields.due_date'))
+                ->date()
+                ->sortable(),
+            TextColumn::make('subscription_fee')
+                ->label(__('app.fields.fee'))
+                ->formatStateUsing(fn (?float $state): string => Helpers::formatCurrency($state)),
+            TextColumn::make('paid_amount')
+                ->label(__('app.fields.paid')),
+        ];
+    }
+}
                     ->formatStateUsing(fn (?float $state): string => Helpers::formatCurrency($state)),
                 TextColumn::make('tax')
                     ->label(__('app.fields.tax'))

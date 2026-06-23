@@ -242,7 +242,6 @@ class MemberImportService
             'goal' => 'fitness',
         ], fn (mixed $value): bool => $value !== null && $value !== '');
     }
-
     /**
      * @param  array<string, mixed>  $row
      */
@@ -270,29 +269,77 @@ class MemberImportService
     private function validateRow(array $row): ?string
     {
         $name = $this->resolveName($row);
-        $email = filled($row['email'] ?? null) ? Str::lower((string) $row['email']) : null;
+        $email = $this->normalizeEmail($row);
+        $error = $this->checkMissingIdentifier($name, $email);
 
+        if (! $error) {
+            $error = $this->checkInvalidEmail($email);
+        }
+
+        if (! $error) {
+            $error = $this->checkInvalidDob($row);
+        }
+
+        if (! $error && $this->subscriptionProvisioner->hasSubscriptionData($row)) {
+            $planName = $this->normalizePlanName($row);
+            $amount = $this->valueParser->parseAmount($row['plan_amount'] ?? null);
+            $error = $this->checkPlanIdentifier($planName, $amount);
+        }
+
+        return $error;
+    }
+
+    private function normalizeEmail(array $row): ?string
+    {
+        return filled($row['email'] ?? null)
+            ? Str::lower((string) $row['email'])
+            : null;
+    }
+
+    private function checkMissingIdentifier(?string $name, ?string $email): ?string
+    {
         if (! filled($name) && ! filled($email)) {
             return __('app.settings.import.errors.missing_identifier');
         }
 
+        return null;
+    }
+
+    private function checkInvalidEmail(?string $email): ?string
+    {
         if (filled($email) && ! filter_var($email, FILTER_VALIDATE_EMAIL)) {
             return __('app.settings.import.errors.invalid_email');
         }
 
-        if (filled($row['dob'] ?? null) && $this->valueParser->parseDate((string) $row['dob']) === null) {
+        return null;
+    }
+
+    private function checkInvalidDob(array $row): ?string
+    {
+        if (filled($row['dob'] ?? null)
+            && $this->valueParser->parseDate((string) $row['dob']) === null
+        ) {
             return __('app.settings.import.errors.invalid_dob');
         }
 
-        if (! $this->subscriptionProvisioner->hasSubscriptionData($row)) {
-            return null;
-        }
+        return null;
+    }
 
-        $planName = filled($row['plan_name'] ?? null) ? trim((string) $row['plan_name']) : null;
-        $amount = $this->valueParser->parseAmount($row['plan_amount'] ?? null);
+    private function normalizePlanName(array $row): ?string
+    {
+        return filled($row['plan_name'] ?? null)
+            ? trim((string) $row['plan_name'])
+            : null;
+    }
 
+    private function checkPlanIdentifier(?string $planName, $amount): ?string
+    {
         if ($planName === null && $amount === null) {
             return __('app.settings.import.errors.missing_plan_identifier');
+        }
+
+        return null;
+    }
         }
 
         if (filled($row['plan_amount'] ?? null) && $amount === null) {

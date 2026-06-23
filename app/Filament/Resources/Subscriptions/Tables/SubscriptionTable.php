@@ -40,6 +40,11 @@ class SubscriptionTable
      */
     public static function configure(Table $table): Table
     {
+        return self::configureColumns($table);
+    }
+
+    private static function configureColumns(Table $table): Table
+    {
         return $table
             ->columns([
                 TextColumn::make('id')
@@ -64,6 +69,9 @@ class SubscriptionTable
                 TextColumn::make('created_at')
                     ->date()
                     ->toggleable(isToggledHiddenByDefault: true),
+            ]);
+    }
+}
                 TextColumn::make('status')
                     ->badge(),
             ])

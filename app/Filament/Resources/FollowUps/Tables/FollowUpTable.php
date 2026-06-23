@@ -91,25 +91,47 @@ class FollowUpTable
             ->emptyStateIcon(
                 ! Enquiry::exists() ? 'heroicon-o-phone' : 'heroicon-o-arrow-path-rounded-square'
             )
-            ->emptyStateHeading(function ($livewire): string {
-                // If no enquiry exist
-                if (! Enquiry::exists()) {
-                    return __('app.empty.no_records', ['records' => __('app.resources.enquiries.plural')]);
-                }
+            ->emptyStateHeading(static function ($livewire): string {
+                return static::getEmptyStateHeading($livewire);
+            });
+    }
 
-                $dates = $livewire->getTableFilterState('date') ?? [];
-                [$from, $to] = [$dates['date_from'] ?? null, $dates['date_to'] ?? null];
-                $records = (string) __('app.resources.follow_ups.plural');
-                $tab = (string) ($livewire->activeTab ?? 'all');
-                $status = $tab !== 'all' ? (string) __('app.status.'.$tab) : null;
+    private static function getEmptyStateHeading($livewire): string
+    {
+        $exists = Enquiry::exists();
+        $dates = $livewire->getTableFilterState('date') ?? [];
+        $from = $dates['date_from'] ?? null;
+        $to = $dates['date_to'] ?? null;
+        $records = (string) __('app.resources.follow_ups.plural');
+        $tab = (string) ($livewire->activeTab ?? 'all');
+        $status = $tab !== 'all' ? (string) __('app.status.' . $tab) : null;
 
-                if (! $from && ! $to) {
-                    return $status
-                        ? __('app.empty.no_status_records', ['status' => $status, 'records' => $records])
-                        : __('app.empty.no_records', ['records' => $records]);
-                }
+        if (! $exists) {
+            $message = __('app.empty.no_records', ['records' => __('app.resources.enquiries.plural')]);
+        } elseif (! $from && ! $to) {
+            $message = $status
+                ? __('app.empty.no_status_records', ['status' => $status, 'records' => $records])
+                : __('app.empty.no_records', ['records' => $records]);
+        } elseif ($tab === 'all') {
+            if ($from && ! $to) {
+                $message = __('app.empty.no_from_date_records', ['from' => $from, 'records' => $records]);
+            } elseif (! $from && $to) {
+                $message = __('app.empty.no_to_date_records', ['to' => $to, 'records' => $records]);
+            } else {
+                $message = __('app.empty.no_range_date_records', ['from' => $from, 'to' => $to, 'records' => $records]);
+            }
+        } else {
+            if ($from && ! $to) {
+                $message = __('app.empty.no_from_date_status_records', ['from' => $from, 'status' => $status, 'records' => $records]);
+            } elseif (! $from && $to) {
+                $message = __('app.empty.no_to_date_status_records', ['to' => $to, 'status' => $status, 'records' => $records]);
+            } else {
+                $message = __('app.empty.no_range_date_status_records', ['from' => $from, 'to' => $to, 'status' => $status, 'records' => $records]);
+            }
+        }
 
-                if ($tab === 'all') {
+        return $message;
+    }
                     return __('app.empty.no_records_in_range', ['records' => $records]);
                 }
 
