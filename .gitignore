@@ -24,6 +24,7 @@ composer.phar
 /public/storage
 /storage/*.key
 /storage/pail
+/storage/data/settingsData.json
 /vendor
 /dist
 _ide_helper.php
