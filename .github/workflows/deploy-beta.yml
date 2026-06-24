@@ -16,4 +16,4 @@ jobs:
           key: ${{ secrets.BETA_SSH_KEY }}
           port: ${{ secrets.BETA_PORT }}
           script: |
-            bash /var/www/julius-beta/deploy.sh
+            bash /opt/deploy-beta.sh
