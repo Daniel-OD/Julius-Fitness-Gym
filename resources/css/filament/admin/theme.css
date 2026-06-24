@@ -89,6 +89,96 @@ html.fi .fi-body {
     border-radius: 1rem !important;
 }
 
+/* ——— Fluid modals & overlays (community-scripts style) ——— */
+
+:root {
+    --jf-modal-ease-enter: cubic-bezier(0.16, 1, 0.3, 1);
+    --jf-modal-ease-leave: cubic-bezier(0.4, 0, 0.2, 1);
+    --jf-modal-duration-enter: 420ms;
+    --jf-modal-duration-leave: 280ms;
+}
+
+html.fi .fi-modal-close-overlay {
+    background: rgb(0 0 0 / 0.42) !important;
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    transition: opacity var(--jf-modal-duration-enter) var(--jf-modal-ease-enter) !important;
+}
+
+html.fi.dark .fi-modal-close-overlay {
+    background: rgb(0 0 0 / 0.62) !important;
+}
+
+html.fi .fi-modal:not(.fi-modal-slide-over) > .fi-modal-window-ctn > .fi-modal-window.fi-transition-enter,
+html.fi .fi-modal:not(.fi-modal-slide-over) > .fi-modal-window-ctn > .fi-modal-window.fi-transition-leave,
+html.fi .fi-modal-slide-over > .fi-modal-window-ctn > .fi-modal-window.fi-transition-enter,
+html.fi .fi-modal-slide-over > .fi-modal-window-ctn > .fi-modal-window.fi-transition-leave {
+    transition-property: opacity, transform !important;
+    transition-duration: var(--jf-modal-duration-enter) !important;
+    transition-timing-function: var(--jf-modal-ease-enter) !important;
+    will-change: opacity, transform;
+}
+
+html.fi .fi-modal:not(.fi-modal-slide-over) > .fi-modal-window-ctn > .fi-modal-window.fi-transition-leave,
+html.fi .fi-modal-slide-over > .fi-modal-window-ctn > .fi-modal-window.fi-transition-leave {
+    transition-duration: var(--jf-modal-duration-leave) !important;
+    transition-timing-function: var(--jf-modal-ease-leave) !important;
+}
+
+html.fi .fi-modal:not(.fi-modal-slide-over) > .fi-modal-window-ctn > .fi-modal-window.fi-transition-enter-start,
+html.fi .fi-modal:not(.fi-modal-slide-over) > .fi-modal-window-ctn > .fi-modal-window.fi-transition-leave-end {
+    opacity: 0 !important;
+    transform: scale(0.94) translateY(14px) !important;
+}
+
+html.fi .fi-modal:not(.fi-modal-slide-over) > .fi-modal-window-ctn > .fi-modal-window.fi-transition-enter-end,
+html.fi .fi-modal:not(.fi-modal-slide-over) > .fi-modal-window-ctn > .fi-modal-window.fi-transition-leave-start {
+    opacity: 1 !important;
+    transform: scale(1) translateY(0) !important;
+}
+
+html.fi .fi-modal-close-btn {
+    border-radius: 9999px;
+    transition:
+        background-color 180ms ease,
+        transform 180ms var(--jf-modal-ease-enter);
+}
+
+html.fi .fi-modal-close-btn:hover {
+    transform: scale(1.06);
+}
+
+html.fi .fi-modal-header {
+    transition: border-color 220ms ease;
+}
+
+html.fi .fi-dropdown-panel {
+    transform-origin: top center;
+    animation: jf-dropdown-in 220ms var(--jf-modal-ease-enter) both;
+}
+
+@keyframes jf-dropdown-in {
+    from {
+        opacity: 0;
+        transform: scale(0.96) translateY(-4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html.fi .fi-modal-close-overlay,
+    html.fi .fi-modal-window.fi-transition-enter,
+    html.fi .fi-modal-window.fi-transition-leave,
+    html.fi .fi-dropdown-panel {
+        animation: none !important;
+        transition-duration: 1ms !important;
+    }
+}
+
 /* ——— Light mode (Apple) ——— */
 
 html.fi:not(.dark) .fi-body {
@@ -263,8 +353,12 @@ html.fi:not(.dark) .fi-wi-stats-overview-stat:hover {
 html.fi:not(.dark) .fi-modal-window {
     border-radius: 1.25rem !important;
     border: 1px solid var(--jf-light-border) !important;
-    box-shadow: 0 16px 48px rgb(0 0 0 / 0.12);
-    background: var(--jf-light-surface);
+    box-shadow:
+        0 24px 64px rgb(0 0 0 / 0.14),
+        0 0 0 1px rgb(255 255 255 / 0.6) inset;
+    background: rgb(255 255 255 / 0.96);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
     color: var(--jf-light-text);
 }
 
@@ -481,9 +575,13 @@ html.fi.dark .fi-wi-stats-overview-stat:hover {
 
 html.fi.dark .fi-modal-window {
     border-radius: 1.25rem !important;
-    border: 1px solid rgb(255 255 255 / 0.1) !important;
-    box-shadow: 0 24px 64px rgb(0 0 0 / 0.6);
-    background: #1c1c1e;
+    border: 1px solid rgb(255 255 255 / 0.12) !important;
+    box-shadow:
+        0 32px 80px rgb(0 0 0 / 0.55),
+        0 0 0 1px rgb(255 255 255 / 0.06) inset;
+    background: rgb(28 28 30 / 0.94);
+    backdrop-filter: blur(28px) saturate(160%);
+    -webkit-backdrop-filter: blur(28px) saturate(160%);
 }
 
 html.fi.dark .fi-modal-content {
@@ -825,6 +923,24 @@ html.fi.dark .jf-onboarding-wizard .fi-modal-footer {
 }
 
 @media (max-width: 640px) {
+    html.fi .fi-modal:not(.fi-modal-slide-over):not(.fi-width-screen) > .fi-modal-window-ctn > .fi-modal-window.fi-transition-enter-start,
+    html.fi .fi-modal:not(.fi-modal-slide-over):not(.fi-width-screen) > .fi-modal-window-ctn > .fi-modal-window.fi-transition-leave-end {
+        transform: scale(1) translateY(100%) !important;
+    }
+
+    html.fi .fi-modal:not(.fi-modal-slide-over):not(.fi-width-screen) > .fi-modal-window-ctn {
+        align-items: end;
+        padding-bottom: 0;
+    }
+
+    html.fi .fi-modal:not(.fi-modal-slide-over):not(.fi-width-screen) > .fi-modal-window-ctn > .fi-modal-window {
+        margin-bottom: 0;
+        width: 100%;
+        max-width: 100%;
+        border-bottom-left-radius: 0 !important;
+        border-bottom-right-radius: 0 !important;
+    }
+
     .jf-onboarding-wizard.fi-modal-window {
         max-height: 100dvh;
         border-radius: 1rem 1rem 0 0 !important;
@@ -837,6 +953,75 @@ html.fi.dark .jf-onboarding-wizard .fi-modal-footer {
     .jf-onboarding-optional .fi-section-content-ctn {
         grid-template-columns: 1fr !important;
     }
+}
+
+/* ——— Sidebar quick actions ——— */
+
+.fi-sidebar-nav:has(.jf-sidebar-quick-actions-slot) {
+    display: flex;
+    flex-direction: column;
+}
+
+.fi-sidebar-nav:has(.jf-sidebar-quick-actions-slot) > .fi-sidebar-nav-groups {
+    display: flex;
+    flex-direction: column;
+}
+
+.fi-sidebar-nav:has(.jf-sidebar-quick-actions-slot) > .jf-sidebar-quick-actions-slot {
+    order: 2;
+}
+
+.fi-sidebar-nav:has(.jf-sidebar-quick-actions-slot) > .fi-sidebar-nav-groups > .fi-sidebar-group:first-child {
+    order: 1;
+}
+
+.fi-sidebar-nav:has(.jf-sidebar-quick-actions-slot) > .fi-sidebar-nav-groups > .fi-sidebar-group:not(:first-child) {
+    order: 3;
+}
+
+.jf-sidebar-quick-actions {
+    margin-top: 0.25rem;
+    margin-bottom: 0.75rem;
+}
+
+.jf-sidebar-quick-actions .fi-sidebar-group-label {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: rgb(161 161 170);
+}
+
+html.fi.dark .jf-sidebar-quick-actions .fi-sidebar-group-label {
+    color: rgb(161 161 170 / 0.72);
+}
+
+.jf-sidebar-quick-action .fi-link,
+.jf-sidebar-quick-action .fi-btn {
+    width: 100%;
+    justify-content: flex-start;
+    gap: 0.625rem;
+    border-radius: 0.625rem;
+    padding: 0.5rem 0.625rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    text-align: left;
+}
+
+.jf-sidebar-quick-action .fi-link:hover,
+.jf-sidebar-quick-action .fi-btn:hover {
+    background: rgb(255 90 31 / 0.08);
+}
+
+html.fi.dark .jf-sidebar-quick-action .fi-link:hover,
+html.fi.dark .jf-sidebar-quick-action .fi-btn:hover {
+    background: rgb(255 255 255 / 0.06);
+}
+
+.jf-sidebar-quick-action .fi-icon-btn-icon,
+.jf-sidebar-quick-action .fi-link-icon {
+    width: 1rem;
+    height: 1rem;
 }
 
 /* ——— Members table ——— */
@@ -1245,86 +1430,11 @@ html.fi.dark .jf-select option {
     --c-600: #e84e15;
 }
 
-.jf-import-btn-content {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.jf-import-btn-loading {
-    font-weight: 600;
-}
-
-[x-cloak] {
-    display: none !important;
-}
-
-.jf-import-progress-panel {
-    display: flex;
-    flex-direction: column;
-    gap: 0.875rem;
-    padding: 1.25rem;
-    border-radius: 1rem;
-    border: 1px solid rgb(255 90 31 / 0.15);
-    background: linear-gradient(180deg, rgb(255 90 31 / 0.06), rgb(255 90 31 / 0.02));
-}
-
-html.fi.dark .jf-import-progress-panel {
-    border-color: rgb(255 90 31 / 0.25);
-    background: linear-gradient(180deg, rgb(255 90 31 / 0.12), rgb(255 90 31 / 0.04));
-}
-
-.jf-import-progress-panel--loading {
-    opacity: 0.95;
-}
-
-.jf-import-progress-status {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.875rem;
-}
-
-.jf-import-progress__title {
-    margin: 0;
-    font-size: 0.9375rem;
-    font-weight: 600;
-    color: var(--jf-light-text, #1d1d1f);
-}
-
-html.fi.dark .jf-import-progress__title {
-    color: rgb(255 255 255 / 0.92);
-}
-
-.jf-import-spinner {
-    flex-shrink: 0;
-    width: 1.25rem;
-    height: 1.25rem;
-    border: 2px solid rgb(255 90 31 / 0.2);
-    border-top-color: #ff5a1f;
-    border-radius: 9999px;
-    animation: jf-import-spin 0.75s linear infinite;
-}
-
-.jf-import-spinner--sm {
-    width: 1rem;
-    height: 1rem;
-}
-
-@keyframes jf-import-spin {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
 .jf-import-progress {
-    height: 0.625rem;
+    height: 0.5rem;
     border-radius: 9999px;
     background: var(--jf-light-row, #f2f2f7);
     overflow: hidden;
-}
-
-.jf-import-progress--indeterminate {
-    position: relative;
 }
 
 html.fi.dark .jf-import-progress {
@@ -1333,39 +1443,14 @@ html.fi.dark .jf-import-progress {
 
 .jf-import-progress__bar {
     height: 100%;
-    min-width: 0.25rem;
     background: linear-gradient(90deg, #ff5a1f, #ffb199);
     border-radius: 9999px;
     transition: width 320ms cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
-.jf-import-progress__bar--indeterminate {
-    width: 40% !important;
-    animation: jf-import-indeterminate 1.25s ease-in-out infinite;
-}
-
-@keyframes jf-import-indeterminate {
-    0% {
-        transform: translateX(-120%);
-    }
-
-    100% {
-        transform: translateX(320%);
-    }
-}
-
 .jf-import-progress__label {
-    margin: 0.25rem 0 0;
     font-size: 0.875rem;
     color: var(--jf-light-text-secondary, #6e6e73);
-}
-
-.jf-import-progress__percent {
-    margin: 0;
-    font-size: 0.8125rem;
-    font-weight: 600;
-    color: #ff5a1f;
-    text-align: right;
 }
 
 .jf-import-results {
