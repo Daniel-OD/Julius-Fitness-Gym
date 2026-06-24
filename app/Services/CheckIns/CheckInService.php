@@ -272,19 +272,6 @@ class CheckInService
             ->count();
     }
 
-    public function activeSubscriptionFor(int $memberId): ?Subscription
-    {
-        $today = CarbonImmutable::today(AppConfig::timezone())->toDateString();
-
-        return Subscription::query()
-            ->where('member_id', $memberId)
-            ->whereDate('start_date', '<=', $today)
-            ->whereDate('end_date', '>=', $today)
-            ->whereNotIn('status', ['cancelled', 'renewed'])
-            ->latest('end_date')
-            ->first();
-    }
-
     /**
      * Record a manual front-desk check-in.
      *
