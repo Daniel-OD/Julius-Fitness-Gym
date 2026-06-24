@@ -1,0 +1,19 @@
+name: Deploy Beta
+
+on:
+  push:
+    branches: [develop]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to LXC beta via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.BETA_HOST }}
+          username: ${{ secrets.BETA_USER }}
+          key: ${{ secrets.BETA_SSH_KEY }}
+          port: ${{ secrets.BETA_PORT }}
+          script: |
+            bash /var/www/julius-beta/deploy.sh
