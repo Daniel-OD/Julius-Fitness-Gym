@@ -21,6 +21,11 @@ class Login extends BaseLogin
         if (Filament::auth()->check()) {
             $lockedPanelId = FilamentSession::authenticatedPanelId();
 
+            if ($lockedPanelId === null && $currentPanelId !== null) {
+                FilamentSession::lockToPanel($currentPanelId);
+                $lockedPanelId = $currentPanelId;
+            }
+
             if ($lockedPanelId === $currentPanelId) {
                 redirect()->intended($this->intendedUrlFor(Filament::auth()->user()));
             }

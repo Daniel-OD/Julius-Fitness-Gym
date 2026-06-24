@@ -42,6 +42,7 @@ class AppServiceProvider extends ServiceProvider
             config(['session.secure' => true]);
         }
 
+        $this->configureProductionRootUrl();
         $this->ensureStorageDirectoriesExist();
         $this->configureLocalExecutionTimeLimit();
         $this->configureMailFromSettings();
@@ -61,6 +62,32 @@ class AppServiceProvider extends ServiceProvider
             'Repository' => Studio::repository(),
             'Reference' => (string) config('studio.ref'),
         ]);
+    }
+
+    /**
+     * Keep generated URLs on the host the user is actually visiting.
+     *
+     * On Render, APP_URL may still point at *.onrender.com while staff use a
+     * custom domain (e.g. beta.juliusgym.ro). Sidebar links would then leave
+     * the session cookie behind and bounce back to login.
+     */
+    private function configureProductionRootUrl(): void
+    {
+        if ($this->app->runningInConsole() || $this->app->runningUnitTests()) {
+            return;
+        }
+
+        if (! $this->app->environment('production')) {
+            return;
+        }
+
+        $request = request();
+
+        if ($request->getHost() === '') {
+            return;
+        }
+
+        URL::forceRootUrl($request->getSchemeAndHttpHost());
     }
 
     private function ensureStorageDirectoriesExist(): void
