@@ -116,25 +116,12 @@ html.fi .fi-modal-slide-over > .fi-modal-window-ctn > .fi-modal-window.fi-transi
     transition-property: opacity, transform !important;
     transition-duration: var(--jf-modal-duration-enter) !important;
     transition-timing-function: var(--jf-modal-ease-enter) !important;
-    will-change: opacity, transform;
 }
 
 html.fi .fi-modal:not(.fi-modal-slide-over) > .fi-modal-window-ctn > .fi-modal-window.fi-transition-leave,
 html.fi .fi-modal-slide-over > .fi-modal-window-ctn > .fi-modal-window.fi-transition-leave {
     transition-duration: var(--jf-modal-duration-leave) !important;
     transition-timing-function: var(--jf-modal-ease-leave) !important;
-}
-
-html.fi .fi-modal:not(.fi-modal-slide-over) > .fi-modal-window-ctn > .fi-modal-window.fi-transition-enter-start,
-html.fi .fi-modal:not(.fi-modal-slide-over) > .fi-modal-window-ctn > .fi-modal-window.fi-transition-leave-end {
-    opacity: 0 !important;
-    transform: scale(0.94) translateY(14px) !important;
-}
-
-html.fi .fi-modal:not(.fi-modal-slide-over) > .fi-modal-window-ctn > .fi-modal-window.fi-transition-enter-end,
-html.fi .fi-modal:not(.fi-modal-slide-over) > .fi-modal-window-ctn > .fi-modal-window.fi-transition-leave-start {
-    opacity: 1 !important;
-    transform: scale(1) translateY(0) !important;
 }
 
 html.fi .fi-modal-close-btn {
@@ -202,9 +189,6 @@ html.fi:not(.dark) .fi-sidebar-header {
 }
 
 html.fi:not(.dark) .fi-topbar {
-    position: sticky;
-    top: 0;
-    z-index: 30;
     background: rgb(242 242 247 / 0.88) !important;
     backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
@@ -439,9 +423,6 @@ html.fi.dark .fi-sidebar-header {
 }
 
 html.fi.dark .fi-topbar {
-    position: sticky;
-    top: 0;
-    z-index: 30;
     background: rgb(10 10 10 / 0.72) !important;
     backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);

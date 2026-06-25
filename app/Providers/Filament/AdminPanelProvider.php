@@ -133,6 +133,14 @@ class AdminPanelProvider extends PanelProvider
                         : Blade::render('@livewire(\App\Filament\Livewire\SubscriptionExpirationNotifications::class, [], key(\'subscription-expiration-notifications\'))')).
                     Blade::render('@livewire(\App\Filament\Livewire\LocaleSwitcher::class, [], key(\'locale-switcher\'))')
                 ),
+            )
+            ->renderHook(
+                PanelsRenderHook::BODY_END,
+                fn (): HtmlString => new HtmlString(
+                    filament()->getCurrentPanel()?->getId() === 'admin'
+                        ? Blade::render('@livewire(\App\Filament\Livewire\SidebarQuickActions::class, [], key(\'sidebar-quick-actions\'))')
+                        : ''
+                ),
             );
     }
 
@@ -297,19 +305,23 @@ class AdminPanelProvider extends PanelProvider
     protected function quickActionsNavigationItems(): array
     {
         return [
-            NavigationItem::make(__('app.dashboard.quick_actions.new_member'))
-                ->url(fn (): string => Dashboard::getUrl(['action' => 'new_member']))
-                ->isActiveWhen(fn (): bool => false),
-            NavigationItem::make(__('app.dashboard.quick_actions.manual_checkin'))
-                ->url(fn (): string => Dashboard::getUrl(['action' => 'manual_checkin']))
-                ->isActiveWhen(fn (): bool => false),
+            $this->quickActionModalNavigationItem(__('app.dashboard.quick_actions.new_member'), 'new_member'),
+            $this->quickActionModalNavigationItem(__('app.dashboard.quick_actions.manual_checkin'), 'manual_checkin'),
             NavigationItem::make(__('app.dashboard.quick_actions.new_lead'))
                 ->url(fn (): string => EnquiryResource::getUrl('create'))
                 ->isActiveWhen(fn (): bool => request()->routeIs('filament.admin.resources.enquiries.create')),
-            NavigationItem::make(__('app.dashboard.quick_actions.new_sale'))
-                ->url(fn (): string => Dashboard::getUrl(['action' => 'new_sale']))
-                ->isActiveWhen(fn (): bool => false),
+            $this->quickActionModalNavigationItem(__('app.dashboard.quick_actions.new_sale'), 'new_sale'),
         ];
+    }
+
+    protected function quickActionModalNavigationItem(string $label, string $action): NavigationItem
+    {
+        return NavigationItem::make($label)
+            ->url('#')
+            ->extraAttributes([
+                'x-on:click.capture.prevent' => "\$dispatch('open-dashboard-quick-action', { action: '{$action}' })",
+            ])
+            ->isActiveWhen(fn (): bool => false);
     }
 
     /**

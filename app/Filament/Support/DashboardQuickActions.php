@@ -34,7 +34,7 @@ final class DashboardQuickActions
                 ->label(__('app.dashboard.quick_actions.new_member'))
                 ->icon('heroicon-o-user-plus')
                 ->color('primary')
-                // removed ->link() so modal is opened via Livewire (no GET to Livewire internal routes)
+                ->link()
                 ->modalWidth('7xl')
                 ->extraModalWindowAttributes(['class' => 'jf-onboarding-wizard'])
                 ->modalHeading(__('app.actions.new', ['resource' => __('app.resources.members.singular')]))
@@ -63,7 +63,7 @@ final class DashboardQuickActions
                 ->label(__('app.dashboard.quick_actions.manual_checkin'))
                 ->icon('heroicon-o-qr-code')
                 ->color('success')
-                // removed ->link() so modal is opened via Livewire (no GET to Livewire internal routes)
+                ->link()
                 ->schema([
                     Select::make('member_id')
                         ->label(__('app.fields.member'))

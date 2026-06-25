@@ -29,7 +29,7 @@ $afterActions = \Filament\Support\Facades\FilamentView::renderHook(\Filament\Vie
         @endif
     </div>
 
-    <div class="fi-header-actions-ctn" @unless(filled($this->defaultAction)) wire:init="ensureDefaultFilters" @endunless>
+    <div class="fi-header-actions-ctn" @unless(filled($this->defaultAction)) wire:init.debounce.500ms="ensureDefaultFilters" @endunless>
         {{ $beforeActions }}
 
         <div class="fi-ios-filter-bar flex w-full flex-wrap items-stretch justify-end gap-2 px-2 py-2 sm:items-center sm:gap-3 sm:px-4">

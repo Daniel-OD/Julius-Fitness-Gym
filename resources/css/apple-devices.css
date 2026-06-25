@@ -74,13 +74,31 @@
 
 /* ——— Filament admin & office ——— */
 
+html.fi {
+    overflow-x: clip;
+}
+
 html.fi .fi-body {
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
+    overflow-x: clip;
+    width: 100%;
+}
+
+html.fi .fi-layout {
+    width: 100%;
+    max-width: 100%;
 }
 
 html.fi .fi-main-ctn {
     min-width: 0;
+    width: 100% !important;
+    max-width: 100%;
+}
+
+html.fi .fi-topbar-ctn {
+    width: 100%;
+    max-width: 100%;
 }
 
 html.fi .fi-main {
@@ -124,8 +142,23 @@ html.fi .fi-main {
         min-width: 0;
     }
 
-    html.fi .fi-wi-stats-overview {
-        grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+    html.fi .fi-topbar {
+        flex-wrap: wrap;
+        row-gap: 0.5rem;
+        min-height: auto;
+        padding-block: 0.5rem;
+    }
+
+    html.fi .fi-topbar .fi-global-search {
+        flex: 1 1 100%;
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    html.fi .fi-topbar-end {
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 0.5rem;
     }
 
     html.fi .fi-ta-ctn {
@@ -154,13 +187,17 @@ html.fi .fi-main {
     }
 }
 
-@media (min-width: 640px) and (max-width: 1023px) {
-    html.fi .fi-wi-stats-overview {
-        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    }
-
+@media (max-width: 1279px) {
+    html.fi .fi-wi-stats-overview,
     .office-dashboard .fi-wi-stats-overview {
         grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+}
+
+@media (max-width: 639px) {
+    html.fi .fi-wi-stats-overview,
+    .office-dashboard .fi-wi-stats-overview {
+        grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
     }
 }
 
