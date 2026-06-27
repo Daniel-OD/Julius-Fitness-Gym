@@ -33,17 +33,24 @@ class InvoiceTransactionObserver
 
         $settings = $this->settingsRepository->get();
 
-        if (
-            ! (bool) data_get($settings, 'notifications.email.enabled', false) ||
-            ! (bool) data_get($settings, 'notifications.email.auto_send_payment_receipt', false)
-        ) {
-            return;
-        }
-
         $invoiceTransaction->loadMissing('invoice.subscription.member');
 
         $invoiceId = $invoiceTransaction->invoice?->getKey();
         if (! $invoiceId) {
+            return;
+        }
+
+        // WhatsApp payment confirmation is independent of the email channel.
+        if ((bool) data_get($settings, 'notifications.whatsapp.enabled', false)) {
+            SendWhatsAppPaymentConfirmation::dispatch(
+                invoiceId: Data::int($invoiceId),
+            )->afterCommit();
+        }
+
+        if (
+            ! (bool) data_get($settings, 'notifications.email.enabled', false) ||
+            ! (bool) data_get($settings, 'notifications.email.auto_send_payment_receipt', false)
+        ) {
             return;
         }
 
@@ -67,14 +74,6 @@ class InvoiceTransactionObserver
             invoiceTransactionId: Data::int($invoiceTransaction->getKey()),
             toEmail: $email,
         )->afterCommit();
-
-        $whatsAppEnabled = (bool) data_get($settings, 'notifications.whatsapp.enabled', false);
-
-        if ($whatsAppEnabled) {
-            SendWhatsAppPaymentConfirmation::dispatch(
-                invoiceId: Data::int($invoiceId),
-            )->afterCommit();
-        }
     }
 
     // Other lifecycle events intentionally left unhandled for v1.
