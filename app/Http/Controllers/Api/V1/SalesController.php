@@ -10,6 +10,8 @@ use App\Services\Api\QueryFilters;
 use App\Services\Shop\SaleService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Validation\ValidationException;
+use InvalidArgumentException;
 
 class SalesController extends ApiController
 {
@@ -34,10 +36,16 @@ class SalesController extends ApiController
     {
         $this->requirePermission($request, 'Create:Sale');
 
-        $sale = $this->saleService->create([
-            ...$request->validated(),
-            'status' => SaleStatus::Completed->value,
-        ], $this->currentUser($request));
+        try {
+            $sale = $this->saleService->create([
+                ...$request->validated(),
+                'status' => SaleStatus::Completed->value,
+            ], $this->currentUser($request));
+        } catch (InvalidArgumentException $exception) {
+            throw ValidationException::withMessages([
+                'items' => [$exception->getMessage()],
+            ]);
+        }
 
         return new SaleResource($sale);
     }
