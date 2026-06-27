@@ -14,6 +14,7 @@ use App\Services\Fitness\NutritionMacroCalculator;
 use App\Services\Fitness\WorkoutPlanAssignmentService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class MemberFitnessController extends Controller
@@ -110,7 +111,7 @@ class MemberFitnessController extends Controller
 
         $validated = $request->validate([
             'logged_at' => ['required', 'date'],
-            'meal_type' => ['required', 'string'],
+            'meal_type' => ['required', Rule::enum(MealType::class)],
             'food_item_id' => ['required', 'integer', 'exists:food_items,id'],
             'quantity' => ['required', 'numeric', 'min:0.1'],
             'unit' => ['required', 'string', 'max:20'],
