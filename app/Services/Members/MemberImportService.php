@@ -154,7 +154,7 @@ class MemberImportService
 
             if (! $memberHandled) {
                 try {
-                    $member = Member::query()->create($attributes);
+                    $member = Member::query()->create([...$attributes, ...$this->creationDefaults()]);
                     $imported++;
                 } catch (\Throwable $exception) {
                     $failed++;
@@ -228,19 +228,30 @@ class MemberImportService
      */
     private function attributesFromRow(array $row): array
     {
-        $status = $this->parseStatus($row['status'] ?? null);
-
         return array_filter([
             'name' => $row['name'] ?? null,
             'email' => filled($row['email'] ?? null) ? Str::lower((string) $row['email']) : null,
             'contact' => $row['contact'] ?? null,
             'dob' => $this->valueParser->parseDate($row['dob'] ?? null),
-            'status' => $status,
+            'status' => filled($row['status'] ?? null) ? $this->parseStatus((string) $row['status']) : null,
             'health_issue' => $row['notes'] ?? null,
+        ], fn (mixed $value): bool => $value !== null && $value !== '');
+    }
+
+    /**
+     * Profile defaults seeded only when creating a brand-new member. They are
+     * intentionally excluded from the duplicate "update" path so re-importing a
+     * file never overwrites an existing member's gender, source or goal.
+     *
+     * @return array<string, string>
+     */
+    private function creationDefaults(): array
+    {
+        return [
             'gender' => 'other',
             'source' => 'others',
             'goal' => 'fitness',
-        ], fn (mixed $value): bool => $value !== null && $value !== '');
+        ];
     }
 
     /**

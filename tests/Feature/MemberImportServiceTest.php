@@ -90,6 +90,33 @@ it('updates duplicate emails when configured', function (): void {
         ->and($existing->fresh()->contact)->toBe('0721111111');
 });
 
+it('preserves existing member profile fields not present in the import file when updating', function (): void {
+    $existing = Member::factory()->create([
+        'email' => 'andrei@example.test',
+        'name' => 'Existing',
+        'gender' => 'female',
+        'source' => 'referral',
+        'goal' => 'weight loss',
+    ]);
+
+    $reader = app(MemberImportSpreadsheetReader::class);
+    $service = app(MemberImportService::class);
+    $dataset = $reader->read(memberImportCsvPath(), 'csv');
+    $mapping = app(MemberImportColumnMapper::class)->suggest(
+        $reader->headersFromFirstRow($dataset, true),
+    );
+    $rows = $service->buildMappedRows($dataset, true, $mapping);
+
+    $service->importChunk($rows, 0, 'update');
+
+    $fresh = $existing->fresh();
+
+    expect($fresh->name)->toBe('Andrei Popescu')
+        ->and($fresh->gender)->toBe('female')
+        ->and($fresh->source)->toBe('referral')
+        ->and($fresh->goal)->toBe('weight loss');
+});
+
 it('flags rows without email or name in analysis', function (): void {
     $dataset = new MemberImportDataset(
         ['Col 1', 'Col 2'],
