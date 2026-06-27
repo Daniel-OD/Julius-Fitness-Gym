@@ -58,3 +58,14 @@ it('redirects unauthenticated admin requests to staff login', function (): void 
     $this->get(route('filament.admin.pages.dashboard'))
         ->assertRedirect(route('filament.admin.auth.login'));
 });
+
+it('generates sidebar links on the request host when APP_URL differs', function (): void {
+    config(['app.url' => 'http://wrong-host.test']);
+
+    $user = adminPanelUser();
+
+    $this->actingAs($user)
+        ->get('https://julius-fitness-gym.test/admin/dashboard')
+        ->assertSuccessful()
+        ->assertSee('href="https://julius-fitness-gym.test/admin/members"', false);
+});

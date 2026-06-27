@@ -28,6 +28,10 @@ class Login extends BaseLogin
 
             if ($lockedPanelId === $currentPanelId) {
                 redirect()->intended($this->intendedUrlFor(Filament::auth()->user()));
+
+                // Stop here — the session is valid for this panel and must be
+                // preserved. Falling through would invalidate it via logout.
+                return;
             }
 
             $this->logoutPreviousSession();
