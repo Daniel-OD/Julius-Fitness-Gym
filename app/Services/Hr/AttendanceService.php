@@ -64,6 +64,9 @@ class AttendanceService
 
         $this->upsertAttendance($user->id, $today, [
             'check_in' => $now,
+            // A fresh check-in must clear any prior check_out, otherwise re-scanning
+            // after a checkout leaves check_out < check_in and corrupts worked hours.
+            'check_out' => null,
             'method' => AttendanceMethod::Qr,
             'status' => $status,
             'note' => $evaluation['late']
@@ -165,13 +168,20 @@ class AttendanceService
             ->whereDate('date', $date)
             ->first();
 
-        if ($existing?->trashed()) {
-            $existing->restore();
+        if ($existing !== null) {
+            if ($existing->trashed()) {
+                $existing->restore();
+            }
+
+            $existing->fill($attributes)->save();
+
+            return $existing;
         }
 
-        return Attendance::query()->updateOrCreate(
-            ['user_id' => $userId, 'date' => $date],
-            $attributes,
-        );
+        return Attendance::query()->create([
+            'user_id' => $userId,
+            'date' => $date,
+            ...$attributes,
+        ]);
     }
 }

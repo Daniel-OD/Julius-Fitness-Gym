@@ -105,14 +105,21 @@ class PayrollService
         $overtimeMultiplier = (float) config('hr.attendance.overtime_multiplier', 1.5);
 
         if ($profile->salary_type === SalaryType::Hourly) {
-            $regularHours = min(
-                $presentDays * $standardHours,
+            $totalWorkedHours = round(
                 $attendances->sum(fn (Attendance $row): float => $row->workedHours()),
+                2,
             );
+            // Regular hours are everything that is not overtime. Clamping against
+            // present_days * standard_hours instead would leave overtime hours
+            // inside regular hours on mixed-length days, paying them twice.
+            $regularHours = max(0, round($totalWorkedHours - $overtimeHours, 2));
             $gross = round(($regularHours * $baseSalary) + ($overtimeHours * $baseSalary * $overtimeMultiplier), 2);
         } else {
             $effectiveWorkingDays = max(1, $workingDays);
-            $paidDays = $presentDays;
+            // Unpaid leave days are paid into gross here and removed via an
+            // itemized deduction below; excluding them from gross as well would
+            // penalize each leave day twice.
+            $paidDays = $presentDays + $unpaidLeaveDays;
             $dailyRate = $baseSalary / $effectiveWorkingDays;
             $gross = round(($dailyRate * $paidDays) + $this->overtimePay($baseSalary, $overtimeHours, $standardHours, $overtimeMultiplier), 2);
         }

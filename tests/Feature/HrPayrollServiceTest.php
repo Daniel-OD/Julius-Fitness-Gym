@@ -76,9 +76,12 @@ it('deducts unpaid leave from monthly payroll', function (): void {
     $service = app(PayrollService::class);
     $result = $service->calculateForStaff($profile, 6, 2026, 22);
 
+    // The 2 unpaid-leave days are paid into gross and then itemized as a single
+    // deduction, so each non-worked day is penalized exactly once: net reflects
+    // the 20 present days (20/22), not 18/22.
     expect($result['deductions'])->not->toBeEmpty()
-        ->and($result['gross'])->toBe(round(2200 * (20 / 22), 2))
-        ->and($result['net'])->toBe(round(2200 * (18 / 22), 2));
+        ->and($result['gross'])->toBe(round(2200 * (22 / 22), 2))
+        ->and($result['net'])->toBe(round(2200 * (20 / 22), 2));
 });
 
 it('calculates hourly payroll from worked hours', function (): void {
@@ -148,6 +151,36 @@ it('calculates hourly payroll with overtime hours', function (): void {
     expect($result['overtime_hours'])->toBe(2.0)
         ->and($result['gross'])->toBe(220.0)
         ->and($result['net'])->toBe(220.0);
+});
+
+it('does not double-count overtime hours across mixed-length days', function (): void {
+    $user = User::factory()->create();
+    $profile = StaffProfile::factory()->for($user)->create([
+        'base_salary' => 20,
+        'salary_type' => SalaryType::Hourly,
+    ]);
+
+    // Day 1: 10h worked (2h overtime beyond the 8h standard).
+    Attendance::factory()->for($user)->create([
+        'date' => '2026-06-02',
+        'check_in' => '2026-06-02 08:00:00',
+        'check_out' => '2026-06-02 18:00:00',
+        'status' => AttendanceStatus::Present,
+    ]);
+    // Day 2: 4h worked (no overtime).
+    Attendance::factory()->for($user)->create([
+        'date' => '2026-06-03',
+        'check_in' => '2026-06-03 09:00:00',
+        'check_out' => '2026-06-03 13:00:00',
+        'status' => AttendanceStatus::Present,
+    ]);
+
+    $result = app(PayrollService::class)->calculateForStaff($profile, 6, 2026, 22);
+
+    // 14h worked, 2h overtime → 12h regular. 12*20 + 2*20*1.5 = 240 + 60 = 300.
+    expect($result['overtime_hours'])->toBe(2.0)
+        ->and($result['gross'])->toBe(300.0)
+        ->and($result['net'])->toBe(300.0);
 });
 
 it('clamps monthly payroll working days to minimum of 1 when zero passed', function (): void {
