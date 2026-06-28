@@ -3,7 +3,9 @@
 use App\Models\Member;
 use App\Notifications\Member\MemberVerifyEmailNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Notifications\SendQueuedNotifications;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\URL;
 
 uses(RefreshDatabase::class);
@@ -54,6 +56,22 @@ it('sends verification email after registration', function (): void {
     $member = Member::where('email', 'test@example.com')->first();
 
     Notification::assertSentTo($member, MemberVerifyEmailNotification::class);
+});
+
+it('queues verification email after registration', function (): void {
+    Queue::fake();
+
+    $this->post(route('member.register'), [
+        'name' => 'Test Member',
+        'email' => 'queued@example.com',
+        'contact' => '0712345678',
+        'password' => 'password123',
+        'password_confirmation' => 'password123',
+    ])->assertRedirect(route('member.verify-email'));
+
+    Queue::assertPushed(SendQueuedNotifications::class, function (SendQueuedNotifications $job): bool {
+        return $job->notification instanceof MemberVerifyEmailNotification;
+    });
 });
 
 it('blocks dashboard without verified email', function (): void {

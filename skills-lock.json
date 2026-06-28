@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "skills": {
+    "api-smoke-testing": {
+      "source": "spencerpauly/awesome-cursor-skills",
+      "sourceType": "github",
+      "skillPath": "resources/api-smoke-testing/SKILL.md",
+      "computedHash": "8f931d8c54e71db19e37c794e5bed420181121ac87b15eadbf2ee728292cb35b"
+    },
+    "auditing-performance": {
+      "source": "spencerpauly/awesome-cursor-skills",
+      "sourceType": "github",
+      "skillPath": "resources/auditing-performance/SKILL.md",
+      "computedHash": "f979be0522fe55bea68e3d55b2dca14140d2b0cb3b32424df0a210e2ed7373d1"
+    },
+    "auditing-security": {
+      "source": "spencerpauly/awesome-cursor-skills",
+      "sourceType": "github",
+      "skillPath": "resources/auditing-security/SKILL.md",
+      "computedHash": "a9da2b16a234fadd1cbda895fbae971d06e997a38e57a7aa6eb59b47bb52b7a8"
+    },
+    "babysitting-pr": {
+      "source": "spencerpauly/awesome-cursor-skills",
+      "sourceType": "github",
+      "skillPath": "resources/babysitting-pr/SKILL.md",
+      "computedHash": "7be8c3a3bc7309e51f041fcb7650191ff9455d1b5e25c0a79f4fd623cb363abf"
+    },
+    "creating-pr": {
+      "source": "spencerpauly/awesome-cursor-skills",
+      "sourceType": "github",
+      "skillPath": "resources/creating-pr/SKILL.md",
+      "computedHash": "e6adeaebb3bc0070a16747b31f0801c63f3896c4cac2fff7292ff7914f056df2"
+    },
+    "parallel-test-fixing": {
+      "source": "spencerpauly/awesome-cursor-skills",
+      "sourceType": "github",
+      "skillPath": "resources/parallel-test-fixing/SKILL.md",
+      "computedHash": "5403dbd429484da5f0894083dc1bbad9f71b7c62eec517ff0c7acc722fe1a859"
+    },
+    "systematic-debugging": {
+      "source": "spencerpauly/awesome-cursor-skills",
+      "sourceType": "github",
+      "skillPath": "resources/systematic-debugging/SKILL.md",
+      "computedHash": "bc589d8370a294e47999250d33647c5a37c911d809b4afb39b34a7f069010eda"
+    },
+    "visual-qa-testing": {
+      "source": "spencerpauly/awesome-cursor-skills",
+      "sourceType": "github",
+      "skillPath": "resources/visual-qa-testing/SKILL.md",
+      "computedHash": "41c3266cfd34e720b26821e4a9620919e346b694b2ba6dddd3a4cada5bb5e903"
+    },
+    "writing-commit-messages": {
+      "source": "spencerpauly/awesome-cursor-skills",
+      "sourceType": "github",
+      "skillPath": "resources/writing-commit-messages/SKILL.md",
+      "computedHash": "a995c4fc9127a677b3ddc6cbeba0fdc981d6da4d7fa84d63de412ba3efeeeb29"
+    },
+    "writing-tests": {
+      "source": "spencerpauly/awesome-cursor-skills",
+      "sourceType": "github",
+      "skillPath": "resources/writing-tests/SKILL.md",
+      "computedHash": "b94315519ae2499cc98deb6943b78f7eb2a72a20bbd8ef824c87dab3be556851"
+    }
+  }
+}

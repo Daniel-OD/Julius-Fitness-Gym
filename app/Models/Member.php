@@ -136,7 +136,11 @@ class Member extends Authenticatable implements MustVerifyEmail
     #[\Override]
     public function sendEmailVerificationNotification(): void
     {
-        $this->notify(new MemberVerifyEmailNotification);
+        try {
+            $this->notify(new MemberVerifyEmailNotification);
+        } catch (\Throwable $exception) {
+            report($exception);
+        }
     }
 
     /**
