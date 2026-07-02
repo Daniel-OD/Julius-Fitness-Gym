@@ -39,7 +39,7 @@ class UserTable
                 ImageColumn::make('photo')
                     ->label(__('app.fields.photo'))
                     ->circular()
-                    ->defaultImageUrl([self::class, 'getDefaultAvatarUrl']),
+                    ->defaultImageUrl(fn (User $record): string => 'https://ui-avatars.com/api/?background=000&color=fff&name='.$record->name),
                 TextColumn::make('name')
                     ->label(__('app.fields.name'))
                     ->sortable()
@@ -95,13 +95,7 @@ class UserTable
                 return User::where('status', $tab)->exists()
                     ? __('app.empty.no_status_records_in_range', ['status' => $status, 'records' => $records])
                     : $base;
-            });
-
-    protected static function getDefaultAvatarUrl(User $record): string
-    {
-        return 'https://ui-avatars.com/api/?background=000&color=fff&name=' . $record->name;
-    }
-}
+            })
             ->emptyStateDescription(function ($livewire): string {
                 $dates = $livewire->getTableFilterState('date') ?? [];
                 [$fromRaw, $toRaw] = [$dates['date_from'] ?? null, $dates['date_to'] ?? null];
@@ -181,7 +175,7 @@ class UserTable
                                     ->success()
                                     ->body(__('app.notifications.user_activated_body', ['name' => $record->name]))
                                     ->send();
-                            })
+                            }))
                             ->visible(fn ($record): bool => $record->status->value === 'inactive'),
                     ])->dropdown(false),
                     ActionGroup::make([
@@ -195,7 +189,7 @@ class UserTable
                         DeleteAction::make(),
                         RestoreAction::make(),
                     ])->dropdown(false),
-                ])
+                ]),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

@@ -44,7 +44,6 @@ final class PlanSchema
             ],
         ];
     }
-    }
 
     /**
      * @return array<string, ValidationRule|array<mixed>|string>
