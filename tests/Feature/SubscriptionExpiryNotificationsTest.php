@@ -13,21 +13,6 @@ use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
-<?php
-
-use App\Contracts\SettingsRepository;
-use App\Jobs\SendSubscriptionExpiryNotification;
-use App\Models\Member;
-use App\Models\Plan;
-use App\Models\Subscription;
-use App\Models\User;
-use App\Notifications\SubscriptionExpiryNotification;
-use Carbon\Carbon;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Bus;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Notification;
 
 uses(RefreshDatabase::class);
 
@@ -53,7 +38,7 @@ function makeSubscriptionExpiringIn(int $days): Subscription
 it('dispatches a job for a subscription expiring in 7 days', function (): void {
     $subscription = makeSubscriptionExpiringIn(7);
 
-    artisan('gym:subscription-expiry-notifications')->assertSuccessful();
+    $this->artisan('gym:subscription-expiry-notifications')->assertSuccessful();
 
     Bus::assertDispatched(SendSubscriptionExpiryNotification::class, fn ($job): bool => $job->subscriptionId === $subscription->id && $job->daysLeft === 7);
 });
@@ -61,7 +46,7 @@ it('dispatches a job for a subscription expiring in 7 days', function (): void {
 it('dispatches a job for a subscription expiring in 3 days', function (): void {
     $subscription = makeSubscriptionExpiringIn(3);
 
-    artisan('gym:subscription-expiry-notifications')->assertSuccessful();
+    $this->artisan('gym:subscription-expiry-notifications')->assertSuccessful();
 
     Bus::assertDispatched(SendSubscriptionExpiryNotification::class, fn ($job): bool => $job->subscriptionId === $subscription->id && $job->daysLeft === 3);
 });
@@ -69,7 +54,7 @@ it('dispatches a job for a subscription expiring in 3 days', function (): void {
 it('dispatches a job for a subscription expiring in 1 day', function (): void {
     $subscription = makeSubscriptionExpiringIn(1);
 
-    artisan('gym:subscription-expiry-notifications')->assertSuccessful();
+    $this->artisan('gym:subscription-expiry-notifications')->assertSuccessful();
 
     Bus::assertDispatched(SendSubscriptionExpiryNotification::class, fn ($job): bool => $job->subscriptionId === $subscription->id && $job->daysLeft === 1);
 });
@@ -77,7 +62,7 @@ it('dispatches a job for a subscription expiring in 1 day', function (): void {
 it('dispatches a job for a subscription expiring today (day 0)', function (): void {
     $subscription = makeSubscriptionExpiringIn(0);
 
-    artisan('gym:subscription-expiry-notifications')->assertSuccessful();
+    $this->artisan('gym:subscription-expiry-notifications')->assertSuccessful();
 
     Bus::assertDispatched(SendSubscriptionExpiryNotification::class, fn ($job): bool => $job->subscriptionId === $subscription->id && $job->daysLeft === 0);
 });
@@ -85,7 +70,7 @@ it('dispatches a job for a subscription expiring today (day 0)', function (): vo
 it('does not dispatch for subscriptions expiring in 2 days (not a trigger)', function (): void {
     makeSubscriptionExpiringIn(2);
 
-    artisan('gym:subscription-expiry-notifications')->assertSuccessful();
+    $this->artisan('gym:subscription-expiry-notifications')->assertSuccessful();
 
     Bus::assertNothingDispatched();
 });
@@ -93,8 +78,8 @@ it('does not dispatch for subscriptions expiring in 2 days (not a trigger)', fun
 it('does not dispatch twice for the same subscription on the same day', function (): void {
     $subscription = makeSubscriptionExpiringIn(7);
 
-    artisan('gym:subscription-expiry-notifications')->assertSuccessful();
-    artisan('gym:subscription-expiry-notifications')->assertSuccessful();
+    $this->artisan('gym:subscription-expiry-notifications')->assertSuccessful();
+    $this->artisan('gym:subscription-expiry-notifications')->assertSuccessful();
 
     Bus::assertDispatchedTimes(SendSubscriptionExpiryNotification::class, 1);
 });
@@ -111,7 +96,7 @@ it('does not dispatch for renewed subscriptions', function (): void {
         'status' => 'renewed',
     ]);
 
-    artisan('gym:subscription-expiry-notifications')->assertSuccessful();
+    $this->artisan('gym:subscription-expiry-notifications')->assertSuccessful();
 
     Bus::assertNothingDispatched();
 });
@@ -137,7 +122,7 @@ it('sends in-app notification to all admin users when job is handled', function 
 it('dry-run lists subscriptions without dispatching', function (): void {
     makeSubscriptionExpiringIn(7);
 
-    artisan('gym:subscription-expiry-notifications --dry-run')->assertSuccessful();
+    $this->artisan('gym:subscription-expiry-notifications --dry-run')->assertSuccessful();
 
     Bus::assertNothingDispatched();
 });

@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Invoice;
 use App\Models\Member;
 use App\Models\Plan;
 use App\Models\Subscription;
@@ -83,6 +84,19 @@ it('admin panel scope excludes internal subscriptions', function (): void {
 
 it('office panel sees all subscription types', function (): void {
     $member = makeMember();
+    $plan = makePlan();
+
+    $official = Subscription::factory()->create(['member_id' => $member->id, 'plan_id' => $plan->id, 'type' => 'official']);
+    $internal = Subscription::factory()->create(['member_id' => $member->id, 'plan_id' => $plan->id, 'type' => 'internal']);
+
+    $ids = Subscription::pluck('id');
+
+    expect($ids)->toContain($official->id)
+        ->and($ids)->toContain($internal->id);
+});
+
+// ─── Status transitions ───────────────────────────────────────────────────────
+
 it('expired subscriptions are found by MarkSubscriptionsStatus command', function (): void {
     $member = makeMember();
     $plan = makePlan();
@@ -95,7 +109,7 @@ it('expired subscriptions are found by MarkSubscriptionsStatus command', functio
         'status' => 'ongoing',
     ]);
 
-    artisan('gym:subscriptions --mark-expired')->assertSuccessful();
+    $this->artisan('gym:subscriptions --mark-expired')->assertSuccessful();
 
     expect(Subscription::where('member_id', $member->id)->where('status', 'expired')->exists())->toBeTrue();
 });
@@ -112,7 +126,33 @@ it('ongoing subscriptions far from expiry are not marked expiring', function ():
         'status' => 'ongoing',
     ]);
 
-    artisan('gym:subscriptions --mark-expiring')->assertSuccessful();
+    $this->artisan('gym:subscriptions --mark-expiring')->assertSuccessful();
 
     expect($sub->fresh()->status->value)->toBe('ongoing');
+});
+
+it('isOfficial returns false for internal type', function (): void {
+    $sub = Subscription::factory()->create([
+        'member_id' => makeMember()->id,
+        'plan_id' => makePlan()->id,
+        'type' => 'internal',
+    ]);
+
+    expect($sub->isOfficial())->toBeFalse();
+});
+
+it('scopeWithoutInvoices filters out subscriptions that have invoices', function (): void {
+    $member = makeMember();
+    $plan = makePlan();
+
+    $withInvoice = Subscription::factory()->create(['member_id' => $member->id, 'plan_id' => $plan->id]);
+    $withoutInvoice = Subscription::factory()->create(['member_id' => $member->id, 'plan_id' => $plan->id]);
+
+    // Attach an invoice to the first subscription only
+    Invoice::factory()->create(['subscription_id' => $withInvoice->id]);
+
+    $ids = Subscription::withoutInvoices()->pluck('id');
+
+    expect($ids)->toContain($withoutInvoice->id)
+        ->and($ids)->not->toContain($withInvoice->id);
 });
