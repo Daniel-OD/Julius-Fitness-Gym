@@ -9,7 +9,6 @@ use App\Models\Member;
 use App\Models\Subscription;
 use App\Services\CheckIns\CheckInService;
 use App\Support\AppConfig;
-use Carbon\CarbonImmutable;
 use Filament\Actions\Action;
 use Filament\Actions\ViewAction;
 use Filament\Facades\Filament;
@@ -71,60 +70,37 @@ class CheckInResource extends Resource
 
     protected static function activeSubscriptionFor(int $memberId): ?Subscription
     {
-        $today = CarbonImmutable::today(AppConfig::timezone())->toDateString();
-
-        return Subscription::query()
-            ->where('member_id', $memberId)
-            ->whereDate('start_date', '<=', $today)
-            ->whereDate('end_date', '>=', $today)
-            ->whereNotIn('status', ['cancelled', 'renewed'])
-            ->latest('end_date')
-            ->first();
+        return app(CheckInService::class)->activeSubscriptionFor($memberId);
     }
 
     #[\Override]
     public static function table(Table $table): Table
     {
-        $timezone = AppConfig::timezone();
-
-        $memberWeight = function (CheckIn $record): ?FontWeight {
-            return $record->checked_out_at ? null : FontWeight::SemiBold;
-        };
-
-        $checkedInFormat = function (CheckIn $record) use ($timezone): string {
-            return $record->checked_in_at
-                ->timezone($timezone)
-                ->format('H:i');
-        };
-
-        $checkedInTooltip = function (CheckIn $record) use ($timezone): string {
-            return $record->checked_in_at
-                ->timezone($timezone)
-                ->translatedFormat('d M Y, H:i');
-        };
-        $presenceState = function (CheckIn $record): string {
-            return $record->checked_out_at
-                ? __('app.checkins.departed')
-                : __('app.checkins.present');
-        };
-
         return $table
             ->columns([
                 TextColumn::make('member.name')
                     ->label(__('app.fields.member'))
                     ->searchable()
                     ->sortable()
-                    ->weight($memberWeight),
+                    ->weight(fn (CheckIn $record): ?FontWeight => $record->checked_out_at
+                        ? null
+                        : FontWeight::SemiBold),
                 TextColumn::make('checked_in_at')
                     ->label(__('app.checkins.checked_in_time'))
-                    ->formatStateUsing($checkedInFormat)
-                    ->tooltip($checkedInTooltip)
+                    ->formatStateUsing(fn (CheckIn $record): string => $record->checked_in_at
+                        ->timezone(AppConfig::timezone())
+                        ->format('H:i'))
+                    ->tooltip(fn (CheckIn $record): string => $record->checked_in_at
+                        ->timezone(AppConfig::timezone())
+                        ->translatedFormat('d M Y, H:i'))
                     ->sortable(),
                 TextColumn::make('presence')
                     ->label(__('app.checkins.presence'))
                     ->badge()
-                    ->color(fn (CheckIn $record): string => $record->checked_out_at ? 'gray' : 'success')
-                    ->state($presenceState),
+                    ->state(fn (CheckIn $record): string => $record->checked_out_at
+                        ? __('app.checkins.departed')
+                        : __('app.checkins.present'))
+                    ->color(fn (CheckIn $record): string => $record->checked_out_at ? 'gray' : 'success'),
                 TextColumn::make('checked_out_at')
                     ->label(__('app.checkins.checked_out'))
                     ->formatStateUsing(fn (CheckIn $record): ?string => $record->checked_out_at
@@ -148,9 +124,7 @@ class CheckInResource extends Resource
                         : null),
                 TextColumn::make('subscription.plan.name')
                     ->label(__('app.fields.plan'))
-                    ->placeholder('—'),
-            ]);
-    }
+                    ->placeholder('—')
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('method')
                     ->label(__('app.fields.method'))
@@ -223,7 +197,7 @@ class CheckInResource extends Resource
 
                             fclose($handle);
                         }, 'check-ins-'.now()->format('Y-m-d-His').'.csv', ['Content-Type' => 'text/csv']);
-                    ),
+                    }),
                 Action::make('manualCheckIn')
                     ->label(__('app.checkins.manual_checkin'))
                     ->icon('heroicon-o-check-circle')
@@ -279,8 +253,9 @@ class CheckInResource extends Resource
                     ->action(function (array $data): void {
                         $memberId = (int) $data['member_id'];
                         $member = Member::query()->findOrFail($memberId);
+                        $checkInService = app(CheckInService::class);
 
-                        if (app(CheckInService::class)->hasOpenSession($memberId)) {
+                        if ($checkInService->createManualCheckIn($memberId) === null) {
                             Notification::make()
                                 ->title(__('app.checkins.already_present_title'))
                                 ->body(__('app.checkins.already_present_body', ['name' => $member->name]))
@@ -290,16 +265,9 @@ class CheckInResource extends Resource
                             return;
                         }
 
-                        CheckIn::create([
-                            'member_id' => $memberId,
-                            'subscription_id' => static::activeSubscriptionFor($memberId)?->id,
-                            'checked_in_at' => now(),
-                            'method' => 'manual',
-                        ]);
-
                         Notification::make()
                             ->title(__('app.checkins.manual_checkin_done_for', ['name' => $member->name]))
-                            ->body(static::activeSubscriptionFor($memberId)?->plan->name ?? __('app.members.qr.no_subscription'))
+                            ->body($checkInService->activeSubscriptionFor($memberId)?->plan?->name ?? __('app.members.qr.no_subscription'))
                             ->success()
                             ->send();
                     }),

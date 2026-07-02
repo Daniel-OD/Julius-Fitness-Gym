@@ -30,62 +30,57 @@ class PlanTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->columns(self::getColumns());
-    }
+            ->columns([
+                TextColumn::make('id')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('code')
+                    ->searchable()
+                    ->label(__('app.fields.code')),
+                TextColumn::make('name')
+                    ->searchable()
+                    ->label(__('app.fields.name')),
+                TextColumn::make('description')
+                    ->searchable()
+                    ->label(__('app.fields.description')),
+                TextColumn::make('service.name')
+                    ->searchable()
+                    ->label(__('app.fields.service')),
+                TextColumn::make('days')
+                    ->searchable()
+                    ->label(__('app.fields.days')),
+                TextColumn::make('amount')
+                    ->searchable()
+                    ->label(__('app.fields.amount'))
+                    ->money(Helpers::getCurrencyCode()),
+                TextColumn::make('status')
+                    ->badge()
+                    ->label(__('app.fields.status')),
+            ])
+            ->defaultSort('id', 'desc')
+            ->emptyStateIcon(
+                ! Service::exists() ? 'heroicon-o-cog-8-tooth' : 'heroicon-o-pencil-square'
+            )
+            ->emptyStateHeading(function ($livewire): string {
+                if (! Service::exists()) {
+                    return __('app.empty.no_records', ['records' => __('app.resources.services.plural')]);
+                }
 
-    private static function getColumns(): array
-    {
-        return [
-            TextColumn::make('id')
-                ->sortable()
-        ->toggleable(isToggledHiddenByDefault: true),
-    TextColumn::make('code')
-        ->searchable()
-        ->label(__('app.fields.code')),
-    TextColumn::make('name')
-        ->searchable()
-        ->label(__('app.fields.name')),
-    TextColumn::make('description')
-        ->searchable()
-        ->label(__('app.fields.description')),
-    TextColumn::make('service.name')
-        ->searchable()
-        ->label(__('app.fields.service')),
-    TextColumn::make('days')
-        ->searchable()
-        ->label(__('app.fields.days')),
-    TextColumn::make('amount')
-        ->searchable()
-        ->label(__('app.fields.amount'))
-        ->money(Helpers::getCurrencyCode()),
-    TextColumn::make('status')
-        ->badge()
-        ->label(__('app.fields.status')),
-])
-->defaultSort('id', 'desc')
-->emptyStateIcon(
-    ! Service::exists() ? 'heroicon-o-cog-8-tooth' : 'heroicon-o-pencil-square'
-)
-->emptyStateHeading(function ($livewire): string {
-    if (! Service::exists()) {
-        return __('app.empty.no_records', ['records' => __('app.resources.services.plural')]);
-    }
+                $records = __('app.resources.plans.plural');
+                $tab = (string) ($livewire->activeTab ?? 'all');
+                $status = $tab !== 'all' ? (string) __('app.status.'.$tab) : null;
 
-    $records = __('app.resources.plans.plural');
-    $tab = (string) ($livewire->activeTab ?? 'all');
-    $status = $tab !== 'all' ? (string) __('app.status.'.$tab) : null;
+                $dates = $livewire->getTableFilterState('date') ?? [];
+                [$from, $to] = [$dates['date_from'] ?? null, $dates['date_to'] ?? null];
 
-    $dates = $livewire->getTableFilterState('date') ?? [];
-    [$from, $to] = [$dates['date_from'] ?? null, $dates['date_to'] ?? null];
+                if (! $from && ! $to) {
+                    return $status
+                        ? __('app.empty.no_status_records', ['status' => $status, 'records' => $records])
+                        : __('app.empty.no_records', ['records' => $records]);
+                }
 
-    if (! $from && ! $to) {
-        return $status
-            ? __('app.empty.no_status_records', ['status' => $status, 'records' => $records])
-            : __('app.empty.no_records', ['records' => $records]);
-    }
-
-    if ($tab === 'all') {
-        return __('app.empty.no_records_in_range', ['records' => $records]);
+                if ($tab === 'all') {
+                    return __('app.empty.no_records_in_range', ['records' => $records]);
                 }
 
                 $base = __('app.empty.no_status_records', ['status' => $status, 'records' => $records]);
@@ -188,7 +183,7 @@ class PlanTable
                                     ->title(__('app.notifications.plan_deactivated'))
                                     ->danger()
                                     ->send();
-                            })
+                            }))
                             ->visible(fn ($record): bool => $record->status->value === 'active'),
                     ])->dropdown(false),
                     ActionGroup::make([
