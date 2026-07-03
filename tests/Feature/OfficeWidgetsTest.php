@@ -63,10 +63,34 @@ it('present-now still shows members who left within the grace window', function 
     $recentlyLeft = CheckIn::factory()->create([
         'checked_in_at' => now()->subHour(),
         'checked_out_at' => now()->subMinutes(max($grace - 1, 0)),
-it('present-now widget is registered on the office dashboard', function (): void {
-    actingAs(employee());
+    ]);
 
-    get('/office')
+    expect(presentNowIds())->toContain($recentlyLeft->id);
+})->skip(fn (): bool => app(CheckInService::class)->presentNowGraceMinutes() === 0, 'Grace window disabled');
+
+it('present-now excludes members who left before the grace window', function (): void {
+    $grace = app(CheckInService::class)->presentNowGraceMinutes();
+    $longGone = CheckIn::factory()->create([
+        'checked_in_at' => now()->subHours(4),
+        'checked_out_at' => now()->subMinutes($grace + 60),
+    ]);
+
+    expect(presentNowIds())->not->toContain($longGone->id);
+});
+
+it('present-now excludes check-ins from previous days', function (): void {
+    $yesterday = CheckIn::factory()->create([
+        'checked_in_at' => now()->subDay(),
+        'checked_out_at' => null,
+    ]);
+
+    expect(presentNowIds())->not->toContain($yesterday->id);
+});
+
+it('present-now widget is registered on the office dashboard', function (): void {
+    $this->actingAs(employee());
+
+    $this->get('/office')
         ->assertOk()
         ->assertSeeLivewire(OfficePresentNowWidget::class);
 });
@@ -103,10 +127,10 @@ it('expiring-soon badge color follows the day thresholds', function (): void {
 // ─── Security: employee cannot manage ─────────────────────────────────────────
 
 it('employee gets 404 hitting a member edit url on the office panel', function (): void {
-    actingAs(employee());
+    $this->actingAs(employee());
     $member = Member::factory()->create();
 
-    get("/office/members/{$member->id}/edit")->assertNotFound();
+    $this->get("/office/members/{$member->id}/edit")->assertNotFound();
 });
 
 it('employee is denied member update, create and delete by policy', function (): void {

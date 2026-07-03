@@ -40,61 +40,56 @@ class SubscriptionTable
      */
     public static function configure(Table $table): Table
     {
-        return self::configureColumns($table);
-    }
-
-    private static function configureColumns(Table $table): Table
-    {
         return $table
             ->columns([
                 TextColumn::make('id')
-        ->toggleable(isToggledHiddenByDefault: true),
-    TextColumn::make('member.name')
-        ->label(__('app.fields.member'))
-        ->description(fn ($record): string => $record->member->code ?? '—'),
-    TextColumn::make('plan.name')
-        ->label(__('app.fields.plan'))
-        ->description(fn ($record): string => $record->plan->code ?? '—'),
-    TextColumn::make('plan.amount')
-        ->label(__('app.fields.amount'))
-        ->alignRight()
-        ->formatStateUsing(fn ($state): string => Helpers::formatCurrency((float) $state))
-        ->toggleable(),
-    TextColumn::make('start_date')
-        ->label(__('app.fields.start_date'))
-        ->date(),
-    TextColumn::make('end_date')
-        ->label(__('app.fields.end_date'))
-        ->date(),
-    TextColumn::make('created_at')
-        ->date()
-        ->toggleable(isToggledHiddenByDefault: true),
-    TextColumn::make('status')
-        ->badge(),
-])
-->emptyStateIcon(
-    ! Member::exists()
-        ? 'heroicon-o-user-group'
-        : (! Plan::exists()
-            ? 'heroicon-o-pencil-square'
-            : 'heroicon-o-ticket'
-        )
-)
-->emptyStateHeading(function ($livewire): string {
-    if (! Member::exists()) {
-        return __('app.empty.no_records', ['records' => __('app.resources.members.plural')]);
-    }
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('member.name')
+                    ->label(__('app.fields.member'))
+                    ->description(fn ($record): string => $record->member->code ?? '—'),
+                TextColumn::make('plan.name')
+                    ->label(__('app.fields.plan'))
+                    ->description(fn ($record): string => $record->plan->code ?? '—'),
+                TextColumn::make('plan.amount')
+                    ->label(__('app.fields.amount'))
+                    ->alignRight()
+                    ->formatStateUsing(fn ($state): string => Helpers::formatCurrency((float) $state))
+                    ->toggleable(),
+                TextColumn::make('start_date')
+                    ->label(__('app.fields.start_date'))
+                    ->date(),
+                TextColumn::make('end_date')
+                    ->label(__('app.fields.end_date'))
+                    ->date(),
+                TextColumn::make('created_at')
+                    ->date()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('status')
+                    ->badge(),
+            ])
+            ->emptyStateIcon(
+                ! Member::exists()
+                    ? 'heroicon-o-user-group'
+                    : (! Plan::exists()
+                        ? 'heroicon-o-pencil-square'
+                        : 'heroicon-o-ticket'
+                    )
+            )
+            ->emptyStateHeading(function ($livewire): string {
+                if (! Member::exists()) {
+                    return __('app.empty.no_records', ['records' => __('app.resources.members.plural')]);
+                }
 
-    if (! Plan::exists()) {
-        return __('app.empty.no_records', ['records' => __('app.resources.plans.plural')]);
-    }
+                if (! Plan::exists()) {
+                    return __('app.empty.no_records', ['records' => __('app.resources.plans.plural')]);
+                }
 
-    $records = (string) __('app.resources.subscriptions.plural');
-    $tab = (string) ($livewire->activeTab ?? 'all');
-    $status = $tab !== 'all' ? (string) __('app.status.'.$tab) : null;
+                $records = (string) __('app.resources.subscriptions.plural');
+                $tab = (string) ($livewire->activeTab ?? 'all');
+                $status = $tab !== 'all' ? (string) __('app.status.'.$tab) : null;
 
-    $dates = $livewire->getTableFilterState('date') ?? [];
-    [$from, $to] = [$dates['date_from'] ?? null, $dates['date_to'] ?? null];
+                $dates = $livewire->getTableFilterState('date') ?? [];
+                [$from, $to] = [$dates['date_from'] ?? null, $dates['date_to'] ?? null];
 
                 if (! $from && ! $to) {
                     return $status
@@ -329,7 +324,8 @@ class SubscriptionTable
                     DeleteBulkAction::make(),
                     ForceDeleteBulkAction::make(),
                     RestoreBulkAction::make(),
-                ])
+                ]),
+            ])
             ->modifyQueryUsing(fn (Builder $query) => $query
                 ->withoutGlobalScopes([
                     SoftDeletingScope::class,

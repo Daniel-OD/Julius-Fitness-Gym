@@ -1,13 +1,13 @@
 <?php
 
-use App.Contracts\SettingsRepository;
-use App.Filament\Resources\Users\Pages\EditUser;
-use App.Jobs\SendPasswordResetEmail;
-use App.Mail\PasswordResetMail;
-use App.Models\User;
-use App.Services\Auth\PasswordResetService;
-use Illuminate.Support.Facades\Mail;
-use Illuminate.Support.Facades\Queue;
+use App\Contracts\SettingsRepository;
+use App\Filament\Resources\Users\Pages\EditUser;
+use App\Jobs\SendPasswordResetEmail;
+use App\Mail\PasswordResetMail;
+use App\Models\User;
+use App\Services\Auth\PasswordResetService;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Queue;
 use Livewire\Livewire;
 
 it('admin can reset a user password from edit page', function (): void {
@@ -18,7 +18,7 @@ it('admin can reset a user password from edit page', function (): void {
         'must_change_password' => false,
     ]);
 
-    actingAs($admin);
+    $this->actingAs($admin);
 
     Livewire::test(EditUser::class, ['record' => $target->getRouteKey()])
         ->callAction('reset_password')
