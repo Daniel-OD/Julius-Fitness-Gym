@@ -706,19 +706,31 @@ new class extends Component
                                 if (! started) {
                                     return;
                                 }
-                                let offset = 0;
-                                const run = () => {
-                                    $wire.importChunk(offset)
-                                        .then((result) => {
-                                            offset += {{ \App\Services\Members\MemberImportService::CHUNK_SIZE }};
-                                            if (result && ! result.done) {
-                                                run();
-                                            }
-                                        })
-                                        .catch(() => $wire.cancelImport());
-                                };
-                                run();
-                            }).catch(() => $wire.cancelImport());
+                                // Wait for Livewire to sync state before starting chunks
+                                setTimeout(() => {
+                                    let offset = 0;
+                                    const run = () => {
+                                        $wire.importChunk(offset)
+                                            .then((result) => {
+                                                offset += {{ \App\Services\Members\MemberImportService::CHUNK_SIZE }};
+                                                if (result && ! result.done) {
+                                                    run();
+                                                } else {
+                                                    // Force a final render to show results
+                                                    $wire.$refresh();
+                                                }
+                                            })
+                                            .catch((err) => {
+                                                console.error('Import chunk error:', err);
+                                                $wire.cancelImport();
+                                            });
+                                    };
+                                    run();
+                                }, 100);
+                            }).catch((err) => {
+                                console.error('Start import error:', err);
+                                $wire.cancelImport();
+                            });
                         "
                     >
                         {{ __('app.settings.import.import_now') }}
