@@ -118,7 +118,7 @@ class AdminPanelProvider extends PanelProvider
                 ),
             )
             ->renderHook(
-                PanelsRenderHook::SIDEBAR_NAV_START,
+                PanelsRenderHook::BODY_END,
                 fn (): HtmlString => new HtmlString(
                     filament()->getCurrentPanel()?->getId() === 'admin'
                         ? Blade::render('@livewire(\App\Filament\Livewire\SidebarQuickActions::class, [], key(\'sidebar-quick-actions\'))')
@@ -193,6 +193,11 @@ class AdminPanelProvider extends PanelProvider
 
         $groups = array_values(array_filter([
             $this->makeNavigationGroup(
+                __('app.navigation.quick_actions'),
+                'heroicon-o-bolt',
+                $this->quickActionsNavigationItems(),
+            ),
+            $this->makeNavigationGroup(
                 __('app.navigation.groups.sales'),
                 'heroicon-o-shopping-cart',
                 $sales,
@@ -232,6 +237,30 @@ class AdminPanelProvider extends PanelProvider
                         ? request()->routeIs('filament.office.pages.dashboard')
                         : request()->routeIs('filament.admin.pages.dashboard'))
             );
+    }
+
+    /**
+     * @return array<int, NavigationItem>
+     */
+    protected function quickActionsNavigationItems(): array
+    {
+        return [
+            $this->quickActionModalNavigationItem(__('app.dashboard.quick_actions.new_member'), 'new_member'),
+            $this->quickActionModalNavigationItem(__('app.dashboard.quick_actions.manual_checkin'), 'manual_checkin'),
+            NavigationItem::make(__('app.dashboard.quick_actions.new_lead'))
+                ->url(fn (): string => EnquiryResource::getUrl('create'))
+                ->isActiveWhen(fn (): bool => request()->routeIs('filament.admin.resources.enquiries.create')),
+        ];
+    }
+
+    protected function quickActionModalNavigationItem(string $label, string $action): NavigationItem
+    {
+        return NavigationItem::make($label)
+            ->url('#')
+            ->extraAttributes([
+                'x-on:click.capture.prevent' => "\$dispatch('open-dashboard-quick-action', { action: '{$action}' })",
+            ])
+            ->isActiveWhen(fn (): bool => false);
     }
 
     /**
