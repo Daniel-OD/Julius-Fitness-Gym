@@ -28,12 +28,21 @@ npm run dev                  # watch mode
 # Code style (run after any PHP changes)
 vendor/bin/pint --dirty --format agent
 
+# Static analysis (Larastan, level 5 — see phpstan.neon.dist)
+vendor/bin/phpstan analyse
+
 # Filament Shield — generate permissions for a new resource
 php artisan shield:generate --resource=SomeResource --panel=admin
 
 # Scheduled commands (run manually for testing)
-php artisan app:mark-invoice-overdue
-php artisan app:mark-subscriptions-status
+php artisan gym:invoices --mark-overdue
+php artisan gym:subscriptions --mark-expired --mark-expiring
+php artisan gym:send-expiring-emails
+
+# Backup / restore / install (app/Console/Commands)
+php artisan app:backup            # zip database + settings to configured folder
+php artisan app:restore {zip}     # restore from a backup zip
+php artisan app:install           # finalize install: admin user, credentials file
 ```
 
 ## Architecture
@@ -43,24 +52,32 @@ php artisan app:mark-subscriptions-status
 **Dev database:** `database/database.sqlite` (MySQL in production)
 **Test database:** SQLite in-memory (`phpunit.xml` sets `DB_CONNECTION=sqlite DB_DATABASE=:memory:`)
 
-### Two parallel interfaces share one model layer
+### Multiple interfaces share one model layer
 
-**Filament admin panel** (`/admin`) — primary UI, registered in `app/Providers/Filament/AdminPanelProvider.php`.
-- Custom iOS-style theme: `resources/css/filament/admin/theme.css` (loaded via `->viteTheme()`)
-- Locale switcher (EN/RO) rendered via `PanelsRenderHook::GLOBAL_SEARCH_AFTER` using `app/Filament/Livewire/LocaleSwitcher.php`
+| Interface | URL | Auth | Notes |
+|---|---|---|---|
+| Admin panel | `/admin` | `web` guard, Filament Shield roles | Primary UI — `app/Providers/Filament/AdminPanelProvider.php` |
+| Office panel | `/office` | `web` guard | Front-desk only. `OfficePanelProvider` **extends** `AdminPanelProvider` but registers just the check-in resource + a scoped dashboard — resources are listed explicitly (not auto-discovered) so staff can't reach admin pages even by direct URL |
+| Member portal | `/member/*` | separate `member` guard (`config/auth.php`, provider `members`) | Self-service: `Member extends Authenticatable`, own login/register/verify-email/password-reset flow (`routes/member.php`, `routes/web.php`, controllers under `app/Http/Controllers/Member/`) |
+| Client portal | `/dashboard` (client) | `web` guard + `dashboard.access:client` middleware | Linked user accounts viewing their member data (`ClientPortalController`) |
+| Public check-in | `/checkin/{qrToken}`, `/reception/scan` | none / `auth` + `can:viewAny,CheckIn` | QR-token check-in/out kiosk flow and staffed reception scanner |
+| REST API v1 | `/api/v1` | Sanctum bearer token | Each resource has a controller (`app/Http/Controllers/Api/V1/`), FormRequest, JsonResource, and a Schema class (`app/Services/Api/Schemas/`) defining allowlists for `spatie/laravel-query-builder` |
 
-**REST API v1** (`/api/v1`) — Sanctum bearer token auth. Each resource has a controller (`app/Http/Controllers/Api/V1/`), FormRequest, JsonResource, and a Schema class (`app/Services/Api/Schemas/`) that defines allowlists for `spatie/laravel-query-builder`.
+Admin panel notes: custom iOS-style theme (`resources/css/filament/admin/theme.css`, loaded via `->viteTheme()`); locale switcher (EN/RO) rendered via `PanelsRenderHook::GLOBAL_SEARCH_AFTER` using `app/Filament/Livewire/LocaleSwitcher.php`.
 
 ### Domain model
 
 ```
 Member ──< Subscription >── Plan
-                              └── Service (optional add-on)
-Subscription ──< Invoice ──< InvoiceTransaction
-Member ──< Enquiry ──< FollowUp
+       │                     └── Service (optional add-on)
+       │      Subscription ──< Invoice ──< InvoiceTransaction
+       ├──< CheckIn >── Subscription   (QR check-in/out log)
+       └──< Enquiry ──< FollowUp
 Expense  (standalone)
-User     (admin accounts, Filament Shield roles)
+User     (admin/staff accounts, Filament Shield roles; distinct from Member)
 ```
+
+`Member` is its own `Authenticatable` on the `member` guard — a `Member` may optionally link to a `User` (`Member::user()`) for client-portal access, but member-portal auth never touches the `users` table.
 
 All domain models use soft deletes. `Invoice` and `InvoiceTransaction` have `#[ObservedBy]` attributes — totals sync automatically via observers, and emails are dispatched via queued jobs (`SendInvoiceIssuedEmail`, `SendInvoicePaymentReceiptEmail`).
 
