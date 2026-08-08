@@ -7,12 +7,8 @@ use App\Models\Member;
 use App\Models\Plan;
 use App\Models\Subscription;
 use App\Support\MemberPlanIntent;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\URL;
-use Tests\TestCase;
-
-uses(TestCase::class, RefreshDatabase::class);
 
 it('stores intended plan when visiting register with plan query', function (): void {
     $plan = Plan::factory()->create(['status' => Status::Active]);

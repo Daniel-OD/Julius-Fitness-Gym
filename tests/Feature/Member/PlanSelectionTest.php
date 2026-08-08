@@ -7,11 +7,7 @@ use App\Models\Member;
 use App\Models\Plan;
 use App\Models\Subscription;
 use Carbon\Carbon;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Queue;
-use Tests\TestCase;
-
-uses(TestCase::class, RefreshDatabase::class);
 
 function verifiedMemberWithoutSubscription(): Member
 {

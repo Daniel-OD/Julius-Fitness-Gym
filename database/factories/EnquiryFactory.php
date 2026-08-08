@@ -30,7 +30,7 @@ class EnquiryFactory extends Factory
             'address' => $this->faker->address(),
             'country' => $this->faker->country(),
             'city' => $this->faker->city(),
-            'state' => $this->faker->stateName(),
+            'state' => $this->faker->state(),
             'pincode' => $this->faker->postcode(),
             'interested_in' => $this->faker->randomElements(['Yoga', 'Cardio', 'Strength', 'Swimming', 'Cycling'], rand(1, 3)),
             'source' => $this->faker->randomElement(['promotions', 'word_of_mouth', 'online', 'referral']),

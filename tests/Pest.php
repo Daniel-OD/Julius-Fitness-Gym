@@ -2,6 +2,7 @@
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Assert;
 use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
@@ -52,4 +53,173 @@ function adminPanelUser(): User
     $user->assignRole($role);
 
     return $user;
+}
+
+/*
+|--------------------------------------------------------------------------
+| pestphp/pest-plugin-laravel compatibility shim
+|--------------------------------------------------------------------------
+|
+| pest-plugin-laravel v4 moved its test helpers (actingAs, get, getJson, ...)
+| under the `Pest\Laravel` namespace instead of defining them globally. Test
+| files in this project call them unqualified (no `use function` import),
+| which only resolves against the global namespace — so every one of these
+| calls fails with "Call to undefined function" unless proxied here. These
+| thin wrappers restore the previous global-function behavior for every
+| helper actually used across the suite.
+|
+*/
+
+if (! function_exists('actingAs')) {
+    function actingAs(...$args)
+    {
+        return Pest\Laravel\actingAs(...$args);
+    }
+}
+
+if (! function_exists('artisan')) {
+    function artisan(...$args)
+    {
+        return Pest\Laravel\artisan(...$args);
+    }
+}
+
+if (! function_exists('assertAuthenticated')) {
+    function assertAuthenticated(...$args)
+    {
+        return Pest\Laravel\assertAuthenticated(...$args);
+    }
+}
+
+if (! function_exists('assertGuest')) {
+    function assertGuest(...$args)
+    {
+        return Pest\Laravel\assertGuest(...$args);
+    }
+}
+
+if (! function_exists('assertAuthenticatedAs')) {
+    function assertAuthenticatedAs(...$args)
+    {
+        return Pest\Laravel\assertAuthenticatedAs(...$args);
+    }
+}
+
+if (! function_exists('assertDatabaseHas')) {
+    function assertDatabaseHas(...$args)
+    {
+        return Pest\Laravel\assertDatabaseHas(...$args);
+    }
+}
+
+if (! function_exists('call')) {
+    function call(...$args)
+    {
+        return Pest\Laravel\call(...$args);
+    }
+}
+
+if (! function_exists('assertSame')) {
+    function assertSame(...$args)
+    {
+        return Assert::assertSame(...$args);
+    }
+}
+
+if (! function_exists('assertNull')) {
+    function assertNull(...$args)
+    {
+        return Assert::assertNull(...$args);
+    }
+}
+
+if (! function_exists('assertNotNull')) {
+    function assertNotNull(...$args)
+    {
+        return Assert::assertNotNull(...$args);
+    }
+}
+
+if (! function_exists('get')) {
+    function get(...$args)
+    {
+        return Pest\Laravel\get(...$args);
+    }
+}
+
+if (! function_exists('getJson')) {
+    function getJson(...$args)
+    {
+        return Pest\Laravel\getJson(...$args);
+    }
+}
+
+if (! function_exists('post')) {
+    function post(...$args)
+    {
+        return Pest\Laravel\post(...$args);
+    }
+}
+
+if (! function_exists('postJson')) {
+    function postJson(...$args)
+    {
+        return Pest\Laravel\postJson(...$args);
+    }
+}
+
+if (! function_exists('put')) {
+    function put(...$args)
+    {
+        return Pest\Laravel\put(...$args);
+    }
+}
+
+if (! function_exists('putJson')) {
+    function putJson(...$args)
+    {
+        return Pest\Laravel\putJson(...$args);
+    }
+}
+
+if (! function_exists('patch')) {
+    function patch(...$args)
+    {
+        return Pest\Laravel\patch(...$args);
+    }
+}
+
+if (! function_exists('patchJson')) {
+    function patchJson(...$args)
+    {
+        return Pest\Laravel\patchJson(...$args);
+    }
+}
+
+if (! function_exists('delete')) {
+    function delete(...$args)
+    {
+        return Pest\Laravel\delete(...$args);
+    }
+}
+
+if (! function_exists('deleteJson')) {
+    function deleteJson(...$args)
+    {
+        return Pest\Laravel\deleteJson(...$args);
+    }
+}
+
+if (! function_exists('from')) {
+    function from(...$args)
+    {
+        return Pest\Laravel\from(...$args);
+    }
+}
+
+if (! function_exists('withSession')) {
+    function withSession(...$args)
+    {
+        return Pest\Laravel\withSession(...$args);
+    }
 }
