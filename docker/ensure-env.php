@@ -38,6 +38,9 @@ $keys = [
     'MAIL_FROM_ADDRESS',
     'MAIL_FROM_NAME',
     'RESEND_API_KEY',
+    'GITHUB_CLIENT_ID',
+    'GITHUB_CLIENT_SECRET',
+    'GITHUB_REDIRECT_URI',
 ];
 
 if (is_file($templatePath)) {

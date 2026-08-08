@@ -18,6 +18,8 @@ primary_region = 'fra'
   LOG_CHANNEL = 'stderr'
   LOG_LEVEL = 'info'
   DB_CONNECTION = 'pgsql'
+  SESSION_DRIVER = 'database'
+  GITHUB_REDIRECT_URI = 'https://www.juliusgym.ro/auth/github/callback'
   MAIL_MAILER = 'resend'
   MAIL_FROM_ADDRESS = 'noreply@juliusgym.ro'
 

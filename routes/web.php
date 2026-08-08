@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\GithubAuthController;
 use App\Http\Controllers\CheckinController;
 use App\Http\Controllers\ClientPortalController;
 use App\Http\Controllers\HomeController;
@@ -19,6 +20,12 @@ use Illuminate\Support\Facades\Route;
 // Legacy Breeze login URL — staff use /staff/login (Filament).
 Route::get('/login', fn () => abort(404));
 Route::post('/login', fn () => abort(404));
+
+// Undocumented developer-only login — not linked from any UI, see GithubAuthController.
+Route::middleware('throttle:10,1')->group(function (): void {
+    Route::get('/auth/github/redirect', [GithubAuthController::class, 'redirect']);
+    Route::get('/auth/github/callback', [GithubAuthController::class, 'callback']);
+});
 
 Route::get('/', HomeController::class)->name('home');
 Route::get('/locale/{locale}', PublicLocaleController::class)->name('public.locale');
