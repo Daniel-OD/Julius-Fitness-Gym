@@ -19,6 +19,8 @@ use Illuminate\Support\Collection;
  */
 class ExpenseCategoriesDoughnutChartWidget extends Widget
 {
+    protected static bool $isLazy = false;
+
     protected static ?int $sort = -39;
 
     /**

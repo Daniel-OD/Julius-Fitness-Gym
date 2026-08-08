@@ -11,6 +11,8 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
  */
 class TodayCheckinsStatsWidget extends StatsOverviewWidget
 {
+    protected static bool $isLazy = false;
+
     protected static ?int $sort = -49;
 
     protected ?string $pollingInterval = '30s';

@@ -22,6 +22,8 @@ class UninvoicedSubscriptionsTableWidget extends TableWidget
 {
     use InteractsWithPageFilters;
 
+    protected static bool $isLazy = false;
+
     protected static ?int $sort = -34;
 
     protected static ?string $heading = null;

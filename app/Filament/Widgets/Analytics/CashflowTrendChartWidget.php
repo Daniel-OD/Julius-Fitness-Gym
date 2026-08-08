@@ -24,6 +24,8 @@ class CashflowTrendChartWidget extends ChartWidget
 {
     use InteractsWithPageFilters;
 
+    protected static bool $isLazy = false;
+
     protected static ?int $sort = -38;
 
     protected ?string $placeholderHeight = '400px';
