@@ -230,4 +230,24 @@ return [
 
     'serialization' => 'json',
 
+    /*
+    |--------------------------------------------------------------------------
+    | Session Request Blocking
+    |--------------------------------------------------------------------------
+    |
+    | The "database" driver does not lock the session row, so concurrent
+    | requests for the same session (e.g. several Livewire component calls
+    | firing on page load) can race and clobber each other's writes. This
+    | serializes them via a cache lock instead.
+    |
+    */
+
+    'block' => env('SESSION_BLOCK', false),
+
+    'block_store' => env('SESSION_BLOCK_STORE'),
+
+    'block_lock_seconds' => (int) env('SESSION_BLOCK_LOCK_SECONDS', 10),
+
+    'block_wait_seconds' => (int) env('SESSION_BLOCK_WAIT_SECONDS', 10),
+
 ];
