@@ -18,7 +18,10 @@ trait RegistersAdminStaffLoginRoute
 
     protected function registerAdminStaffLoginRoute(): void
     {
-        Route::middleware(Filament::getPanel('admin')->getMiddleware())
+        Route::middleware([
+            'panel:admin',
+            ...Filament::getPanel('admin')->getMiddleware(),
+        ])
             ->group(function (): void {
                 Route::get(self::STAFF_LOGIN_PATH, Login::class)
                     ->name('filament.admin.auth.login');
