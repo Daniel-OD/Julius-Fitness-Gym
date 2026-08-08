@@ -1,3 +1,11 @@
+# Redirect bare apex domain to www (edit server_name below if the apex domain changes)
+server {
+    listen 0.0.0.0:${PORT};
+    listen [::]:${PORT};
+    server_name juliusgym.ro;
+    return 301 https://www.juliusgym.ro$request_uri;
+}
+
 server {
     listen 0.0.0.0:${PORT} default_server;
     listen [::]:${PORT} default_server;
