@@ -883,9 +883,11 @@ class Settings extends Page implements HasForms
         Mail::forgetMailers();
 
         $gymName = (string) (data_get($formState, 'general.gym_name') ?: config('app.name'));
+        $gymEmail = (string) data_get($formState, 'general.gym_email', '');
+        $gymContact = (string) data_get($formState, 'general.gym_contact', '');
 
         try {
-            Mail::to($user->email)->send(new TestMailConfigurationMail($gymName));
+            Mail::to($user->email)->send(new TestMailConfigurationMail($gymName, $gymEmail ?: null, $gymContact ?: null));
 
             Notification::make()
                 ->title(__('app.settings.mail.test_sent_title'))

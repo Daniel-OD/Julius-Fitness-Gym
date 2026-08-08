@@ -17,6 +17,8 @@ class TestMailConfigurationMail extends Mailable
 
     public function __construct(
         public readonly string $gymName,
+        public readonly ?string $gymEmail = null,
+        public readonly ?string $gymContact = null,
     ) {}
 
     public function envelope(): Envelope
@@ -32,6 +34,8 @@ class TestMailConfigurationMail extends Mailable
             view: 'emails.test-configuration',
             with: [
                 'gymName' => $this->gymName,
+                'gymEmail' => $this->gymEmail,
+                'gymContact' => $this->gymContact,
             ],
         );
     }

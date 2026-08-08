@@ -1,7 +1,19 @@
 @php
+    use App\Helpers\Helpers;
+    use Illuminate\Support\Facades\Storage;
+
     /** @var string $gymName */
     /** @var string|null $gymEmail */
     /** @var string|null $gymContact */
+
+    $logoPath = data_get(Helpers::getSettings(), 'general.gym_logo');
+    if (is_array($logoPath)) {
+        $logoPath = $logoPath[0] ?? null;
+    }
+
+    $logoUrl = is_string($logoPath) && filled($logoPath)
+        ? Storage::disk('public')->url($logoPath)
+        : null;
 @endphp
 
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-family: Arial, sans-serif; background: #f6f7fb; padding: 24px 0;">
@@ -10,18 +22,29 @@
             <table role="presentation" width="640" cellpadding="0" cellspacing="0" style="background: #ffffff; border: 1px solid #e5e7eb;">
                 <tr>
                     <td style="padding: 20px 22px; background: #0b152d; color: #ffffff;">
-                        <div style="font-size: 18px; font-weight: 700; line-height: 1.2;">{{ $gymName }}</div>
-                        <div style="font-size: 12px; color: #cbd5e1; margin-top: 6px;">
-                            @if (filled($gymEmail))
-                                {{ $gymEmail }}
-                            @endif
-                            @if (filled($gymEmail) && filled($gymContact))
-                                &nbsp;|&nbsp;
-                            @endif
-                            @if (filled($gymContact))
-                                {{ $gymContact }}
-                            @endif
-                        </div>
+                        <table role="presentation" cellpadding="0" cellspacing="0">
+                            <tr>
+                                @if ($logoUrl)
+                                    <td style="padding-right: 12px; vertical-align: middle;">
+                                        <img src="{{ $logoUrl }}" alt="{{ $gymName }}" height="32" style="height: 32px; width: auto; display: block; border-radius: 4px;">
+                                    </td>
+                                @endif
+                                <td style="vertical-align: middle;">
+                                    <div style="font-size: 18px; font-weight: 700; line-height: 1.2;">{{ $gymName }}</div>
+                                    <div style="font-size: 12px; color: #cbd5e1; margin-top: 6px;">
+                                        @if (filled($gymEmail))
+                                            {{ $gymEmail }}
+                                        @endif
+                                        @if (filled($gymEmail) && filled($gymContact))
+                                            &nbsp;|&nbsp;
+                                        @endif
+                                        @if (filled($gymContact))
+                                            {{ $gymContact }}
+                                        @endif
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
                     </td>
                 </tr>
 
