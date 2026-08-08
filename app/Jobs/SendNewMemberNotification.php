@@ -15,6 +15,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Throwable;
 
 /**
  * Send an email to the admin when a member selects a plan via the member portal.
@@ -60,5 +61,17 @@ class SendNewMemberNotification implements ShouldQueue
             planName: Data::string($plan->name),
             gymName: $gymName ?: 'Julius Fitness Gym',
         ));
+    }
+
+    /**
+     * Handle a job failure after all retries are exhausted.
+     */
+    public function failed(?Throwable $exception): void
+    {
+        Log::error('Failed to send new member notification after all retries.', [
+            'member_id' => $this->memberId,
+            'plan_id' => $this->planId,
+            'exception' => $exception?->getMessage(),
+        ]);
     }
 }

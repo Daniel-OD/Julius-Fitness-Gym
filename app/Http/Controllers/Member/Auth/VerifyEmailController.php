@@ -30,7 +30,7 @@ class VerifyEmailController extends Controller
         $member = Member::findOrFail($id);
 
         abort_unless((string) auth('member')->id() === $id, 403);
-        abort_if(! hash_equals($hash, password_hash((string) $member->getEmailForVerification(), PASSWORD_BCRYPT)), 403);
+        abort_if(! hash_equals($hash, sha1((string) $member->getEmailForVerification())), 403);
         abort_unless($request->hasValidSignature(), 403);
 
         if (! $member->hasVerifiedEmail()) {

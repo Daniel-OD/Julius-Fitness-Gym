@@ -10,6 +10,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use Throwable;
 
 /**
  * Send the "payment received" receipt email (queued).
@@ -53,5 +54,18 @@ class SendInvoicePaymentReceiptEmail implements ShouldQueue
                 'missing' => $exception->viewData['missing'],
             ]);
         }
+    }
+
+    /**
+     * Handle a job failure after all retries are exhausted.
+     */
+    public function failed(?Throwable $exception): void
+    {
+        Log::error('Failed to send invoice payment receipt email after all retries.', [
+            'invoice_id' => $this->invoiceId,
+            'invoice_transaction_id' => $this->invoiceTransactionId,
+            'to_email' => $this->toEmail,
+            'exception' => $exception?->getMessage(),
+        ]);
     }
 }

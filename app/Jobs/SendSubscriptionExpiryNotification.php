@@ -16,6 +16,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Throwable;
 
 /**
  * Send in-app and (optionally) email notifications for a subscription
@@ -91,5 +92,17 @@ class SendSubscriptionExpiryNotification implements ShouldQueue
         }
 
         Mail::to($memberEmail)->send($mailable);
+    }
+
+    /**
+     * Handle a job failure after all retries are exhausted.
+     */
+    public function failed(?Throwable $exception): void
+    {
+        Log::error('Failed to send subscription expiry notification after all retries.', [
+            'subscription_id' => $this->subscriptionId,
+            'days_left' => $this->daysLeft,
+            'exception' => $exception?->getMessage(),
+        ]);
     }
 }

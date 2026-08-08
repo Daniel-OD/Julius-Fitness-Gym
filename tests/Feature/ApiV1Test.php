@@ -122,6 +122,15 @@ it('GET /api/v1/members returns paginated list', function (): void {
         ->assertJsonStructure(['data', 'meta']);
 });
 
+it('GET /api/v1/members supports include and sort query params', function (): void {
+    Sanctum::actingAs(apiUser());
+    Member::factory()->count(2)->create();
+
+    getJson('/api/v1/members?include=subscriptions&sort=-created_at')
+        ->assertOk()
+        ->assertJsonStructure(['data', 'meta']);
+});
+
 it('POST /api/v1/members creates a member', function (): void {
     Sanctum::actingAs(apiUser());
 

@@ -2,12 +2,13 @@
 
 use App\Models\Member;
 use App\Models\User;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function (): void {
-    $this->user = User::factory()->create();
+    $this->user = adminPanelUser();
     actingAs($this->user);
 });
 
@@ -27,6 +28,13 @@ it('checkin_token is unique across members', function (): void {
         ->unique();
 
     expect($tokens->count())->toBe(10);
+});
+
+it('rejects a duplicate member code at the database level', function (): void {
+    $existing = Member::factory()->create();
+
+    expect(fn () => Member::factory()->create(['code' => $existing->code]))
+        ->toThrow(QueryException::class);
 });
 
 it('member soft delete does not permanently remove record', function (): void {
@@ -75,4 +83,12 @@ it('qr routes require authentication', function (): void {
 
     get(route('web.members.qr', $member))->assertRedirect();
     get(route('web.members.qr.download', $member))->assertRedirect();
+});
+
+it('qr routes deny users without View:Member permission', function (): void {
+    actingAs(User::factory()->create());
+    $member = Member::factory()->create();
+
+    get(route('web.members.qr', $member))->assertForbidden();
+    get(route('web.members.qr.download', $member))->assertForbidden();
 });

@@ -28,19 +28,20 @@ npm run dev                  # watch mode
 # Code style (run after any PHP changes)
 vendor/bin/pint --dirty --format agent
 
-# Static analysis (Larastan, level 5 — see phpstan.neon.dist)
+# Static analysis (Larastan, level 5 — see phpstan.neon)
 vendor/bin/phpstan analyse
 
 # Filament Shield — generate permissions for a new resource
 php artisan shield:generate --resource=SomeResource --panel=admin
 
-# Scheduled commands (run manually for testing)
+# Scheduled commands (defined in routes/console.php; run manually for testing)
 php artisan gym:invoices --mark-overdue
 php artisan gym:subscriptions --mark-expired --mark-expiring
-php artisan gym:send-expiring-emails
+php artisan gym:subscription-expiry-notifications --dry-run   # 7/3/1/0-day expiry emails + in-app admin notifications
+php artisan app:cache --clear     # warm/clear Laravel, Filament & route caches
 
 # Backup / restore / install (app/Console/Commands)
-php artisan app:backup            # zip database + settings to configured folder
+php artisan app:backup            # zip database + settings to configured folder; --trigger=manual|after_member|end_of_day|pre-restore
 php artisan app:restore {zip}     # restore from a backup zip
 php artisan app:install           # finalize install: admin user, credentials file
 ```
@@ -88,6 +89,8 @@ All domain models use soft deletes. `Invoice` and `InvoiceTransaction` have `#[O
 | `app/Services/Analytics/AnalyticsService.php` | Financial & membership metric queries used by dashboard widgets |
 | `app/Services/Email/InvoiceEmailService.php` | Builds and sends invoice/receipt emails with PDF attachment |
 | `app/Services/Subscriptions/SubscriptionRenewalService.php` | Renewal business logic (shared by Filament and API) |
+| `app/Services/Members/MemberStatusSyncService.php` | Derives a `Member`'s active/inactive status from its subscriptions — called by `gym:subscriptions` and elsewhere after subscription changes |
+| `app/Services/CheckIns/CheckInService.php` | QR check-in/out logic — rate limiting, grace-entry handling, subscription validation |
 | `app/Services/JsonSettingsRepository.php` | Reads/writes `storage/data/settingsData.json`; implements `SettingsRepository` |
 | `app/Services/JsonSequenceRepository.php` | Generates sequential codes (member codes, invoice numbers) via `SequenceRepository` |
 | `app/Support/AppLocale.php` | Resolves active locale (settings → query param → Accept-Language header) |

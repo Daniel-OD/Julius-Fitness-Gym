@@ -55,9 +55,10 @@ class SubscriptionRenewalService
                 'status' => $status,
             ]);
 
-            if ($record->end_date->lt($today)) {
-                $record->update(['status' => 'renewed']);
-            }
+            // Always supersede the old subscription, even when renewing early — otherwise
+            // both remain simultaneously "active" (double-counted in analytics/check-in
+            // access) until the old one's end_date naturally passes.
+            $record->update(['status' => 'renewed']);
 
             $invoiceData = $data['invoice'] ?? [];
             $fee = round(Data::float($plan->amount), 2);

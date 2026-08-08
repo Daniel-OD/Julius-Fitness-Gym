@@ -65,6 +65,7 @@ final class QueryFilters
         self::validateTrashedParameter($request, $errors);
         self::validateCommaSeparatedStringParameter($request, 'include', 'Include must be a comma-separated string.', $errors);
         self::validateCommaSeparatedStringParameter($request, 'sort', 'Sort must be a comma-separated string.', $errors);
+        self::validateFilterParameters($request, $resourceKey, $errors);
 
         if (! empty($errors)) {
             throw new HttpResponseException(response()->json([
@@ -99,48 +100,49 @@ final class QueryFilters
         if (! is_string($value)) {
             $errors[$param][] = $message;
         }
+    }
 
-        $rules = ResourceQueryRules::filters($resourceKey);
+    private static function validateFilterParameters(Request $request, string $resourceKey, array &$errors): void
+    {
         $filter = $request->query('filter');
-        if ($filter !== null) {
-            if (! is_array($filter)) {
-                $errors['filter'][] = 'Filter must be an object (e.g. `filter[field]=value`).';
-            } else {
-                foreach ($filter as $key => $value) {
-                    if (! is_string($key) || $key === '') {
-                        $errors['filter'][] = 'Filter keys must be strings.';
-
-                        continue;
-                    }
-
-                    if (! array_key_exists($key, $rules)) {
-                        continue;
-                    }
-
-                    if (! is_scalar($value)) {
-                        $errors["filter.{$key}"][] = 'Filter value must be a scalar.';
-
-                        continue;
-                    }
-
-                    $value = trim((string) $value);
-                    if ($value === '') {
-                        continue;
-                    }
-
-                    $type = $rules[$key]['type'];
-                    if (in_array($type, ['date_range', 'datetime_range'], true) && str_contains($value, '..') && self::parseRange($value) === null) {
-                        $errors["filter.{$key}"][] = 'Range filters must use `from..to`.';
-                    }
-                }
-            }
+        if ($filter === null) {
+            return;
         }
 
-        if ($errors !== []) {
-            throw new HttpResponseException(response()->json([
-                'message' => __('app.api.invalid_query'),
-                'errors' => $errors,
-            ], 400));
+        if (! is_array($filter)) {
+            $errors['filter'][] = 'Filter must be an object (e.g. `filter[field]=value`).';
+
+            return;
+        }
+
+        $rules = ResourceQueryRules::filters($resourceKey);
+
+        foreach ($filter as $key => $value) {
+            if (! is_string($key) || $key === '') {
+                $errors['filter'][] = 'Filter keys must be strings.';
+
+                continue;
+            }
+
+            if (! array_key_exists($key, $rules)) {
+                continue;
+            }
+
+            if (! is_scalar($value)) {
+                $errors["filter.{$key}"][] = 'Filter value must be a scalar.';
+
+                continue;
+            }
+
+            $value = trim((string) $value);
+            if ($value === '') {
+                continue;
+            }
+
+            $type = $rules[$key]['type'];
+            if (in_array($type, ['date_range', 'datetime_range'], true) && str_contains($value, '..') && self::parseRange($value) === null) {
+                $errors["filter.{$key}"][] = 'Range filters must use `from..to`.';
+            }
         }
     }
 

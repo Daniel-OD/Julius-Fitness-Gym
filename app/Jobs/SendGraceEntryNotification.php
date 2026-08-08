@@ -15,6 +15,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Throwable;
 
 /**
  * Notify the admin when an expired member uses their one-time grace entry.
@@ -68,5 +69,16 @@ class SendGraceEntryNotification implements ShouldQueue
             scannedAt: $checkIn->checked_in_at->timezone($timezone)->translatedFormat('d M Y, H:i'),
             gymName: $gymName ?: 'Julius Fitness Gym',
         ));
+    }
+
+    /**
+     * Handle a job failure after all retries are exhausted.
+     */
+    public function failed(?Throwable $exception): void
+    {
+        Log::error('Failed to send grace entry notification after all retries.', [
+            'check_in_id' => $this->checkInId,
+            'exception' => $exception?->getMessage(),
+        ]);
     }
 }

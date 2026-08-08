@@ -14,6 +14,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Throwable;
 
 /**
  * Send a portal invitation email so a member can set their password.
@@ -69,5 +70,16 @@ class SendMemberPortalInvitation implements ShouldQueue
         }
 
         Mail::to($memberEmail)->send($mailable);
+    }
+
+    /**
+     * Handle a job failure after all retries are exhausted.
+     */
+    public function failed(?Throwable $exception): void
+    {
+        Log::error('Failed to send member portal invitation after all retries.', [
+            'member_id' => $this->memberId,
+            'exception' => $exception?->getMessage(),
+        ]);
     }
 }

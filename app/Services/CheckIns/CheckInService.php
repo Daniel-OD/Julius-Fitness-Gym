@@ -8,6 +8,7 @@ use App\Jobs\SendGraceEntryNotification;
 use App\Models\CheckIn;
 use App\Models\Member;
 use App\Models\Subscription;
+use App\Services\Members\MemberStatusSyncService;
 use App\Support\AppConfig;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
@@ -152,16 +153,21 @@ class CheckInService
             ->where('member_id', $memberId)
             ->whereDate('start_date', '<=', $today)
             ->whereDate('end_date', '>=', $today)
-            ->whereNotIn('status', ['cancelled', 'renewed'])
+            ->whereNotIn('status', MemberStatusSyncService::NON_QUALIFYING_STATUSES)
             ->latest('end_date')
             ->first();
     }
 
+    /**
+     * The member's most recent subscription regardless of expiry — deliberately
+     * includes 'expired' (unlike {@see self::activeSubscriptionFor()}) since this
+     * is used to find a just-expired subscription for one-time grace-entry checks.
+     */
     private function latestSubscriptionFor(int $memberId): ?Subscription
     {
         return Subscription::query()
             ->where('member_id', $memberId)
-            ->whereNotIn('status', ['cancelled', 'renewed'])
+            ->whereNotIn('status', ['cancelled', 'renewed', 'pending_payment'])
             ->latest('end_date')
             ->first();
     }

@@ -16,7 +16,7 @@ class MemberVerifyEmailNotification extends VerifyEmail
             Carbon::now()->addMinutes(60),
             [
                 'id' => $notifiable->getKey(),
-                'hash' => password_hash((string) $notifiable->getEmailForVerification(), PASSWORD_BCRYPT),
+                'hash' => sha1((string) $notifiable->getEmailForVerification()),
             ]
         );
     }

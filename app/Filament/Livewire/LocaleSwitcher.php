@@ -75,6 +75,8 @@ class LocaleSwitcher extends Component
 
     public function setLocale(string $locale): mixed
     {
+        abort_unless(auth()->user()?->can('View:Settings') ?? false, 403);
+
         $options = $this->getOptionsProperty();
 
         if (! array_key_exists($locale, $options)) {

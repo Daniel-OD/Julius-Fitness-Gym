@@ -10,6 +10,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use Throwable;
 
 /**
  * Send the "invoice issued" email (queued).
@@ -50,5 +51,17 @@ class SendInvoiceIssuedEmail implements ShouldQueue
                 'missing' => $exception->viewData['missing'],
             ]);
         }
+    }
+
+    /**
+     * Handle a job failure after all retries are exhausted.
+     */
+    public function failed(?Throwable $exception): void
+    {
+        Log::error('Failed to send invoice issued email after all retries.', [
+            'invoice_id' => $this->invoiceId,
+            'to_email' => $this->toEmail,
+            'exception' => $exception?->getMessage(),
+        ]);
     }
 }

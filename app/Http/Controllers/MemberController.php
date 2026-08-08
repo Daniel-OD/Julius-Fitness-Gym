@@ -17,6 +17,8 @@ class MemberController extends Controller
 
     public function qr(Member $member): View
     {
+        $this->authorize('view', $member);
+
         $member->ensureCheckinToken();
 
         $access = $this->subscriptionAccess->forMember($member);
@@ -31,6 +33,8 @@ class MemberController extends Controller
 
     public function qrDownload(Member $member): Response
     {
+        $this->authorize('view', $member);
+
         $member->ensureCheckinToken();
 
         $svg = $this->qrCodeService->svgForMember($member);

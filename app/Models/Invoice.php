@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Cache;
 
 #[ObservedBy(InvoiceObserver::class)]
 #[Fillable([
@@ -136,10 +137,12 @@ class Invoice extends Model
         parent::boot();
 
         static::saving(function (self $invoice): void {
-            if (! $invoice->number) {
-                $invoice->number = Helpers::generateLastNumber('invoice', Invoice::class, $invoice->date);
-            }
-            Helpers::updateLastNumber('invoice', $invoice->number, $invoice->date);
+            Cache::lock('sequence:invoice', 10)->block(5, function () use ($invoice): void {
+                if (! $invoice->number) {
+                    $invoice->number = Helpers::generateLastNumber('invoice', Invoice::class, $invoice->date);
+                }
+                Helpers::updateLastNumber('invoice', $invoice->number, $invoice->date);
+            });
 
             $taxRate = Helpers::getTaxRate() ?: 0;
             $summary = InvoiceCalculator::summary(

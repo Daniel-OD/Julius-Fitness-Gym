@@ -24,7 +24,7 @@ php artisan shield:generate --resource=ResourceName --panel=admin
 # Scheduled & Maintenance Commands
 php artisan gym:invoices --mark-overdue                      # Mark overdue invoices
 php artisan gym:subscriptions --mark-expired --mark-expiring  # Update subscription statuses
-php artisan gym:send-expiring-emails                         # Queue member expiry notifications (7 & 3 days)
+php artisan gym:subscription-expiry-notifications             # Queue member expiry notifications (7/3/1/0 days)
 php artisan app:backup                                       # Backup DB + settings JSON to zip
 php artisan app:restore {zip} --include-settings             # Restore DB + settings from zip backup
 ```

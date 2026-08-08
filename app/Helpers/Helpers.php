@@ -82,7 +82,8 @@ class Helpers
     public static function gymName(): string
     {
         try {
-            $general = is_array(self::getSettings()['general'] ?? null) ? self::getSettings()['general'] : [];
+            $settings = self::getSettings();
+            $general = is_array($settings['general'] ?? null) ? $settings['general'] : [];
             $name = $general['gym_name'] ?? '';
             if (! empty($name)) {
                 return (string) $name;

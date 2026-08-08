@@ -20,20 +20,20 @@ final class InvoiceCalculator
         float $discountAmount,
         float $paidAmount,
     ): array {
-        $fee = max(round($fee), 0.0);
+        $fee = max(round($fee, 2), 0.0);
         $taxRatePercent = max($taxRatePercent, 0.0);
 
-        $tax = round(($fee * $taxRatePercent) / 100);
+        $tax = round(($fee * $taxRatePercent) / 100, 2);
 
         $discountAmount = min(max($discountAmount, 0.0), $fee);
-        $discountAmount = round($discountAmount);
+        $discountAmount = round($discountAmount, 2);
 
-        $total = round(max($fee + $tax - $discountAmount, 0.0));
+        $total = round(max($fee + $tax - $discountAmount, 0.0), 2);
 
         $paidAmount = min(max($paidAmount, 0.0), $total);
-        $paidAmount = round($paidAmount);
+        $paidAmount = round($paidAmount, 2);
 
-        $due = round(max($total - $paidAmount, 0.0));
+        $due = round(max($total - $paidAmount, 0.0), 2);
 
         return [
             'fee' => (float) $fee,

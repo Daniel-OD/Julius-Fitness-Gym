@@ -6,6 +6,10 @@ use App\Filament\Auth\ForcePasswordChange;
 use App\Filament\Auth\Login;
 use App\Filament\Office\Pages\Dashboard;
 use App\Filament\Resources\CheckIns\CheckInResource;
+use App\Filament\Widgets\Office\OfficeExpiredSubscriptionsWidget;
+use App\Filament\Widgets\Office\OfficeExpiringSoonWidget;
+use App\Filament\Widgets\Office\OfficePresentNowWidget;
+use App\Filament\Widgets\Office\OfficeTodayStatsWidget;
 use App\Models\CheckIn;
 use Filament\Navigation\NavigationBuilder;
 use Filament\Navigation\NavigationItem;
@@ -37,8 +41,12 @@ class OfficePanelProvider extends AdminPanelProvider
                 ForcePasswordChange::class,
                 Dashboard::class,
             ])
-            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
-            ->widgets([])
+            ->widgets([
+                OfficeTodayStatsWidget::class,
+                OfficePresentNowWidget::class,
+                OfficeExpiringSoonWidget::class,
+                OfficeExpiredSubscriptionsWidget::class,
+            ])
             // Shield plugin is intentionally omitted: it would expose the Roles
             // management resource. Permission enforcement still works through
             // policies (Gate), which are panel-independent.

@@ -18,6 +18,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
 /**
@@ -121,10 +122,12 @@ class Member extends Authenticatable implements MustVerifyEmail
         parent::boot();
 
         static::saving(function (self $member): void {
-            if (! $member->code) {
-                $member->code = Helpers::generateLastNumber('member', Member::class, null, 'code');
-            }
-            Helpers::updateLastNumber('member', $member->code);
+            Cache::lock('sequence:member', 10)->block(5, function () use ($member): void {
+                if (! $member->code) {
+                    $member->code = Helpers::generateLastNumber('member', Member::class, null, 'code');
+                }
+                Helpers::updateLastNumber('member', $member->code);
+            });
 
             if (! $member->checkin_token) {
                 $member->checkin_token = Str::random(32);

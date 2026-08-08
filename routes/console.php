@@ -3,10 +3,9 @@
 use App\Helpers\Helpers;
 use Illuminate\Support\Facades\Schedule;
 
-Schedule::command('gym:invoices --mark-overdue')->dailyAt('00:05');
-Schedule::command('gym:subscriptions')->dailyAt('00:10');
-Schedule::command('gym:subscription-expiry-notifications')->dailyAt('09:00');
-Schedule::command('gym:send-expiring-emails')->dailyAt('09:00');
+Schedule::command('gym:invoices --mark-overdue')->dailyAt('00:05')->withoutOverlapping();
+Schedule::command('gym:subscriptions')->dailyAt('00:10')->withoutOverlapping();
+Schedule::command('gym:subscription-expiry-notifications')->dailyAt('09:00')->withoutOverlapping();
 
 // Daily backup — runs only when backup is enabled and trigger includes end-of-day
 (function (): void {
@@ -24,5 +23,5 @@ Schedule::command('gym:send-expiring-emails')->dailyAt('09:00');
         ? $backup['end_of_day_time']
         : '22:00';
 
-    Schedule::command('app:backup', ['--trigger' => 'end_of_day'])->dailyAt($time);
+    Schedule::command('app:backup', ['--trigger' => 'end_of_day'])->dailyAt($time)->withoutOverlapping();
 })();

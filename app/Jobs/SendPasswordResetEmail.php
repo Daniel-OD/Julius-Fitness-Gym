@@ -15,6 +15,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Throwable;
 
 /**
  * Send an email containing a newly generated password.
@@ -81,6 +82,8 @@ class SendPasswordResetEmail implements ShouldQueue
      */
     private function resolveRecipient(string $gymName): ?array
     {
+        $gymName = e($gymName);
+
         if ($this->recipientType === 'member') {
             $member = Member::query()->find($this->recipientId);
 
@@ -114,5 +117,17 @@ class SendPasswordResetEmail implements ShouldQueue
         }
 
         return null;
+    }
+
+    /**
+     * Handle a job failure after all retries are exhausted.
+     */
+    public function failed(?Throwable $exception): void
+    {
+        Log::error('Failed to send password reset email after all retries.', [
+            'recipient_type' => $this->recipientType,
+            'recipient_id' => $this->recipientId,
+            'exception' => $exception?->getMessage(),
+        ]);
     }
 }

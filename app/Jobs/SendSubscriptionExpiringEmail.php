@@ -12,6 +12,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use Throwable;
 
 /**
  * Send a subscription expiring email to a member (queued).
@@ -45,5 +46,17 @@ class SendSubscriptionExpiringEmail implements ShouldQueue
             subscription: $this->subscription,
             daysLeft: $this->daysLeft,
         ));
+    }
+
+    /**
+     * Handle a job failure after all retries are exhausted.
+     */
+    public function failed(?Throwable $exception): void
+    {
+        Log::error('Failed to send subscription expiring email after all retries.', [
+            'member_id' => $this->member->id,
+            'subscription_id' => $this->subscription->id,
+            'exception' => $exception?->getMessage(),
+        ]);
     }
 }
