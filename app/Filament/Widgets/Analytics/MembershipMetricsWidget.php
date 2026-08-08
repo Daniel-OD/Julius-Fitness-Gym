@@ -17,6 +17,8 @@ class MembershipMetricsWidget extends StatsOverviewWidget
 {
     use InteractsWithPageFilters;
 
+    protected static bool $isLazy = false;
+
     protected static ?int $sort = -41;
 
     protected int|string|array $columnSpan = 'full';

@@ -18,6 +18,8 @@ class FinancialMetricsWidget extends StatsOverviewWidget
 {
     use InteractsWithPageFilters;
 
+    protected static bool $isLazy = false;
+
     protected static ?int $sort = -40;
 
     /**

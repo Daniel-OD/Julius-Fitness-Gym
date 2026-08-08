@@ -15,6 +15,8 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
  */
 class GymOverviewStatsWidget extends StatsOverviewWidget
 {
+    protected static bool $isLazy = false;
+
     protected static ?int $sort = -50;
 
     protected int|string|array $columnSpan = 'full';

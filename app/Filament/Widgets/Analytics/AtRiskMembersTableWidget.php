@@ -23,6 +23,8 @@ use Illuminate\Database\Eloquent\Builder;
  */
 class AtRiskMembersTableWidget extends TableWidget
 {
+    protected static bool $isLazy = false;
+
     protected static ?int $sort = -38;
 
     protected static ?string $heading = null;

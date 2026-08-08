@@ -26,6 +26,8 @@ use Illuminate\Support\HtmlString;
  */
 class MembershipOverviewSubscriptionsTableWidget extends TableWidget
 {
+    protected static bool $isLazy = false;
+
     protected static ?int $sort = -39;
 
     protected ?string $placeholderHeight = '14rem';
