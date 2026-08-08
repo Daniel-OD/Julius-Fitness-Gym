@@ -18,7 +18,8 @@ primary_region = 'fra'
   LOG_CHANNEL = 'stderr'
   LOG_LEVEL = 'info'
   DB_CONNECTION = 'pgsql'
-  MAIL_MAILER = 'log'
+  MAIL_MAILER = 'resend'
+  MAIL_FROM_ADDRESS = 'noreply@juliusgym.ro'
 
 [http_service]
   internal_port = 8080
@@ -32,4 +33,3 @@ primary_region = 'fra'
   memory = '1gb'
   cpu_kind = 'shared'
   cpus = 1
-# redeploy trigger
