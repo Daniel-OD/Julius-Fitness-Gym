@@ -1,0 +1,38 @@
+name: Deploy test
+
+on:
+  push:
+    branches:
+      - test
+
+concurrency:
+  group: deploy-test
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    timeout-minutes: 15
+    steps:
+      - name: Deploy pe juliusgym-test
+        env:
+          SSH_KEY: ${{ secrets.JULIUSGYM_TEST_DEPLOY_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_KEY" > ~/.ssh/prod_deploy_key
+          chmod 600 ~/.ssh/prod_deploy_key
+          ssh-keyscan -H 192.168.1.110 >> ~/.ssh/known_hosts 2>/dev/null
+
+          set +e
+          ssh -o BatchMode=yes -o ConnectTimeout=10 \
+            -i ~/.ssh/prod_deploy_key deploy@192.168.1.110 'deploy' \
+            | tee deploy_output.log
+          EXIT_CODE=${PIPESTATUS[0]}
+          set -e
+
+          rm -f ~/.ssh/prod_deploy_key
+          exit $EXIT_CODE
+
+      - name: Rezumat deploy
+        if: always()
+        run: cat deploy_output.log || true
