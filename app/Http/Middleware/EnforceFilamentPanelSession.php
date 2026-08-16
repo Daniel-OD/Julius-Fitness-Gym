@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
 use App\Support\FilamentSession;
 use Closure;
 use Filament\Facades\Filament;
@@ -31,6 +32,18 @@ class EnforceFilamentPanelSession
         }
 
         if ($lockedPanelId === $currentPanelId) {
+            return $next($request);
+        }
+
+        // Admins/owners are legitimately authorized on both the admin and office
+        // panels (see User::isAdministrator()) — re-lock to the panel they just
+        // navigated to instead of tearing down the session, otherwise switching
+        // panels in the same browser session logs them out entirely.
+        $user = Filament::auth()->user();
+
+        if ($user instanceof User && $user->isAdministrator() && $user->canAccessPanel($panel)) {
+            FilamentSession::lockToPanel($currentPanelId);
+
             return $next($request);
         }
 

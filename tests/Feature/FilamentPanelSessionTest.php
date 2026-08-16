@@ -48,3 +48,30 @@ it('clears panel lock on logout event', function (): void {
 
     expect(FilamentSession::authenticatedPanelId())->toBeNull();
 });
+
+it('lets a super admin move between admin and office panels without being logged out', function (): void {
+    Role::firstOrCreate(['name' => 'super_admin', 'guard_name' => 'web']);
+    $admin = User::factory()->create();
+    $admin->assignRole('super_admin');
+
+    $this->actingAs($admin)
+        ->withSession([FilamentSession::AUTHENTICATED_PANEL_KEY => 'admin'])
+        ->get('/office')
+        ->assertOk();
+
+    expect(auth()->check())->toBeTrue();
+    expect(FilamentSession::authenticatedPanelId())->toBe('office');
+});
+
+it('still logs out an employee-only user who crosses into a panel they were not locked to', function (): void {
+    (new EmployeeRoleSeeder)->run();
+    $employee = User::factory()->create();
+    $employee->assignRole('employee');
+
+    $this->actingAs($employee)
+        ->withSession([FilamentSession::AUTHENTICATED_PANEL_KEY => 'admin'])
+        ->get('/office')
+        ->assertRedirect();
+
+    expect(auth()->check())->toBeFalse();
+});
