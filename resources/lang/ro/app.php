@@ -909,6 +909,7 @@ return [
             'register' => 'Creare cont',
             'register_subtitle' => 'Alătură-te Julius Fitness Gym.',
             'register_verify_hint' => 'După înregistrare vei primi un email de confirmare înainte de a accesa portalul.',
+            'contact_label' => 'Nr. Telefon',
             'create_account' => 'Crează cont',
             'already_registered' => 'Ai deja un cont?',
             'no_account' => 'Nu ai cont încă?',

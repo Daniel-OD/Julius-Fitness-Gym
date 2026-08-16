@@ -28,6 +28,26 @@ it('registers a new member with valid data', function (): void {
     assertAuthenticatedAs(Member::where('email', 'test@example.com')->first(), 'member');
 });
 
+it('shows the phone number label on the register page', function (): void {
+    get(route('member.register'))
+        ->assertOk()
+        ->assertSee(__('app.member.auth.contact_label'));
+});
+
+it('flashes a status message after registration that is displayed on the verify-email page', function (): void {
+    post(route('member.register'), [
+        'name' => 'Test Member',
+        'email' => 'test@example.com',
+        'contact' => '0712345678',
+        'password' => 'password123',
+        'password_confirmation' => 'password123',
+    ])->assertSessionHas('status', __('app.member.auth.verify_before_continue'));
+
+    get(route('member.verify-email'))
+        ->assertOk()
+        ->assertSee(__('app.member.auth.verify_before_continue'));
+});
+
 it('rejects duplicate email on registration', function (): void {
     Member::factory()->create(['email' => 'existing@example.com']);
 

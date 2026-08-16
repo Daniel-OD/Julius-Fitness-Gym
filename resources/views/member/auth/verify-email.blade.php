@@ -20,9 +20,9 @@
             </div>
         @endif
 
-        @if (session('status') === 'verification-link-sent')
+        @if (session('status'))
             <div class="mt-5 w-full rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700 dark:border-green-800/40 dark:bg-green-900/20 dark:text-green-400">
-                {{ __('app.member.auth.verification_sent') }}
+                {{ session('status') === 'verification-link-sent' ? __('app.member.auth.verification_sent') : session('status') }}
             </div>
         @endif
 

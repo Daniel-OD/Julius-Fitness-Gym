@@ -129,7 +129,7 @@
 
                     <div>
                         <label for="register-contact" class="mb-2 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                            {{ __('app.fields.contact') }}
+                            {{ __('app.member.auth.contact_label') }}
                         </label>
                         <input id="register-contact" name="contact" type="tel" value="{{ old('contact') }}" required autocomplete="tel"
                             class="block w-full rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm text-zinc-900 outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-100 dark:border-white/10 dark:bg-zinc-950 dark:text-white dark:focus:border-brand-400 dark:focus:ring-brand-400" />

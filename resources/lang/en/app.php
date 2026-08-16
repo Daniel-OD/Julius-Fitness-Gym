@@ -909,6 +909,7 @@ return [
             'register' => 'Create account',
             'register_subtitle' => 'Join Julius Fitness Gym.',
             'register_verify_hint' => 'After signing up you will receive a confirmation email before accessing the portal.',
+            'contact_label' => 'Phone number',
             'create_account' => 'Create account',
             'already_registered' => 'Already have an account?',
             'no_account' => 'No account yet?',
