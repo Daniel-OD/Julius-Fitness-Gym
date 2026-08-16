@@ -20,6 +20,16 @@ final class AppLocale
         $queryLocale = $request->query('locale');
         $queryLocale = is_string($queryLocale) ? trim($queryLocale) : null;
 
+        // A locale the visitor already picked (e.g. via the public site's language
+        // switcher) takes priority over the site-wide admin default and the browser's
+        // Accept-Language header, so the choice stays consistent across the app.
+        $sessionLocale = $request->hasSession()
+            ? $request->session()->get(PublicLocale::SESSION_KEY)
+            : null;
+        $sessionLocale = is_string($sessionLocale) && in_array($sessionLocale, $supportedLocales, true)
+            ? $sessionLocale
+            : null;
+
         $settingsLocale = null;
         try {
             $settings = app(SettingsRepository::class)->get();
@@ -32,7 +42,7 @@ final class AppLocale
         $headerLocale = $request->getPreferredLanguage($supportedLocales);
         $headerLocale = is_string($headerLocale) ? trim($headerLocale) : null;
 
-        $locale = $queryLocale ?: ($settingsLocale ?: ($headerLocale ?: AppConfig::string('app.locale', 'en')));
+        $locale = $queryLocale ?: ($sessionLocale ?: ($settingsLocale ?: ($headerLocale ?: AppConfig::string('app.public_locale', 'ro'))));
 
         if (! in_array($locale, $supportedLocales, true)) {
             $locale = in_array($fallbackLocale, $supportedLocales, true)

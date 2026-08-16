@@ -57,3 +57,29 @@ it('rejects unsupported public locale', function (): void {
         ->get('/locale/fr')
         ->assertNotFound();
 });
+
+it('carries a supported public locale choice over to member portal routes', function (): void {
+    // Pin the app default locale so the assertion does not depend on the
+    // (gitignored) settings file, which is empty in CI.
+    /** @var SettingsRepository $settings */
+    $settings = app(SettingsRepository::class);
+    $settings->put([
+        ...$settings->get(),
+        'general' => [
+            ...($settings->get()['general'] ?? []),
+            'locale' => 'ro',
+        ],
+    ]);
+
+    $member = Member::factory()->create([
+        'password' => 'password',
+        'email_verified_at' => now(),
+    ]);
+
+    withSession([PublicLocale::SESSION_KEY => 'en'])
+        ->actingAs($member, 'member')
+        ->get(route('member.plans'))
+        ->assertOk()
+        ->assertSee(__('app.member.plans.title', [], 'en'))
+        ->assertDontSee(__('app.member.plans.title', [], 'ro'));
+});
